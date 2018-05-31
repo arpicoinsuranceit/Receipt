@@ -1,6 +1,6 @@
 package org.arpico.groupit.receipt.dto;
 
-public class Spouse {
+public class SpouseDto {
 	private boolean _sActive;
 	private String _sTitle;
 	private String _sName;
@@ -11,6 +11,7 @@ public class Spouse {
 	private String _sSmoking;
 	private String _sOccupation;
 	private String _sCustCode;
+	private String occuCode;
 	
 	public boolean is_sActive() {
 		return _sActive;
@@ -71,5 +72,11 @@ public class Spouse {
 	}
 	public void set_sCustCode(String _sCustCode) {
 		this._sCustCode = _sCustCode;
+	}
+	public String getOccuCode() {
+		return occuCode;
+	}
+	public void setOccuCode(String occuCode) {
+		this.occuCode = occuCode;
 	}
 }

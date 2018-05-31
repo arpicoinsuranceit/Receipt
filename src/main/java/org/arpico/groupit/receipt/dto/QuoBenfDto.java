@@ -1,6 +1,6 @@
 package org.arpico.groupit.receipt.dto;
 
-public class QuoBenf {
+public class QuoBenfDto {
 	private String benfName;
 	private String riderCode;
 	private Integer riderTerm;

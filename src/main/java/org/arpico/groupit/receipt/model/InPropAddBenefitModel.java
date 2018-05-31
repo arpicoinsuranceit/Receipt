@@ -1,12 +1,18 @@
 package org.arpico.groupit.receipt.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class InPropAddBenefit {
-	private String sbucod;
-	private String loccod;
-	private Integer pprnum;
-	private String ridcod;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.arpico.groupit.receipt.model.pk.InPropAddBenefitPK;
+
+@Entity
+@Table(name = "inpropaddbenefit")
+public class InPropAddBenefitModel implements Serializable{
+	private InPropAddBenefitPK inPropAddBenefitPK;
 	private String ridnam;
 	private Integer ridtrm;
 	private Double sumasu;
@@ -28,30 +34,14 @@ public class InPropAddBenefit {
 	private Date expdat;
 	private String medgrd;
 	
-	public String getSbucod() {
-		return sbucod;
+	@EmbeddedId
+	public InPropAddBenefitPK getInPropAddBenefitPK() {
+		return inPropAddBenefitPK;
 	}
-	public void setSbucod(String sbucod) {
-		this.sbucod = sbucod;
+	public void setInPropAddBenefitPK(InPropAddBenefitPK inPropAddBenefitPK) {
+		this.inPropAddBenefitPK = inPropAddBenefitPK;
 	}
-	public String getLoccod() {
-		return loccod;
-	}
-	public void setLoccod(String loccod) {
-		this.loccod = loccod;
-	}
-	public Integer getPprnum() {
-		return pprnum;
-	}
-	public void setPprnum(Integer pprnum) {
-		this.pprnum = pprnum;
-	}
-	public String getRidcod() {
-		return ridcod;
-	}
-	public void setRidcod(String ridcod) {
-		this.ridcod = ridcod;
-	}
+
 	public String getRidnam() {
 		return ridnam;
 	}
@@ -175,13 +165,12 @@ public class InPropAddBenefit {
 	
 	@Override
 	public String toString() {
-		return "InPropAddBenefit [sbucod=" + sbucod + ", loccod=" + loccod + ", pprnum=" + pprnum + ", ridcod=" + ridcod
-				+ ", ridnam=" + ridnam + ", ridtrm=" + ridtrm + ", sumasu=" + sumasu + ", rdrprm=" + rdrprm
-				+ ", lockin=" + lockin + ", prmmth=" + prmmth + ", prmqat=" + prmqat + ", prmhlf=" + prmhlf
-				+ ", prmyer=" + prmyer + ", instyp=" + instyp + ", disord=" + disord + ", ridtyp=" + ridtyp
-				+ ", prmonl=" + prmonl + ", agemin=" + agemin + ", agemax=" + agemax + ", grdord=" + grdord
-				+ ", grprid=" + grprid + ", prpseq=" + prpseq + ", expdat=" + expdat + ", medgrd=" + medgrd + "]";
+		return "InPropAddBenefit [inPropAddBenefitPK=" + inPropAddBenefitPK + ", ridnam=" + ridnam + ", ridtrm="
+				+ ridtrm + ", sumasu=" + sumasu + ", rdrprm=" + rdrprm + ", lockin=" + lockin + ", prmmth=" + prmmth
+				+ ", prmqat=" + prmqat + ", prmhlf=" + prmhlf + ", prmyer=" + prmyer + ", instyp=" + instyp
+				+ ", disord=" + disord + ", ridtyp=" + ridtyp + ", prmonl=" + prmonl + ", agemin=" + agemin
+				+ ", agemax=" + agemax + ", grdord=" + grdord + ", grprid=" + grprid + ", prpseq=" + prpseq
+				+ ", expdat=" + expdat + ", medgrd=" + medgrd + "]";
 	}
-	
 	
 }

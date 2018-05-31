@@ -10,6 +10,8 @@ public class SaveReceiptDto {
 	private Integer amount;
 	private String payAmountWord;
 	private String productCode;
+	private String branchCode;
+	private String agentCode;
 	
 	public Integer getQuotationId() {
 		return quotationId;
@@ -59,10 +61,25 @@ public class SaveReceiptDto {
 	public void setProductCode(String productCode) {
 		this.productCode = productCode;
 	}
+	public String getBranchCode() {
+		return branchCode;
+	}
+	public void setBranchCode(String branchCode) {
+		this.branchCode = branchCode;
+	}
+	
+	public String getAgentCode() {
+		return agentCode;
+	}
+	public void setAgentCode(String agentCode) {
+		this.agentCode = agentCode;
+	}
 	@Override
 	public String toString() {
 		return "SaveReceiptDto [quotationId=" + quotationId + ", quotationDetailId=" + quotationDetailId + ", bankCode="
 				+ bankCode + ", remark=" + remark + ", payMode=" + payMode + ", amount=" + amount + ", payAmountWord="
-				+ payAmountWord + ", productCode=" + productCode + "]";
-	}	
+				+ payAmountWord + ", productCode=" + productCode + ", branchCode=" + branchCode + ", agentCode="
+				+ agentCode + "]";
+	}
+	
 }

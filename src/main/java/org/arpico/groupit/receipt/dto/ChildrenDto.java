@@ -1,6 +1,6 @@
 package org.arpico.groupit.receipt.dto;
 
-public class Children {
+public class ChildrenDto {
 	private boolean _cActive;
 	private String _cName;
 	private String _cDob;
