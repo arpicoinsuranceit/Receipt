@@ -1,0 +1,20 @@
+package org.arpico.groupit.receipt.dao;
+
+import java.util.List;
+
+import org.arpico.groupit.receipt.dto.ProposalL3Dto;
+import org.arpico.groupit.receipt.model.InProposalBasicsModel;
+import org.arpico.groupit.receipt.model.InProposalsModel;
+import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;
+
+public interface InProposalCustomDao {
+
+	List<ProposalNoSeqNoModel> getProposalNoSeqNoModelList(String val) throws Exception;
+
+	InProposalBasicsModel geInProposalBasics(Integer pprNo, Integer prpseq) throws Exception;
+
+	InProposalsModel getProposal(Integer propId, Integer propSeq) throws Exception;
+	
+	List<ProposalL3Dto> checkL3(Integer propId) throws Exception;
+
+}

@@ -2,7 +2,9 @@ package org.arpico.groupit.receipt.controller;
 
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.service.QuotationReceiptService;
+import org.arpico.groupit.receipt.validation.CommonValidations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,19 +15,42 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @CrossOrigin(origins = "*")
 public class QuotationReceiptController {
-	
+
 	@Autowired
 	private QuotationReceiptService quotationReceiptService;
-	
-	@RequestMapping(value = "/savereceiptquo" , method = RequestMethod.POST)
-	public ResponseEntity<Object> savereceiptquo(@RequestBody SaveReceiptDto saveReceiptDto){
+
+	@Autowired
+	private CommonValidations commonValidations;
+
+	@RequestMapping(value = "/savereceiptquo", method = RequestMethod.POST)
+	public ResponseEntity<Object> savereceiptquo(@RequestBody SaveReceiptDto saveReceiptDto) {
 		System.out.println(saveReceiptDto.toString());
+
+		String valid = "Error";
+
 		try {
-			quotationReceiptService.saveQuotationReceipt(saveReceiptDto);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			valid = commonValidations.validateQuotationReceiptInputs(saveReceiptDto);
+		} catch (Exception e1) {
+			e1.printStackTrace();
 		}
-		return null;
+
+		try {
+			if (valid.equalsIgnoreCase("ok")) {
+				String resp = quotationReceiptService.saveQuotationReceipt(saveReceiptDto);
+
+				if (resp.equalsIgnoreCase("WORK")) {
+					return new ResponseEntity<>(resp, HttpStatus.OK);
+				} else {
+					return new ResponseEntity<>(resp, HttpStatus.NOT_ACCEPTABLE);
+				}
+
+			} else {
+				return new ResponseEntity<>(valid, HttpStatus.NOT_ACCEPTABLE);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
+			
+		}
 	}
 }

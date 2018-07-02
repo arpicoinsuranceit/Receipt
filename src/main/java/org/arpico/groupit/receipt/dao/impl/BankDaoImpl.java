@@ -20,4 +20,11 @@ public class BankDaoImpl implements BankDao{
 		return (List<BankModel>) jdbcTemplate.query("select * from smbank " + dataSql + " group by BANCOD;", new BankRowMapper());
 	}
 
+	@Override
+	public BankModel getBankById(String bankId) throws Exception {
+		return (BankModel) jdbcTemplate.queryForObject("select * from smbank where BANCOD='"+bankId+"' group by BANCOD", new BankRowMapper());
+	}
+	
+	
+
 }

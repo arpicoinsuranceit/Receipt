@@ -7,14 +7,14 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.arpico.groupit.receipt.model.pk.InPropFamDetailsPK;
+import org.arpico.groupit.receipt.model.pk.InPropFamDetailsModelPK;
 import org.arpico.groupit.receipt.util.AppConstant;
 
 @Entity
 @Table (name = "inpropfamdetails")
 public class InPropFamDetailsModel implements Serializable {
 
-	private InPropFamDetailsPK inPropFamDetailsPK;
+	private InPropFamDetailsModelPK inPropFamDetailsPK;
 	private String fmlrel;
 	private Date fmldob;
 	private String fmlnic;
@@ -28,11 +28,11 @@ public class InPropFamDetailsModel implements Serializable {
 	private String shrbap = "N";
 	
 	@EmbeddedId
-	public InPropFamDetailsPK getInPropFamDetailsPK() {
+	public InPropFamDetailsModelPK getInPropFamDetailsPK() {
 		return inPropFamDetailsPK;
 	}
 
-	public void setInPropFamDetailsPK(InPropFamDetailsPK inPropFamDetailsPK) {
+	public void setInPropFamDetailsPK(InPropFamDetailsModelPK inPropFamDetailsPK) {
 		this.inPropFamDetailsPK = inPropFamDetailsPK;
 	}
 

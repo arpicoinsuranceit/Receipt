@@ -15,45 +15,57 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class BankServiceImpl implements BankService{
+public class BankServiceImpl implements BankService {
 
-	@Autowired 
+	@Autowired
 	private BankDao bankDao;
-	
+
 	@Autowired
 	private UserDao userDao;
-	
+
 	@Override
 	public List<BankDto> getBanksByUser(String userCode) throws Exception {
-		
+
 		String locationsTemp = userDao.getUserLocations(userCode);
 		String location = new DaoParameters().getParaForIn(locationsTemp);
 		String dataSql = "where SBUCOD = '450' ";
-		if(!location.contains("HO")) {
-			dataSql +=  " and loccod in (" + location + ")";
+		if (!location.contains("HO")) {
+			dataSql += " and loccod in (" + location + ")";
 		}
-		
+
 		List<BankModel> bankModels = bankDao.getBankList(dataSql);
 		List<BankDto> bankDtos = new ArrayList<>();
-		
+
 		System.out.println(bankModels.size());
-		
+
 		for (BankModel bankModel : bankModels) {
 			BankDto bankDto = getBankDto(bankModel);
 			bankDtos.add(bankDto);
 		}
-		
-		
+
 		return bankDtos;
 	}
 
 	private BankDto getBankDto(BankModel bankModel) {
 		BankDto bankDto = new BankDto();
-		
+
 		bankDto.setBankCode(bankModel.getBankCode());
 		bankDto.setBankName(bankModel.getBankName());
-		
+
 		return bankDto;
 	}
-	
+
+	@Override
+	public boolean findBankById(String bankId) {
+		try {
+			BankModel bankModel = bankDao.getBankById(bankId);
+			if (bankModel != null) {
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 }

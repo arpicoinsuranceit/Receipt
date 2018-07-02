@@ -1,14 +1,13 @@
 package org.arpico.groupit.receipt.dto;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class ViewQuotationDto {
 	private String productCode;
 	private String productName;
 	private Integer quoDetailId;
 	private Integer quotationId;
-	private Date quotationDate;
+	private String quotationDate;
 	private MainLifeDto _mainlife;
 	private SpouseDto _spouse;
 	private ArrayList<ChildrenDto> _children;
@@ -71,10 +70,10 @@ public class ViewQuotationDto {
 	public void setQuoDetailId(Integer quoDetailId) {
 		this.quoDetailId = quoDetailId;
 	}
-	public Date getQuotationDate() {
+	public String getQuotationDate() {
 		return quotationDate;
 	}
-	public void setQuotationDate(Date quotationDate) {
+	public void setQuotationDate(String quotationDate) {
 		this.quotationDate = quotationDate;
 	}
 	public String getProductName() {

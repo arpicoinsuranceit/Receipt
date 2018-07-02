@@ -8,4 +8,6 @@ public interface BankDao {
 	
 	List<BankModel> getBankList(String dataSql) throws Exception;
 	
+	BankModel getBankById(String bankId) throws Exception;
+	
 }

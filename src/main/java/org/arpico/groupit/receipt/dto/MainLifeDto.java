@@ -93,5 +93,12 @@ public class MainLifeDto {
 	public void set_occuCode(String _occuCode) {
 		this._occuCode = _occuCode;
 	}
+	@Override
+	public String toString() {
+		return "MainLifeDto [_mTitle=" + _mTitle + ", _mName=" + _mName + ", _mNic=" + _mNic + ", _mEmail=" + _mEmail
+				+ ", _mGender=" + _mGender + ", _mDob=" + _mDob + ", _mAge=" + _mAge + ", _mSmoking=" + _mSmoking
+				+ ", _mMobile=" + _mMobile + ", _mOccupation=" + _mOccupation + ", _mCivilStatus=" + _mCivilStatus
+				+ ", _mCustCode=" + _mCustCode + ", _occuCode=" + _occuCode + "]";
+	}
 }
 

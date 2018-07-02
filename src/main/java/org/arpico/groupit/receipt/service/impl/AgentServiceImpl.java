@@ -37,4 +37,13 @@ public class AgentServiceImpl implements AgentService{
 		return agentDto;
 	}
 
+	@Override
+	public boolean availableAgent(String agentCode) throws Exception {
+		List<AgentModel> agentModel = agentDao.findAgentByCode(agentCode);
+		if (agentModel!= null && agentModel.size()>0){
+			return true;
+		}
+		return false;
+	}
+
 }

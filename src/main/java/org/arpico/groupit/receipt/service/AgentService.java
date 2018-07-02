@@ -7,4 +7,6 @@ import org.arpico.groupit.receipt.dto.AgentDto;
 public interface AgentService {
 
 	List<AgentDto> getAgentList(Integer agentCode) throws Exception;
+	
+	boolean availableAgent (String agentCode) throws Exception;
 }

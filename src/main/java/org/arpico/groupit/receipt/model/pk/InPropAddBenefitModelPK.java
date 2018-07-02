@@ -5,20 +5,24 @@ import java.io.Serializable;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class InPropAddBenefitPK implements Serializable{
+public class InPropAddBenefitModelPK implements Serializable{
+	
 	protected String sbucod;
 	protected String loccod;
 	protected Integer pprnum;
 	protected String ridcod;
+	protected Integer prpseq;
 	
-	public InPropAddBenefitPK() {
+	public InPropAddBenefitModelPK() {
 	}
 	
-	public InPropAddBenefitPK(String sbucod, String loccod, Integer pprnum, String ridcod) {
+	public InPropAddBenefitModelPK(String sbucod, String loccod, Integer pprnum, String ridcod, Integer prpseq) {
+		super();
 		this.sbucod = sbucod;
 		this.loccod = loccod;
 		this.pprnum = pprnum;
 		this.ridcod = ridcod;
+		this.prpseq = prpseq;
 	}
 
 	public String getSbucod() {
@@ -52,7 +56,14 @@ public class InPropAddBenefitPK implements Serializable{
 	public void setRidcod(String ridcod) {
 		this.ridcod = ridcod;
 	}
-	
-	
+
+	public Integer getPrpseq() {
+		return prpseq;
+	}
+
+	public void setPrpseq(Integer prpseq) {
+		this.prpseq = prpseq;
+	}
+
 	
 }

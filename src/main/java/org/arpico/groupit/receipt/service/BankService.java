@@ -7,5 +7,7 @@ import org.arpico.groupit.receipt.dto.BankDto;
 public interface BankService {
 	
 	List<BankDto> getBanksByUser(String userCode) throws Exception;
+	
+	boolean findBankById(String bankId);
 
 }

@@ -7,43 +7,44 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.arpico.groupit.receipt.model.pk.InPropLoadingPK;
+import org.arpico.groupit.receipt.model.pk.InPropLoadingModelPK;
+import org.arpico.groupit.receipt.util.AppConstant;
 
 @Entity
 @Table(name = "inproploading")
 public class InPropLoadingModel implements Serializable{
 	
-	private InPropLoadingPK inPropLoadingPK;
+	private InPropLoadingModelPK inPropLoadingPK;
 	private String ridnam;
-	private Double oculod; 
-	private Double ocuval;
-	private Double ocuvmt;
-	private Double ocuvqt;
-	private Double ocuvhy;
-	private Double ocuvyr;
-	private Double subrat;
-	private Double emrate;
-	private Double subval;
-	private Double subvmt;
-	private Double subvqt;
-	private Double subvhy;
-	private Double subvyr;
-	private Double ratmil;
-	private Double ratval;
-	private Double ratvmt;
-	private Double ratvqt;
-	private Double ratvhy;
-	private Double ratvyr;
+	private Double oculod = AppConstant.ZERO_TWO_DECIMAL;
+	private Double ocuval = AppConstant.ZERO_FOR_DECIMAL;
+	private Double ocuvmt = AppConstant.ZERO_FOR_DECIMAL;
+	private Double ocuvqt = AppConstant.ZERO_FOR_DECIMAL;
+	private Double ocuvhy = AppConstant.ZERO_FOR_DECIMAL;
+	private Double ocuvyr = AppConstant.ZERO_FOR_DECIMAL;
+	private Double subrat = AppConstant.ZERO_FOR_DECIMAL;
+	private Double emrate = AppConstant.ZERO_FOR_DECIMAL;
+	private Double subval = AppConstant.ZERO_FOR_DECIMAL;
+	private Double subvmt = AppConstant.ZERO_FOR_DECIMAL;
+	private Double subvqt = AppConstant.ZERO_FOR_DECIMAL;
+	private Double subvhy = AppConstant.ZERO_FOR_DECIMAL;
+	private Double subvyr = AppConstant.ZERO_FOR_DECIMAL;
+	private Double ratmil = AppConstant.ZERO_FOR_DECIMAL;
+	private Double ratval = AppConstant.ZERO_FOR_DECIMAL;
+	private Double ratvmt = AppConstant.ZERO_FOR_DECIMAL;
+	private Double ratvqt = AppConstant.ZERO_FOR_DECIMAL;
+	private Double ratvhy = AppConstant.ZERO_FOR_DECIMAL;
+	private Double ratvyr = AppConstant.ZERO_FOR_DECIMAL;
 	private Date lockin;
 	private String instyp;
 	private String ridtyp;
 	private Integer grdord;
 	
 	@EmbeddedId
-	public InPropLoadingPK getInPropLoadingPK() {
+	public InPropLoadingModelPK getInPropLoadingPK() {
 		return inPropLoadingPK;
 	}
-	public void setInPropLoadingPK(InPropLoadingPK inPropLoadingPK) {
+	public void setInPropLoadingPK(InPropLoadingModelPK inPropLoadingPK) {
 		this.inPropLoadingPK = inPropLoadingPK;
 	}
 	public String getRidnam() {

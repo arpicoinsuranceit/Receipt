@@ -7,21 +7,22 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.arpico.groupit.receipt.model.pk.InPropAddBenefitPK;
+import org.arpico.groupit.receipt.model.pk.InPropAddBenefitModelPK;
+import org.arpico.groupit.receipt.util.AppConstant;
 
 @Entity
 @Table(name = "inpropaddbenefit")
 public class InPropAddBenefitModel implements Serializable{
-	private InPropAddBenefitPK inPropAddBenefitPK;
+	private InPropAddBenefitModelPK inPropAddBenefitPK;
 	private String ridnam;
 	private Integer ridtrm;
-	private Double sumasu;
-	private Double rdrprm;
+	private Double sumasu = AppConstant.ZERO_FOR_DECIMAL;
+	private Double rdrprm = AppConstant.ZERO_FOR_DECIMAL;
 	private Date lockin;
-	private Double prmmth;
-	private Double prmqat;
-	private Double prmhlf;
-	private Double prmyer;
+	private Double prmmth = AppConstant.ZERO_FOR_DECIMAL;
+	private Double prmqat = AppConstant.ZERO_FOR_DECIMAL;
+	private Double prmhlf = AppConstant.ZERO_FOR_DECIMAL;
+	private Double prmyer = AppConstant.ZERO_FOR_DECIMAL;
 	private String instyp;
 	private Integer disord;
 	private String ridtyp;
@@ -30,15 +31,14 @@ public class InPropAddBenefitModel implements Serializable{
 	private Integer agemax;
 	private Integer grdord;
 	private String grprid;
-	private Integer prpseq;
 	private Date expdat;
 	private String medgrd;
 	
 	@EmbeddedId
-	public InPropAddBenefitPK getInPropAddBenefitPK() {
+	public InPropAddBenefitModelPK getInPropAddBenefitPK() {
 		return inPropAddBenefitPK;
 	}
-	public void setInPropAddBenefitPK(InPropAddBenefitPK inPropAddBenefitPK) {
+	public void setInPropAddBenefitPK(InPropAddBenefitModelPK inPropAddBenefitPK) {
 		this.inPropAddBenefitPK = inPropAddBenefitPK;
 	}
 
@@ -144,12 +144,6 @@ public class InPropAddBenefitModel implements Serializable{
 	public void setGrprid(String grprid) {
 		this.grprid = grprid;
 	}
-	public Integer getPrpseq() {
-		return prpseq;
-	}
-	public void setPrpseq(Integer prpseq) {
-		this.prpseq = prpseq;
-	}
 	public Date getExpdat() {
 		return expdat;
 	}
@@ -162,15 +156,16 @@ public class InPropAddBenefitModel implements Serializable{
 	public void setMedgrd(String medgrd) {
 		this.medgrd = medgrd;
 	}
-	
 	@Override
 	public String toString() {
-		return "InPropAddBenefit [inPropAddBenefitPK=" + inPropAddBenefitPK + ", ridnam=" + ridnam + ", ridtrm="
+		return "InPropAddBenefitModel [inPropAddBenefitPK=" + inPropAddBenefitPK + ", ridnam=" + ridnam + ", ridtrm="
 				+ ridtrm + ", sumasu=" + sumasu + ", rdrprm=" + rdrprm + ", lockin=" + lockin + ", prmmth=" + prmmth
 				+ ", prmqat=" + prmqat + ", prmhlf=" + prmhlf + ", prmyer=" + prmyer + ", instyp=" + instyp
 				+ ", disord=" + disord + ", ridtyp=" + ridtyp + ", prmonl=" + prmonl + ", agemin=" + agemin
-				+ ", agemax=" + agemax + ", grdord=" + grdord + ", grprid=" + grprid + ", prpseq=" + prpseq
-				+ ", expdat=" + expdat + ", medgrd=" + medgrd + "]";
+				+ ", agemax=" + agemax + ", grdord=" + grdord + ", grprid=" + grprid + ", expdat=" + expdat
+				+ ", medgrd=" + medgrd + "]";
 	}
+	
+	
 	
 }
