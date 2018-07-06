@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsDao;
 import org.arpico.groupit.receipt.dao.InPropAddBenefictCustomDao;
 import org.arpico.groupit.receipt.dao.InPropAddBenefictDao;
@@ -23,7 +24,9 @@ import org.arpico.groupit.receipt.dao.InPropShedulesDao;
 import org.arpico.groupit.receipt.dao.InPropSurrenderValsCustomDao;
 import org.arpico.groupit.receipt.dao.InPropSurrenderValsDao;
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
+import org.arpico.groupit.receipt.dao.InProposalDao;
 import org.arpico.groupit.receipt.dao.InTransactionsDao;
+import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
 import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
 import org.arpico.groupit.receipt.dto.ProposalL3Dto;
 import org.arpico.groupit.receipt.dto.ProposalNoSeqNoDto;
@@ -41,11 +44,13 @@ import org.arpico.groupit.receipt.model.InProposalBasicsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.InTransactionsModel;
 import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;
+import org.arpico.groupit.receipt.service.InTransactionService;
 import org.arpico.groupit.receipt.service.NumberGenerator;
 import org.arpico.groupit.receipt.service.ProposalServce;
 import org.arpico.groupit.receipt.util.AppConstant;
 import org.arpico.groupit.receipt.util.CommonMethodsUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +58,9 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class ProposalServiceImpl implements ProposalServce {
 
+	@Autowired
+	private InProposalDao inProposalDao;
+	
 	@Autowired
 	private InProposalCustomDao inProposalCustomDao;
 
@@ -115,6 +123,12 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	@Autowired
 	private InPropSurrenderValsCustomDao surrenderValCustomDao;
+	
+	@Autowired
+	private InTransactionService inTransactionService;
+	
+	@Autowired
+	private InBillingTransactionsCustomDao billingTransactionsCustomDao;
 
 	@Override
 	public List<ProposalNoSeqNoDto> getProposalNoSeqNoDtoList(String val) throws Exception {
@@ -140,9 +154,10 @@ public class ProposalServiceImpl implements ProposalServce {
 	@Override
 	public ProposalBasicDetailsDto getBasicDetails(Integer pprNum, Integer seqNum) throws Exception {
 		InProposalBasicsModel basicsModel = inProposalCustomDao.geInProposalBasics(pprNum, seqNum);
-
+		List<LastReceiptSummeryDto> dtos = inTransactionService.getLastReceiptsByPprNo(pprNum.toString());
 		ProposalBasicDetailsDto basicDetailsDto = getBasicDetailsDto(basicsModel);
-
+		basicDetailsDto.setAmtPayble(billingTransactionsCustomDao.paybleAmountThisMonth(basicsModel.getProposalNo()));
+		basicDetailsDto.setLastReceiptSummeryDtos(dtos);
 		return basicDetailsDto;
 	}
 
@@ -180,8 +195,11 @@ public class ProposalServiceImpl implements ProposalServce {
 						InProposalsModel proposalsModelNew = getProposalPolicyStage(inProposalsModel, numberGen[1],
 								saveReceiptDto);
 
+						inProposalDao.save(proposalsModelNew);
+						
 						Integer updatedSeqNo = proposalsModelNew.getInProposalsModelPK().getPrpseq();
-
+						seqNo = updatedSeqNo;
+						
 						List<InPropAddBenefitModel> addBenefitModels = addBenefictCustomDao.getBenefByPprSeq(pprNo,
 								seqNo);
 						if (addBenefitModels != null && !addBenefitModels.isEmpty()) {
@@ -238,23 +256,48 @@ public class ProposalServiceImpl implements ProposalServce {
 							propSurrenderValsModels = incrementSurrenderVals(propSurrenderValsModels, updatedSeqNo,proposalsModelNew.getPolnum());
 							surrenderValDao.save(propSurrenderValsModels);
 						}
+						
+						InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
+								saveReceiptDto);
+						inTransactionsModel.setSeqnum(updatedSeqNo);
+						InBillingTransactionsModel inBillingTransactionsModel = commonethodUtility
+								.getInBillingTransactionModel(inProposalsModel, saveReceiptDto, inTransactionsModel);
+						inBillingTransactionsModel.setPrpseq(updatedSeqNo);
+						inTransactionDao.save(inTransactionsModel);
+						inBillingTransactionDao.save(inBillingTransactionsModel);
 
+						return new ResponseEntity<>("Success", HttpStatus.OK);
+						
+					}else {
+						return new ResponseEntity<>("Error at generate Policy No", HttpStatus.INTERNAL_SERVER_ERROR);
 					}
 
+				} else {
+					InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
+							saveReceiptDto);
+					InBillingTransactionsModel inBillingTransactionsModel = commonethodUtility
+							.getInBillingTransactionModel(inProposalsModel, saveReceiptDto, inTransactionsModel);
+					inTransactionDao.save(inTransactionsModel);
+					inBillingTransactionDao.save(inBillingTransactionsModel);
+					
+					return new ResponseEntity<>("Success", HttpStatus.OK);
 				}
 
+			}else {
+				InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
+						saveReceiptDto);
+				InBillingTransactionsModel inBillingTransactionsModel = commonethodUtility
+						.getInBillingTransactionModel(inProposalsModel, saveReceiptDto, inTransactionsModel);
+				inTransactionDao.save(inTransactionsModel);
+				inBillingTransactionDao.save(inBillingTransactionsModel);
+				
+				return new ResponseEntity<>("Success", HttpStatus.OK);
 			}
 
-			InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
-					saveReceiptDto);
-			InBillingTransactionsModel inBillingTransactionsModel = commonethodUtility
-					.getInBillingTransactionModel(inProposalsModel, saveReceiptDto, inTransactionsModel);
-			inTransactionDao.save(inTransactionsModel);
-			inBillingTransactionDao.save(inBillingTransactionsModel);
-
+		} else {
+			return new ResponseEntity<>("Proposal Not Found", HttpStatus.NOT_FOUND);
 		}
 
-		return null;
 	}
 
 	private List<InPropSurrenderValsModel> incrementSurrenderVals(

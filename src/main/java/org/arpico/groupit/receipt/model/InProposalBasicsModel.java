@@ -7,6 +7,7 @@ public class InProposalBasicsModel {
 	private String custTitle;
 	private String agentCode;
 	private String product;
+	private Double premium;
 	
 	public Integer getProposalNo() {
 		return proposalNo;
@@ -44,9 +45,17 @@ public class InProposalBasicsModel {
 	public void setProduct(String product) {
 		this.product = product;
 	}
+	public Double getPremium() {
+		return premium;
+	}
+	public void setPremium(Double premium) {
+		this.premium = premium;
+	}
 	@Override
 	public String toString() {
-		return "ProposalBasicDetailsDto [proposalNo=" + proposalNo + ", seqNo=" + seqNo + ", custName=" + custName
-				+ ", custTitle=" + custTitle + ", agentCode=" + agentCode + ", product=" + product + "]";
+		return "InProposalBasicsModel [proposalNo=" + proposalNo + ", seqNo=" + seqNo + ", custName=" + custName
+				+ ", custTitle=" + custTitle + ", agentCode=" + agentCode + ", product=" + product + ", premium="
+				+ premium + "]";
 	}
+	
 }

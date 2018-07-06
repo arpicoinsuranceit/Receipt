@@ -10,11 +10,17 @@ import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;
 public interface InProposalCustomDao {
 
 	List<ProposalNoSeqNoModel> getProposalNoSeqNoModelList(String val) throws Exception;
+	
+	List<ProposalNoSeqNoModel> getPolicyNoSeqNoModelList(String val) throws Exception;
 
 	InProposalBasicsModel geInProposalBasics(Integer pprNo, Integer prpseq) throws Exception;
 
 	InProposalsModel getProposal(Integer propId, Integer propSeq) throws Exception;
 	
+	InProposalsModel getProposalBuPolicy(Integer polId, Integer propSeq) throws Exception;
+	
 	List<ProposalL3Dto> checkL3(Integer propId) throws Exception;
+
+	InProposalBasicsModel geInPolicyBasics(int polNo, int seqNo) throws Exception;
 
 }

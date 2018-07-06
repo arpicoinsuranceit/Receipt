@@ -53,11 +53,8 @@ public class CommonMethodsUtility {
 			inTransactionsModel.setCreaby(new JwtDecoder().generate(saveReceiptDto.getToken()));
 			inTransactionsModel.setCreadt(AppConstant.DATE);
 			
-			System.out.println(inProposalsModel.getCscode() + "custCode ppr");
-			
 			inTransactionsModel.setCscode(inProposalsModel.getCscode());
 			
-			System.out.println(inTransactionsModel.getCscode());
 			
 			inTransactionsModel.setInTransactionsModelPK(inTransactionsModelPK);
 			inTransactionsModel.setLockin(AppConstant.DATE);
@@ -69,6 +66,7 @@ public class CommonMethodsUtility {
 			inTransactionsModel.setPpdad3(inProposalsModel.getPpdad3());
 			inTransactionsModel.setPprnum(inProposalsModel.getInProposalsModelPK().getPprnum());
 			inTransactionsModel.setQuonum(saveReceiptDto.getQuotationId());
+			inTransactionsModel.setPolnum(saveReceiptDto.getPolId());
 			inTransactionsModel.setRctsta("VALID");
 			inTransactionsModel.setRemark(saveReceiptDto.getRemark());
 			inTransactionsModel.setSeqnum(saveReceiptDto.getQuotationDetailId());
@@ -109,7 +107,6 @@ public class CommonMethodsUtility {
 			
 			InBillingTransactionsModel billingTransactionsModel = new InBillingTransactionsModel();
 
-			
 			billingTransactionsModel.setBillingTransactionsModelPK(billingTransactionsModelPK);
 			billingTransactionsModel.setAdmfee(AppConstant.ZERO_TWO_DECIMAL);
 			billingTransactionsModel.setAdvcod(Integer.parseInt(saveReceiptDto.getAgentCode()));
@@ -126,6 +123,7 @@ public class CommonMethodsUtility {
 			}catch (Exception e) {}
 			billingTransactionsModel.setDepost((saveReceiptDto.getAmount()*-1));
 			billingTransactionsModel.setGlintg("N");
+			
 			billingTransactionsModel.setGrsprm(AppConstant.ZERO_FOR_DECIMAL);
 			billingTransactionsModel.setHrbprm(AppConstant.ZERO_FOR_DECIMAL);
 			billingTransactionsModel.setInsnum(inTransactionsModel.getInTransactionsModelPK().getLinnum());

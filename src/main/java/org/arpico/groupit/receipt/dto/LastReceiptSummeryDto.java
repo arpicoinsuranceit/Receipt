@@ -8,6 +8,8 @@ public class LastReceiptSummeryDto {
 	private String pprnum;
 	private String polnum;
 	private Double amount;
+	private Double paymod;
+	private String chqrel;
 	
 	public String getDoccod() {
 		return doccod;
@@ -46,11 +48,22 @@ public class LastReceiptSummeryDto {
 		this.amount = amount;
 	}
 	
+	public Double getPaymod() {
+		return paymod;
+	}
+	public void setPaymod(Double paymod) {
+		this.paymod = paymod;
+	}
+	public String getChqrel() {
+		return chqrel;
+	}
+	public void setChqrel(String chqrel) {
+		this.chqrel = chqrel;
+	}
 	@Override
 	public String toString() {
 		return "LastReceiptSummeryDto [doccod=" + doccod + ", doctyp=" + doctyp + ", creadt=" + creadt + ", pprnum="
-				+ pprnum + ", polnum=" + polnum + ", amount=" + amount + "]";
+				+ pprnum + ", polnum=" + polnum + ", amount=" + amount + ", paymod=" + paymod + ", chqrel=" + chqrel
+				+ "]";
 	}
-	
-
 }

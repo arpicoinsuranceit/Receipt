@@ -31,7 +31,7 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 	@Override
 	public InProposalBasicsModel geInProposalBasics(Integer pprNo, Integer prpseq) throws Exception {
 		List<InProposalBasicsModel> basicsModels = jdbcTemplate.query("select advcod, ppdnam, prdcod, pprnum, ntitle, "
-				+ "prpseq from inproposals where pprnum = '"+pprNo+"' and prpseq = '"+prpseq+"' and sbucod = '450'", new InProposalBasicRowMapper());
+				+ "prpseq, totprm from inproposals where pprnum = '"+pprNo+"' and prpseq = '"+prpseq+"' and sbucod = '450'", new InProposalBasicRowMapper());
 		
 		if(!basicsModels.isEmpty()) {
 			return basicsModels.get(0);
@@ -72,6 +72,38 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 				"WHERE ((x.totprm + x.polfee) - x.spiamt) <= x.payment AND reqcnt < 1 GROUP BY x.pprnum", new ProposalL3RowMapper());
 		
 		return models;
+	}
+
+	@Override
+	public List<ProposalNoSeqNoModel> getPolicyNoSeqNoModelList(String val) throws Exception {
+		List<ProposalNoSeqNoModel> list = jdbcTemplate.query(
+				"select polnum as pprnum, prpseq from inproposals where  pprsta in ('plisu', 'plaps')  and sbucod = '450' and polnum like '" + val + "%'", new ProposalNoSeqNoRowMapper());
+		return list;
+	}
+
+	@Override
+	public InProposalBasicsModel geInPolicyBasics(int polNo, int seqNo) throws Exception {
+		List<InProposalBasicsModel> basicsModels = jdbcTemplate.query("select advcod, ppdnam, prdcod, pprnum, ntitle, "
+				+ "prpseq, totprm from inproposals where polnum = '"+polNo+"' and prpseq = '"+seqNo+"' and sbucod = '450'", new InProposalBasicRowMapper());
+		
+		if(!basicsModels.isEmpty()) {
+			return basicsModels.get(0);
+		}
+		
+		return null;
+	}
+
+	@Override
+	public InProposalsModel getProposalBuPolicy(Integer polId, Integer propSeq) throws Exception {
+		List<InProposalsModel> models = jdbcTemplate.query("select * from inproposals where polnum = '"+polId+"' and prpseq = '"+propSeq+"' and sbucod = '450'", new InProposalsRowMapper());
+		
+		System.out.println(models.size());
+		
+		if(!models.isEmpty()) {
+			return models.get(0);
+		}
+		
+		return null;
 	}
 
 }

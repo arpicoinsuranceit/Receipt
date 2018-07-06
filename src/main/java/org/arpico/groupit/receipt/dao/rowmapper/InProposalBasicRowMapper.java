@@ -17,7 +17,7 @@ public class InProposalBasicRowMapper implements RowMapper<InProposalBasicsModel
 		basicsModel.setProposalNo(Integer.parseInt(rs.getString("pprnum")));
 		basicsModel.setSeqNo(rs.getInt("prpseq"));
 		basicsModel.setCustTitle(rs.getString("ntitle"));
-		
+		basicsModel.setPremium(rs.getDouble("totprm"));
 		return basicsModel;
 	}
 

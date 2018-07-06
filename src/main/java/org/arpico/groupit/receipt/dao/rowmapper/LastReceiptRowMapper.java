@@ -18,6 +18,8 @@ public class LastReceiptRowMapper implements RowMapper<LastReceiptSummeryModel>{
 		model.setPolnum(rs.getInt("polnum"));
 		model.setPprnum(rs.getString("pprnum"));
 		model.setTotprm(rs.getDouble("totprm"));
+		model.setPaymod(rs.getString("paymod"));
+		model.setChqrel(rs.getString("chqrel"));
 		
 		return model;
 	}

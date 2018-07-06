@@ -1,5 +1,6 @@
 package org.arpico.groupit.receipt.controller;
 
+import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.service.QuotationReceiptService;
 import org.arpico.groupit.receipt.validation.CommonValidations;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -52,5 +54,16 @@ public class QuotationReceiptController {
 			return new ResponseEntity<>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
 			
 		}
+	}
+	
+	@RequestMapping(value = "/getQuodetail", method = RequestMethod.POST)
+	public ProposalBasicDetailsDto getPolicyBasicDetails(@RequestParam String polId, @RequestParam String prpseq) {
+		
+		try {
+			return quotationReceiptService.getBasicDetails(Integer.parseInt(polId.trim()), Integer.parseInt(prpseq.trim()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

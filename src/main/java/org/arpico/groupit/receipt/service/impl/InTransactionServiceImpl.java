@@ -16,27 +16,27 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
-public class InTransactionServiceImpl implements InTransactionService{
+public class InTransactionServiceImpl implements InTransactionService {
 
 	@Autowired
 	private InTransactionCustomDao inTransactionCustomDao;
-	
+
 	@Override
 	public List<LastReceiptSummeryDto> getLastReceipts(String token) throws Exception {
-		
+
 		List<LastReceiptSummeryDto> lastReceiptSummeryDtos = new ArrayList<>();
-		
-		List<LastReceiptSummeryModel> lastReceiptSummeryModels =
-				inTransactionCustomDao.getLastReceipts(new JwtDecoder().generate(token));
-		
+
+		List<LastReceiptSummeryModel> lastReceiptSummeryModels = inTransactionCustomDao
+				.getLastReceipts(new JwtDecoder().generate(token));
+
 		lastReceiptSummeryModels.forEach(e -> lastReceiptSummeryDtos.add(getLastReceiptDto(e)));
-		
+
 		return lastReceiptSummeryDtos;
 	}
 
 	private LastReceiptSummeryDto getLastReceiptDto(LastReceiptSummeryModel e) {
 		LastReceiptSummeryDto dto = new LastReceiptSummeryDto();
-		
+
 		dto.setAmount(e.getTotprm());
 		dto.setCreadt(new SimpleDateFormat("yyyy/MM/dd").format(e.getCreadt()));
 		dto.setDoccod(e.getDoccod());
@@ -44,6 +44,29 @@ public class InTransactionServiceImpl implements InTransactionService{
 		dto.setPolnum(Integer.toString(e.getPolnum()));
 		dto.setPprnum(e.getPprnum());
 		return dto;
+	}
+
+	@Override
+	public List<LastReceiptSummeryDto> getLastReceiptsByPprNo(String pprNo) throws Exception {
+
+		List<LastReceiptSummeryDto> lastReceiptSummeryDtos = new ArrayList<>();
+
+		List<LastReceiptSummeryModel> lastReceiptSummeryModels = inTransactionCustomDao.getLastReceiptsByPprNo(pprNo);
+
+		lastReceiptSummeryModels.forEach(e -> lastReceiptSummeryDtos.add(getLastReceiptDto(e)));
+
+		return lastReceiptSummeryDtos;
+	}
+
+	@Override
+	public List<LastReceiptSummeryDto> getLastReceiptsByPolNo(String polNo) throws Exception {
+		List<LastReceiptSummeryDto> lastReceiptSummeryDtos = new ArrayList<>();
+
+		List<LastReceiptSummeryModel> lastReceiptSummeryModels = inTransactionCustomDao.getLastReceiptsByPolNo(polNo);
+
+		lastReceiptSummeryModels.forEach(e -> lastReceiptSummeryDtos.add(getLastReceiptDto(e)));
+
+		return lastReceiptSummeryDtos;
 	}
 
 }

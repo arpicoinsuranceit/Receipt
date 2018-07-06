@@ -22,7 +22,9 @@ import org.arpico.groupit.receipt.dao.InPropSurrenderValsDao;
 import org.arpico.groupit.receipt.dao.InProposalDao;
 import org.arpico.groupit.receipt.dao.InTransactionsDao;
 import org.arpico.groupit.receipt.dto.ChildrenDto;
+import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
 import org.arpico.groupit.receipt.dto.MedicalRequirementsDto;
+import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
 import org.arpico.groupit.receipt.dto.QuoBenfDto;
 import org.arpico.groupit.receipt.dto.QuoChildBenefDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
@@ -628,6 +630,12 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		}
 		customerDao.save(customerModel);
 		return customerModel;
+	}
+
+	@Override
+	public ProposalBasicDetailsDto getBasicDetails(Integer quoId, Integer seqId) throws Exception {
+		
+		return null;
 	}
 
 }

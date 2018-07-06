@@ -1,5 +1,7 @@
 package org.arpico.groupit.receipt.dto;
 
+import java.util.List;
+
 public class ProposalBasicDetailsDto {
 	private Integer proposalNo;
 	private Integer seqNo;
@@ -7,6 +9,10 @@ public class ProposalBasicDetailsDto {
 	private String custTitle;
 	private String agentCode;
 	private String product;
+	private Double premium;
+	private Double amtPayble;
+	
+	private List<LastReceiptSummeryDto> lastReceiptSummeryDtos;
 	
 	public Integer getProposalNo() {
 		return proposalNo;
@@ -44,11 +50,28 @@ public class ProposalBasicDetailsDto {
 	public void setProduct(String product) {
 		this.product = product;
 	}
+	public List<LastReceiptSummeryDto> getLastReceiptSummeryDtos() {
+		return lastReceiptSummeryDtos;
+	}
+	public void setLastReceiptSummeryDtos(List<LastReceiptSummeryDto> lastReceiptSummeryDtos) {
+		this.lastReceiptSummeryDtos = lastReceiptSummeryDtos;
+	}
+	public Double getPremium() {
+		return premium;
+	}
+	public void setPremium(Double premium) {
+		this.premium = premium;
+	}
+	public Double getAmtPayble() {
+		return amtPayble;
+	}
+	public void setAmtPayble(Double amtPayble) {
+		this.amtPayble = amtPayble;
+	}
 	@Override
 	public String toString() {
 		return "ProposalBasicDetailsDto [proposalNo=" + proposalNo + ", seqNo=" + seqNo + ", custName=" + custName
-				+ ", custTitle=" + custTitle + ", agentCode=" + agentCode + ", product=" + product + "]";
+				+ ", custTitle=" + custTitle + ", agentCode=" + agentCode + ", product=" + product + ", premium="
+				+ premium + ", amtPayble=" + amtPayble + ", lastReceiptSummeryDtos=" + lastReceiptSummeryDtos + "]";
 	}
-	
-
 }

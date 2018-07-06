@@ -17,8 +17,20 @@ public class InTransactionCustomDaoImpl implements InTransactionCustomDao{
 	
 	@Override
 	public List<LastReceiptSummeryModel> getLastReceipts(String user) throws Exception {
-		return (List<LastReceiptSummeryModel>) jdbcTemplate.query("select doccod, docnum, creadt, pprnum, polnum, totprm from intransactions where creaby "
-				+ " = '"+user+"' order by creadt desc limit 8", new LastReceiptRowMapper());
+		return (List<LastReceiptSummeryModel>) jdbcTemplate.query("select doccod, docnum, creadt, pprnum, polnum, totprm, chqrel, paymod from intransactions where creaby "
+				+ " = '"+user+"'  order by creadt desc limit 8", new LastReceiptRowMapper());
+	}
+
+	@Override
+	public List<LastReceiptSummeryModel> getLastReceiptsByPprNo(String pprNo) throws Exception {
+		return (List<LastReceiptSummeryModel>) jdbcTemplate.query("select doccod, docnum, creadt, pprnum, polnum, totprm, chqrel, paymod from intransactions where pprnum "
+				+ " = '"+pprNo+"'  order by creadt desc limit 2", new LastReceiptRowMapper());
+	}
+
+	@Override
+	public List<LastReceiptSummeryModel> getLastReceiptsByPolNo(String polNo) throws Exception {
+		return (List<LastReceiptSummeryModel>) jdbcTemplate.query("select doccod, docnum, creadt, pprnum, polnum, totprm, chqrel, paymod from intransactions where polnum "
+				+ " = '"+polNo+"'  order by creadt desc limit 2", new LastReceiptRowMapper());
 	}
 
 }

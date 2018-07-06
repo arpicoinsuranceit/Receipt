@@ -6,6 +6,8 @@ public class SaveReceiptDto {
 	private Integer quotationDetailId; 
 	private Integer propId;
 	private Integer propSeq; 
+	private Integer polId;
+	private Integer polSeq; 
 	private String bankCode;
 	private String remark; 
 	private String payMode;
@@ -44,6 +46,18 @@ public class SaveReceiptDto {
 	}
 	public void setPropSeq(Integer propSeq) {
 		this.propSeq = propSeq;
+	}
+	public Integer getPolId() {
+		return polId;
+	}
+	public void setPolId(Integer polId) {
+		this.polId = polId;
+	}
+	public Integer getPolSeq() {
+		return polSeq;
+	}
+	public void setPolSeq(Integer polSeq) {
+		this.polSeq = polSeq;
 	}
 	public String getBankCode() {
 		return bankCode;
@@ -127,10 +141,12 @@ public class SaveReceiptDto {
 	@Override
 	public String toString() {
 		return "SaveReceiptDto [quotationId=" + quotationId + ", quotationDetailId=" + quotationDetailId + ", propId="
-				+ propId + ", propSeq=" + propSeq + ", bankCode=" + bankCode + ", remark=" + remark + ", payMode="
-				+ payMode + ", amount=" + amount + ", payAmountWord=" + payAmountWord + ", productCode=" + productCode
-				+ ", branchCode=" + branchCode + ", agentCode=" + agentCode + ", chequeno=" + chequeno + ", chequedate="
-				+ chequedate + ", chequebank=" + chequebank + ", transferno=" + transferno + ", token=" + token + "]";
+				+ propId + ", propSeq=" + propSeq + ", polId=" + polId + ", polSeq=" + polSeq + ", bankCode=" + bankCode
+				+ ", remark=" + remark + ", payMode=" + payMode + ", amount=" + amount + ", payAmountWord="
+				+ payAmountWord + ", productCode=" + productCode + ", branchCode=" + branchCode + ", agentCode="
+				+ agentCode + ", chequeno=" + chequeno + ", chequedate=" + chequedate + ", chequebank=" + chequebank
+				+ ", transferno=" + transferno + ", token=" + token + "]";
 	}
+	
 	
 }
