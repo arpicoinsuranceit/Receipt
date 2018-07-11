@@ -10,6 +10,7 @@ import org.arpico.groupit.receipt.dao.InAgentMastDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsDao;
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
+import org.arpico.groupit.receipt.dao.RmsUserDao;
 import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
 import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
 import org.arpico.groupit.receipt.dto.ProposalNoSeqNoDto;
@@ -22,6 +23,7 @@ import org.arpico.groupit.receipt.model.InTransactionsModel;
 import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;
 import org.arpico.groupit.receipt.model.ReFundModel;
 import org.arpico.groupit.receipt.model.pk.InBillingTransactionsModelPK;
+import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.InTransactionService;
 import org.arpico.groupit.receipt.service.NumberGenerator;
 import org.arpico.groupit.receipt.service.PolicyReceiptService;
@@ -56,7 +58,9 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 	@Autowired
 	private InTransactionService inTransactionService;
 
-	
+	@Autowired
+	private RmsUserDao rmsUserDao;
+
 	@Override
 	public List<ProposalNoSeqNoDto> getPolicyNoSeqNoDtoList(String val) throws Exception {
 		List<ProposalNoSeqNoDto> proposalNoSeqNoDtos = new ArrayList<ProposalNoSeqNoDto>();
@@ -83,7 +87,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		InProposalBasicsModel basicsModel = inProposalCustomDao.geInPolicyBasics(polNo, seqNo);
 
 		List<LastReceiptSummeryDto> dtos = inTransactionService.getLastReceiptsByPolNo(polNo.toString());
-		
+
 		ProposalBasicDetailsDto basicDetailsDto = getBasicDetailsDto(basicsModel);
 		basicDetailsDto.setAmtPayble(billingTransactionsCustomDao.paybleAmountThisMonth(basicsModel.getProposalNo()));
 		basicDetailsDto.setLastReceiptSummeryDtos(dtos);
@@ -109,51 +113,58 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		InProposalsModel inProposalsModel = inProposalCustomDao.getProposalBuPolicy(saveReceiptDto.getPolId(),
 				saveReceiptDto.getPolSeq());
 
-		InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
-				saveReceiptDto);
+		String agentCode = new JwtDecoder().generate(saveReceiptDto.getToken());
 
-		inTransactionsModel.getInTransactionsModelPK().setDoccod("RCPL");
+		System.out.println(agentCode);
+		String locCode = rmsUserDao.getLocation(agentCode);
 
-		InBillingTransactionsModel deposit = commonethodUtility.getInBillingTransactionModel(inProposalsModel,
-				saveReceiptDto, inTransactionsModel);
+		if (locCode != null) {
 
-		deposit.getBillingTransactionsModelPK().setDoccod("RCPL");
-		deposit.setTxntyp("POLDEP");
+			InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
+					saveReceiptDto, agentCode, locCode);
 
-		List<InBillingTransactionsModel> unSetOffList = billingTransactionsCustomDao
-				.getUnSetOffs(inProposalsModel.getInProposalsModelPK().getPprnum());
+			inTransactionsModel.getInTransactionsModelPK().setDoccod("RCPL");
 
-		InBillingTransactionsModel invoice = null;
+			InBillingTransactionsModel deposit = commonethodUtility.getInBillingTransactionModel(inProposalsModel,
+					saveReceiptDto, inTransactionsModel);
 
-		if (unSetOffList != null && unSetOffList.size() > 0) {
-			invoice = unSetOffList.get(0);
-		} else {
-			invoice = createInvoice(inProposalsModel);
-			inBillingTransactionDao.save(invoice);
-		}
+			deposit.getBillingTransactionsModelPK().setDoccod("RCPL");
+			deposit.setTxntyp("POLDEP");
 
-		List<InBillingTransactionsModel> setoffList = null;
+			List<InBillingTransactionsModel> unSetOffList = billingTransactionsCustomDao
+					.getUnSetOffs(inProposalsModel.getInProposalsModelPK().getPprnum());
 
-		List<ReFundModel> fundModels = billingTransactionsCustomDao
-				.getRefundList(inProposalsModel.getInProposalsModelPK().getPprnum());
+			InBillingTransactionsModel invoice = null;
 
-		Double amount = saveReceiptDto.getAmount();
+			if (unSetOffList != null && unSetOffList.size() > 0) {
+				invoice = unSetOffList.get(0);
+			} else {
+				invoice = createInvoice(inProposalsModel);
+				inBillingTransactionDao.save(invoice);
+			}
 
-		if (fundModels != null && fundModels.size() > 0) {
-			for (ReFundModel reFundModel : fundModels) {
-				amount += reFundModel.getRefamount();
+			List<InBillingTransactionsModel> setoffList = null;
+
+			List<ReFundModel> fundModels = billingTransactionsCustomDao
+					.getRefundList(inProposalsModel.getInProposalsModelPK().getPprnum());
+
+			Double amount = saveReceiptDto.getAmount();
+
+			if (fundModels != null && fundModels.size() > 0) {
+				for (ReFundModel reFundModel : fundModels) {
+					amount += reFundModel.getRefamount();
+				}
+			}
+
+			if (invoice.getAmount() <= amount) {
+				setoffList = getSetOff(invoice, deposit, setoffList, inProposalsModel);
+			}
+
+			inBillingTransactionDao.save(deposit);
+			if (setoffList != null && setoffList.size() > 0) {
+				inBillingTransactionDao.save(setoffList);
 			}
 		}
-
-		if (invoice.getAmount() <= amount) {
-			setoffList = getSetOff(invoice, deposit, setoffList, inProposalsModel);
-		}
-
-		inBillingTransactionDao.save(deposit);
-		if(setoffList != null && setoffList.size() > 0) {
-			inBillingTransactionDao.save(setoffList);
-		}
-		
 		return null;
 
 	}
@@ -164,25 +175,24 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		setoffList = new ArrayList<>();
 		if (setoffList != null && setoffList.size() > 0) {
 			for (InBillingTransactionsModel setoff : setoffList) {
-				setoffList.add(getSetOff(invoice,setoff, inProposalsModel));
+				setoffList.add(getSetOff(invoice, setoff, inProposalsModel));
 			}
 		}
-		
-		setoffList.add(getSetOff(invoice,deposit, inProposalsModel));
+
+		setoffList.add(getSetOff(invoice, deposit, inProposalsModel));
 		return setoffList;
 	}
 
 	private InBillingTransactionsModel getSetOff(InBillingTransactionsModel invoice, InBillingTransactionsModel setoff,
 			InProposalsModel inProposalsModel) throws Exception {
-		
+
 		String[] numberGen = numberGenerator.generateNewId("", "", "PRMISQ", "");
-		
+
 		List<AgentMastModel> agentMastModels = inAgentMastDao.getAgentDetails(inProposalsModel.getAdvcod());
 
 		AgentMastModel agentMastModel = agentMastModels.get(0);
 
-		
-		if(numberGen[0].equals("Success")) {
+		if (numberGen[0].equals("Success")) {
 			InBillingTransactionsModelPK modelPK = new InBillingTransactionsModelPK();
 			modelPK.setDoccod("RCPL");
 			modelPK.setDocnum(Integer.parseInt(numberGen[1]));
@@ -190,16 +200,14 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 			modelPK.setLoccod(inProposalsModel.getBrncod());
 			modelPK.setTxndat(AppConstant.DATE);
 			modelPK.setSbucod(AppConstant.SBU_CODE);
-			
-			
+
 			InBillingTransactionsModel model = new InBillingTransactionsModel();
 			model.setBillingTransactionsModelPK(modelPK);
-			
+
 			model.setAdmfee(AppConstant.ZERO_TWO_DECIMAL);
 			model.setAdvcod(Integer.parseInt(inProposalsModel.getAdvcod()));
 			model.setAgncls(agentMastModel.getAgncls());
-			model.setAmount(
-					inProposalsModel.getTaxamt() + inProposalsModel.getAdmfee() + inProposalsModel.getTotprm());
+			model.setAmount(inProposalsModel.getTaxamt() + inProposalsModel.getAdmfee() + inProposalsModel.getTotprm());
 			model.setBrncod(inProposalsModel.getBrncod());
 			model.setChqrel("N");
 			model.setComiss(AppConstant.ZERO_FOR_DECIMAL);
@@ -238,13 +246,12 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 				model.setUnlcod(agentMastModel.getBrnmanager());
 			}
 
-			
 			model.setTxnyer(invoice.getTxnyer());
 			model.setTxnmth(invoice.getTxnmth());
-			
+
 			return model;
 		}
-		
+
 		return null;
 	}
 

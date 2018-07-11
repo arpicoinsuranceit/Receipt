@@ -6,6 +6,7 @@ public class ReFundModel {
 	private String doccod;
 	private Integer docnum;
 	private Double refamount;
+	private Integer linnum;
 
 	public Integer getPprnum() {
 		return pprnum;
@@ -39,10 +40,18 @@ public class ReFundModel {
 		this.refamount = refamount;
 	}
 
+	public Integer getLinnum() {
+		return linnum;
+	}
+
+	public void setLinnum(Integer linnum) {
+		this.linnum = linnum;
+	}
+
 	@Override
 	public String toString() {
 		return "ReFundModel [pprnum=" + pprnum + ", doccod=" + doccod + ", docnum=" + docnum + ", refamount="
-				+ refamount + "]";
+				+ refamount + ", linnum=" + linnum + "]";
 	}
 
 }

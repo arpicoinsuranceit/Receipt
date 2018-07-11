@@ -21,6 +21,7 @@ import org.arpico.groupit.receipt.dao.InPropShedulesDao;
 import org.arpico.groupit.receipt.dao.InPropSurrenderValsDao;
 import org.arpico.groupit.receipt.dao.InProposalDao;
 import org.arpico.groupit.receipt.dao.InTransactionsDao;
+import org.arpico.groupit.receipt.dao.RmsUserDao;
 import org.arpico.groupit.receipt.dto.ChildrenDto;
 import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
 import org.arpico.groupit.receipt.dto.MedicalRequirementsDto;
@@ -49,6 +50,7 @@ import org.arpico.groupit.receipt.model.pk.InPropMedicalReqModelPK;
 import org.arpico.groupit.receipt.model.pk.InPropSchedulesModelPK;
 import org.arpico.groupit.receipt.model.pk.InPropSurrenderValsPK;
 import org.arpico.groupit.receipt.model.pk.InProposalsModelPK;
+import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.NumberGenerator;
 import org.arpico.groupit.receipt.service.QuotationReceiptService;
 import org.arpico.groupit.receipt.util.AppConstant;
@@ -109,161 +111,175 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 	
 	@Autowired
 	private CustomerDao customerDao;
+	
+	@Autowired
+	private RmsUserDao rmsUserDao;
 
 	@Override
 	public String saveQuotationReceipt(SaveReceiptDto saveReceiptDto) throws Exception {
 
 		List<AgentModel> agentModels = agentDao.findAgentByCode(saveReceiptDto.getAgentCode());
+		
+		String agentCode = new JwtDecoder().generate(saveReceiptDto.getToken());
 
-		if (agentModels != null && agentModels.size() > 0) {
+		System.out.println(agentCode);
+		String locCode = rmsUserDao.getLocation(agentCode);
+		
+		if (locCode != null) {
+			if (agentModels != null && agentModels.size() > 0) {
 
-			String[] numberGen = numberGenerator.generateNewId("", "", "PROSQ", "");
+				String[] numberGen = numberGenerator.generateNewId("", "", "PROSQ", "");
 
-			if (numberGen[0].equals("Success")) {
+				if (numberGen[0].equals("Success")) {
 
-				ViewQuotationDto resp = quotationClient.getQuotation(saveReceiptDto.getQuotationDetailId(),
-						saveReceiptDto.getQuotationId());
+					ViewQuotationDto resp = quotationClient.getQuotation(saveReceiptDto.getQuotationDetailId(),
+							saveReceiptDto.getQuotationId());
 
-				System.out.println(resp);
+					System.out.println(resp);
 
-				List<MedicalRequirementsDto> medicalRequirementsDtos = quotationClient
-						.getMediReq(saveReceiptDto.getQuotationDetailId());
+					List<MedicalRequirementsDto> medicalRequirementsDtos = quotationClient
+							.getMediReq(saveReceiptDto.getQuotationDetailId());
 
-				List<SheduleDto> sheduleDtos = quotationClient.getShedule(saveReceiptDto.getQuotationDetailId());
+					List<SheduleDto> sheduleDtos = quotationClient.getShedule(saveReceiptDto.getQuotationDetailId());
 
-				List<SurrenderValsDto> surrenderValsDtos = quotationClient
-						.getSurrenderVals(saveReceiptDto.getQuotationDetailId());
+					List<SurrenderValsDto> surrenderValsDtos = quotationClient
+							.getSurrenderVals(saveReceiptDto.getQuotationDetailId());
 
-				// System.out.println(sheduleDtos.size());
-				// Primary Keys
-				InProposalsModelPK inProposalsModelPK = getProposalModelPK(saveReceiptDto);
-				inProposalsModelPK.setPprnum(numberGen[1]);
+					// System.out.println(sheduleDtos.size());
+					// Primary Keys
+					InProposalsModelPK inProposalsModelPK = getProposalModelPK(saveReceiptDto);
+					inProposalsModelPK.setPprnum(numberGen[1]);
 
-				System.out.println(inProposalsModelPK.getPprnum());
+					System.out.println(inProposalsModelPK.getPprnum());
 
-				InProposalsModel inProposalsModel = getProposalModel(resp, saveReceiptDto);
+					InProposalsModel inProposalsModel = getProposalModel(resp, saveReceiptDto);
 
-				// Set Primary Keys to model
-				inProposalsModel.setInProposalsModelPK(inProposalsModelPK);
+					// Set Primary Keys to model
+					inProposalsModel.setInProposalsModelPK(inProposalsModelPK);
 
-				List<InPropLoadingModel> inPropLoadingModels = new ArrayList<>();
+					List<InPropLoadingModel> inPropLoadingModels = new ArrayList<>();
 
-				List<InPropAddBenefitModel> addBenefitModels = benefictDetailsDao
-						.getBenefictByProduct(resp.getProductCode());
+					List<InPropAddBenefitModel> addBenefitModels = benefictDetailsDao
+							.getBenefictByProduct(resp.getProductCode());
 
-				for (InPropAddBenefitModel inPropAddBenefitModel : addBenefitModels) {
-					inPropAddBenefitModel.getInPropAddBenefitPK().setLoccod(saveReceiptDto.getBranchCode());
-					inPropAddBenefitModel.getInPropAddBenefitPK()
-							.setPprnum(Integer.parseInt(inProposalsModelPK.getPprnum()));
-					inPropAddBenefitModel.getInPropAddBenefitPK().setPrpseq(inProposalsModelPK.getPrpseq());
-					inPropAddBenefitModel.setRidtrm(0);
-					inPropAddBenefitModel.setSumasu(0.0);
-					inPropAddBenefitModel.setRdrprm(0.0);
-					inPropAddBenefitModel.setPrmmth(0.0);
-					inPropAddBenefitModel.setPrmqat(0.0);
-					inPropAddBenefitModel.setPrmhlf(0.0);
-					inPropAddBenefitModel.setPrmyer(0.0);
+					for (InPropAddBenefitModel inPropAddBenefitModel : addBenefitModels) {
+						inPropAddBenefitModel.getInPropAddBenefitPK().setLoccod(saveReceiptDto.getBranchCode());
+						inPropAddBenefitModel.getInPropAddBenefitPK()
+								.setPprnum(Integer.parseInt(inProposalsModelPK.getPprnum()));
+						inPropAddBenefitModel.getInPropAddBenefitPK().setPrpseq(inProposalsModelPK.getPrpseq());
+						inPropAddBenefitModel.setRidtrm(0);
+						inPropAddBenefitModel.setSumasu(0.0);
+						inPropAddBenefitModel.setRdrprm(0.0);
+						inPropAddBenefitModel.setPrmmth(0.0);
+						inPropAddBenefitModel.setPrmqat(0.0);
+						inPropAddBenefitModel.setPrmhlf(0.0);
+						inPropAddBenefitModel.setPrmyer(0.0);
 
-					InPropLoadingModelPK inPropLoadingModelPK = new InPropLoadingModelPK();
-					inPropLoadingModelPK.setLoccod(saveReceiptDto.getBranchCode());
-					inPropLoadingModelPK.setPprnum(Integer.parseInt(inProposalsModelPK.getPprnum()));
-					inPropLoadingModelPK.setRidcod(inPropAddBenefitModel.getInPropAddBenefitPK().getRidcod());
-					inPropLoadingModelPK.setSbucod(AppConstant.SBU_CODE);
-					inPropLoadingModelPK.setPrpseq(inProposalsModelPK.getPrpseq());
+						InPropLoadingModelPK inPropLoadingModelPK = new InPropLoadingModelPK();
+						inPropLoadingModelPK.setLoccod(saveReceiptDto.getBranchCode());
+						inPropLoadingModelPK.setPprnum(Integer.parseInt(inProposalsModelPK.getPprnum()));
+						inPropLoadingModelPK.setRidcod(inPropAddBenefitModel.getInPropAddBenefitPK().getRidcod());
+						inPropLoadingModelPK.setSbucod(AppConstant.SBU_CODE);
+						inPropLoadingModelPK.setPrpseq(inProposalsModelPK.getPrpseq());
 
-					InPropLoadingModel inPropLoadingModel = new InPropLoadingModel();
-					inPropLoadingModel.setInPropLoadingPK(inPropLoadingModelPK);
-					inPropLoadingModel.setRidnam(inPropAddBenefitModel.getRidnam());
-					inPropLoadingModel.setGrdord(inPropAddBenefitModel.getGrdord());
-					inPropLoadingModel.setLockin(AppConstant.DATE);
-					inPropLoadingModel.setInstyp(inPropAddBenefitModel.getInstyp());
-					inPropLoadingModel.setRidtyp(inPropAddBenefitModel.getRidtyp());
+						InPropLoadingModel inPropLoadingModel = new InPropLoadingModel();
+						inPropLoadingModel.setInPropLoadingPK(inPropLoadingModelPK);
+						inPropLoadingModel.setRidnam(inPropAddBenefitModel.getRidnam());
+						inPropLoadingModel.setGrdord(inPropAddBenefitModel.getGrdord());
+						inPropLoadingModel.setLockin(AppConstant.DATE);
+						inPropLoadingModel.setInstyp(inPropAddBenefitModel.getInstyp());
+						inPropLoadingModel.setRidtyp(inPropAddBenefitModel.getRidtyp());
 
-					inPropLoadingModels.add(inPropLoadingModel);
+						inPropLoadingModels.add(inPropLoadingModel);
 
-				}
+					}
 
-				for (QuoBenfDto benfDto : resp.get_mainLifeBenefits()) {
-					getInPropAddBebefit(benfDto, addBenefitModels, "main", resp.get_plan().get_frequance(),
-							inPropLoadingModels, resp.get_mainlife().get_occuCode());
-				}
+					for (QuoBenfDto benfDto : resp.get_mainLifeBenefits()) {
+						getInPropAddBebefit(benfDto, addBenefitModels, "main", resp.get_plan().get_frequance(),
+								inPropLoadingModels, resp.get_mainlife().get_occuCode());
+					}
 
-				for (QuoBenfDto benfDto : resp.get_spouseBenefits()) {
-					getInPropAddBebefit(benfDto, addBenefitModels, "spouse", resp.get_plan().get_frequance(),
-							inPropLoadingModels, resp.get_spouse().getOccuCode());
-				}
+					for (QuoBenfDto benfDto : resp.get_spouseBenefits()) {
+						getInPropAddBebefit(benfDto, addBenefitModels, "spouse", resp.get_plan().get_frequance(),
+								inPropLoadingModels, resp.get_spouse().getOccuCode());
+					}
 
-				addBenefitModels = getChildBenefits(resp.get_childrenBenefits(), addBenefitModels, "children",
-						resp.get_plan().get_frequance(), inPropLoadingModels);
+					addBenefitModels = getChildBenefits(resp.get_childrenBenefits(), addBenefitModels, "children",
+							resp.get_plan().get_frequance(), inPropLoadingModels);
 
-				List<InPropFamDetailsModel> propFamDetailsModels = new ArrayList<>();
+					List<InPropFamDetailsModel> propFamDetailsModels = new ArrayList<>();
 
-				for (ChildrenDto childrenDto : resp.get_children()) {
-					propFamDetailsModels.add(getFamily(childrenDto, inProposalsModelPK.getPprnum(),
-							inProposalsModelPK.getPrpseq(), saveReceiptDto.getBranchCode()));
-				}
-
-				List<InPropSchedulesModel> inPropScheduleList = null;
-
-				if (sheduleDtos != null && sheduleDtos.size() > 0) {
-					inPropScheduleList = new ArrayList<>();
-					for (SheduleDto sheduleDto : sheduleDtos) {
-						inPropScheduleList.add(getPropShedule(sheduleDto, inProposalsModelPK.getPprnum(),
+					for (ChildrenDto childrenDto : resp.get_children()) {
+						propFamDetailsModels.add(getFamily(childrenDto, inProposalsModelPK.getPprnum(),
 								inProposalsModelPK.getPrpseq(), saveReceiptDto.getBranchCode()));
 					}
 
+					List<InPropSchedulesModel> inPropScheduleList = null;
+
+					if (sheduleDtos != null && sheduleDtos.size() > 0) {
+						inPropScheduleList = new ArrayList<>();
+						for (SheduleDto sheduleDto : sheduleDtos) {
+							inPropScheduleList.add(getPropShedule(sheduleDto, inProposalsModelPK.getPprnum(),
+									inProposalsModelPK.getPrpseq(), saveReceiptDto.getBranchCode()));
+						}
+
+					}
+
+					final List<InPropMedicalReqModel> inPropMedicalReqModels = new ArrayList<>();
+
+					if (medicalRequirementsDtos != null && medicalRequirementsDtos.size() > 0) {
+						medicalRequirementsDtos.forEach(
+								mediReq -> inPropMedicalReqModels.add(getMediReq(mediReq, inProposalsModelPK.getPprnum(),
+										inProposalsModelPK.getPrpseq(), saveReceiptDto.getBranchCode())));
+					}
+
+					final List<InPropSurrenderValsModel> inPropSurrenderValsModels = new ArrayList<>();
+					// System.out.println("Surrendeer Vals : " + surrenderValsDtos.size());
+					if (surrenderValsDtos != null && surrenderValsDtos.size() > 0) {
+						surrenderValsDtos.forEach(
+								surVal -> inPropSurrenderValsModels.add(getSurrenderVals(saveReceiptDto.getAgentCode(),
+										saveReceiptDto.getQuotationId(), surVal, inProposalsModelPK.getPprnum(),
+										inProposalsModelPK.getPrpseq(), saveReceiptDto.getBranchCode())));
+					}
+
+					inProposalDao.save(inProposalsModel);
+					inPropAddBenefictDao.save(addBenefitModels);
+					if (inPropScheduleList != null) {
+						inPropShedulesDao.save(inPropScheduleList);
+					}
+					if (inPropMedicalReqModels != null && inPropMedicalReqModels.size() > 0) {
+						inPropMedicalReqDao.save(inPropMedicalReqModels);
+					}
+
+					InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
+							saveReceiptDto, agentCode, locCode);
+
+					InBillingTransactionsModel inBillingTransactionsModel = commonethodUtility
+							.getInBillingTransactionModel(inProposalsModel, saveReceiptDto, inTransactionsModel);
+
+					inPropFamDetailsDao.save(propFamDetailsModels);
+					inPropLoadingDao.save(inPropLoadingModels);
+					inTransactionDao.save(inTransactionsModel);
+					inBillingTransactionDao.save(inBillingTransactionsModel);
+					inPropSurrenderValsDao.save(inPropSurrenderValsModels);
+					try {
+						quotationClient.updateStatus(saveReceiptDto.getQuotationDetailId());
+					} catch (Exception e) {
+						return "Receipt Save Successfully, Error at change Quotation Status";
+					}
+					return "Work";
+				} else {
+
+					return "Number Generation Error";
 				}
-
-				final List<InPropMedicalReqModel> inPropMedicalReqModels = new ArrayList<>();
-
-				if (medicalRequirementsDtos != null && medicalRequirementsDtos.size() > 0) {
-					medicalRequirementsDtos.forEach(
-							mediReq -> inPropMedicalReqModels.add(getMediReq(mediReq, inProposalsModelPK.getPprnum(),
-									inProposalsModelPK.getPrpseq(), saveReceiptDto.getBranchCode())));
-				}
-
-				final List<InPropSurrenderValsModel> inPropSurrenderValsModels = new ArrayList<>();
-				// System.out.println("Surrendeer Vals : " + surrenderValsDtos.size());
-				if (surrenderValsDtos != null && surrenderValsDtos.size() > 0) {
-					surrenderValsDtos.forEach(
-							surVal -> inPropSurrenderValsModels.add(getSurrenderVals(saveReceiptDto.getAgentCode(),
-									saveReceiptDto.getQuotationId(), surVal, inProposalsModelPK.getPprnum(),
-									inProposalsModelPK.getPrpseq(), saveReceiptDto.getBranchCode())));
-				}
-
-				inProposalDao.save(inProposalsModel);
-				inPropAddBenefictDao.save(addBenefitModels);
-				if (inPropScheduleList != null) {
-					inPropShedulesDao.save(inPropScheduleList);
-				}
-				if (inPropMedicalReqModels != null && inPropMedicalReqModels.size() > 0) {
-					inPropMedicalReqDao.save(inPropMedicalReqModels);
-				}
-
-				InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
-						saveReceiptDto);
-
-				InBillingTransactionsModel inBillingTransactionsModel = commonethodUtility
-						.getInBillingTransactionModel(inProposalsModel, saveReceiptDto, inTransactionsModel);
-
-				inPropFamDetailsDao.save(propFamDetailsModels);
-				inPropLoadingDao.save(inPropLoadingModels);
-				inTransactionDao.save(inTransactionsModel);
-				inBillingTransactionDao.save(inBillingTransactionsModel);
-				inPropSurrenderValsDao.save(inPropSurrenderValsModels);
-				try {
-					quotationClient.updateStatus(saveReceiptDto.getQuotationDetailId());
-				} catch (Exception e) {
-					return "Receipt Save Successfully, Error at change Quotation Status";
-				}
-				return "Work";
 			} else {
-
-				return "Number Generation Error";
+				return "Agent not Found";
 			}
 		} else {
-			return "Agent not Found";
+			return "User not Found";
 		}
+
+		
 
 	}
 
@@ -511,6 +527,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		inProposalsModel.setInvpos(resp.get_plan().getInvPos());
 		inProposalsModel.setLifpos(resp.get_plan().getLifePos());
 		inProposalsModel.setSumrkm(resp.get_plan().getSumatRiskMain());
+		inProposalsModel.setPprsta("L0");
 		inProposalsModel
 				.setSumrks(resp.get_plan().getSumatRiskSpouse() != null ? resp.get_plan().getSumatRiskSpouse() : 0.0);
 
@@ -591,15 +608,16 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		
 		String[] numberGen = numberGenerator.generateNewId("450", "", "CSPINSQ", "");
 
+		System.out.println(numberGen[0]);
 		
 		CustomerModel customerModel = new CustomerModel();
 		customerModel.setSbucod(AppConstant.SBU_CODE);
 		customerModel.setCreaby("system");
 		customerModel.setCreadt(AppConstant.DATE);
-		if (numberGen[0].equals(numberGen[1])) {
-			customerModel.setCscode("");
+		if (numberGen[0].equals("Success")) {
+			customerModel.setCscode(numberGen[1]);
 		}else {
-			throw new RuntimeException();
+			throw new RuntimeException(numberGen[0]);
 		}
 		
 		customerModel.setLockin(AppConstant.DATE);
@@ -617,7 +635,8 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		customerModel.setPpdnic(resp.get_mainlife().get_mNic());
 		customerModel.setPpdsex(resp.get_mainlife().get_mGender());
 		customerModel.setPpdtel(resp.get_mainlife().get_mMobile());
-		if(resp.get_spouse() != null) {
+		if(resp.get_spouse() != null && resp.get_spouse().get_sAge()!= null &&  resp.get_spouse().get_sGender() != null && resp.get_spouse().getOccuCode() != null) {
+			System.out.println(resp.get_spouse().toString());
 			customerModel.setSagnxt(Integer.parseInt(resp.get_spouse().get_sAge()));
 			try {
 				customerModel.setSpodob(new SimpleDateFormat("dd-MM-yyyy").parse(resp.get_spouse().get_sDob()));

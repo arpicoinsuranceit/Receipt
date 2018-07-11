@@ -36,7 +36,7 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 
 	@Override
 	public List<ReFundModel> getRefundList(String pprNum) throws Exception {
-		List<ReFundModel> reFundModels = jdbcTemplate.query("elect pprnum,doccod,docnum,(sum(depost)*-1) as refamount from inbillingtransactions where sbucod='450' and pprnum='"+ pprNum +"'  group by docnum having sum(depost) <0 order by docnum", new ReFundAmntRowMapper());
+		List<ReFundModel> reFundModels = jdbcTemplate.query("select pprnum,doccod,docnum,(sum(depost)*-1) as refamount, max(linnum) as linnum from inbillingtransactions where sbucod='450' and pprnum='"+ pprNum +"'  group by docnum having sum(depost) <0 order by docnum", new ReFundAmntRowMapper());
 		return reFundModels;
 	}
 

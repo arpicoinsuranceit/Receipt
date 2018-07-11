@@ -19,7 +19,7 @@ public class InAgentMastDaoImpl implements InAgentMastDao{
 	public List<AgentMastModel> getAgentDetails(String agenCode) throws Exception {
 		return (List<AgentMastModel>) jdbcTemplate.query("select agncls,unlcod, loccod as location, " + 
 				"(select agncod from inagentmast where loccod = location and agncls = 'BRN' and agnsta = 'ACT') as brnmanager " + 
-				"from inagentmast where agncod= '"+agenCode+"';", new AgentMastRowMapper());
+				"from inagentmast where agncod= '"+agenCode+"'", new AgentMastRowMapper());
 	}
 
 }

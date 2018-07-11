@@ -22,21 +22,25 @@ public class CommonMethodsUtility {
 
 	@Autowired
 	private NumberGenerator numberGenerator;
-	
+
 	@Autowired
 	private InAgentMastDao inAgentMastDao;
-	
-	public InTransactionsModel getInTransactionModel(InProposalsModel inProposalsModel, SaveReceiptDto saveReceiptDto)
-			throws Exception {
+
+	public InTransactionsModel getInTransactionModel(InProposalsModel inProposalsModel, SaveReceiptDto saveReceiptDto,
+			String userCode, String locCode) throws Exception {
 
 		String[] numberGen = numberGenerator.generateNewId("", "", "RCNBSQ", "");
-		
+
+		String agentCode = new JwtDecoder().generate(saveReceiptDto.getToken());
+
+		System.out.println(agentCode);
+
 		System.out.println(numberGen[1]);
 
 		if (numberGen[0].equalsIgnoreCase("Success")) {
 			InTransactionsModelPK inTransactionsModelPK = new InTransactionsModelPK();
 			inTransactionsModelPK.setSbucod(AppConstant.SBU_CODE);
-			inTransactionsModelPK.setLoccod(saveReceiptDto.getBranchCode());
+			inTransactionsModelPK.setLoccod(locCode);
 			inTransactionsModelPK.setDoccod("RCNB");
 			inTransactionsModelPK.setDocnum(Integer.parseInt(numberGen[1]));
 			inTransactionsModelPK.setLinnum(0);
@@ -50,12 +54,11 @@ public class CommonMethodsUtility {
 			inTransactionsModel.setBilpik("N");
 			inTransactionsModel.setChqrel("N");
 			inTransactionsModel.setCompad("N");
-			inTransactionsModel.setCreaby(new JwtDecoder().generate(saveReceiptDto.getToken()));
+			inTransactionsModel.setCreaby(agentCode);
 			inTransactionsModel.setCreadt(AppConstant.DATE);
-			
+
 			inTransactionsModel.setCscode(inProposalsModel.getCscode());
-			
-			
+
 			inTransactionsModel.setInTransactionsModelPK(inTransactionsModelPK);
 			inTransactionsModel.setLockin(AppConstant.DATE);
 			inTransactionsModel.setNtitle(inProposalsModel.getNtitle());
@@ -84,18 +87,17 @@ public class CommonMethodsUtility {
 
 			return inTransactionsModel;
 		}
-
 		return null;
 
 	}
-	
+
 	public InBillingTransactionsModel getInBillingTransactionModel(InProposalsModel inProposalsModel,
 			SaveReceiptDto saveReceiptDto, InTransactionsModel inTransactionsModel) throws Exception {
 
 		List<AgentMastModel> agentMastModels = inAgentMastDao.getAgentDetails(saveReceiptDto.getAgentCode());
 
 		AgentMastModel agentMastModel = agentMastModels.get(0);
-		
+
 		if (agentMastModels != null && agentMastModels.size() > 0) {
 			InBillingTransactionsModelPK billingTransactionsModelPK = new InBillingTransactionsModelPK();
 			billingTransactionsModelPK.setDoccod(inTransactionsModel.getInTransactionsModelPK().getDoccod());
@@ -103,8 +105,8 @@ public class CommonMethodsUtility {
 			billingTransactionsModelPK.setLinnum(inTransactionsModel.getInTransactionsModelPK().getLinnum());
 			billingTransactionsModelPK.setSbucod(AppConstant.SBU_CODE);
 			billingTransactionsModelPK.setTxndat(AppConstant.DATE);
-			billingTransactionsModelPK.setLoccod(saveReceiptDto.getBranchCode());
-			
+			billingTransactionsModelPK.setLoccod(inTransactionsModel.getInTransactionsModelPK().getLoccod());
+
 			InBillingTransactionsModel billingTransactionsModel = new InBillingTransactionsModel();
 
 			billingTransactionsModel.setBillingTransactionsModelPK(billingTransactionsModelPK);
@@ -118,12 +120,15 @@ public class CommonMethodsUtility {
 			billingTransactionsModel.setComper(AppConstant.ZERO_FOR_DECIMAL);
 			billingTransactionsModel.setCreaby(inTransactionsModel.getCreaby());
 			billingTransactionsModel.setCreadt(AppConstant.DATE);
+			billingTransactionsModel.setBrncod(inProposalsModel.getBrncod());
+			billingTransactionsModel.setPrpseq(inProposalsModel.getInProposalsModelPK().getPrpseq());
 			try {
 				billingTransactionsModel.setCscode(Integer.parseInt(inTransactionsModel.getCscode()));
-			}catch (Exception e) {}
-			billingTransactionsModel.setDepost((saveReceiptDto.getAmount()*-1));
+			} catch (Exception e) {
+			}
+			billingTransactionsModel.setDepost((saveReceiptDto.getAmount() * -1));
 			billingTransactionsModel.setGlintg("N");
-			
+
 			billingTransactionsModel.setGrsprm(AppConstant.ZERO_FOR_DECIMAL);
 			billingTransactionsModel.setHrbprm(AppConstant.ZERO_FOR_DECIMAL);
 			billingTransactionsModel.setInsnum(inTransactionsModel.getInTransactionsModelPK().getLinnum());
@@ -131,7 +136,7 @@ public class CommonMethodsUtility {
 			billingTransactionsModel.setOldprm(AppConstant.ZERO_FOR_DECIMAL);
 			billingTransactionsModel.setPaymod(inTransactionsModel.getPaymod());
 			billingTransactionsModel.setPaytrm(Integer.parseInt(inProposalsModel.getPaytrm()));
-			billingTransactionsModel.setPolfee(inProposalsModel.getPolfee());
+			billingTransactionsModel.setPolfee(AppConstant.ZERO_TWO_DECIMAL);
 			billingTransactionsModel.setPprnum(Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum()));
 			billingTransactionsModel.setPrdcod(inProposalsModel.getPrdcod());
 			billingTransactionsModel.setPrpseq(saveReceiptDto.getQuotationDetailId());
@@ -142,18 +147,19 @@ public class CommonMethodsUtility {
 			billingTransactionsModel.setTaxamt(inProposalsModel.getTaxamt());
 			billingTransactionsModel.setToptrm(inProposalsModel.getToptrm());
 			billingTransactionsModel.setTxntyp("PROPDEP");
-			if(agentMastModel.getAgncls().equalsIgnoreCase("IC")) {
+			if (agentMastModel.getAgncls().equalsIgnoreCase("IC")) {
 				billingTransactionsModel.setUnlcod(agentMastModel.getUnlcod());
-			}if(agentMastModel.getAgncls().equalsIgnoreCase("UNL")) {
+			}
+			if (agentMastModel.getAgncls().equalsIgnoreCase("UNL")) {
 				billingTransactionsModel.setUnlcod(agentMastModel.getBrnmanager());
 			}
 			billingTransactionsModel.setTxnyer(Calendar.getInstance().get(Calendar.YEAR));
 			billingTransactionsModel.setTxnmth(Calendar.getInstance().get(Calendar.MONTH));
-			
+
 			return billingTransactionsModel;
 		}
 
 		return null;
 	}
-	
+
 }
