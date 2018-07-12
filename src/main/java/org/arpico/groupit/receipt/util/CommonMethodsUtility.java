@@ -57,7 +57,10 @@ public class CommonMethodsUtility {
 			inTransactionsModel.setCreaby(agentCode);
 			inTransactionsModel.setCreadt(AppConstant.DATE);
 
-			inTransactionsModel.setCscode(inProposalsModel.getCscode());
+			try {
+				inTransactionsModel.setCscode(inProposalsModel.getCscode());
+			}catch (Exception e) {}
+			
 
 			inTransactionsModel.setInTransactionsModelPK(inTransactionsModelPK);
 			inTransactionsModel.setLockin(AppConstant.DATE);

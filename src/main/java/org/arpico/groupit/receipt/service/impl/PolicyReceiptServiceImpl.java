@@ -10,6 +10,7 @@ import org.arpico.groupit.receipt.dao.InAgentMastDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsDao;
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
+import org.arpico.groupit.receipt.dao.InTransactionsDao;
 import org.arpico.groupit.receipt.dao.RmsUserDao;
 import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
 import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
@@ -30,6 +31,7 @@ import org.arpico.groupit.receipt.service.PolicyReceiptService;
 import org.arpico.groupit.receipt.util.AppConstant;
 import org.arpico.groupit.receipt.util.CommonMethodsUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +47,9 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 	@Autowired
 	private CommonMethodsUtility commonethodUtility;
+
+	@Autowired
+	private InTransactionsDao inTransactionDao;
 
 	@Autowired
 	private InBillingTransactionsDao inBillingTransactionDao;
@@ -110,8 +115,11 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 	@Override
 	public ResponseEntity<Object> savePolicyReceipt(SaveReceiptDto saveReceiptDto) throws Exception {
+
 		InProposalsModel inProposalsModel = inProposalCustomDao.getProposalBuPolicy(saveReceiptDto.getPolId(),
 				saveReceiptDto.getPolSeq());
+
+		System.out.println((inProposalsModel == null) + "null");
 
 		String agentCode = new JwtDecoder().generate(saveReceiptDto.getToken());
 
@@ -135,13 +143,18 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 					.getUnSetOffs(inProposalsModel.getInProposalsModelPK().getPprnum());
 
 			InBillingTransactionsModel invoice = null;
+			
+			System.out.println("unsetoff list " + unSetOffList.size());
 
 			if (unSetOffList != null && unSetOffList.size() > 0) {
 				invoice = unSetOffList.get(0);
 			} else {
-				invoice = createInvoice(inProposalsModel);
+				invoice = createInvoice(inProposalsModel, null, agentCode, locCode);
 				inBillingTransactionDao.save(invoice);
 			}
+			
+			System.out.println(invoice == null);
+			System.out.println(invoice.toString());
 
 			List<InBillingTransactionsModel> setoffList = null;
 
@@ -156,107 +169,244 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 				}
 			}
 
+			System.out.println(invoice.getAmount() + "  invoice amount");
+
+			
+			
 			if (invoice.getAmount() <= amount) {
-				setoffList = getSetOff(invoice, deposit, setoffList, inProposalsModel);
+				ReFundModel fundModel = new ReFundModel();
+				fundModel.setDoccod(deposit.getBillingTransactionsModelPK().getDoccod());
+				fundModel.setDocnum(deposit.getBillingTransactionsModelPK().getDocnum());
+				fundModel.setPprnum(Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum()));
+				fundModel.setRefamount(deposit.getDepost() * -1);
+				fundModel.setLinnum(deposit.getBillingTransactionsModelPK().getLinnum());
+
+				for (InBillingTransactionsModel reFundModel : unSetOffList) {
+					System.out.println(reFundModel.getTxnyer() + " " +  reFundModel.getTxnmth() + " "+ reFundModel.getAmount() );
+					
+				}
+				
+				setoffList = getSetOff(invoice, fundModel, setoffList, inProposalsModel, fundModels, agentCode, locCode,
+						unSetOffList);
 			}
 
+			inTransactionDao.save(inTransactionsModel);
 			inBillingTransactionDao.save(deposit);
+
 			if (setoffList != null && setoffList.size() > 0) {
+				System.out.println(setoffList.size() + "  setoff list");
+
+				for (InBillingTransactionsModel e : setoffList) {
+					System.out.println(e.getBillingTransactionsModelPK().toString());
+				}
+				for (InBillingTransactionsModel e : setoffList) {
+					System.out.println(e.toString());
+				}
+
 				inBillingTransactionDao.save(setoffList);
 			}
+
+			return new ResponseEntity<>("Success", HttpStatus.OK);
 		}
 		return null;
 
 	}
 
-	private List<InBillingTransactionsModel> getSetOff(InBillingTransactionsModel invoice,
-			InBillingTransactionsModel deposit, List<InBillingTransactionsModel> setoffList,
-			InProposalsModel inProposalsModel) throws Exception {
-		setoffList = new ArrayList<>();
-		if (setoffList != null && setoffList.size() > 0) {
-			for (InBillingTransactionsModel setoff : setoffList) {
-				setoffList.add(getSetOff(invoice, setoff, inProposalsModel));
+	private List<InBillingTransactionsModel> getSetOff(InBillingTransactionsModel invoice, ReFundModel deposit,
+			List<InBillingTransactionsModel> setoffList, InProposalsModel inProposalsModel,
+			List<ReFundModel> fundModels, String user, String loc, List<InBillingTransactionsModel> unsetoffList)
+			throws Exception {
+		
+		
+
+		Double invoiceAmount = invoice.getAmount();
+		
+		System.out.println(invoice.getTxnyer());
+		System.out.println(invoice.getTxnmth());
+
+		System.out.println("invoiceAmount 1 : " + invoiceAmount);
+
+		if (setoffList == null) {
+			setoffList = new ArrayList<>();
+		}
+
+		if (fundModels != null && fundModels.size() > 0) {
+
+			for (Integer i = 0; i < fundModels.size(); i++) {
+				ReFundModel reFundModel = fundModels.get(i);
+				System.out.println("refund : " + reFundModel.getRefamount());
+				invoiceAmount = invoiceAmount - reFundModel.getRefamount();
+
+				System.out.println("invoiceAmount 2 : " + invoiceAmount);
+				if (invoiceAmount > 0) {
+					System.out.println("invoiceAmount max : " + invoiceAmount);
+					setoffList.add(getSetoff(reFundModel, invoice, inProposalsModel, user, loc));
+					fundModels.remove(reFundModel);
+
+					System.out.println("FundModel Size : " + fundModels.size());
+
+					i++;
+				} else {
+					System.out.println("invoiceAmount min : " + invoiceAmount);
+
+					ReFundModel tempReFundModel = new ReFundModel();
+					tempReFundModel.setDoccod(reFundModel.getDoccod());
+					tempReFundModel.setDocnum(reFundModel.getDocnum());
+					tempReFundModel.setPprnum(reFundModel.getPprnum());
+					tempReFundModel.setRefamount(reFundModel.getRefamount() + invoiceAmount);
+					tempReFundModel.setLinnum(reFundModel.getLinnum() + 1);
+
+					setoffList.add(getSetoff(tempReFundModel, invoice, inProposalsModel, user, loc));
+					reFundModel.setRefamount(reFundModel.getRefamount() - tempReFundModel.getRefamount());
+
+					InBillingTransactionsModel newInvoice = null;
+					Integer txnYer = invoice.getTxnyer()+1;
+					Integer txnMth = invoice.getTxnmth()+1;
+
+					for (InBillingTransactionsModel e : unsetoffList) {
+						if (e.getTxnyer() == txnYer && e.getTxnmth() == txnMth) {
+							newInvoice = e;
+						}
+					}
+
+					if (newInvoice == null) {
+						newInvoice = createInvoice(inProposalsModel, invoice, user, loc);
+					}
+
+					setoffList.add(newInvoice);
+					getSetOff(newInvoice, deposit, setoffList, inProposalsModel, fundModels, user, loc, unsetoffList);
+					/*
+					 * List<InBillingTransactionsModel> billingTransactionsModels = if
+					 * (billingTransactionsModels != null && !billingTransactionsModels.isEmpty()) {
+					 * setoffList.addAll(billingTransactionsModels); }
+					 */
+					i++;
+				}
 			}
 		}
 
-		setoffList.add(getSetOff(invoice, deposit, inProposalsModel));
-		return setoffList;
+		System.out.println("invoiceAmount end refunds : " + invoiceAmount);
+		System.out
+				.println("invoiceAmount <= (deposit.getRefamount()) : " + (invoiceAmount <= (deposit.getRefamount())));
+		if (invoiceAmount <= (deposit.getRefamount())) {
+
+			Double depAmount = deposit.getRefamount();
+
+			System.out.println("depAmount 1 : " + depAmount);
+
+			deposit.setRefamount(invoiceAmount);
+			depAmount = depAmount - invoiceAmount;
+
+			System.out.println("depAmount 2 : " + depAmount);
+
+			setoffList.add(getSetoff(deposit, invoice, inProposalsModel, user, loc));
+
+			InBillingTransactionsModel newInvoice = null;
+			Integer txnYer = invoice.getTxnyer()+1;
+			Integer txnMth = invoice.getTxnmth()+1;
+
+			for (InBillingTransactionsModel e : unsetoffList) {
+				if (e.getTxnyer() == txnYer && e.getTxnmth() == txnMth) {
+					newInvoice = e;
+				}
+			}
+
+			if (newInvoice == null) {
+				newInvoice = createInvoice(inProposalsModel, invoice, user, loc);
+			}
+
+			System.out.println(newInvoice == null);
+
+			System.out.println("depAmount >= newInvoice.getAmount() : " + (depAmount >= newInvoice.getAmount()));
+
+			if (depAmount >= newInvoice.getAmount()) {
+
+				deposit.setRefamount(depAmount);
+				deposit.setLinnum(deposit.getLinnum() + 1);
+
+				System.out.println("depAmount 3 : " + depAmount);
+				System.out.println("depAmount 4 : " + deposit.getRefamount());
+
+				System.out.println("fundModel 4 : " + fundModels.size());
+				getSetOff(newInvoice, deposit, setoffList, inProposalsModel, fundModels, user, loc, unsetoffList);
+				/*
+				 * List<InBillingTransactionsModel> billingTransactionsModels = if
+				 * (billingTransactionsModels != null && !billingTransactionsModels.isEmpty()) {
+				 * setoffList.addAll(billingTransactionsModels); }
+				 */
+
+			}
+
+			return setoffList;
+		} else {
+			return setoffList;
+		}
+
 	}
 
-	private InBillingTransactionsModel getSetOff(InBillingTransactionsModel invoice, InBillingTransactionsModel setoff,
-			InProposalsModel inProposalsModel) throws Exception {
+	private InBillingTransactionsModel getSetoff(ReFundModel reFundModel, InBillingTransactionsModel invoice,
+			InProposalsModel inProposalsModel, String user, String loc) throws Exception {
 
-		String[] numberGen = numberGenerator.generateNewId("", "", "PRMISQ", "");
+		InBillingTransactionsModelPK modelPK = new InBillingTransactionsModelPK();
+		modelPK.setDoccod(reFundModel.getDoccod());
+		modelPK.setDocnum(reFundModel.getDocnum());
+		modelPK.setLinnum(reFundModel.getLinnum() + 1);
+		modelPK.setLoccod(loc);
+		modelPK.setTxndat(AppConstant.DATE);
+		modelPK.setSbucod(AppConstant.SBU_CODE);
 
-		List<AgentMastModel> agentMastModels = inAgentMastDao.getAgentDetails(inProposalsModel.getAdvcod());
+		InBillingTransactionsModel model = new InBillingTransactionsModel();
+		model.setBillingTransactionsModelPK(modelPK);
 
-		AgentMastModel agentMastModel = agentMastModels.get(0);
-
-		if (numberGen[0].equals("Success")) {
-			InBillingTransactionsModelPK modelPK = new InBillingTransactionsModelPK();
-			modelPK.setDoccod("RCPL");
-			modelPK.setDocnum(Integer.parseInt(numberGen[1]));
-			modelPK.setLinnum(0);
-			modelPK.setLoccod(inProposalsModel.getBrncod());
-			modelPK.setTxndat(AppConstant.DATE);
-			modelPK.setSbucod(AppConstant.SBU_CODE);
-
-			InBillingTransactionsModel model = new InBillingTransactionsModel();
-			model.setBillingTransactionsModelPK(modelPK);
-
-			model.setAdmfee(AppConstant.ZERO_TWO_DECIMAL);
-			model.setAdvcod(Integer.parseInt(inProposalsModel.getAdvcod()));
-			model.setAgncls(agentMastModel.getAgncls());
-			model.setAmount(inProposalsModel.getTaxamt() + inProposalsModel.getAdmfee() + inProposalsModel.getTotprm());
-			model.setBrncod(inProposalsModel.getBrncod());
-			model.setChqrel("N");
-			model.setComiss(AppConstant.ZERO_FOR_DECIMAL);
-			model.setComper(AppConstant.ZERO_FOR_DECIMAL);
-			// billingTransactionsModel.setCreaby(inTransactionsModel.getCreaby());
-			model.setCreadt(AppConstant.DATE);
-			try {
-				model.setCscode(Integer.parseInt(inProposalsModel.getCscode()));
-			} catch (Exception e) {
-			}
-			model.setDepost(AppConstant.ZERO_TWO_DECIMAL);
-			model.setGlintg("N");
-
-			model.setGrsprm(AppConstant.ZERO_FOR_DECIMAL);
-			model.setHrbprm(AppConstant.ZERO_FOR_DECIMAL);
-			model.setInsnum(0);
-			model.setLockin(AppConstant.DATE);
-			model.setOldprm(AppConstant.ZERO_FOR_DECIMAL);
-
-			model.setPaytrm(Integer.parseInt(inProposalsModel.getPaytrm()));
-			model.setPolfee(inProposalsModel.getPolfee());
-			model.setPprnum(Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum()));
-			model.setPrdcod(inProposalsModel.getPrdcod());
-			model.setPrpseq(inProposalsModel.getInProposalsModelPK().getPrpseq());
-			model.setRefdoc(modelPK.getDoccod());
-			model.setRefnum(modelPK.getDocnum());
-			model.setSrcdoc(modelPK.getDoccod());
-			model.setSrcnum(modelPK.getDocnum());
-			model.setTaxamt(inProposalsModel.getTaxamt());
-			model.setToptrm(inProposalsModel.getToptrm());
-			model.setTxntyp("INVOICE");
-			if (agentMastModel.getAgncls().equalsIgnoreCase("IC")) {
-				model.setUnlcod(agentMastModel.getUnlcod());
-			}
-			if (agentMastModel.getAgncls().equalsIgnoreCase("UNL")) {
-				model.setUnlcod(agentMastModel.getBrnmanager());
-			}
-
-			model.setTxnyer(invoice.getTxnyer());
-			model.setTxnmth(invoice.getTxnmth());
-
-			return model;
+		model.setAdmfee(invoice.getAdmfee());
+		model.setAdvcod(invoice.getAdvcod());
+		model.setAgncls(invoice.getAgncls());
+		model.setAmount(reFundModel.getRefamount() * -1);
+		model.setBrncod(inProposalsModel.getBrncod());
+		model.setChqrel("N");
+		model.setComiss(AppConstant.ZERO_FOR_DECIMAL);
+		model.setComper(AppConstant.ZERO_FOR_DECIMAL);
+		model.setCreaby(user);
+		model.setCreadt(AppConstant.DATE);
+		try {
+			model.setCscode(Integer.parseInt(inProposalsModel.getCscode()));
+		} catch (Exception e) {
 		}
+		model.setDepost(reFundModel.getRefamount());
+		model.setGlintg("N");
 
-		return null;
+		model.setGrsprm(AppConstant.ZERO_FOR_DECIMAL);
+		model.setHrbprm(AppConstant.ZERO_FOR_DECIMAL);
+		model.setInsnum(0);
+		model.setLockin(AppConstant.DATE);
+		model.setOldprm(AppConstant.ZERO_FOR_DECIMAL);
+
+		model.setPaytrm(Integer.parseInt(inProposalsModel.getPaytrm()));
+		
+		model.setPolfee(invoice.getPolfee());
+		model.setPolnum(Integer.parseInt(inProposalsModel.getPolnum()));
+		model.setPprnum(Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum()));
+		model.setPrdcod(inProposalsModel.getPrdcod());
+		model.setPrpseq(inProposalsModel.getInProposalsModelPK().getPrpseq());
+		model.setRefdoc(modelPK.getDoccod());
+		model.setRefnum(modelPK.getDocnum());
+		model.setSrcdoc(modelPK.getDoccod());
+		model.setSrcnum(modelPK.getDocnum());
+		model.setTaxamt(inProposalsModel.getTaxamt());
+		model.setToptrm(inProposalsModel.getToptrm());
+		model.setTxntyp("POLDEP");
+		model.setUnlcod(invoice.getUnlcod());
+
+		model.setTxnyer(invoice.getTxnyer());
+		model.setTxnmth(invoice.getTxnmth());
+
+		return model;
+
 	}
 
 	@Override
-	public InBillingTransactionsModel createInvoice(InProposalsModel inProposalsModel) throws Exception {
+	public InBillingTransactionsModel createInvoice(InProposalsModel inProposalsModel,
+			InBillingTransactionsModel previousInvoice, String user, String loc) throws Exception {
 
 		String[] numberGen = numberGenerator.generateNewId("", "", "PRMISQ", "");
 		List<AgentMastModel> agentMastModels = inAgentMastDao.getAgentDetails(inProposalsModel.getAdvcod());
@@ -270,7 +420,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 			billingTransactionsModelPK.setDoccod("PRMI");
 			billingTransactionsModelPK.setDocnum(Integer.parseInt(numberGen[1]));
 			billingTransactionsModelPK.setLinnum(0);
-			billingTransactionsModelPK.setLoccod(inProposalsModel.getInProposalsModelPK().getLoccod());
+			billingTransactionsModelPK.setLoccod(loc);
 			billingTransactionsModelPK.setSbucod(AppConstant.SBU_CODE);
 			billingTransactionsModelPK.setTxndat(AppConstant.DATE);
 
@@ -281,13 +431,19 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 			billingTransactionsModel.setAdmfee(AppConstant.ZERO_TWO_DECIMAL);
 			billingTransactionsModel.setAdvcod(Integer.parseInt(inProposalsModel.getAdvcod()));
 			billingTransactionsModel.setAgncls(agentMastModel.getAgncls());
-			billingTransactionsModel.setAmount(
-					inProposalsModel.getTaxamt() + inProposalsModel.getAdmfee() + inProposalsModel.getTotprm());
+			if (previousInvoice != null) {
+				billingTransactionsModel.setAmount(
+						inProposalsModel.getTaxamt() + inProposalsModel.getAdmfee() + inProposalsModel.getTotprm());
+			} else {
+				billingTransactionsModel.setAmount(inProposalsModel.getTaxamt() + inProposalsModel.getAdmfee()
+						+ inProposalsModel.getTotprm() + inProposalsModel.getPolfee());
+			}
+
 			billingTransactionsModel.setBrncod(inProposalsModel.getBrncod());
 			billingTransactionsModel.setChqrel("N");
 			billingTransactionsModel.setComiss(AppConstant.ZERO_FOR_DECIMAL);
 			billingTransactionsModel.setComper(AppConstant.ZERO_FOR_DECIMAL);
-			// billingTransactionsModel.setCreaby(inTransactionsModel.getCreaby());
+			billingTransactionsModel.setCreaby(user);
 			billingTransactionsModel.setCreadt(AppConstant.DATE);
 			try {
 				billingTransactionsModel.setCscode(Integer.parseInt(inProposalsModel.getCscode()));
@@ -303,7 +459,12 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 			billingTransactionsModel.setOldprm(AppConstant.ZERO_FOR_DECIMAL);
 
 			billingTransactionsModel.setPaytrm(Integer.parseInt(inProposalsModel.getPaytrm()));
-			billingTransactionsModel.setPolfee(inProposalsModel.getPolfee());
+			if (previousInvoice != null) {
+				billingTransactionsModel.setPolfee(AppConstant.ZERO_TWO_DECIMAL);
+			} else {
+				billingTransactionsModel.setPolfee(inProposalsModel.getPolfee());
+			}
+			billingTransactionsModel.setPolnum(Integer.parseInt(inProposalsModel.getPolnum()));
 			billingTransactionsModel.setPprnum(Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum()));
 			billingTransactionsModel.setPrdcod(inProposalsModel.getPrdcod());
 			billingTransactionsModel.setPrpseq(inProposalsModel.getInProposalsModelPK().getPrpseq());
@@ -321,17 +482,31 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 				billingTransactionsModel.setUnlcod(agentMastModel.getBrnmanager());
 			}
 
-			try {
-				InBillingTransactionsModel model = billingTransactionsCustomDao
-						.getTxnYearDate(inProposalsModel.getInProposalsModelPK().getPprnum());
-				billingTransactionsModel.setTxnyer(model.getTxnyer() + 1);
-				billingTransactionsModel.setTxnmth(model.getTxnmth() + 1);
-			} catch (Exception e) {
+			if (previousInvoice != null) {
+				if (previousInvoice.getTxnmth() >= 12) {
+					billingTransactionsModel.setTxnyer(previousInvoice.getTxnyer() + 1);
+					billingTransactionsModel.setTxnmth(1);
+				} else {
+					billingTransactionsModel.setTxnyer(previousInvoice.getTxnyer());
+					billingTransactionsModel.setTxnmth(previousInvoice.getTxnmth() + 1);
+				}
 
-				System.out.println(e.getMessage());
+			} else {
+				try {
+					InBillingTransactionsModel model = billingTransactionsCustomDao
+							.getTxnYearDate(inProposalsModel.getInProposalsModelPK().getPprnum());
 
-				billingTransactionsModel.setTxnyer(Calendar.getInstance().get(Calendar.YEAR));
-				billingTransactionsModel.setTxnmth(Calendar.getInstance().get(Calendar.MONTH));
+					if (model.getTxnmth() >= 12) {
+						billingTransactionsModel.setTxnyer(model.getTxnyer() + 1);
+						billingTransactionsModel.setTxnmth(1);
+					} else {
+						billingTransactionsModel.setTxnyer(model.getTxnyer());
+						billingTransactionsModel.setTxnmth(model.getTxnmth() + 1);
+					}
+				} catch (Exception e) {
+					billingTransactionsModel.setTxnyer(Calendar.getInstance().get(Calendar.YEAR));
+					billingTransactionsModel.setTxnmth(Calendar.getInstance().get(Calendar.MONTH));
+				}
 			}
 			return billingTransactionsModel;
 

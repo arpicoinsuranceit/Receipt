@@ -3,6 +3,7 @@ package org.arpico.groupit.receipt.dao.impl;
 import java.util.List;
 
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
+import org.arpico.groupit.receipt.dao.rowmapper.InPolicyBasicRowMapper;
 import org.arpico.groupit.receipt.dao.rowmapper.InProposalBasicRowMapper;
 import org.arpico.groupit.receipt.dao.rowmapper.InProposalsRowMapper;
 import org.arpico.groupit.receipt.dao.rowmapper.ProposalL3RowMapper;
@@ -83,8 +84,8 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 
 	@Override
 	public InProposalBasicsModel geInPolicyBasics(int polNo, int seqNo) throws Exception {
-		List<InProposalBasicsModel> basicsModels = jdbcTemplate.query("select advcod, ppdnam, prdcod, pprnum, ntitle, "
-				+ "prpseq, totprm from inproposals where polnum = '"+polNo+"' and prpseq = '"+seqNo+"' and sbucod = '450'", new InProposalBasicRowMapper());
+		List<InProposalBasicsModel> basicsModels = jdbcTemplate.query("select advcod, ppdnam, prdcod, polnum, ntitle, "
+				+ "prpseq, totprm from inproposals where polnum = '"+polNo+"' and prpseq = '"+seqNo+"' and sbucod = '450'", new InPolicyBasicRowMapper());
 		
 		if(!basicsModels.isEmpty()) {
 			return basicsModels.get(0);

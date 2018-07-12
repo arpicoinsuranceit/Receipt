@@ -24,7 +24,7 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 	
 	@Override
 	public List<InBillingTransactionsModel> getUnSetOffs(String pprnum) throws Exception {
-		List<InBillingTransactionsModel> billingTransactionsModels = jdbcTemplate.query("select * from inbillingtransactions  where sbucod = '450' and pprnum = '"+ pprnum +"' group by txnyer, txnmth having sum(amount) <> 0 order by creadt asc limit 1", new InBillingTransactionRowMapper());
+		List<InBillingTransactionsModel> billingTransactionsModels = jdbcTemplate.query("select * from inbillingtransactions  where sbucod = '450' and pprnum = '"+ pprnum +"' group by txnyer, txnmth having sum(amount) <> 0 order by creadt asc", new InBillingTransactionRowMapper());
 		return billingTransactionsModels;
 	}
 

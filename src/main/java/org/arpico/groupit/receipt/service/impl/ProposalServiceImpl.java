@@ -212,11 +212,18 @@ public class ProposalServiceImpl implements ProposalServce {
 
 						String[] numberGen = numberGenerator.generateNewId("", "", "POLCSQ", "");
 						if (numberGen[0].equals("Success")) {
+							
+							inProposalsModel.setPprsta("INAC");
+							inProposalsModel.setLockin(AppConstant.DATE);
+							
+							inProposalDao.save(inProposalsModel);
+							
 
 							InProposalsModel proposalsModelNew = getProposalPolicyStage(inProposalsModel, numberGen[1],
 									saveReceiptDto);
 
 							inProposalDao.save(proposalsModelNew);
+							
 
 							System.out.println("proposal save done");
 
@@ -371,8 +378,11 @@ public class ProposalServiceImpl implements ProposalServce {
 
 								inBillingTransactionDao.save(setoffList);
 							}
-
+							
+							
 							return new ResponseEntity<>("Success", HttpStatus.OK);
+							
+							
 
 						} else {
 							return new ResponseEntity<>("Error at generate Policy No",
@@ -587,6 +597,7 @@ public class ProposalServiceImpl implements ProposalServce {
 		proposalsModel.setCreaby(AppConstant.SYSTEM_CREATE);
 		proposalsModel.setCreadt(AppConstant.DATE);
 		proposalsModel.setPprsta(AppConstant.POLICY_STATUS_PLISU);
+		proposalsModel.setProsta(AppConstant.POLICY_STATUS_PLISU);
 
 		return proposalsModel;
 	}

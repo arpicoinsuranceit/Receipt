@@ -17,5 +17,6 @@ public interface PolicyReceiptService {
 
 	ResponseEntity<Object> savePolicyReceipt(SaveReceiptDto saveReceiptDto) throws Exception;
 	
-	InBillingTransactionsModel createInvoice(InProposalsModel inProposalsModel) throws Exception;
+	InBillingTransactionsModel createInvoice(InProposalsModel inProposalsModel,
+			InBillingTransactionsModel previousInvoice, String user, String loc) throws Exception;
 }
