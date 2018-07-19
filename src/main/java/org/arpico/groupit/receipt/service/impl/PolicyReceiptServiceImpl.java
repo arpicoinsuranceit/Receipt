@@ -209,7 +209,6 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 			return new ResponseEntity<>("Success", HttpStatus.OK);
 		}
 		return null;
-
 	}
 
 	private List<InBillingTransactionsModel> getSetOff(InBillingTransactionsModel invoice, ReFundModel deposit,

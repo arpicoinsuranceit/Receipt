@@ -18,7 +18,7 @@ public class InTransactionCustomDaoImpl implements InTransactionCustomDao{
 	@Override
 	public List<LastReceiptSummeryModel> getLastReceipts(String user) throws Exception {
 		return (List<LastReceiptSummeryModel>) jdbcTemplate.query("select doccod, docnum, creadt, pprnum, polnum, totprm, chqrel, paymod from intransactions where creaby "
-				+ " = '"+user+"'  order by creadt desc limit 8", new LastReceiptRowMapper());
+				+ " = '"+user+"'  order by docnum desc limit 8", new LastReceiptRowMapper());
 	}
 
 	@Override
