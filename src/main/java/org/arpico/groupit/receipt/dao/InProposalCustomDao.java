@@ -3,6 +3,7 @@ package org.arpico.groupit.receipt.dao;
 import java.util.List;
 
 import org.arpico.groupit.receipt.dto.ProposalL3Dto;
+import org.arpico.groupit.receipt.model.InPropPreviousPolModel;
 import org.arpico.groupit.receipt.model.InProposalBasicsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;
@@ -22,5 +23,7 @@ public interface InProposalCustomDao {
 	List<ProposalL3Dto> checkL3(Integer propId) throws Exception;
 
 	InProposalBasicsModel geInPolicyBasics(int polNo, int seqNo) throws Exception;
+	
+	List<InPropPreviousPolModel> getPreviousPolicies(String sbu,String nic)throws Exception;
 
 }
