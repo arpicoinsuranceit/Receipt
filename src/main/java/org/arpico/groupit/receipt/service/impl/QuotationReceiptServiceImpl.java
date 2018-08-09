@@ -23,7 +23,6 @@ import org.arpico.groupit.receipt.dao.InProposalDao;
 import org.arpico.groupit.receipt.dao.InTransactionsDao;
 import org.arpico.groupit.receipt.dao.RmsUserDao;
 import org.arpico.groupit.receipt.dto.ChildrenDto;
-import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
 import org.arpico.groupit.receipt.dto.MedicalRequirementsDto;
 import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
 import org.arpico.groupit.receipt.dto.QuoBenfDto;
@@ -132,22 +131,24 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 				if (numberGen[0].equals("Success")) {
 
-					ViewQuotationDto resp = quotationClient.getQuotation(saveReceiptDto.getQuotationDetailId(),
+					ViewQuotationDto resp = quotationClient.getQuotation(saveReceiptDto.getSeqNo(),
 							saveReceiptDto.getQuotationId());
 
 					System.out.println(resp);
 
 					List<MedicalRequirementsDto> medicalRequirementsDtos = quotationClient
-							.getMediReq(saveReceiptDto.getQuotationDetailId());
+							.getMediReq(saveReceiptDto.getSeqNo(), saveReceiptDto.getQuotationId());
 
-					List<SheduleDto> sheduleDtos = quotationClient.getShedule(saveReceiptDto.getQuotationDetailId());
+					List<SheduleDto> sheduleDtos = quotationClient.getShedule(saveReceiptDto.getSeqNo(),
+							saveReceiptDto.getQuotationId());
 
 					List<SurrenderValsDto> surrenderValsDtos = quotationClient
-							.getSurrenderVals(saveReceiptDto.getQuotationDetailId());
+							.getSurrenderVals(saveReceiptDto.getSeqNo(),
+									saveReceiptDto.getQuotationId());
 
 					// System.out.println(sheduleDtos.size());
 					// Primary Keys
-					InProposalsModelPK inProposalsModelPK = getProposalModelPK(saveReceiptDto);
+					InProposalsModelPK inProposalsModelPK = getProposalModelPK(saveReceiptDto, locCode);
 					inProposalsModelPK.setPprnum(numberGen[1]);
 
 					System.out.println(inProposalsModelPK.getPprnum());
@@ -156,6 +157,8 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 					// Set Primary Keys to model
 					inProposalsModel.setInProposalsModelPK(inProposalsModelPK);
+					inProposalsModel.setCreaby(agentCode);
+					inProposalsModel.setCurusr(agentCode);
 
 					List<InPropLoadingModel> inPropLoadingModels = new ArrayList<>();
 
@@ -241,6 +244,13 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 										saveReceiptDto.getQuotationId(), surVal, inProposalsModelPK.getPprnum(),
 										inProposalsModelPK.getPrpseq(), saveReceiptDto.getBranchCode())));
 					}
+					
+					/////////// When Ho //////////
+					
+					inProposalsModel.setPprsta("L1");
+					inProposalsModel.setProsta("L1");
+					
+					
 
 					inProposalDao.save(inProposalsModel);
 					inPropAddBenefictDao.save(addBenefitModels);
@@ -263,7 +273,8 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					inBillingTransactionDao.save(inBillingTransactionsModel);
 					inPropSurrenderValsDao.save(inPropSurrenderValsModels);
 					try {
-						quotationClient.updateStatus(saveReceiptDto.getQuotationDetailId());
+						quotationClient.updateStatus(saveReceiptDto.getSeqNo(),
+								saveReceiptDto.getQuotationId());
 					} catch (Exception e) {
 						return "Receipt Save Successfully, Error at change Quotation Status";
 					}
@@ -364,12 +375,12 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					break;
 				}
 
-				List<InOcuLoadDetModel> detModels = occuLoadDatdao.inOccuLoadDatDaosByOccupation(ocuCode);
+				List<InOcuLoadDetModel> detModels = occuLoadDatdao.inOccuLoadDatDaosByOccupation(ocuCode, benfDto.getRiderCode());
 				if (detModels.size() > 0) {
 					InOcuLoadDetModel detModel = detModels.get(0);
 					for (InPropLoadingModel propLoadingModel : inPropLoadingModels) {
 						if (propLoadingModel.getInPropLoadingPK().getRidcod().equals(benfDto.getRiderCode())) {
-							propLoadingModel.setOculod(Double.parseDouble(detModel.getOcucod()));
+							propLoadingModel.setOculod(Double.parseDouble(detModel.getLodcls()));
 							propLoadingModel.setInstyp(insType);
 
 						}
@@ -524,10 +535,12 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		inProposalsModel.setAdmfee(resp.get_plan().getAdminFee());
 		inProposalsModel.setTaxamt(resp.get_plan().getTax());
 		inProposalsModel.setGrsprm(resp.get_plan().getGrsprm());
-		inProposalsModel.setInvpos(resp.get_plan().getInvPos());
-		inProposalsModel.setLifpos(resp.get_plan().getLifePos());
+		inProposalsModel.setInvpos(resp.get_plan().getInvPos() == null ? 0 : resp.get_plan().getInvPos());
+		inProposalsModel.setLifpos(resp.get_plan().getLifePos() == null ? 0 : resp.get_plan().getLifePos());
 		inProposalsModel.setSumrkm(resp.get_plan().getSumatRiskMain());
 		inProposalsModel.setPprsta("L0");
+		inProposalsModel.setProsta("L0");
+		
 		inProposalsModel
 				.setSumrks(resp.get_plan().getSumatRiskSpouse() != null ? resp.get_plan().getSumatRiskSpouse() : 0.0);
 
@@ -566,6 +579,8 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 			inProposalsModel.setSpodob(new SimpleDateFormat("dd-MM-yyyy").parse(resp.get_spouse().get_sDob()));
 			inProposalsModel.setSagnxt(Integer.parseInt(resp.get_spouse().get_sAge()));
 			inProposalsModel.setSpoocu(resp.get_spouse().getOccuCode());
+		}else {
+			inProposalsModel.setSpoocu(Integer.toString(0));
 		}
 
 		if (resp.getProductCode().equalsIgnoreCase("ARTM")) {
@@ -593,10 +608,10 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		return inProposalsModel;
 	}
 
-	private InProposalsModelPK getProposalModelPK(SaveReceiptDto saveReceiptDto) {
+	private InProposalsModelPK getProposalModelPK(SaveReceiptDto saveReceiptDto, String loccode) {
 		InProposalsModelPK inProposalsModelPK = new InProposalsModelPK();
 
-		inProposalsModelPK.setLoccod(saveReceiptDto.getBranchCode());
+		inProposalsModelPK.setLoccod(loccode);
 		inProposalsModelPK.setPrpseq(saveReceiptDto.getQuotationDetailId());
 		inProposalsModelPK.setSbucod(AppConstant.SBU_CODE);
 		inProposalsModelPK.setDoccod(AppConstant.DOC_CODE_QUOT);

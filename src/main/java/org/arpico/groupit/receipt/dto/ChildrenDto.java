@@ -88,5 +88,11 @@ public class ChildrenDto {
 	public void set_cHrbfc(boolean _cHrbfc) {
 		this._cHrbfc = _cHrbfc;
 	}
+	@Override
+	public String toString() {
+		return "ChildrenDto [_cActive=" + _cActive + ", _cName=" + _cName + ", _cDob=" + _cDob + ", _cAge=" + _cAge
+				+ ", _cNic=" + _cNic + ", _cTitle=" + _cTitle + ", _cSuhrbc=" + _cSuhrbc + ", _cCibc=" + _cCibc
+				+ ", _cHbc=" + _cHbc + ", _cHrbic=" + _cHrbic + ", _cHrbfc=" + _cHrbfc + "]";
+	}
 	
 }

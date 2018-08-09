@@ -702,7 +702,7 @@ public class ProposalServiceImpl implements ProposalServce {
 					}
 				} catch (Exception e) {
 					billingTransactionsModel.setTxnyer(Calendar.getInstance().get(Calendar.YEAR));
-					billingTransactionsModel.setTxnmth(Calendar.getInstance().get(Calendar.MONTH));
+					billingTransactionsModel.setTxnmth(Calendar.getInstance().get(Calendar.MONTH)+1);
 				}
 			}
 			return billingTransactionsModel;

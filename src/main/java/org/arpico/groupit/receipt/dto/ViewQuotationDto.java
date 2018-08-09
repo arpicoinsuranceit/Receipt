@@ -88,6 +88,14 @@ public class ViewQuotationDto {
 	public void setQuotationId(Integer quotationId) {
 		this.quotationId = quotationId;
 	}
+	@Override
+	public String toString() {
+		return "ViewQuotationDto [productCode=" + productCode + ", productName=" + productName + ", quoDetailId="
+				+ quoDetailId + ", quotationId=" + quotationId + ", quotationDate=" + quotationDate + ", _mainlife="
+				+ _mainlife + ", _spouse=" + _spouse + ", _children=" + _children + ", _plan=" + _plan
+				+ ", _mainLifeBenefits=" + _mainLifeBenefits + ", _spouseBenefits=" + _spouseBenefits
+				+ ", _childrenBenefits=" + _childrenBenefits + "]";
+	}
 	
 	
 	

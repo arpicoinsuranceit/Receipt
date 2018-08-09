@@ -47,15 +47,17 @@ public class CommonMethodsUtility {
 
 			InTransactionsModel inTransactionsModel = new InTransactionsModel();
 
+			inTransactionsModel.setQuonum(inProposalsModel.getQuonum());
 			inTransactionsModel.setAdvcod(saveReceiptDto.getAgentCode());
 			inTransactionsModel.setAmtwrd(saveReceiptDto.getPayAmountWord());
 			inTransactionsModel.setBancod(saveReceiptDto.getBankCode());
 			inTransactionsModel.setBildat(AppConstant.DATE);
-			inTransactionsModel.setBilpik("N");
+			inTransactionsModel.setBilpik("Y");
 			inTransactionsModel.setChqrel("N");
 			inTransactionsModel.setCompad("N");
-			inTransactionsModel.setCreaby(agentCode);
+			inTransactionsModel.setCreaby(userCode);
 			inTransactionsModel.setCreadt(AppConstant.DATE);
+			inTransactionsModel.setSeqnum(inProposalsModel.getInProposalsModelPK().getPrpseq());
 
 			try {
 				inTransactionsModel.setCscode(inProposalsModel.getCscode());
@@ -71,11 +73,9 @@ public class CommonMethodsUtility {
 			inTransactionsModel.setPpdad2(inProposalsModel.getPpdad2());
 			inTransactionsModel.setPpdad3(inProposalsModel.getPpdad3());
 			inTransactionsModel.setPprnum(inProposalsModel.getInProposalsModelPK().getPprnum());
-			inTransactionsModel.setQuonum(saveReceiptDto.getQuotationId());
 			inTransactionsModel.setPolnum(saveReceiptDto.getPolId());
 			inTransactionsModel.setRctsta("VALID");
 			inTransactionsModel.setRemark(saveReceiptDto.getRemark());
-			inTransactionsModel.setSeqnum(saveReceiptDto.getQuotationDetailId());
 			inTransactionsModel.setTotprm(saveReceiptDto.getAmount());
 			inTransactionsModel.setTxndat(AppConstant.DATE);
 
@@ -121,7 +121,7 @@ public class CommonMethodsUtility {
 			billingTransactionsModel.setChqrel("N");
 			billingTransactionsModel.setComiss(AppConstant.ZERO_FOR_DECIMAL);
 			billingTransactionsModel.setComper(AppConstant.ZERO_FOR_DECIMAL);
-			billingTransactionsModel.setCreaby(inTransactionsModel.getCreaby());
+			billingTransactionsModel.setCreaby(inProposalsModel.getCreaby());
 			billingTransactionsModel.setCreadt(AppConstant.DATE);
 			billingTransactionsModel.setBrncod(inProposalsModel.getBrncod());
 			billingTransactionsModel.setPrpseq(inProposalsModel.getInProposalsModelPK().getPrpseq());
@@ -157,7 +157,7 @@ public class CommonMethodsUtility {
 				billingTransactionsModel.setUnlcod(agentMastModel.getBrnmanager());
 			}
 			billingTransactionsModel.setTxnyer(Calendar.getInstance().get(Calendar.YEAR));
-			billingTransactionsModel.setTxnmth(Calendar.getInstance().get(Calendar.MONTH));
+			billingTransactionsModel.setTxnmth(Calendar.getInstance().get(Calendar.MONTH)+1);
 
 			return billingTransactionsModel;
 		}

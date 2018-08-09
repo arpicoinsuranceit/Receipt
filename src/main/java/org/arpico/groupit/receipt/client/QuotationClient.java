@@ -16,28 +16,32 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class QuotationClient {
 
-	public ViewQuotationDto getQuotation(Integer quId, Integer qId) {
+	public ViewQuotationDto getQuotation(Integer seqNo, Integer qId) {
 
 		MultiValueMap<String, Integer> map = new LinkedMultiValueMap<String, Integer>();
-		map.add("qdId", quId);
+		map.add("seqNo", seqNo);
 		map.add("qId", qId);
 
 		try {
 			RestTemplate restTemplate = new RestTemplate();
 			ViewQuotationDto result = restTemplate.postForObject(AppConstant.URI_GET_QUO_DETAILS, map,
 					ViewQuotationDto.class);
-			System.out.println(result.get_mainlife().get_mDob());
+			System.out.println(result.toString());
+			System.out.println(result.get_mainlife().toString());
+			System.out.println(result.get_spouse().toString());
+			System.out.println(result.get_plan().toString());
 			return result;
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public ViewQuotationDto getHealthBenef(Integer quId) {
+	public ViewQuotationDto getHealthBenef(Integer seqNo, Integer qId) {
 
 		MultiValueMap<String, Integer> map = new LinkedMultiValueMap<String, Integer>();
-		map.add("qdId", quId);
+		map.add("seqNo", seqNo);
+		map.add("qId", qId);
 
 		try {
 			RestTemplate restTemplate = new RestTemplate();
@@ -50,10 +54,11 @@ public class QuotationClient {
 		return null;
 	}
 
-	public List<SheduleDto> getShedule(Integer quId) {
+	public List<SheduleDto> getShedule(Integer seqNo, Integer qId) {
 
 		MultiValueMap<String, Integer> map = new LinkedMultiValueMap<String, Integer>();
-		map.add("qdId", quId);
+		map.add("seqNo", seqNo);
+		map.add("qId", qId);
 
 		try {
 			RestTemplate restTemplate = new RestTemplate();
@@ -71,10 +76,11 @@ public class QuotationClient {
 		return null;
 	}
 
-	public List<MedicalRequirementsDto> getMediReq(Integer quId) {
+	public List<MedicalRequirementsDto> getMediReq(Integer seqNo, Integer qId) {
 
 		MultiValueMap<String, Integer> map = new LinkedMultiValueMap<String, Integer>();
-		map.add("qdId", quId);
+		map.add("seqNo", seqNo);
+		map.add("qId", qId);
 
 		try {
 			RestTemplate restTemplate = new RestTemplate();
@@ -93,10 +99,11 @@ public class QuotationClient {
 		return null;
 	}
 	
-	public List<SurrenderValsDto> getSurrenderVals(Integer quId) {
+	public List<SurrenderValsDto> getSurrenderVals(Integer seqNo, Integer qId) {
 
 		MultiValueMap<String, Integer> map = new LinkedMultiValueMap<String, Integer>();
-		map.add("qdId", quId);
+		map.add("seqNo", seqNo);
+		map.add("qId", qId);
 
 		try {
 			RestTemplate restTemplate = new RestTemplate();
@@ -115,10 +122,10 @@ public class QuotationClient {
 		return null;
 	}
 
-	public boolean isAvailableQuotation(Integer qdId, Integer qId) throws Exception{
+	public boolean isAvailableQuotation(Integer seqNo, Integer qId) throws Exception{
 
 		MultiValueMap<String, Integer> map = new LinkedMultiValueMap<String, Integer>();
-		map.add("qdId", qdId);
+		map.add("seqNo", seqNo);
 		map.add("qId", qId);
 
 		RestTemplate restTemplate = new RestTemplate();
@@ -132,10 +139,11 @@ public class QuotationClient {
 
 	}
 	
-	public String updateStatus(Integer quId) {
+	public String updateStatus(Integer seqNo, Integer qId) {
 
 		MultiValueMap<String, Integer> map = new LinkedMultiValueMap<String, Integer>();
-		map.add("qdId", quId);
+		map.add("seqNo", seqNo);
+		map.add("qId", qId);
 
 		try {
 			RestTemplate restTemplate = new RestTemplate();

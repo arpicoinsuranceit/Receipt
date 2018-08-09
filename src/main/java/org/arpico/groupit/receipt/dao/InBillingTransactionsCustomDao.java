@@ -15,4 +15,6 @@ public interface InBillingTransactionsCustomDao{
 	
 	Double paybleAmountThisMonth(Integer pprNo) throws Exception;
 
+	InBillingTransactionsModel getLasiInvoice(String pprnum) throws Exception;
+
 }

@@ -164,4 +164,14 @@ public class PlanDto {
 	public void setSumatRiskSpouse(Double sumatRiskSpouse) {
 		this.sumatRiskSpouse = sumatRiskSpouse;
 	}
+	@Override
+	public String toString() {
+		return "PlanDto [_term=" + _term + ", _frequance=" + _frequance + ", _bsa=" + _bsa + ", contribution="
+				+ contribution + ", _interestRate=" + _interestRate + ", _payingterm=" + _payingterm + ", _msfb="
+				+ _msfb + ", _bsaTotal=" + _bsaTotal + ", _nomineeName=" + _nomineeName + ", _nomineedob=" + _nomineedob
+				+ ", _nomineeAge=" + _nomineeAge + ", _nomoneeRelation=" + _nomoneeRelation + ", pensionPaingTerm="
+				+ pensionPaingTerm + ", retAge=" + retAge + ", age=" + age + ", policyFee=" + policyFee + ", adminFee="
+				+ adminFee + ", tax=" + tax + ", grsprm=" + grsprm + ", invPos=" + invPos + ", lifePos=" + lifePos
+				+ ", sumatRiskMain=" + sumatRiskMain + ", sumatRiskSpouse=" + sumatRiskSpouse + "]";
+	}
 }

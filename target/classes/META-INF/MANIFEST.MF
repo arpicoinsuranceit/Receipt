@@ -3,7 +3,7 @@ Implementation-Title: ReceiptModule
 Implementation-Version: 0.0.1-SNAPSHOT
 Built-By: Dell
 Implementation-Vendor-Id: com.arpico.groupit
-Build-Jdk: 1.8.0_171
+Build-Jdk: 1.8.0_181
 Implementation-URL: http://projects.spring.io/spring-boot/ReceiptModul
  e/
 Created-By: Maven Integration for Eclipse

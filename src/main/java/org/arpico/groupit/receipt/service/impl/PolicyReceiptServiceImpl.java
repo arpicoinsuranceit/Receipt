@@ -1,11 +1,17 @@
 package org.arpico.groupit.receipt.service.impl;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.arpico.groupit.receipt.dao.CommisDaoCustom;
 import org.arpico.groupit.receipt.dao.InAgentMastDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsDao;
@@ -17,6 +23,7 @@ import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
 import org.arpico.groupit.receipt.dto.ProposalNoSeqNoDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.model.AgentMastModel;
+import org.arpico.groupit.receipt.model.CommisModel;
 import org.arpico.groupit.receipt.model.InBillingTransactionsModel;
 import org.arpico.groupit.receipt.model.InProposalBasicsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
@@ -66,8 +73,15 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 	@Autowired
 	private RmsUserDao rmsUserDao;
 
+	@Autowired
+	private CommisDaoCustom commisDaoCustom;
+
 	@Override
 	public List<ProposalNoSeqNoDto> getPolicyNoSeqNoDtoList(String val) throws Exception {
+		
+		System.out.println("called");
+		System.out.println(val);
+		
 		List<ProposalNoSeqNoDto> proposalNoSeqNoDtos = new ArrayList<ProposalNoSeqNoDto>();
 
 		List<ProposalNoSeqNoModel> list = inProposalCustomDao.getPolicyNoSeqNoModelList(val);
@@ -76,6 +90,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 			proposalNoSeqNoDtos.add(getPolicyNoSeqNoDto(proposalNoSeqNoModel));
 
 		}
+		System.out.println(proposalNoSeqNoDtos.size());
 
 		return proposalNoSeqNoDtos;
 	}
@@ -119,11 +134,10 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		InProposalsModel inProposalsModel = inProposalCustomDao.getProposalBuPolicy(saveReceiptDto.getPolId(),
 				saveReceiptDto.getPolSeq());
 
-		System.out.println((inProposalsModel == null) + "null");
-
 		String agentCode = new JwtDecoder().generate(saveReceiptDto.getToken());
+		
+		System.out.println("agent code : ///" + agentCode);
 
-		System.out.println(agentCode);
 		String locCode = rmsUserDao.getLocation(agentCode);
 
 		if (locCode != null) {
@@ -133,26 +147,50 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 			inTransactionsModel.getInTransactionsModelPK().setDoccod("RCPL");
 
+			inTransactionDao.save(inTransactionsModel);
+
+			System.out.println("transaction model save");
+
 			InBillingTransactionsModel deposit = commonethodUtility.getInBillingTransactionModel(inProposalsModel,
 					saveReceiptDto, inTransactionsModel);
-
+			deposit.setCreaby(agentCode);
+			deposit.setPolnum(inTransactionsModel.getPolnum());
 			deposit.getBillingTransactionsModelPK().setDoccod("RCPL");
 			deposit.setTxntyp("POLDEP");
+
+			inBillingTransactionDao.save(deposit);
+
+			System.out.println("deposit model save");
+			System.out.println(deposit.toString());
 
 			List<InBillingTransactionsModel> unSetOffList = billingTransactionsCustomDao
 					.getUnSetOffs(inProposalsModel.getInProposalsModelPK().getPprnum());
 
-			InBillingTransactionsModel invoice = null;
+			System.out.println("ussetoff list size : " + unSetOffList.size());
+			unSetOffList.forEach(System.out::println);
+			System.out.println("ussetoff list //////////////////////////////");
+
+			InBillingTransactionsModel previousInvoice = null;
+			try {
+				previousInvoice = billingTransactionsCustomDao.getLasiInvoice(inProposalsModel.getInProposalsModelPK().getPprnum());
+			}catch (Exception e) {
+				System.out.println(e.getMessage());
+				System.out.println("No previuos Invoices");
+			}
 			
-			System.out.println("unsetoff list " + unSetOffList.size());
+			InBillingTransactionsModel invoice = null;
 
 			if (unSetOffList != null && unSetOffList.size() > 0) {
 				invoice = unSetOffList.get(0);
 			} else {
-				invoice = createInvoice(inProposalsModel, null, agentCode, locCode);
-				inBillingTransactionDao.save(invoice);
+				System.out.println("new invoice");
+				invoice = createInvoice(inProposalsModel, previousInvoice, agentCode, locCode);
+				
+
 			}
-			
+
+			System.out.println("halfway");
+
 			System.out.println(invoice == null);
 			System.out.println(invoice.toString());
 
@@ -161,7 +199,13 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 			List<ReFundModel> fundModels = billingTransactionsCustomDao
 					.getRefundList(inProposalsModel.getInProposalsModelPK().getPprnum());
 
+			System.out.println("/n ==fundModels==");
+
+			fundModels.forEach(System.out::println);
+
 			Double amount = saveReceiptDto.getAmount();
+
+			System.out.println("Amount : " + amount);
 
 			if (fundModels != null && fundModels.size() > 0) {
 				for (ReFundModel reFundModel : fundModels) {
@@ -169,29 +213,30 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 				}
 			}
 
+			System.out.println("Amount after refund: " + amount);
+
 			System.out.println(invoice.getAmount() + "  invoice amount");
 
-			
-			
 			if (invoice.getAmount() <= amount) {
+				
+				System.out.println("amount if");
+				
 				ReFundModel fundModel = new ReFundModel();
 				fundModel.setDoccod(deposit.getBillingTransactionsModelPK().getDoccod());
 				fundModel.setDocnum(deposit.getBillingTransactionsModelPK().getDocnum());
 				fundModel.setPprnum(Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum()));
 				fundModel.setRefamount(deposit.getDepost() * -1);
 				fundModel.setLinnum(deposit.getBillingTransactionsModelPK().getLinnum());
-
+				fundModel.setPaymode(deposit.getPaymod());
 				for (InBillingTransactionsModel reFundModel : unSetOffList) {
-					System.out.println(reFundModel.getTxnyer() + " " +  reFundModel.getTxnmth() + " "+ reFundModel.getAmount() );
-					
+					System.out.println(
+							reFundModel.getTxnyer() + " " + reFundModel.getTxnmth() + " " + reFundModel.getAmount());
+
 				}
-				
+
 				setoffList = getSetOff(invoice, fundModel, setoffList, inProposalsModel, fundModels, agentCode, locCode,
 						unSetOffList);
 			}
-
-			inTransactionDao.save(inTransactionsModel);
-			inBillingTransactionDao.save(deposit);
 
 			if (setoffList != null && setoffList.size() > 0) {
 				System.out.println(setoffList.size() + "  setoff list");
@@ -216,10 +261,10 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 			List<ReFundModel> fundModels, String user, String loc, List<InBillingTransactionsModel> unsetoffList)
 			throws Exception {
 		
-		
+		System.out.println("agent code setoff : ///" + user);
 
 		Double invoiceAmount = invoice.getAmount();
-		
+
 		System.out.println(invoice.getTxnyer());
 		System.out.println(invoice.getTxnmth());
 
@@ -239,7 +284,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 				System.out.println("invoiceAmount 2 : " + invoiceAmount);
 				if (invoiceAmount > 0) {
 					System.out.println("invoiceAmount max : " + invoiceAmount);
-					setoffList.add(getSetoff(reFundModel, invoice, inProposalsModel, user, loc));
+					setoffList.add(getSetoff(reFundModel, invoice, inProposalsModel, user, loc, reFundModel.getPaymode()));
 					fundModels.remove(reFundModel);
 
 					System.out.println("FundModel Size : " + fundModels.size());
@@ -255,15 +300,27 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 					tempReFundModel.setRefamount(reFundModel.getRefamount() + invoiceAmount);
 					tempReFundModel.setLinnum(reFundModel.getLinnum() + 1);
 
-					setoffList.add(getSetoff(tempReFundModel, invoice, inProposalsModel, user, loc));
+					setoffList.add(getSetoff(tempReFundModel, invoice, inProposalsModel, user, loc, reFundModel.getPaymode()));
 					reFundModel.setRefamount(reFundModel.getRefamount() - tempReFundModel.getRefamount());
 
 					InBillingTransactionsModel newInvoice = null;
-					Integer txnYer = invoice.getTxnyer()+1;
-					Integer txnMth = invoice.getTxnmth()+1;
+					
+					Integer txnYer = invoice.getTxnyer();
+					Integer txnMth = invoice.getTxnmth() + 1;
+					
+					if(invoice.getTxnmth() == 12) {
+						 txnYer = invoice.getTxnyer() + 1;
+						 txnMth = 1;
+					}
+					
+					
 
 					for (InBillingTransactionsModel e : unsetoffList) {
-						if (e.getTxnyer() == txnYer && e.getTxnmth() == txnMth) {
+						
+						System.out.println("////////////////////////////// Billing Unsetoff //////////////////");
+						System.out.println("txn year : " + txnYer + ", txnmth : " + txnMth + "e yer : " + e.getTxnyer() + " , e mth : " + e.getTxnmth());
+						System.out.println("////////////////////////// END Billing Unsetoff //////////////////");
+						if (e.getTxnyer().equals(txnYer) && e.getTxnmth().equals(txnMth)) {
 							newInvoice = e;
 						}
 					}
@@ -297,20 +354,39 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 			depAmount = depAmount - invoiceAmount;
 
 			System.out.println("depAmount 2 : " + depAmount);
+			
+			System.out.println(invoice.toString());
 
-			setoffList.add(getSetoff(deposit, invoice, inProposalsModel, user, loc));
+			setoffList.add(getSetoff(deposit, invoice, inProposalsModel, user, loc, deposit.getPaymode()));
 
 			InBillingTransactionsModel newInvoice = null;
-			Integer txnYer = invoice.getTxnyer()+1;
-			Integer txnMth = invoice.getTxnmth()+1;
+			
+			Integer txnYer = invoice.getTxnyer();
+			Integer txnMth = invoice.getTxnmth() + 1;
+			
+			if(invoice.getTxnmth() == 12) {
+				 txnYer = invoice.getTxnyer() + 1;
+				 txnMth = 1;
+			}
 
 			for (InBillingTransactionsModel e : unsetoffList) {
-				if (e.getTxnyer() == txnYer && e.getTxnmth() == txnMth) {
+				System.out.println("ELSE");
+				
+				System.out.println("////////////////////////////// Billing Unsetoff //////////////////");
+				System.out.println("txn year : " + txnYer + ", txnmth : " + txnMth + "e yer : " + e.getTxnyer() + " , e mth : " + e.getTxnmth());
+				System.out.println(e.getTxnyer().equals(txnYer) && e.getTxnmth().equals(txnMth));
+				System.out.println("////////////////////////// END Billing Unsetoff //////////////////");
+				
+				if (e.getTxnyer().equals(txnYer) && e.getTxnmth().equals(txnMth)) {
+					
+					System.out.println("set old invoice");
+					
 					newInvoice = e;
 				}
 			}
 
 			if (newInvoice == null) {
+				System.out.println("set new invoice");
 				newInvoice = createInvoice(inProposalsModel, invoice, user, loc);
 			}
 
@@ -344,7 +420,44 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 	}
 
 	private InBillingTransactionsModel getSetoff(ReFundModel reFundModel, InBillingTransactionsModel invoice,
-			InProposalsModel inProposalsModel, String user, String loc) throws Exception {
+			InProposalsModel inProposalsModel, String user, String loc, String paymode) throws Exception {
+
+		
+		
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		String dateString = null;
+		if(invoice.getTxnmth()< 10) {
+			dateString =  invoice.getTxnyer() + "-0" + invoice.getTxnmth() + "-01";
+		}else {
+			dateString =  invoice.getTxnyer() + "-"+invoice.getTxnmth() + "-01";
+		}
+		
+		String polDate = simpleDateFormat.format(inProposalsModel.getIcpdat());
+		
+
+		LocalDate policyDate = LocalDate.parse(polDate);
+		LocalDate currentDate = LocalDate.parse(dateString);
+		int diffInYears = (int) ChronoUnit.YEARS.between(policyDate, currentDate) +1;
+
+		System.out.println(policyDate);
+		System.out.println(currentDate);
+		
+		System.out.println(
+				"/////////////////////////////////////////////////////// setoff /////////////////////////////");
+		System.out.println(inProposalsModel.getIcpdat());
+		CommisModel commisModel = null;
+		if(inProposalsModel.getPrdcod().equals("ARTM")) {
+			commisModel = commisDaoCustom.getCommis(diffInYears, inProposalsModel.getPrdcod(),
+					inProposalsModel.getToptrm(), inProposalsModel.getIcpdat());
+		}else {
+			commisModel = commisDaoCustom.getCommis(diffInYears, inProposalsModel.getPrdcod(),
+					inProposalsModel.getToptrm(), inProposalsModel.getIcpdat());
+		}
+
+		System.out.println(commisModel);
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(inProposalsModel.getIcpdat());
 
 		InBillingTransactionsModelPK modelPK = new InBillingTransactionsModelPK();
 		modelPK.setDoccod(reFundModel.getDoccod());
@@ -367,6 +480,10 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		model.setComper(AppConstant.ZERO_FOR_DECIMAL);
 		model.setCreaby(user);
 		model.setCreadt(AppConstant.DATE);
+		model.setIcpmon(policyDate.getMonthValue());
+		model.setIcpyer(policyDate.getYear());
+		model.setPaymod(paymode);
+
 		try {
 			model.setCscode(Integer.parseInt(inProposalsModel.getCscode()));
 		} catch (Exception e) {
@@ -379,9 +496,13 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		model.setInsnum(0);
 		model.setLockin(AppConstant.DATE);
 		model.setOldprm(AppConstant.ZERO_FOR_DECIMAL);
+		model.setOtham1(AppConstant.ZERO_FOR_DECIMAL);
+		model.setOtham2(AppConstant.ZERO_FOR_DECIMAL);
+		model.setOtham3(AppConstant.ZERO_FOR_DECIMAL);
+		model.setOtham4(AppConstant.ZERO_FOR_DECIMAL);
 
 		model.setPaytrm(Integer.parseInt(inProposalsModel.getPaytrm()));
-		
+
 		model.setPolfee(invoice.getPolfee());
 		model.setPolnum(Integer.parseInt(inProposalsModel.getPolnum()));
 		model.setPprnum(Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum()));
@@ -395,9 +516,23 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		model.setToptrm(inProposalsModel.getToptrm());
 		model.setTxntyp("POLDEP");
 		model.setUnlcod(invoice.getUnlcod());
+		model.setGrsprm(inProposalsModel.getGrsprm());
+
+		if (inProposalsModel.getSinprm() == "1") {
+			model.setComper(commisModel.getComsin());
+			BigDecimal commis = new BigDecimal(inProposalsModel.getGrsprm())
+					.multiply(new BigDecimal(commisModel.getComsin()).divide(new BigDecimal(100)));
+			model.setComiss(commis.setScale(2, RoundingMode.HALF_UP).doubleValue());
+		} else {
+			model.setComper(commisModel.getComper());
+			BigDecimal commis = new BigDecimal(inProposalsModel.getGrsprm())
+					.multiply(new BigDecimal(commisModel.getComper()).divide(new BigDecimal(100)));
+			model.setComiss(commis.setScale(2, RoundingMode.HALF_UP).doubleValue());
+		}
 
 		model.setTxnyer(invoice.getTxnyer());
 		model.setTxnmth(invoice.getTxnmth());
+		model.setPolyer(diffInYears);
 
 		return model;
 
@@ -431,8 +566,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 			billingTransactionsModel.setAdvcod(Integer.parseInt(inProposalsModel.getAdvcod()));
 			billingTransactionsModel.setAgncls(agentMastModel.getAgncls());
 			if (previousInvoice != null) {
-				billingTransactionsModel.setAmount(
-						inProposalsModel.getTaxamt() + inProposalsModel.getAdmfee() + inProposalsModel.getTotprm());
+				billingTransactionsModel.setAmount(inProposalsModel.getTotprm());
 			} else {
 				billingTransactionsModel.setAmount(inProposalsModel.getTaxamt() + inProposalsModel.getAdmfee()
 						+ inProposalsModel.getTotprm() + inProposalsModel.getPolfee());
@@ -504,9 +638,12 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 					}
 				} catch (Exception e) {
 					billingTransactionsModel.setTxnyer(Calendar.getInstance().get(Calendar.YEAR));
-					billingTransactionsModel.setTxnmth(Calendar.getInstance().get(Calendar.MONTH));
+					billingTransactionsModel.setTxnmth(Calendar.getInstance().get(Calendar.MONTH) + 1);
 				}
 			}
+			
+			inBillingTransactionDao.save(billingTransactionsModel);
+			
 			return billingTransactionsModel;
 
 		} else {

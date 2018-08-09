@@ -10,16 +10,16 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class InOccuLoadDatDaoImpl implements InOccuLoadDatDao{
+public class InOccuLoadDatDaoImpl implements InOccuLoadDatDao {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-	
+
 	@Override
-	public List<InOcuLoadDetModel> inOccuLoadDatDaosByOccupation(String ocuCode) throws Exception {
-		List<InOcuLoadDetModel> datDaos = jdbcTemplate.query
-				("select * from inoculoaddet where sbucod = '450' and ocucod = '"+ocuCode+"';", 
-						new InOccuLoadDatRowMapper());
+	public List<InOcuLoadDetModel> inOccuLoadDatDaosByOccupation(String ocuCode, String ridCode) throws Exception {
+		List<InOcuLoadDetModel> datDaos = jdbcTemplate
+				.query("select * from inoculoaddet where sbucod = '450' and ocucod = '" + ocuCode + "' and ridcod = '"
+						+ ridCode + "'", new InOccuLoadDatRowMapper());
 		return datDaos;
 	}
 

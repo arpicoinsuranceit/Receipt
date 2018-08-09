@@ -17,7 +17,7 @@ public class ReFundAmntRowMapper implements RowMapper<ReFundModel>{
 		fundModel.setPprnum(rs.getInt("pprnum"));
 		fundModel.setRefamount(rs.getDouble("refamount"));
 		fundModel.setLinnum(rs.getInt("linnum"));
-		
+		fundModel.setPaymode(rs.getString("paymod"));
 		return fundModel;
 	}
 

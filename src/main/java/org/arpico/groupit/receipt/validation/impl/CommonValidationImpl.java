@@ -46,7 +46,7 @@ public class CommonValidationImpl implements CommonValidations {
 	@Override
 	public String validateQuotationReceiptInputs(SaveReceiptDto saveReceiptDto) throws Exception {
 
-		if (quotationClient.isAvailableQuotation(saveReceiptDto.getQuotationDetailId(),
+		if (quotationClient.isAvailableQuotation(saveReceiptDto.getSeqNo(),
 				saveReceiptDto.getQuotationId())) {
 			if (agentService.availableAgent(saveReceiptDto.getAgentCode())) {
 				if (bankService.findBankById(saveReceiptDto.getBankCode())) {
