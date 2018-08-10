@@ -1,8 +1,5 @@
 package org.arpico.groupit.receipt.service.impl;
 
-
-import static org.hamcrest.CoreMatchers.nullValue;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,24 +9,14 @@ import java.util.Map;
 import org.arpico.groupit.receipt.client.QuotationClient;
 import org.arpico.groupit.receipt.dao.BenefictDetailsDao;
 import org.arpico.groupit.receipt.dao.BranchUnderwriteDao;
-import org.arpico.groupit.receipt.dao.InAgentMastDao;
-import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
 import org.arpico.groupit.receipt.dao.InOccuLoadDatDao;
-import org.arpico.groupit.receipt.dao.InPropAddBenefictCustomDao;
 import org.arpico.groupit.receipt.dao.InPropAddBenefictDao;
-import org.arpico.groupit.receipt.dao.InPropFamDetailsCustomDao;
 import org.arpico.groupit.receipt.dao.InPropFamDetailsDao;
-import org.arpico.groupit.receipt.dao.InPropLoadingCustomDao;
 import org.arpico.groupit.receipt.dao.InPropLoadingDao;
-import org.arpico.groupit.receipt.dao.InPropMedicalReqCustomDao;
 import org.arpico.groupit.receipt.dao.InPropMedicalReqDao;
-import org.arpico.groupit.receipt.dao.InPropNomDetailsCustomDao;
 import org.arpico.groupit.receipt.dao.InPropNomDetailsDao;
-import org.arpico.groupit.receipt.dao.InPropPrePolsCustomDao;
 import org.arpico.groupit.receipt.dao.InPropPrePolsDao;
-import org.arpico.groupit.receipt.dao.InPropShedulesCustomDao;
 import org.arpico.groupit.receipt.dao.InPropShedulesDao;
-import org.arpico.groupit.receipt.dao.InPropSurrenderValsCustomDao;
 import org.arpico.groupit.receipt.dao.InPropSurrenderValsDao;
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
 import org.arpico.groupit.receipt.dao.InProposalDao;
@@ -64,7 +51,6 @@ import org.arpico.groupit.receipt.model.pk.InPropSurrenderValsPK;
 import org.arpico.groupit.receipt.model.pk.InProposalsModelPK;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.BranchUnderwriteService;
-import org.arpico.groupit.receipt.service.InTransactionService;
 import org.arpico.groupit.receipt.util.AppConstant;
 import org.arpico.groupit.receipt.util.CalculationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,58 +82,25 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	private InPropAddBenefictDao addBenefictDao;
 
 	@Autowired
-	private InPropAddBenefictCustomDao addBenefictCustomDao;
-
-	@Autowired
 	private InPropFamDetailsDao famDetailsDao;
-
-	@Autowired
-	private InPropFamDetailsCustomDao famDetailsCustomDao;
 
 	@Autowired
 	private InPropLoadingDao propLoadingDao;
 
 	@Autowired
-	private InPropLoadingCustomDao propLoadingCustomDao;
-
-	@Autowired
 	private InPropMedicalReqDao propMedicalReqDao;
-
-	@Autowired
-	private InPropMedicalReqCustomDao propMedicalReqCustomDao;
 
 	@Autowired
 	private InPropNomDetailsDao propNomDetailsDao;
 
 	@Autowired
-	private InPropNomDetailsCustomDao propNomDetailsCustomDao;
-
-	@Autowired
 	private InPropPrePolsDao propPrePolsDao;
-
-	@Autowired
-	private InPropPrePolsCustomDao propPrePolsCustomDao;
 
 	@Autowired
 	private InPropShedulesDao propScheduleDao;
 
 	@Autowired
-	private InPropShedulesCustomDao propScheduleCustomDao;
-
-	@Autowired
 	private InPropSurrenderValsDao surrenderValDao;
-
-	@Autowired
-	private InPropSurrenderValsCustomDao surrenderValCustomDao;
-
-	@Autowired
-	private InTransactionService inTransactionService;
-
-	@Autowired
-	private InBillingTransactionsCustomDao billingTransactionsCustomDao;
-
-	@Autowired
-	private InAgentMastDao inAgentMastDao;
 	
 	@Autowired
 	private RmsUserDao rmsUserDao;
@@ -213,6 +166,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 				/* Set new Proposal model to save */
 				InProposalsModel newInProposalsModel=getInProposalModel(inProposalsModel,saveUnderwriteDto,quotationDto);
 				newInProposalsModel.setInProposalsModelPK(newInProposalsModelPK);
+				newInProposalsModel.setCurusr(agentCode);
 				
 				if(saveUnderwriteDto.getSendToApprove()) {
 					newInProposalsModel.setPprsta("L1");
@@ -300,14 +254,14 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 				
 				/* Get Medical Requirements From Quotation DB */
 				List<MedicalRequirementsDto> medicalRequirementsDtos = quotationClient
-						.getMediReq(saveUnderwriteDto.getQuotationNo());
+						.getMediReq(saveUnderwriteDto.getQuotationDetailNo());
 				
 				/* Get Schedule Details From Quotation DB */
-				List<SheduleDto> sheduleDtos = quotationClient.getShedule(saveUnderwriteDto.getQuotationNo());
+				List<SheduleDto> sheduleDtos = quotationClient.getShedule(saveUnderwriteDto.getQuotationDetailNo());
 		
 				/* Get Surrender Values From Quotation DB */
 				List<SurrenderValsDto> surrenderValsDtos = quotationClient
-						.getSurrenderVals(saveUnderwriteDto.getQuotationNo());
+						.getSurrenderVals(saveUnderwriteDto.getQuotationDetailNo());
 				
 				List<InPropSchedulesModel> inPropScheduleList = null;
 		
@@ -510,8 +464,10 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 			newInProposalsModel.setIntrat(quotationDto.get_plan().getRetAge().doubleValue());
 		}
 		
-		//newInProposalsModel.setPrpdat(AppConstant.DATE);
-
+		newInProposalsModel.setPrpdat(new SimpleDateFormat("yyyy-MM-dd").parse(saveUnderwriteDto.getPropDate()));
+		newInProposalsModel.setAgmcod(saveUnderwriteDto.getAgentCode());
+		newInProposalsModel.setAdvcod(saveUnderwriteDto.getAgentCode());
+		
 		newInProposalsModel.setNumchl(quotationDto.get_children().size());
 		newInProposalsModel.setPrdcod(quotationDto.getProductCode());
 		newInProposalsModel.setPrdnam(quotationDto.getProductName());
@@ -761,7 +717,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 					}
 					
 					if(e.getDob() != "" && e.getDob() != null) {
-						detailsModel.setNomdob(new SimpleDateFormat("yyyy-MM-dd").parse(e.getDob()));
+						detailsModel.setNomdob(new SimpleDateFormat("yyyy-MM-dd").parse(e.getNomineeDateofBirth()));
 					}
 					
 				} catch (ParseException e1) {

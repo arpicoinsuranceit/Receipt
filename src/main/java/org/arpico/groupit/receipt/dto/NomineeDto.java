@@ -9,6 +9,7 @@ public class NomineeDto{
 	private Integer age;
 	private Date nomineeDob;
 	private String relation;
+	private String nomineeDateofBirth;
 
 	public Integer getId() {
 		return id;
@@ -48,6 +49,14 @@ public class NomineeDto{
 
 	public void setRelation(String relation) {
 		this.relation = relation;
+	}
+
+	public String getNomineeDateofBirth() {
+		return nomineeDateofBirth;
+	}
+
+	public void setNomineeDateofBirth(String nomineeDateofBirth) {
+		this.nomineeDateofBirth = nomineeDateofBirth;
 	}
 	
 }

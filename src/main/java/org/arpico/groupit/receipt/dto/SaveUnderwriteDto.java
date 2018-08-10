@@ -10,6 +10,8 @@ public class SaveUnderwriteDto {
 	private Integer quotationNo;
 	private Integer quotationDetailNo;
 	private String token;
+	private String propDate;
+	private String agentCode;
 	private MainLifeUnderwriteDto mainlifeUnderwriteDto;
 	private SpouseUnderwriteDto spouseUnderwriteDto;
 	private ArrayList<ChildrenDto> children=new ArrayList<>();
@@ -55,6 +57,19 @@ public class SaveUnderwriteDto {
 	public void setToken(String token) {
 		this.token = token;
 	}
+	
+	public String getPropDate() {
+		return propDate;
+	}
+	public void setPropDate(String propDate) {
+		this.propDate = propDate;
+	}
+	public String getAgentCode() {
+		return agentCode;
+	}
+	public void setAgentCode(String agentCode) {
+		this.agentCode = agentCode;
+	}
 	public void setSpouseUnderwriteDto(SpouseUnderwriteDto spouseUnderwriteDto) {
 		this.spouseUnderwriteDto = spouseUnderwriteDto;
 	}
@@ -80,13 +95,10 @@ public class SaveUnderwriteDto {
 	public String toString() {
 		return "SaveUnderwriteDto [sendToApprove=" + sendToApprove + ", proposalNo=" + proposalNo + ", seqNo=" + seqNo
 				+ ", quotationNo=" + quotationNo + ", quotationDetailNo=" + quotationDetailNo + ", token=" + token
-				+ ", mainlifeUnderwriteDto=" + mainlifeUnderwriteDto + ", spouseUnderwriteDto=" + spouseUnderwriteDto
-				+ ", children=" + children + ", nominee=" + nominee + "]";
+				+ ", propDate=" + propDate + ", agentCode=" + agentCode + ", mainlifeUnderwriteDto="
+				+ mainlifeUnderwriteDto + ", spouseUnderwriteDto=" + spouseUnderwriteDto + ", children=" + children
+				+ ", nominee=" + nominee + "]";
 	}
-	
-	
-	
-	
 	
 	
 }

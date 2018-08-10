@@ -5,6 +5,7 @@ public class NomineeUnderwriteDto{
 	private String name; 
 	private String relationship;
 	private String dob;
+	private String nomineeDateofBirth;
 	private String share;
 	private String nic;
 	private String guardianName;
@@ -35,6 +36,13 @@ public class NomineeUnderwriteDto{
 	}
 	public void setDob(String dob) {
 		this.dob = dob;
+	}
+	
+	public String getNomineeDateofBirth() {
+		return nomineeDateofBirth;
+	}
+	public void setNomineeDateofBirth(String nomineeDateofBirth) {
+		this.nomineeDateofBirth = nomineeDateofBirth;
 	}
 	public String getShare() {
 		return share;
