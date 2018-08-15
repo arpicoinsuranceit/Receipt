@@ -124,6 +124,19 @@ public class BranchUnderwriteController {
 		return null;
 	}
 	
+	@RequestMapping(value = "/getQuotationDetailFromSeqNo/{seqNo}/{qId}", method = RequestMethod.GET)
+	public Integer getQuotationDetailFromSeqNo (@PathVariable("seqNo") Integer seqNo,@PathVariable("qId") Integer qId){
+		System.out.println("getQuotationDetailFromSeqNo");
+		
+		try {
+			return quotationClient.getQuotationDetailFromSeqNo(seqNo, qId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
 	@RequestMapping(value = "/saveUnderwrite", method = RequestMethod.POST)
 	public ResponseEntity<Object> saveUnderwrite(@RequestBody SaveUnderwriteDto saveUnderwriteDto) {
 		System.out.println(saveUnderwriteDto.toString());

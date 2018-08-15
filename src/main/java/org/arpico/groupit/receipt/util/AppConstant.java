@@ -25,6 +25,7 @@ public class AppConstant {
 	public static final String URI_QUOTATION_PENSION_SHEDULE = "http://localhost:8084/getPensionShedule";
 	public static final String URI_QUOTATION_NOMINEE_DETAILS = "http://localhost:8084/getNominee";
 	public static final String URI_UPDATE_STATUS = "http://localhost:8084/updateStatus";
+	public static final String URI_QUOTATION_DETAILS_FROM_SEQNO = "http://localhost:8084/getQuotationDetailFromSeqNo";
 	
 	public static final String DOC_CODE_FOR_RECEIPT = "RCPP";
 	public static final String POLICY_STATUS_PLISU = "PLISU";

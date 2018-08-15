@@ -110,6 +110,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 
 	@Override
 	public List<InProposalUnderwriteModel> getProposalToUnderwrite(String usercode) throws Exception {
+		//System.out.println(usercode + "user code...");
 		List<String> loccodes=branchUnderwriteDao.findLocCodes(usercode);
 		String locations="";
 		if(loccodes != null) {
@@ -122,7 +123,13 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		
 		//System.out.println(locations + " Branch Codes ------");
 		
-		return branchUnderwriteDao.findProposalToUnderwrite(locations);
+		if(locations != "") {
+			return branchUnderwriteDao.findProposalToUnderwrite(locations);
+		}else {
+			return null;
+		}
+		
+		
 	}
 
 	@Override
@@ -243,6 +250,13 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 				/* Load Family Details */
 				
 				for (ChildrenDto childrenDto : quotationDto.get_children()) {
+					for (ChildrenDto childrenDto1 : saveUnderwriteDto.getChildren()) {
+						if(childrenDto.get_cTitle().equals(childrenDto1.get_cTitle()) && childrenDto.get_cAge().equals(childrenDto1.get_cAge()) 
+								) {
+							childrenDto.set_cName(childrenDto1.get_cName());
+						}
+					}
+					
 					propFamDetailsModels.add(getFamily(childrenDto, newInProposalsModelPK.getPprnum(),
 							newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
 				}
@@ -370,7 +384,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	/* Set Data to InProposalModel */
 	private InProposalsModel getInProposalModel(InProposalsModel inProposalsModel, SaveUnderwriteDto saveUnderwriteDto,
 			ViewQuotationDto quotationDto) throws Exception {
-		
+		SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
 		InProposalsModel newInProposalsModel=inProposalsModel;
 		
 		newInProposalsModel.setPpdnam(saveUnderwriteDto.getMainlifeUnderwriteDto().getMainlifeFullName());
@@ -378,7 +392,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		newInProposalsModel.setPpdad1(saveUnderwriteDto.getMainlifeUnderwriteDto().getAddress1());
 		newInProposalsModel.setPpdad2(saveUnderwriteDto.getMainlifeUnderwriteDto().getAddress2());
 		newInProposalsModel.setPpdad3(saveUnderwriteDto.getMainlifeUnderwriteDto().getAddress3());
-		newInProposalsModel.setPpddob(new SimpleDateFormat("yyyy-MM-dd").parse(quotationDto.get_mainlife().get_mDob()));
+		newInProposalsModel.setPpddob(dateFormat.parse(new SimpleDateFormat("yyyy-MM-dd").format(new SimpleDateFormat("dd-MM-yyyy").parse(quotationDto.get_mainlife().get_mDob()))));
 		newInProposalsModel.setPpdnag(Integer.valueOf(quotationDto.get_mainlife().get_mAge()));
 		newInProposalsModel.setPpdnic(quotationDto.get_mainlife().get_mNic());
 		newInProposalsModel.setPpdsex(quotationDto.get_mainlife().get_mGender());
@@ -452,7 +466,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 			newInProposalsModel.setSpoocu(saveUnderwriteDto.getSpouseUnderwriteDto().getSpouseOccupation());
 			newInProposalsModel.setStitle(quotationDto.get_spouse().get_sTitle());
 			newInProposalsModel.setSponic(quotationDto.get_spouse().get_sNic());
-			newInProposalsModel.setSpodob(new SimpleDateFormat("yyyy-MM-dd").parse(quotationDto.get_spouse().get_sDob()));
+			newInProposalsModel.setSpodob(dateFormat.parse(new SimpleDateFormat("yyyy-MM-dd").format(new SimpleDateFormat("dd-MM-yyyy").parse(quotationDto.get_spouse().get_sDob()))));
 			newInProposalsModel.setSagnxt(Integer.valueOf(quotationDto.get_spouse().get_sAge()));
 			newInProposalsModel.setShighc(Double.valueOf(saveUnderwriteDto.getSpouseUnderwriteDto().getSpouseHeight()));
 			newInProposalsModel.setWighkg(Double.valueOf(saveUnderwriteDto.getSpouseUnderwriteDto().getSpouseWeight()));
@@ -691,6 +705,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	
 	private List<InPropNomDetailsModel> getNomineeDetails(SaveUnderwriteDto saveUnderwriteDto,
 			String pprnum, Integer prpseq, String branchCode){
+		SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
 		InPropNomDetailsModelPK inPropNomineeValsPK = new InPropNomDetailsModelPK();
 
 		inPropNomineeValsPK.setPprnum(Integer.parseInt(pprnum));
@@ -700,7 +715,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		
 		List<InPropNomDetailsModel> inPropNomDetailsModels=new ArrayList<>();
 		
-		if(saveUnderwriteDto.getNominee().get(0).getName() != null) {
+		if(saveUnderwriteDto.getNominee().size() > 0) {
 			saveUnderwriteDto.getNominee().forEach(e ->{
 				InPropNomDetailsModel detailsModel=new InPropNomDetailsModel();
 				inPropNomineeValsPK.setNomnam(e.getName());
@@ -713,11 +728,11 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 				
 				try {
 					if(e.getGuardianDOB() != "" && e.getGuardianDOB() != null) {
-						detailsModel.setGurdob(new SimpleDateFormat("yyyy-MM-dd").parse(e.getGuardianDOB()));
+						detailsModel.setGurdob(dateFormat.parse(new SimpleDateFormat("yyyy-MM-dd").format(new SimpleDateFormat("dd-MM-yyyy").parse(e.getGuardianDOB()))));
 					}
 					
 					if(e.getDob() != "" && e.getDob() != null) {
-						detailsModel.setNomdob(new SimpleDateFormat("yyyy-MM-dd").parse(e.getNomineeDateofBirth()));
+						detailsModel.setNomdob(dateFormat.parse(new SimpleDateFormat("yyyy-MM-dd").format(new SimpleDateFormat("dd-MM-yyyy").parse(e.getDob()))));
 					}
 					
 				} catch (ParseException e1) {
@@ -728,7 +743,10 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 				
 				detailsModel.setNomnic(e.getNic());
 				detailsModel.setNomrel(e.getRelationship());
-				detailsModel.setNomshr(Double.parseDouble(e.getShare()));
+				if(e.getShare() != null) {
+					detailsModel.setNomshr(Double.parseDouble(e.getShare()));
+				}
+				
 				detailsModel.setNomsum(0.0);
 				detailsModel.setNomtyp(e.getType());
 				

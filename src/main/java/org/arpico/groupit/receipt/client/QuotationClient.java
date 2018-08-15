@@ -193,5 +193,23 @@ public class QuotationClient {
 		}
 		return null;
 	}
+	
+	public Integer getQuotationDetailFromSeqNo(Integer seqNo, Integer qId) {
+
+		MultiValueMap<String, Integer> map = new LinkedMultiValueMap<String, Integer>();
+		map.add("seqNo", seqNo);
+		map.add("qId", qId);
+
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			Integer result = restTemplate.postForObject(AppConstant.URI_QUOTATION_DETAILS_FROM_SEQNO, map,
+					Integer.class);
+			System.out.println(result);
+			return result;
+		} catch (Exception e) {
+
+		}
+		return null;
+	}
 
 }

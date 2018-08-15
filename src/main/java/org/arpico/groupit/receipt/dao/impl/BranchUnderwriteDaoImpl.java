@@ -35,6 +35,7 @@ public class BranchUnderwriteDaoImpl implements BranchUnderwriteDao {
 				return userLocListTemp;
 			}
 		});
+		
 		return userLocList;
 	}
 
