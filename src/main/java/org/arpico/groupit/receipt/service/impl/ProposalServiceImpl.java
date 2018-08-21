@@ -27,6 +27,7 @@ import org.arpico.groupit.receipt.dao.InPropSurrenderValsCustomDao;
 import org.arpico.groupit.receipt.dao.InPropSurrenderValsDao;
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
 import org.arpico.groupit.receipt.dao.InProposalDao;
+import org.arpico.groupit.receipt.dao.InShortPremiumActProductDao;
 import org.arpico.groupit.receipt.dao.InTransactionsDao;
 import org.arpico.groupit.receipt.dao.RmsUserDao;
 import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
@@ -47,13 +48,15 @@ import org.arpico.groupit.receipt.model.InPropSurrenderValsModel;
 import org.arpico.groupit.receipt.model.InProposalBasicsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.InTransactionsModel;
-import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;
-import org.arpico.groupit.receipt.model.ReFundModel;
+import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;/*
+import org.arpico.groupit.receipt.model.ReFundModel;*/
 import org.arpico.groupit.receipt.model.pk.InBillingTransactionsModelPK;
+import org.arpico.groupit.receipt.model.pk.InShortPremiumModelPK;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.InTransactionService;
 import org.arpico.groupit.receipt.service.NumberGenerator;
 import org.arpico.groupit.receipt.service.ProposalServce;
+import org.arpico.groupit.receipt.service.SetoffService;
 import org.arpico.groupit.receipt.util.AppConstant;
 import org.arpico.groupit.receipt.util.CommonMethodsUtility;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +65,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
-@Transactional
 public class ProposalServiceImpl implements ProposalServce {
 
 	@Autowired
@@ -139,10 +141,16 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	@Autowired
 	private InAgentMastDao inAgentMastDao;
-	
+
 	@Autowired
 	private RmsUserDao rmsUserDao;
+	
+	@Autowired
+	private SetoffService setoffService;
 
+	@Autowired
+	private InShortPremiumActProductDao actProductDao; 
+	
 	@Override
 	public List<ProposalNoSeqNoDto> getProposalNoSeqNoDtoList(String val) throws Exception {
 		List<ProposalNoSeqNoDto> proposalNoSeqNoDtos = new ArrayList<ProposalNoSeqNoDto>();
@@ -196,7 +204,7 @@ public class ProposalServiceImpl implements ProposalServce {
 		System.out.println(agentCode);
 		String locCode = rmsUserDao.getLocation(agentCode);
 
-		if (locCode != null ) {
+		if (locCode != null) {
 
 			InProposalsModel inProposalsModel = inProposalCustomDao.getProposal(saveReceiptDto.getPropId(),
 					saveReceiptDto.getPropSeq());
@@ -206,211 +214,19 @@ public class ProposalServiceImpl implements ProposalServce {
 				Integer pprNo = Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum());
 				Integer seqNo = inProposalsModel.getInProposalsModelPK().getPrpseq();
 
-				if (inProposalsModel.getPprsta().equalsIgnoreCase("L3")) {
-					List<ProposalL3Dto> proposalL3Dtos = inProposalCustomDao.checkL3(saveReceiptDto.getPropId());
-					if (!proposalL3Dtos.isEmpty()) {
+				///////////// save billing//////////////////////
+				InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
+						saveReceiptDto, agentCode, locCode);
+				InBillingTransactionsModel inBillingTransactionsModel = commonethodUtility
+						.getInBillingTransactionModel(inProposalsModel, saveReceiptDto, inTransactionsModel);
+				inTransactionDao.save(inTransactionsModel);
+				inBillingTransactionDao.save(inBillingTransactionsModel);
+				///////////////// end save billing ///////////////
 
-						String[] numberGen = numberGenerator.generateNewId("", "", "POLCSQ", "");
-						if (numberGen[0].equals("Success")) {
-							
-							inProposalsModel.setPprsta("INAC");
-							inProposalsModel.setLockin(AppConstant.DATE);
-							
-							inProposalDao.save(inProposalsModel);
-							
+				
+				checkPolicy(inProposalsModel, pprNo, seqNo, saveReceiptDto, agentCode, locCode, inBillingTransactionsModel);
 
-							InProposalsModel proposalsModelNew = getProposalPolicyStage(inProposalsModel, numberGen[1],
-									saveReceiptDto);
-
-							inProposalDao.save(proposalsModelNew);
-							
-
-							System.out.println("proposal save done");
-
-							Integer updatedSeqNo = proposalsModelNew.getInProposalsModelPK().getPrpseq();
-							seqNo = updatedSeqNo;
-
-							List<InPropAddBenefitModel> addBenefitModels = addBenefictCustomDao.getBenefByPprSeq(pprNo,
-									seqNo);
-							if (addBenefitModels != null && !addBenefitModels.isEmpty()) {
-								addBenefitModels = incrementSeqAddBenef(addBenefitModels, updatedSeqNo);
-								addBenefictDao.save(addBenefitModels);
-							}
-
-							System.out.println("benef save done");
-
-							List<InPropFamDetailsModel> famDetailsModels = famDetailsCustomDao
-									.getFamilyByPprNoAndSeqNo(pprNo, seqNo);
-							if (famDetailsModels != null && !famDetailsModels.isEmpty()) {
-								famDetailsModels = incrementSeqFamDetails(famDetailsModels, updatedSeqNo);
-								famDetailsDao.save(famDetailsModels);
-							}
-
-							System.out.println("fam save done");
-
-							List<InPropLoadingModel> inPropLoadingModels = propLoadingCustomDao
-									.getPropLoadingBuPprNumAndSeq(pprNo, seqNo);
-							if (inPropLoadingModels != null && !inPropLoadingModels.isEmpty()) {
-								inPropLoadingModels = getInPropLoadings(inPropLoadingModels, updatedSeqNo);
-								propLoadingDao.save(inPropLoadingModels);
-							}
-
-							System.out.println("pro loading save done");
-
-							List<InPropMedicalReqModel> inPropMedicalReqModels = propMedicalReqCustomDao
-									.getMedicalReqByPprNoAndSeq(pprNo, seqNo);
-							if (inPropMedicalReqModels != null && !inPropMedicalReqModels.isEmpty()) {
-								inPropMedicalReqModels = incrementPropMedical(inPropMedicalReqModels, updatedSeqNo);
-								propMedicalReqDao.save(inPropMedicalReqModels);
-							}
-
-							System.out.println("propMedi save done");
-
-							List<InPropNomDetailsModel> propNomDetailsModels = propNomDetailsCustomDao
-									.getNomByPprNoAndPprSeq(pprNo, seqNo);
-							if (propNomDetailsModels != null && !propNomDetailsModels.isEmpty()) {
-								propNomDetailsModels = incrementPropNomDetailsSeq(propNomDetailsModels, updatedSeqNo);
-								propNomDetailsDao.save(propNomDetailsModels);
-							}
-
-							System.out.println("nominee save done");
-
-							List<InPropPrePolsModel> inPropPrePolsModels = propPrePolsCustomDao
-									.getPrePolByPprNoAndPprSeq(pprNo, seqNo);
-							if (inPropPrePolsModels != null && !inPropPrePolsModels.isEmpty()) {
-								inPropPrePolsModels = incrementPropPolSeq(inPropPrePolsModels, updatedSeqNo);
-								propPrePolsDao.save(inPropPrePolsModels);
-
-							}
-
-							System.out.println("proposalPrePol save done");
-
-							List<InPropSchedulesModel> propSchedulesModels = propScheduleCustomDao
-									.getScheduleBuPprNoAndSeqNo(pprNo, seqNo);
-							if (propSchedulesModels != null && !propSchedulesModels.isEmpty()) {
-								propSchedulesModels = incremenntScheduleSeq(propSchedulesModels, updatedSeqNo);
-								propScheduleDao.save(propSchedulesModels);
-							}
-
-							System.out.println("proposal Schedule save done");
-
-							List<InPropSurrenderValsModel> propSurrenderValsModels = surrenderValCustomDao
-									.getSurrenderValByInpprNoAndSeq(pprNo, seqNo);
-							if (propSurrenderValsModels != null && !propSurrenderValsModels.isEmpty()) {
-								propSurrenderValsModels = incrementSurrenderVals(propSurrenderValsModels, updatedSeqNo,
-										proposalsModelNew.getPolnum());
-								surrenderValDao.save(propSurrenderValsModels);
-							}
-
-							System.out.println("proposal surrender Val save done");
-
-							InTransactionsModel inTransactionsModel = commonethodUtility
-									.getInTransactionModel(inProposalsModel, saveReceiptDto, agentCode, locCode);
-
-							inTransactionsModel.setSeqnum(updatedSeqNo);
-
-							System.out.println("transaction generated");
-
-							InBillingTransactionsModel deposit = commonethodUtility.getInBillingTransactionModel(
-									inProposalsModel, saveReceiptDto, inTransactionsModel);
-							deposit.setPrpseq(updatedSeqNo);
-
-							System.out.println("deposit generated");
-
-							List<InBillingTransactionsModel> unSetOffList = billingTransactionsCustomDao
-									.getUnSetOffs(inProposalsModel.getInProposalsModelPK().getPprnum());
-
-							System.out.println("unSetOffList");
-
-							InBillingTransactionsModel invoice = null;
-
-							if (unSetOffList != null && unSetOffList.size() > 0) {
-								invoice = unSetOffList.get(0);
-							} else {
-								invoice = createInvoice(inProposalsModel, null, agentCode, locCode);
-								inBillingTransactionDao.save(invoice);
-							}
-
-							System.out.println("invoice");
-
-							List<InBillingTransactionsModel> setoffList = null;
-
-							List<ReFundModel> fundModels = billingTransactionsCustomDao
-									.getRefundList(inProposalsModel.getInProposalsModelPK().getPprnum());
-
-							System.out.println("fundModels size : " + fundModels.size());
-
-							Double amount = saveReceiptDto.getAmount();
-
-							if (fundModels != null && fundModels.size() > 0) {
-								for (ReFundModel reFundModel : fundModels) {
-									amount += reFundModel.getRefamount();
-								}
-							}
-
-							System.out.println("amount size : " + amount);
-							System.out.println("amount size : " + (invoice.getAmount() <= amount));
-							if (invoice.getAmount() <= amount) {
-
-								ReFundModel fundModel = new ReFundModel();
-								fundModel.setDoccod(deposit.getBillingTransactionsModelPK().getDoccod());
-								fundModel.setDocnum(deposit.getBillingTransactionsModelPK().getDocnum());
-								fundModel.setPprnum(
-										Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum()));
-								fundModel.setRefamount(deposit.getDepost() * -1);
-								fundModel.setLinnum(deposit.getBillingTransactionsModelPK().getLinnum());
-								setoffList = getSetOff(invoice, fundModel, setoffList, inProposalsModel, fundModels,
-										agentCode, locCode);
-							}
-
-							inTransactionDao.save(inTransactionsModel);
-							inBillingTransactionDao.save(deposit);
-
-							if (setoffList != null && setoffList.size() > 0) {
-								System.out.println(setoffList.size() + "  setoff list");
-
-								for (InBillingTransactionsModel e : setoffList) {
-									System.out.println(e.getBillingTransactionsModelPK().toString());
-								}
-								for (InBillingTransactionsModel e : setoffList) {
-									System.out.println(e.toString());
-								}
-
-								inBillingTransactionDao.save(setoffList);
-							}
-							
-							
-							return new ResponseEntity<>("Success", HttpStatus.OK);
-							
-							
-
-						} else {
-							return new ResponseEntity<>("Error at generate Policy No",
-									HttpStatus.INTERNAL_SERVER_ERROR);
-						}
-
-					} else {
-						InTransactionsModel inTransactionsModel = commonethodUtility
-								.getInTransactionModel(inProposalsModel, saveReceiptDto, agentCode, locCode);
-						InBillingTransactionsModel inBillingTransactionsModel = commonethodUtility
-								.getInBillingTransactionModel(inProposalsModel, saveReceiptDto, inTransactionsModel);
-
-						inTransactionDao.save(inTransactionsModel);
-						inBillingTransactionDao.save(inBillingTransactionsModel);
-
-						return new ResponseEntity<>("Success", HttpStatus.OK);
-					}
-
-				} else {
-					InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
-							saveReceiptDto, agentCode, locCode);
-					InBillingTransactionsModel inBillingTransactionsModel = commonethodUtility
-							.getInBillingTransactionModel(inProposalsModel, saveReceiptDto, inTransactionsModel);
-					inTransactionDao.save(inTransactionsModel);
-					inBillingTransactionDao.save(inBillingTransactionsModel);
-
-					return new ResponseEntity<>("Success", HttpStatus.OK);
-				}
+				return new ResponseEntity<>("Success", HttpStatus.OK);
 
 			} else {
 				return new ResponseEntity<>("Proposal Not Found", HttpStatus.NOT_FOUND);
@@ -422,7 +238,175 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	}
 
-	private List<InBillingTransactionsModel> getSetOff(InBillingTransactionsModel invoice, ReFundModel deposit,
+	@Transactional
+	private void checkPolicy(InProposalsModel inProposalsModel, Integer pprNo, Integer seqNo,
+			SaveReceiptDto saveReceiptDto, String agentCode, String locCode, InBillingTransactionsModel deposit) throws Exception {
+		if (inProposalsModel.getPprsta().equalsIgnoreCase("L3")) {
+			List<ProposalL3Dto> proposalL3Dtos = inProposalCustomDao.checkL3(saveReceiptDto.getPropId());
+			if (!proposalL3Dtos.isEmpty()) {
+
+				String[] numberGen = numberGenerator.generateNewId("", "", "POLCSQ", "");
+				if (numberGen[0].equals("Success")) {
+
+					inProposalsModel.setPprsta("INAC");
+					inProposalsModel.setLockin(AppConstant.DATE);
+
+					inProposalDao.save(inProposalsModel);
+
+					InProposalsModel proposalsModelNew = getProposalPolicyStage(inProposalsModel, numberGen[1],
+							saveReceiptDto);
+
+					inProposalDao.save(proposalsModelNew);
+
+					System.out.println("proposal save done");
+
+					Integer updatedSeqNo = proposalsModelNew.getInProposalsModelPK().getPrpseq();
+					seqNo = updatedSeqNo;
+
+					List<InPropAddBenefitModel> addBenefitModels = addBenefictCustomDao.getBenefByPprSeq(pprNo, seqNo);
+					if (addBenefitModels != null && !addBenefitModels.isEmpty()) {
+						addBenefitModels = incrementSeqAddBenef(addBenefitModels, updatedSeqNo);
+						addBenefictDao.save(addBenefitModels);
+					}
+
+					System.out.println("benef save done");
+
+					List<InPropFamDetailsModel> famDetailsModels = famDetailsCustomDao.getFamilyByPprNoAndSeqNo(pprNo,
+							seqNo);
+					if (famDetailsModels != null && !famDetailsModels.isEmpty()) {
+						famDetailsModels = incrementSeqFamDetails(famDetailsModels, updatedSeqNo);
+						famDetailsDao.save(famDetailsModels);
+					}
+
+					System.out.println("fam save done");
+
+					List<InPropLoadingModel> inPropLoadingModels = propLoadingCustomDao
+							.getPropLoadingBuPprNumAndSeq(pprNo, seqNo);
+					if (inPropLoadingModels != null && !inPropLoadingModels.isEmpty()) {
+						inPropLoadingModels = getInPropLoadings(inPropLoadingModels, updatedSeqNo);
+						propLoadingDao.save(inPropLoadingModels);
+					}
+
+					System.out.println("pro loading save done");
+
+					List<InPropMedicalReqModel> inPropMedicalReqModels = propMedicalReqCustomDao
+							.getMedicalReqByPprNoAndSeq(pprNo, seqNo);
+					if (inPropMedicalReqModels != null && !inPropMedicalReqModels.isEmpty()) {
+						inPropMedicalReqModels = incrementPropMedical(inPropMedicalReqModels, updatedSeqNo);
+						propMedicalReqDao.save(inPropMedicalReqModels);
+					}
+
+					System.out.println("propMedi save done");
+
+					List<InPropNomDetailsModel> propNomDetailsModels = propNomDetailsCustomDao
+							.getNomByPprNoAndPprSeq(pprNo, seqNo);
+					if (propNomDetailsModels != null && !propNomDetailsModels.isEmpty()) {
+						propNomDetailsModels = incrementPropNomDetailsSeq(propNomDetailsModels, updatedSeqNo);
+						propNomDetailsDao.save(propNomDetailsModels);
+					}
+
+					System.out.println("nominee save done");
+
+					List<InPropPrePolsModel> inPropPrePolsModels = propPrePolsCustomDao.getPrePolByPprNoAndPprSeq(pprNo,
+							seqNo);
+					if (inPropPrePolsModels != null && !inPropPrePolsModels.isEmpty()) {
+						inPropPrePolsModels = incrementPropPolSeq(inPropPrePolsModels, updatedSeqNo);
+						propPrePolsDao.save(inPropPrePolsModels);
+
+					}
+
+					System.out.println("proposalPrePol save done");
+
+					List<InPropSchedulesModel> propSchedulesModels = propScheduleCustomDao
+							.getScheduleBuPprNoAndSeqNo(pprNo, seqNo);
+					if (propSchedulesModels != null && !propSchedulesModels.isEmpty()) {
+						propSchedulesModels = incremenntScheduleSeq(propSchedulesModels, updatedSeqNo);
+						propScheduleDao.save(propSchedulesModels);
+					}
+
+					System.out.println("proposal Schedule save done");
+
+					List<InPropSurrenderValsModel> propSurrenderValsModels = surrenderValCustomDao
+							.getSurrenderValByInpprNoAndSeq(pprNo, seqNo);
+					if (propSurrenderValsModels != null && !propSurrenderValsModels.isEmpty()) {
+						propSurrenderValsModels = incrementSurrenderVals(propSurrenderValsModels, updatedSeqNo,
+								proposalsModelNew.getPolnum());
+						surrenderValDao.save(propSurrenderValsModels);
+					}
+
+					System.out.println("proposal surrender Val save done");
+
+					InShortPremiumModelPK inShortPremiumModelPK = new InShortPremiumModelPK();
+					inShortPremiumModelPK.setPrdcod(inProposalsModel.getPrdcod());
+					inShortPremiumModelPK.setSbucod("450");
+					
+					Double recovery = actProductDao.findByStatusAndInShortPremiumModelPK("ACT", inShortPremiumModelPK).getSpiamt();
+					
+					setoffService.setoff(proposalsModelNew, agentCode, locCode, saveReceiptDto, deposit, recovery);
+
+					/*
+					
+					 * 
+					 * List<InBillingTransactionsModel> unSetOffList = billingTransactionsCustomDao
+					 * .getUnSetOffs(inProposalsModel.getInProposalsModelPK().getPprnum());
+					 * 
+					 * System.out.println("unSetOffList");
+					 * 
+					 * InBillingTransactionsModel invoice = null;
+					 * 
+					 * if (unSetOffList != null && unSetOffList.size() > 0) { invoice =
+					 * unSetOffList.get(0); } else { invoice = createInvoice(inProposalsModel, null,
+					 * agentCode, locCode); inBillingTransactionDao.save(invoice); }
+					 * 
+					 * System.out.println("invoice");
+					 * 
+					 * List<InBillingTransactionsModel> setoffList = null;
+					 * 
+					 * List<ReFundModel> fundModels = billingTransactionsCustomDao
+					 * .getRefundList(inProposalsModel.getInProposalsModelPK().getPprnum());
+					 * 
+					 * System.out.println("fundModels size : " + fundModels.size());
+					 * 
+					 * Double amount = saveReceiptDto.getAmount();
+					 * 
+					 * if (fundModels != null && fundModels.size() > 0) { for (ReFundModel
+					 * reFundModel : fundModels) { amount += reFundModel.getRefamount(); } }
+					 * 
+					 * System.out.println("amount size : " + amount);
+					 * System.out.println("amount size : " + (invoice.getAmount() <= amount)); if
+					 * (invoice.getAmount() <= amount) {
+					 * 
+					 * ReFundModel fundModel = new ReFundModel();
+					 * fundModel.setDoccod(deposit.getBillingTransactionsModelPK().getDoccod());
+					 * fundModel.setDocnum(deposit.getBillingTransactionsModelPK().getDocnum());
+					 * fundModel.setPprnum(
+					 * Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum()));
+					 * fundModel.setRefamount(deposit.getDepost() * -1);
+					 * fundModel.setLinnum(deposit.getBillingTransactionsModelPK().getLinnum());
+					 * setoffList = getSetOff(invoice, fundModel, setoffList, inProposalsModel,
+					 * fundModels, agentCode, locCode); }
+					 * 
+					 * inTransactionDao.save(inTransactionsModel);
+					 * inBillingTransactionDao.save(deposit);
+					 * 
+					 * if (setoffList != null && setoffList.size() > 0) {
+					 * System.out.println(setoffList.size() + "  setoff list");
+					 * 
+					 * for (InBillingTransactionsModel e : setoffList) {
+					 * System.out.println(e.getBillingTransactionsModelPK().toString()); } for
+					 * (InBillingTransactionsModel e : setoffList) {
+					 * System.out.println(e.toString()); }
+					 * 
+					 * inBillingTransactionDao.save(setoffList); }
+					 */
+
+				}
+			}
+		}
+
+	}
+
+	/*private List<InBillingTransactionsModel> getSetOff(InBillingTransactionsModel invoice, ReFundModel deposit,
 			List<InBillingTransactionsModel> setoffList, InProposalsModel inProposalsModel,
 			List<ReFundModel> fundModels, String user, String loc) throws Exception {
 
@@ -466,11 +450,11 @@ public class ProposalServiceImpl implements ProposalServce {
 					InBillingTransactionsModel newInvoice = createInvoice(inProposalsModel, invoice, user, loc);
 					setoffList.add(newInvoice);
 					getSetOff(newInvoice, deposit, setoffList, inProposalsModel, fundModels, user, loc);
-					/*
+					
 					 * List<InBillingTransactionsModel> billingTransactionsModels = if
 					 * (billingTransactionsModels != null && !billingTransactionsModels.isEmpty()) {
 					 * setoffList.addAll(billingTransactionsModels); }
-					 */
+					 
 					i++;
 				}
 
@@ -494,7 +478,7 @@ public class ProposalServiceImpl implements ProposalServce {
 
 			setoffList.add(getSetoff(deposit, invoice, inProposalsModel, user, loc));
 
-			InBillingTransactionsModel newInvoice = createInvoice(inProposalsModel, invoice,user, loc);
+			InBillingTransactionsModel newInvoice = createInvoice(inProposalsModel, invoice, user, loc);
 			setoffList.add(newInvoice);
 
 			System.out.println("depAmount >= newInvoice.getAmount() : " + (depAmount >= newInvoice.getAmount()));
@@ -509,11 +493,11 @@ public class ProposalServiceImpl implements ProposalServce {
 
 				System.out.println("fundModel 4 : " + fundModels.size());
 				getSetOff(newInvoice, deposit, setoffList, inProposalsModel, fundModels, user, loc);
-				/*
+				
 				 * List<InBillingTransactionsModel> billingTransactionsModels = if
 				 * (billingTransactionsModels != null && !billingTransactionsModels.isEmpty()) {
 				 * setoffList.addAll(billingTransactionsModels); }
-				 */
+				 
 
 			}
 
@@ -521,7 +505,7 @@ public class ProposalServiceImpl implements ProposalServce {
 		} else {
 			return setoffList;
 		}
-	}
+	}*/
 
 	private List<InPropSurrenderValsModel> incrementSurrenderVals(
 			List<InPropSurrenderValsModel> propSurrenderValsModels, Integer updatedSeqNo, String polNo) {
@@ -702,7 +686,7 @@ public class ProposalServiceImpl implements ProposalServce {
 					}
 				} catch (Exception e) {
 					billingTransactionsModel.setTxnyer(Calendar.getInstance().get(Calendar.YEAR));
-					billingTransactionsModel.setTxnmth(Calendar.getInstance().get(Calendar.MONTH)+1);
+					billingTransactionsModel.setTxnmth(Calendar.getInstance().get(Calendar.MONTH) + 1);
 				}
 			}
 			return billingTransactionsModel;
@@ -713,7 +697,7 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	}
 
-	private InBillingTransactionsModel getSetoff(ReFundModel reFundModel, InBillingTransactionsModel invoice,
+	/*private InBillingTransactionsModel getSetoff(ReFundModel reFundModel, InBillingTransactionsModel invoice,
 			InProposalsModel inProposalsModel, String user, String loc) throws Exception {
 
 		InBillingTransactionsModelPK modelPK = new InBillingTransactionsModelPK();
@@ -770,5 +754,5 @@ public class ProposalServiceImpl implements ProposalServce {
 		return model;
 
 	}
-
+*/
 }

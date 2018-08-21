@@ -21,6 +21,7 @@ public class BankController {
 	@RequestMapping(value = "/getbank", method = RequestMethod.POST)
 	public List<BankDto> getBankDtos(@RequestParam String token){
 		String userCode = new JwtDecoder().generate(token);
+		System.out.println(userCode);
 		try {
 			return bankService.getBanksByUser(userCode);
 		} catch (Exception e) {

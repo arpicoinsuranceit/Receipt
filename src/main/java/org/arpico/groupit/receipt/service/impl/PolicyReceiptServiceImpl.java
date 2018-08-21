@@ -1,17 +1,17 @@
 package org.arpico.groupit.receipt.service.impl;
 
-import java.math.BigDecimal;
+/*import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+import java.time.temporal.ChronoUnit;*/
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import javax.transaction.Transactional;
-
-import org.arpico.groupit.receipt.dao.CommisDaoCustom;
+/*
+import org.arpico.groupit.receipt.dao.CommisDaoCustom;*/
 import org.arpico.groupit.receipt.dao.InAgentMastDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsDao;
@@ -22,19 +22,20 @@ import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
 import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
 import org.arpico.groupit.receipt.dto.ProposalNoSeqNoDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
-import org.arpico.groupit.receipt.model.AgentMastModel;
-import org.arpico.groupit.receipt.model.CommisModel;
+import org.arpico.groupit.receipt.model.AgentMastModel;/*
+import org.arpico.groupit.receipt.model.CommisModel;*/
 import org.arpico.groupit.receipt.model.InBillingTransactionsModel;
 import org.arpico.groupit.receipt.model.InProposalBasicsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.InTransactionsModel;
-import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;
-import org.arpico.groupit.receipt.model.ReFundModel;
+import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;/*
+import org.arpico.groupit.receipt.model.ReFundModel;*/
 import org.arpico.groupit.receipt.model.pk.InBillingTransactionsModelPK;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.InTransactionService;
 import org.arpico.groupit.receipt.service.NumberGenerator;
 import org.arpico.groupit.receipt.service.PolicyReceiptService;
+import org.arpico.groupit.receipt.service.SetoffService;
 import org.arpico.groupit.receipt.util.AppConstant;
 import org.arpico.groupit.receipt.util.CommonMethodsUtility;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,8 +74,10 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 	@Autowired
 	private RmsUserDao rmsUserDao;
 
-	@Autowired
-	private CommisDaoCustom commisDaoCustom;
+	/*@Autowired
+	private CommisDaoCustom commisDaoCustom;*/
+	
+	@Autowired SetoffService setoffService;
 
 	@Override
 	public List<ProposalNoSeqNoDto> getPolicyNoSeqNoDtoList(String val) throws Exception {
@@ -163,7 +166,13 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 			System.out.println("deposit model save");
 			System.out.println(deposit.toString());
 
-			List<InBillingTransactionsModel> unSetOffList = billingTransactionsCustomDao
+			
+			
+			
+			
+			
+			
+			/*List<InBillingTransactionsModel> unSetOffList = billingTransactionsCustomDao
 					.getUnSetOffs(inProposalsModel.getInProposalsModelPK().getPprnum());
 
 			System.out.println("ussetoff list size : " + unSetOffList.size());
@@ -185,8 +194,6 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 			} else {
 				System.out.println("new invoice");
 				invoice = createInvoice(inProposalsModel, previousInvoice, agentCode, locCode);
-				
-
 			}
 
 			System.out.println("halfway");
@@ -217,6 +224,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 			System.out.println(invoice.getAmount() + "  invoice amount");
 
+			
 			if (invoice.getAmount() <= amount) {
 				
 				System.out.println("amount if");
@@ -249,14 +257,16 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 				}
 
 				inBillingTransactionDao.save(setoffList);
-			}
+			}*/
+			
+			setoffService.setoff(inProposalsModel, agentCode, locCode, saveReceiptDto, deposit, 0.0);
 
 			return new ResponseEntity<>("Success", HttpStatus.OK);
 		}
 		return null;
 	}
 
-	private List<InBillingTransactionsModel> getSetOff(InBillingTransactionsModel invoice, ReFundModel deposit,
+	/*private List<InBillingTransactionsModel> getSetOff(InBillingTransactionsModel invoice, ReFundModel deposit,
 			List<InBillingTransactionsModel> setoffList, InProposalsModel inProposalsModel,
 			List<ReFundModel> fundModels, String user, String loc, List<InBillingTransactionsModel> unsetoffList)
 			throws Exception {
@@ -331,11 +341,11 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 					setoffList.add(newInvoice);
 					getSetOff(newInvoice, deposit, setoffList, inProposalsModel, fundModels, user, loc, unsetoffList);
-					/*
+					
 					 * List<InBillingTransactionsModel> billingTransactionsModels = if
 					 * (billingTransactionsModels != null && !billingTransactionsModels.isEmpty()) {
 					 * setoffList.addAll(billingTransactionsModels); }
-					 */
+					 
 					i++;
 				}
 			}
@@ -404,11 +414,11 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 				System.out.println("fundModel 4 : " + fundModels.size());
 				getSetOff(newInvoice, deposit, setoffList, inProposalsModel, fundModels, user, loc, unsetoffList);
-				/*
+				
 				 * List<InBillingTransactionsModel> billingTransactionsModels = if
 				 * (billingTransactionsModels != null && !billingTransactionsModels.isEmpty()) {
 				 * setoffList.addAll(billingTransactionsModels); }
-				 */
+				 
 
 			}
 
@@ -536,7 +546,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 		return model;
 
-	}
+	}*/
 
 	@Override
 	public InBillingTransactionsModel createInvoice(InProposalsModel inProposalsModel,

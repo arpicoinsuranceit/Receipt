@@ -25,7 +25,7 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 	@Override
 	public List<ProposalNoSeqNoModel> getProposalNoSeqNoModelList(String val) throws Exception {
 		List<ProposalNoSeqNoModel> list = jdbcTemplate.query(
-				"select pprnum, prpseq from inproposals where sbucod = '450' and pprnum like '" + val + "%'", new ProposalNoSeqNoRowMapper());
+				"select pprnum, prpseq from inproposals where sbucod = '450' and pprnum like '" + val + "%' and pprsta not in ('PLISU', 'PLAPS', 'INAC', 'EXPI', 'MATU')", new ProposalNoSeqNoRowMapper());
 		return list;
 	}
 
