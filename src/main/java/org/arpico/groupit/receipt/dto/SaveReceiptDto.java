@@ -34,7 +34,7 @@ public class SaveReceiptDto {
 	public Integer getSeqNo() {
 		return seqNo;
 	}
-
+	
 	public void setSeqNo(Integer seqNo) {
 		this.seqNo = seqNo;
 	}
@@ -192,5 +192,7 @@ public class SaveReceiptDto {
 				+ branchCode + ", agentCode=" + agentCode + ", chequeno=" + chequeno + ", chequedate=" + chequedate
 				+ ", chequebank=" + chequebank + ", transferno=" + transferno + ", token=" + token + "]";
 	}
+
+	
 
 }

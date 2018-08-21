@@ -34,6 +34,8 @@ public class BankServiceImpl implements BankService {
 		}
 
 		List<BankModel> bankModels = bankDao.getBankList(dataSql);
+		
+		System.out.println(dataSql);
 		List<BankDto> bankDtos = new ArrayList<>();
 
 		System.out.println(bankModels.size());

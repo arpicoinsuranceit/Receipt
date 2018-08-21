@@ -1,14 +1,15 @@
 package org.arpico.groupit.receipt.dao.impl;
 
 import java.util.List;
-
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
 import org.arpico.groupit.receipt.dao.rowmapper.InPolicyBasicRowMapper;
+import org.arpico.groupit.receipt.dao.rowmapper.InPropPreviousPolsRowMapper;
 import org.arpico.groupit.receipt.dao.rowmapper.InProposalBasicRowMapper;
 import org.arpico.groupit.receipt.dao.rowmapper.InProposalsRowMapper;
 import org.arpico.groupit.receipt.dao.rowmapper.ProposalL3RowMapper;
 import org.arpico.groupit.receipt.dao.rowmapper.ProposalNoSeqNoRowMapper;
 import org.arpico.groupit.receipt.dto.ProposalL3Dto;
+import org.arpico.groupit.receipt.model.InPropPreviousPolModel;
 import org.arpico.groupit.receipt.model.InProposalBasicsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;
@@ -105,6 +106,18 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 		}
 		
 		return null;
+	}
+
+	@Override
+	public List<InPropPreviousPolModel> getPreviousPolicies(String sbu, String nic) throws Exception {
+		List<InPropPreviousPolModel> models = jdbcTemplate.query("select prdcod,polnum,bassum,sumrkm,case when pprsta in ('PLISU','LAMD') " + 
+				"then 'Y' else 'N' end pplinf from inproposals a " + 
+				"where a.sbucod='" + sbu + "' and a.ppdnic='"+ nic + "' "+ 
+				"and a.pprsta <> 'INAC' and (a.polnum is not null or " + 
+				"polnum <> '') and TIMESTAMPDIFF(YEAR,icpdat,sysdate()) <= 2", new InPropPreviousPolsRowMapper());
+		
+		
+		return models;
 	}
 
 }

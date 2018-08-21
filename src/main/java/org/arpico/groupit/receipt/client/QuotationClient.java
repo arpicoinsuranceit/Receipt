@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.arpico.groupit.receipt.dto.MedicalRequirementsDto;
+import org.arpico.groupit.receipt.dto.NomineeDto;
+import org.arpico.groupit.receipt.dto.PensionSheduleDto;
 import org.arpico.groupit.receipt.dto.SheduleDto;
 import org.arpico.groupit.receipt.dto.SurrenderValsDto;
 import org.arpico.groupit.receipt.dto.ViewQuotationDto;
@@ -149,6 +151,70 @@ public class QuotationClient {
 			RestTemplate restTemplate = new RestTemplate();
 			String result = restTemplate.postForObject(AppConstant.URI_UPDATE_STATUS, map, String.class);
 
+			return result;
+		} catch (Exception e) {
+
+		}
+		return null;
+	}
+	
+	public List<PensionSheduleDto> getPensionShedule(Integer seqNo, Integer qId) {
+
+		MultiValueMap<String, Integer> map = new LinkedMultiValueMap<String, Integer>();
+		map.add("seqNo", seqNo);
+		map.add("qId", qId);
+
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			PensionSheduleDto[] result = restTemplate.postForObject(AppConstant.URI_QUOTATION_PENSION_SHEDULE, map,
+					PensionSheduleDto[].class);
+
+			List<PensionSheduleDto> pensionValsDtos = new ArrayList<>();
+			for (PensionSheduleDto pensionValsDto : result) {
+				pensionValsDtos.add(pensionValsDto);
+			}
+
+			return pensionValsDtos;
+		} catch (Exception e) {
+
+		}
+		return null;
+	}
+	
+	public List<NomineeDto> getNominee(Integer seqNo, Integer qId) {
+
+		MultiValueMap<String, Integer> map = new LinkedMultiValueMap<String, Integer>();
+		map.add("seqNo", seqNo);
+		map.add("qId", qId);
+
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			NomineeDto[] result = restTemplate.postForObject(AppConstant.URI_QUOTATION_NOMINEE_DETAILS, map,
+					NomineeDto[].class);
+
+			List<NomineeDto> nomineeDtos = new ArrayList<>();
+			for (NomineeDto nomineeValsDto : result) {
+				nomineeDtos.add(nomineeValsDto);
+			}
+
+			return nomineeDtos;
+		} catch (Exception e) {
+
+		}
+		return null;
+	}
+	
+	public Integer getQuotationDetailFromSeqNo(Integer seqNo, Integer qId) {
+
+		MultiValueMap<String, Integer> map = new LinkedMultiValueMap<String, Integer>();
+		map.add("seqNo", seqNo);
+		map.add("qId", qId);
+
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			Integer result = restTemplate.postForObject(AppConstant.URI_QUOTATION_DETAILS_FROM_SEQNO, map,
+					Integer.class);
+			System.out.println(result);
 			return result;
 		} catch (Exception e) {
 

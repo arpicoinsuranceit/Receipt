@@ -29,7 +29,7 @@ public class InProposalsModel {
 	private String ppdndu;
 	private Integer toptrm;
 	private String paytrm;
-	private String paymth;
+	private String paymth; 
 	private Double bassum = AppConstant.ZERO_FOR_DECIMAL;
 	private Double premum = AppConstant.ZERO_FOR_DECIMAL;
 	private Double highcm;
@@ -55,7 +55,7 @@ public class InProposalsModel {
 	private Date lockin = AppConstant.DATE;
 	private String sinprm;
 	private String pprsta;
-	private String prosta;
+	private String prosta; 
 	private String ppdmob;
 	private Double ppdani;
 	private String stitle;
@@ -69,7 +69,7 @@ public class InProposalsModel {
 	private Date spodob;
 	private Integer sagnxt;
 	private String spotel;
-	private Double totprm;
+	private Double totprm; 
 	private Double sumrks = AppConstant.ZERO_FOR_DECIMAL;
 	private Double sumrkm = AppConstant.ZERO_FOR_DECIMAL;
 	private Double prmqtt = AppConstant.ZERO_FOR_DECIMAL;
