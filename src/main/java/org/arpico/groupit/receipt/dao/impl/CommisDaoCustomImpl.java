@@ -1,7 +1,5 @@
 package org.arpico.groupit.receipt.dao.impl;
 
-import static org.hamcrest.CoreMatchers.nullValue;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

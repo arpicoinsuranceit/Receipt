@@ -7,6 +7,7 @@ public class SaveUnderwriteDto {
 	private boolean sendToApprove;
 	private Integer proposalNo;
 	private Integer seqNo;
+	private Integer quoSeqNo;
 	private Integer quotationNo;
 	private Integer quotationDetailNo;
 	private String token;
@@ -91,14 +92,22 @@ public class SaveUnderwriteDto {
 	public void setNominee(ArrayList<NomineeUnderwriteDto> nominee) {
 		this.nominee = nominee;
 	}
+	
+	public Integer getQuoSeqNo() {
+		return quoSeqNo;
+	}
+	public void setQuoSeqNo(Integer quoSeqNo) {
+		this.quoSeqNo = quoSeqNo;
+	}
 	@Override
 	public String toString() {
 		return "SaveUnderwriteDto [sendToApprove=" + sendToApprove + ", proposalNo=" + proposalNo + ", seqNo=" + seqNo
-				+ ", quotationNo=" + quotationNo + ", quotationDetailNo=" + quotationDetailNo + ", token=" + token
-				+ ", propDate=" + propDate + ", agentCode=" + agentCode + ", mainlifeUnderwriteDto="
-				+ mainlifeUnderwriteDto + ", spouseUnderwriteDto=" + spouseUnderwriteDto + ", children=" + children
-				+ ", nominee=" + nominee + "]";
+				+ ", quoSeqNo=" + quoSeqNo + ", quotationNo=" + quotationNo + ", quotationDetailNo=" + quotationDetailNo
+				+ ", token=" + token + ", propDate=" + propDate + ", agentCode=" + agentCode
+				+ ", mainlifeUnderwriteDto=" + mainlifeUnderwriteDto + ", spouseUnderwriteDto=" + spouseUnderwriteDto
+				+ ", children=" + children + ", nominee=" + nominee + "]";
 	}
+	
 	
 	
 }
