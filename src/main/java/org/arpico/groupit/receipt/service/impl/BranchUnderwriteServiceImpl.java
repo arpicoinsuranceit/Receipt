@@ -28,6 +28,7 @@ import org.arpico.groupit.receipt.dto.QuoChildBenefDto;
 import org.arpico.groupit.receipt.dto.SaveUnderwriteDto;
 import org.arpico.groupit.receipt.dto.SheduleDto;
 import org.arpico.groupit.receipt.dto.SurrenderValsDto;
+import org.arpico.groupit.receipt.dto.UnderwriteDto;
 import org.arpico.groupit.receipt.dto.ViewQuotationDto;
 import org.arpico.groupit.receipt.model.InOcuLoadDetModel;
 import org.arpico.groupit.receipt.model.InPropAddBenefitModel;
@@ -109,26 +110,37 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	private InProposalDao inProposalDao;
 
 	@Override
-	public List<InProposalUnderwriteModel> getProposalToUnderwrite(String usercode) throws Exception {
+	public UnderwriteDto getProposalToUnderwrite(String usercode, Integer pageIndex, Integer pageSize) throws Exception {
 		//System.out.println(usercode + "user code...");
-		List<String> loccodes=branchUnderwriteDao.findLocCodes(usercode);
-		String locations="";
-		if(loccodes != null) {
-			for (String string : loccodes) {
-				locations+="'"+string+"'"+",";
+		if(usercode!=null) {
+			List<String> loccodes=branchUnderwriteDao.findLocCodes(usercode);
+			String locations="";
+			if(loccodes != null) {
+				for (String string : loccodes) {
+					locations+="'"+string+"'"+",";
+				}
 			}
+			
+			locations=locations.replaceAll(",$", "");
+			
+			if(locations != "") {
+				List<InProposalUnderwriteModel> inProposalUnderwriteModels=branchUnderwriteDao.findProposalToUnderwrite(locations,pageSize,pageIndex*pageSize,loccodes.contains("HO"));
+				Integer count=branchUnderwriteDao.findProposalCount(loccodes.contains("HO"), locations);
+
+				UnderwriteDto underwriteDto=new UnderwriteDto();
+				underwriteDto.setInProposalUnderwriteModel(inProposalUnderwriteModels);
+				underwriteDto.setPropCount(count);
+				
+				return underwriteDto;
+				
+			}else {
+				return null;
+			}
+			
+			
 		}
 		
-		locations=locations.replaceAll(",$", "");
-		
-		//System.out.println(locations + " Branch Codes ------");
-		
-		if(locations != "") {
-			return branchUnderwriteDao.findProposalToUnderwrite(locations);
-		}else {
-			return null;
-		}
-		
+		return null;
 		
 	}
 
@@ -756,6 +768,8 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		
 		return inPropNomDetailsModels;
 	}
+
+	
 	
 
 }

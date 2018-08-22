@@ -1,15 +1,14 @@
 package org.arpico.groupit.receipt.controller;
 
 import java.util.List;
-
 import org.arpico.groupit.receipt.client.QuotationClient;
 import org.arpico.groupit.receipt.dto.NomineeDto;
 import org.arpico.groupit.receipt.dto.PensionSheduleDto;
 import org.arpico.groupit.receipt.dto.SaveUnderwriteDto;
 import org.arpico.groupit.receipt.dto.SheduleDto;
 import org.arpico.groupit.receipt.dto.SurrenderValsDto;
+import org.arpico.groupit.receipt.dto.UnderwriteDto;
 import org.arpico.groupit.receipt.dto.ViewQuotationDto;
-import org.arpico.groupit.receipt.model.InProposalUnderwriteModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.BranchUnderwriteService;
@@ -32,13 +31,13 @@ public class BranchUnderwriteController {
 	@Autowired
 	private QuotationClient quotationClient;
 	
-	@RequestMapping(value = "/loadProposalToUnderwrite/{token:.+}", method = RequestMethod.GET)
-	public List<InProposalUnderwriteModel> getProposalsToUnderwrite (@PathVariable("token") String token){
+	@RequestMapping(value = "/loadProposalToUnderwrite/{token:.+}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
+	public UnderwriteDto getProposalsToUnderwrite (@PathVariable("token") String token,@PathVariable("pageIndex") Integer pageIndex,@PathVariable("pageSize") Integer pageSize){
 		System.out.println("loadProposalToUnderwrite");
 		
 		try {
 			String userCode=new JwtDecoder().generate(token);
-			return branchUnderwriteService.getProposalToUnderwrite(userCode);
+			return branchUnderwriteService.getProposalToUnderwrite(userCode,pageIndex,pageSize);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
