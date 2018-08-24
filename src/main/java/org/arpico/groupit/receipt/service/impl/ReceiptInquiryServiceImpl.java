@@ -5,7 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import org.arpico.groupit.receipt.dao.BranchUnderwriteDao;
 import org.arpico.groupit.receipt.dao.ReceiptInquiryCustomDao;
+import org.arpico.groupit.receipt.dto.AccountDetailsDto;
+import org.arpico.groupit.receipt.dto.BankDetailsDto;
+import org.arpico.groupit.receipt.dto.LoadReceiptInquiryDetailsDto;
+import org.arpico.groupit.receipt.dto.PolicyDetailsDto;
 import org.arpico.groupit.receipt.dto.ReceiptDetailsDto;
+import org.arpico.groupit.receipt.model.AccountDetailsModel;
+import org.arpico.groupit.receipt.model.BankDetailsModel;
+import org.arpico.groupit.receipt.model.PolicyDetailsModel;
 import org.arpico.groupit.receipt.model.ReceiptDetailsModel;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.ReceiptInquiryService;
@@ -24,7 +31,7 @@ public class ReceiptInquiryServiceImpl implements ReceiptInquiryService{
 	private BranchUnderwriteDao branchUnderwriteDao;
 
 	@Override
-	public List<ReceiptDetailsDto> getAllReceiptDetails(String token,Integer pageNum,Integer limit) throws Exception {
+	public LoadReceiptInquiryDetailsDto getAllReceiptDetails(String token,Integer pageNum,Integer limit) throws Exception {
 		
 		String userCode=new JwtDecoder().generate(token);
 		
@@ -67,14 +74,90 @@ public class ReceiptInquiryServiceImpl implements ReceiptInquiryService{
 					receiptDetailsDtos.add(detailsDto);
 				});
 				
-				return receiptDetailsDtos;
+				Integer count=receiptInquiryCustomDao.getAllReceiptCount(locations, loccodes.contains("HO"));
+				
+				LoadReceiptInquiryDetailsDto loadReceiptInquiryDetailsDto=new LoadReceiptInquiryDetailsDto();
+				loadReceiptInquiryDetailsDto.setReceiptCount(count);
+				loadReceiptInquiryDetailsDto.setReceiptDetailsDto(receiptDetailsDtos);
+				
+				return loadReceiptInquiryDetailsDto;
 				
 			}
 		}
 		
-		return new ArrayList<>();
+		return new LoadReceiptInquiryDetailsDto();
 		
 		
+	}
+
+	@Override
+	public List<PolicyDetailsDto> getAllPolicyDetails(String docCode, Integer docNum) throws Exception {
+		List<PolicyDetailsModel> policyDetailsModels=receiptInquiryCustomDao.getAllPolicyDetails(docCode, docNum);
+		List<PolicyDetailsDto> policyDetailsDtos=new ArrayList<>();
+		
+		if(policyDetailsModels != null) {
+			policyDetailsModels.forEach(p -> {
+				
+				PolicyDetailsDto detailsDto=new PolicyDetailsDto();
+				detailsDto.setAmount(p.getAmount());
+				detailsDto.setComDate(new SimpleDateFormat("yyyy-MM-dd").format(p.getComDate()));
+				if(p.getDate() != null) {
+					detailsDto.setDate(new SimpleDateFormat("yyyy-MM-dd").format(p.getDate()));
+				}
+				
+				detailsDto.setInsMonth(p.getInsMonth());
+				detailsDto.setPolnum(p.getPolnum());
+				detailsDto.setPolType(p.getPolType());
+				detailsDto.setPprnum(p.getPprnum());
+				detailsDto.setStatus(p.getStatus());
+				
+				policyDetailsDtos.add(detailsDto);
+				
+			});
+		}
+		
+		return policyDetailsDtos;
+	}
+
+	@Override
+	public List<AccountDetailsDto> getAllAccountDetails(String docCode, Integer docNum) throws Exception {
+		List<AccountDetailsModel> accountDetailsModels=receiptInquiryCustomDao.getAllAccountDetails(docCode, docNum);
+		List<AccountDetailsDto> accountDetailsDtos=new ArrayList<>();
+		
+		if(accountDetailsModels!=null) {
+			accountDetailsModels.forEach(a -> {
+				AccountDetailsDto accountDetailsDto=new AccountDetailsDto();
+				accountDetailsDto.setAccNO(a.getAccNO());
+				accountDetailsDto.setBranch(a.getBranch());
+				accountDetailsDto.setCr(a.getCr());
+				accountDetailsDto.setDescription(a.getDescription());
+				accountDetailsDto.setDr(a.getDr());
+				
+				accountDetailsDtos.add(accountDetailsDto);
+				
+			});
+		}
+		
+		return accountDetailsDtos;
+	}
+
+	@Override
+	public BankDetailsDto getBankDetails(String docCode, Integer docNum) throws Exception {
+		BankDetailsDto bankDetailsDto=new BankDetailsDto();
+		BankDetailsModel bankDetailsModel=receiptInquiryCustomDao.getBankDetails(docCode, docNum);
+		
+		if(bankDetailsModel!=null) {
+			bankDetailsDto.setAmount(bankDetailsModel.getAmount());
+			bankDetailsDto.setBranchCode(bankDetailsModel.getBranchCode());
+			bankDetailsDto.setColBank(bankDetailsModel.getColBank());
+			bankDetailsDto.setInsDate(new SimpleDateFormat("yyyy-MM-dd").format(bankDetailsModel.getInsDate()));
+			bankDetailsDto.setInsNo(bankDetailsModel.getInsNo());
+			bankDetailsDto.setInsType(bankDetailsModel.getInsType());
+			bankDetailsDto.setRemarks(bankDetailsModel.getRemarks());
+			bankDetailsDto.setStatus(bankDetailsModel.getStatus());
+		}
+		
+		return bankDetailsDto;
 	}
 	
 
