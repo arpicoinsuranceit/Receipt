@@ -33,4 +33,10 @@ public class InTransactionCustomDaoImpl implements InTransactionCustomDao{
 				+ " = '"+polNo+"'  order by creadt desc limit 2", new LastReceiptRowMapper());
 	}
 
+	@Override
+	public List<LastReceiptSummeryModel> getReceiptsByDocNum(String docnum) throws Exception {
+		return (List<LastReceiptSummeryModel>) jdbcTemplate.query("select doccod, docnum, creadt, pprnum, polnum, totprm, chqrel, paymod from intransactions where docnum "
+				+ " = '"+docnum+"' ", new LastReceiptRowMapper());
+	}
+
 }

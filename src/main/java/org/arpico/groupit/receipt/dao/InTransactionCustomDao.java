@@ -12,5 +12,6 @@ public interface InTransactionCustomDao {
 
 	List<LastReceiptSummeryModel> getLastReceiptsByPolNo(String polNo)throws Exception;
 
-
+	List<LastReceiptSummeryModel> getReceiptsByDocNum(String docnum)throws Exception;
+	
 }

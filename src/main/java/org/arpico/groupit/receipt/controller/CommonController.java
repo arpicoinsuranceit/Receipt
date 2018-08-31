@@ -1,7 +1,6 @@
 package org.arpico.groupit.receipt.controller;
 
 import java.util.List;
-
 import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
 import org.arpico.groupit.receipt.service.InTransactionService;
 import org.arpico.groupit.receipt.util.CurrencyFormat;
