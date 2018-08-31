@@ -8,6 +8,7 @@ public class ReFundModel {
 	private Double refamount;
 	private Integer linnum;
 	private String paymode;
+	private Integer active = 1;
 	
 	public Integer getPprnum() {
 		return pprnum;
@@ -57,11 +58,18 @@ public class ReFundModel {
 		this.paymode = paymode;
 	}
 
+	public Integer getActive() {
+		return active;
+	}
+
+	public void setActive(Integer active) {
+		this.active = active;
+	}
+
 	@Override
 	public String toString() {
 		return "ReFundModel [pprnum=" + pprnum + ", doccod=" + doccod + ", docnum=" + docnum + ", refamount="
-				+ refamount + ", linnum=" + linnum + ", paymode=" + paymode + "]";
+				+ refamount + ", linnum=" + linnum + ", paymode=" + paymode + ", active=" + active + "]";
 	}
-
 
 }

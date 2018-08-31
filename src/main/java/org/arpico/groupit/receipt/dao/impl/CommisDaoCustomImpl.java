@@ -1,5 +1,8 @@
 package org.arpico.groupit.receipt.dao.impl;
 
+import static org.mockito.Matchers.contains;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,16 +24,27 @@ public class CommisDaoCustomImpl implements CommisDaoCustom {
 	public CommisModel getCommis(Integer comYear, String prodCode, Integer term, Date date) throws Exception {
 		List<Object> args = new ArrayList<>();
 		
+		System.out.println("comYear : " + comYear);
+		System.out.println("prodCode : " + prodCode);
+		System.out.println("term : " + term);
+		System.out.println("date : " + date);
+		
+		
+		
 		String sql = "SELECT " + "    comper, comsin " + "FROM "
 				+ "    inproductcom " + "WHERE " + "    sbucod = '450' AND comyer = " + comYear + " "
 				+ "        AND prdcod = '" + prodCode + "' " + "        AND frmtrm <= " + term + " "
-				+ "        AND toterm >= " + term + " " + "        AND '" + date + "' BETWEEN todate AND frmdat";
+				+ "        AND toterm >= " + term + " " + "        AND '" + new SimpleDateFormat("yyyy-MM-dd").format(date) + "' BETWEEN todate AND frmdat";
 		
 		System.out.println(sql);
 		
 		List<CommisModel> commisModels = jdbcTemplate.query(sql,
 				new CommisRowMapper(), args.toArray());
 
+		System.out.println(commisModels.size());
+		
+		commisModels.forEach(System.out::println);
+		
 		CommisModel commisModel = null;
 
 		if (commisModels != null && !commisModels.isEmpty()) {

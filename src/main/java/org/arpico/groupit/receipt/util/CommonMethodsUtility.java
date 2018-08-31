@@ -2,6 +2,7 @@ package org.arpico.groupit.receipt.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.arpico.groupit.receipt.dao.InAgentMastDao;
@@ -56,7 +57,7 @@ public class CommonMethodsUtility {
 			inTransactionsModel.setChqrel("N");
 			inTransactionsModel.setCompad("N");
 			inTransactionsModel.setCreaby(userCode);
-			inTransactionsModel.setCreadt(AppConstant.DATE);
+			inTransactionsModel.setCreadt(new Date());
 			inTransactionsModel.setSeqnum(inProposalsModel.getInProposalsModelPK().getPrpseq());
 
 			try {
@@ -65,7 +66,7 @@ public class CommonMethodsUtility {
 			
 
 			inTransactionsModel.setInTransactionsModelPK(inTransactionsModelPK);
-			inTransactionsModel.setLockin(AppConstant.DATE);
+			inTransactionsModel.setLockin(new Date());
 			inTransactionsModel.setNtitle(inProposalsModel.getNtitle());
 			inTransactionsModel.setPpdnam(inProposalsModel.getPpdnam());
 			inTransactionsModel.setPaymod(saveReceiptDto.getPayMode());
@@ -77,11 +78,15 @@ public class CommonMethodsUtility {
 			inTransactionsModel.setRctsta("VALID");
 			inTransactionsModel.setRemark(saveReceiptDto.getRemark());
 			inTransactionsModel.setTotprm(saveReceiptDto.getAmount());
-			inTransactionsModel.setTxndat(AppConstant.DATE);
+			inTransactionsModel.setTxndat(new Date());
 
 			if (saveReceiptDto.getPayMode().equalsIgnoreCase("CQ")) {
 				inTransactionsModel.setChqbnk(saveReceiptDto.getChequebank());
+				try {
 				inTransactionsModel.setChqdat(new SimpleDateFormat("dd-MM-yyyy").parse(saveReceiptDto.getChequedate()));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				inTransactionsModel.setChqnum(saveReceiptDto.getChequeno());
 			}
 			if (saveReceiptDto.getPayMode().equalsIgnoreCase("CR")) {
@@ -122,7 +127,7 @@ public class CommonMethodsUtility {
 			billingTransactionsModel.setComiss(AppConstant.ZERO_FOR_DECIMAL);
 			billingTransactionsModel.setComper(AppConstant.ZERO_FOR_DECIMAL);
 			billingTransactionsModel.setCreaby(inProposalsModel.getCreaby());
-			billingTransactionsModel.setCreadt(AppConstant.DATE);
+			billingTransactionsModel.setCreadt(new Date());
 			billingTransactionsModel.setBrncod(inProposalsModel.getBrncod());
 			billingTransactionsModel.setPrpseq(inProposalsModel.getInProposalsModelPK().getPrpseq());
 			try {
@@ -135,7 +140,7 @@ public class CommonMethodsUtility {
 			billingTransactionsModel.setGrsprm(AppConstant.ZERO_FOR_DECIMAL);
 			billingTransactionsModel.setHrbprm(AppConstant.ZERO_FOR_DECIMAL);
 			billingTransactionsModel.setInsnum(inTransactionsModel.getInTransactionsModelPK().getLinnum());
-			billingTransactionsModel.setLockin(AppConstant.DATE);
+			billingTransactionsModel.setLockin(new Date());
 			billingTransactionsModel.setOldprm(AppConstant.ZERO_FOR_DECIMAL);
 			billingTransactionsModel.setPaymod(inTransactionsModel.getPaymod());
 			billingTransactionsModel.setPaytrm(Integer.parseInt(inProposalsModel.getPaytrm()));

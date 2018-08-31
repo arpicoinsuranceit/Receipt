@@ -46,7 +46,7 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 	public InProposalsModel getProposal(Integer propId, Integer propSeq) throws Exception {
 		List<InProposalsModel> models = jdbcTemplate.query("select * from inproposals where pprnum = '"+propId+"' and prpseq = '"+propSeq+"' and sbucod = '450'", new InProposalsRowMapper());
 		
-		System.out.println(models.size());
+		//System.out.println(models.size());
 		
 		if(!models.isEmpty()) {
 			return models.get(0);

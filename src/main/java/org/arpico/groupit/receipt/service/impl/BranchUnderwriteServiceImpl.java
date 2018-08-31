@@ -3,6 +3,7 @@ package org.arpico.groupit.receipt.service.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -165,7 +166,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 			if(inProposalsModel != null) {
 				
 				inProposalsModel.setPprsta("INAC");
-				inProposalsModel.setLockin(AppConstant.DATE);
+				inProposalsModel.setLockin(new Date());
 				
 				/* Inactive Before Line of InProposal */
 				inProposalDao.save(inProposalsModel);
@@ -226,7 +227,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 					inPropLoadingModel.setInPropLoadingPK(inPropLoadingModelPK);
 					inPropLoadingModel.setRidnam(inPropAddBenefitModel.getRidnam());
 					inPropLoadingModel.setGrdord(inPropAddBenefitModel.getGrdord());
-					inPropLoadingModel.setLockin(AppConstant.DATE);
+					inPropLoadingModel.setLockin(new Date());
 					inPropLoadingModel.setInstyp(inPropAddBenefitModel.getInstyp());
 					inPropLoadingModel.setRidtyp(inPropAddBenefitModel.getRidtyp());
 
@@ -498,8 +499,8 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		newInProposalsModel.setPrdcod(quotationDto.getProductCode());
 		newInProposalsModel.setPrdnam(quotationDto.getProductName());
 		
-		newInProposalsModel.setCreadt(AppConstant.DATE);
-		newInProposalsModel.setLockin(AppConstant.DATE);
+		newInProposalsModel.setCreadt(new Date());
+		newInProposalsModel.setLockin(new Date());
 		
 		return newInProposalsModel;
 	}
@@ -513,7 +514,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 				addBenefitModel.setRidtrm(benfDto.getRiderTerm());
 				addBenefitModel.setSumasu(benfDto.getRiderSum());
 				addBenefitModel.setRdrprm(benfDto.getPremium());
-				addBenefitModel.setLockin(AppConstant.DATE);
+				addBenefitModel.setLockin(new Date());
 				addBenefitModel.setInstyp(insType);
 
 				switch (frequency) {
@@ -582,7 +583,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 						addBenefitModel.setRidtrm(v.getRiderTerm());
 						addBenefitModel.setSumasu(v.getRiderSum());
 						addBenefitModel.setRdrprm(v.getPremium());
-						addBenefitModel.setLockin(AppConstant.DATE);
+						addBenefitModel.setLockin(new Date());
 						addBenefitModel.setInstyp(insType);
 
 						switch (frequency) {
@@ -630,7 +631,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		detailsModel.setInPropFamDetailsPK(famDetailsModelPK);
 		detailsModel.setFmlrel(childrenDto.get_cTitle().toUpperCase());
 		detailsModel.setFmldob(new SimpleDateFormat("dd-MM-yyyy").parse(childrenDto.get_cDob()));
-		detailsModel.setLockin(AppConstant.DATE);
+		detailsModel.setLockin(new Date());
 		detailsModel.setFmlsex(childrenDto.get_cTitle().equals("Son") ? "M" : "F");
 		detailsModel.setFmlage(childrenDto.get_cAge().floatValue());
 		detailsModel.setCicapp(childrenDto.is_cCibc() ? "Y" : "N");
@@ -680,7 +681,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		InPropMedicalReqModel inPropMedicalReqModel = new InPropMedicalReqModel();
 
 		inPropMedicalReqModel.setInPropMedicalReqModelPK(inPropMedicalReqModelPK);
-		inPropMedicalReqModel.setLockin(AppConstant.DATE);
+		inPropMedicalReqModel.setLockin(new Date());
 		inPropMedicalReqModel.setTessta("N");
 		inPropMedicalReqModel.setHoscod("NA");
 		inPropMedicalReqModel.setPaysta("");
@@ -736,7 +737,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 				detailsModel.setGurdnm(e.getGuardianName());
 				detailsModel.setGurnic(e.getGuardianNic());
 				detailsModel.setGurrel(e.getGuardianRelation());
-				detailsModel.setLockin(AppConstant.DATE);
+				detailsModel.setLockin(new Date());
 				
 				try {
 					if(e.getGuardianDOB() != "" && e.getGuardianDOB() != null) {

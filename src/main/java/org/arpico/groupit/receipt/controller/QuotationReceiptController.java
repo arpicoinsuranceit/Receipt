@@ -28,6 +28,8 @@ public class QuotationReceiptController {
 	public ResponseEntity<Object> savereceiptquo(@RequestBody SaveReceiptDto saveReceiptDto) {
 		System.out.println(saveReceiptDto.toString());
 
+		System.out.println("Work");
+		
 		String valid = "Error";
 
 		try {
@@ -35,12 +37,13 @@ public class QuotationReceiptController {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-
+		System.out.println(valid);
 		try {
 			if (valid.equalsIgnoreCase("ok")) {
 				String resp = quotationReceiptService.saveQuotationReceipt(saveReceiptDto);
-
+				System.out.println(resp);
 				if (resp.equalsIgnoreCase("WORK")) {
+					
 					return new ResponseEntity<>(resp, HttpStatus.OK);
 				} else {
 					return new ResponseEntity<>(resp, HttpStatus.NOT_ACCEPTABLE);
