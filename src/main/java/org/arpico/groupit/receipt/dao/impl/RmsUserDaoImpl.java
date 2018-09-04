@@ -2,8 +2,6 @@ package org.arpico.groupit.receipt.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-
 import org.arpico.groupit.receipt.dao.RmsUserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -21,7 +19,7 @@ public class RmsUserDaoImpl implements RmsUserDao{
 	public String getLocation(String userCode) throws Exception {
 		String userLocList = null;
 		
-		userLocList = jdbcTemplate.query("SELECT LOC_CODE FROM marksys.rms_users where USER_ID = '"+userCode+"'", new ResultSetExtractor<String>() {
+		userLocList = jdbcTemplate.query("SELECT LOC_CODE FROM marksys.rms_users where USER_ID = '"+userCode+"' and SBU_CODE='450' and active=1 ", new ResultSetExtractor<String>() {
 
 			@Override
 			public String extractData(ResultSet rs) throws SQLException, DataAccessException {

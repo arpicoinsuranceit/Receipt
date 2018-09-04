@@ -1,7 +1,6 @@
 package org.arpico.groupit.receipt.controller;
 
 import java.util.List;
-
 import org.arpico.groupit.receipt.dto.BankDto;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.BankService;
