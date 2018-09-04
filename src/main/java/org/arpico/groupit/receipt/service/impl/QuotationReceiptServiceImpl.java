@@ -11,6 +11,7 @@ import java.util.Map;
 import org.arpico.groupit.receipt.client.QuotationClient;
 import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.BenefictDetailsDao;
+import org.arpico.groupit.receipt.dao.BranchUnderwriteDao;
 import org.arpico.groupit.receipt.dao.CustomerDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsDao;
 import org.arpico.groupit.receipt.dao.InOccuLoadDatDao;
@@ -114,6 +115,9 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 	
 	@Autowired
 	private RmsUserDao rmsUserDao;
+	
+	@Autowired
+	private BranchUnderwriteDao branchUnderwriteDao;
 
 	@Override
 	public String saveQuotationReceipt(SaveReceiptDto saveReceiptDto) throws Exception {
@@ -671,6 +675,11 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 	public ProposalBasicDetailsDto getBasicDetails(Integer quoId, Integer seqId) throws Exception {
 		
 		return null;
+	}
+
+	@Override
+	public List<String> getBranches(String userCode) throws Exception {
+		return branchUnderwriteDao.findLocCodes(userCode);
 	}
 
 }

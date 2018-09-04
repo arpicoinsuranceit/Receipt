@@ -1,5 +1,7 @@
 package org.arpico.groupit.receipt.controller;
 
+import java.util.List;
+
 import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.service.QuotationReceiptService;
@@ -64,6 +66,17 @@ public class QuotationReceiptController {
 		
 		try {
 			return quotationReceiptService.getBasicDetails(Integer.parseInt(polId.trim()), Integer.parseInt(prpseq.trim()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@RequestMapping(value = "/getBranches", method = RequestMethod.POST)
+	public List<String> getBranches(@RequestParam String userCode) {
+		
+		try {
+			return quotationReceiptService.getBranches(userCode);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

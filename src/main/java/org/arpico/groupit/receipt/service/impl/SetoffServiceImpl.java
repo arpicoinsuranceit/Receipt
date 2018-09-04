@@ -365,6 +365,10 @@ public class SetoffServiceImpl implements SetoffService {
 		Integer j = 0;
 
 		while (amount >= invoiceAmount) {
+			
+			if(amount == 0 ) {
+				break;
+			}
 
 			boolean b = true;
 
