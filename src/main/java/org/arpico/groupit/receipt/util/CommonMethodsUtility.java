@@ -83,7 +83,7 @@ public class CommonMethodsUtility {
 			if (saveReceiptDto.getPayMode().equalsIgnoreCase("CQ")) {
 				inTransactionsModel.setChqbnk(saveReceiptDto.getChequebank());
 				try {
-				inTransactionsModel.setChqdat(new SimpleDateFormat("dd-MM-yyyy").parse(saveReceiptDto.getChequedate()));
+				inTransactionsModel.setChqdat(new SimpleDateFormat("yyyy-MM-dd").parse(saveReceiptDto.getChequedate()));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -163,6 +163,9 @@ public class CommonMethodsUtility {
 			}
 			billingTransactionsModel.setTxnyer(Calendar.getInstance().get(Calendar.YEAR));
 			billingTransactionsModel.setTxnmth(Calendar.getInstance().get(Calendar.MONTH)+1);
+			if(saveReceiptDto.getPayMode().equals("CQ")) {
+				billingTransactionsModel.setCandoc("");
+			}
 
 			return billingTransactionsModel;
 		}

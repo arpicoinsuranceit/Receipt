@@ -225,15 +225,19 @@ public class ProposalServiceImpl implements ProposalServce {
 				inBillingTransactionsModel.getBillingTransactionsModelPK().setDoccod("RCPP");
 				inBillingTransactionsModel.setRefdoc("RCPP");
 				inBillingTransactionsModel.setSrcdoc("RCPP");
+				inBillingTransactionsModel.setTaxamt(0.0);
+				inBillingTransactionsModel.setAdmfee(0.0);
+				inBillingTransactionsModel.setPolfee(0.0);
 
 				inTransactionDao.save(inTransactionsModel);
 				inBillingTransactionDao.save(inBillingTransactionsModel);
-				
-				
+
 				///////////////// end save billing ///////////////
 
-				checkPolicy(inProposalsModel, pprNo, seqNo, saveReceiptDto, agentCode, locCode,
-						inBillingTransactionsModel);
+				if (!saveReceiptDto.getPayMode().equals("CQ")) {
+					checkPolicy(inProposalsModel, pprNo, seqNo, saveReceiptDto, agentCode, locCode,
+							inBillingTransactionsModel);
+				}
 
 				return new ResponseEntity<>("Success", HttpStatus.OK);
 
@@ -252,12 +256,10 @@ public class ProposalServiceImpl implements ProposalServce {
 			SaveReceiptDto saveReceiptDto, String agentCode, String locCode, InBillingTransactionsModel deposit)
 			throws Exception {
 		if (inProposalsModel.getPprsta().equalsIgnoreCase("L3")) {
-			
-			
-			
+
 			List<ProposalL3Dto> proposalL3Dtos = inProposalCustomDao.checkL3(saveReceiptDto.getPropId());
 			if (!proposalL3Dtos.isEmpty()) {
-				
+
 				System.out.println("PASS CHECK POLICY");
 
 				String[] numberGen = numberGenerator.generateNewId("", "", "POLCSQ", "");
@@ -362,8 +364,8 @@ public class ProposalServiceImpl implements ProposalServce {
 					setoffService.setoff(proposalsModelNew, agentCode, locCode, saveReceiptDto, deposit, recovery);
 
 				}
-			} else{
-				System.out.println("FAIL CHECK POLICY");	
+			} else {
+				System.out.println("FAIL CHECK POLICY");
 			}
 		} else {
 			System.out.println("FAIL CHECK POLICY");

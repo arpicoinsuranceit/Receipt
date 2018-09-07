@@ -271,6 +271,9 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 					InBillingTransactionsModel inBillingTransactionsModel = commonethodUtility
 							.getInBillingTransactionModel(inProposalsModel, saveReceiptDto, inTransactionsModel);
+					inBillingTransactionsModel.setTaxamt(0.0);
+					inBillingTransactionsModel.setAdmfee(0.0);
+					inBillingTransactionsModel.setPolfee(0.0);
 
 					inPropFamDetailsDao.save(propFamDetailsModels);
 					inPropLoadingDao.save(inPropLoadingModels);

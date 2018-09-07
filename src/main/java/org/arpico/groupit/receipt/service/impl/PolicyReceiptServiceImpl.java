@@ -154,11 +154,18 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 			deposit.setCreaby(agentCode);
 			deposit.setPolnum(inTransactionsModel.getPolnum());
 			deposit.getBillingTransactionsModelPK().setDoccod("RCPL");
+			deposit.setRefdoc("RCPL");
+			deposit.setSrcdoc("RCPL");
+			deposit.setTaxamt(0.0);
+			deposit.setAdmfee(0.0);
+			deposit.setPolfee(0.0);
 			deposit.setTxntyp("POLDEP");
 
 			inBillingTransactionDao.save(deposit);
 
-			setoff(inProposalsModel, agentCode, locCode, saveReceiptDto, deposit, 0.0);
+			if (saveReceiptDto.equals("CQ")) {
+				setoff(inProposalsModel, agentCode, locCode, saveReceiptDto, deposit, 0.0);
+			}
 
 			return new ResponseEntity<>("Success", HttpStatus.OK);
 		}
