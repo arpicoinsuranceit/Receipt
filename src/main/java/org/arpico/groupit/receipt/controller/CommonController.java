@@ -1,7 +1,10 @@
 package org.arpico.groupit.receipt.controller;
 
 import java.util.List;
+
+import org.arpico.groupit.receipt.dto.BranchDto;
 import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
+import org.arpico.groupit.receipt.service.BranchService;
 import org.arpico.groupit.receipt.service.InTransactionService;
 import org.arpico.groupit.receipt.util.CurrencyFormat;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,9 @@ public class CommonController {
 	@Autowired
 	private InTransactionService inTransactionService;
 	
+	@Autowired
+	private BranchService branchService;
+	
 	@RequestMapping(value = "/convertNumberToWord/{number}")
 	public String convertNumberToWord(@PathVariable Double number) {
 		
@@ -34,6 +40,17 @@ public class CommonController {
 		
 		try {
 			return inTransactionService.getLastReceipts(token);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@RequestMapping(value = "/getbranches", method = RequestMethod.POST)
+	public List<BranchDto> getBranches(@RequestParam String token) {
+		
+		try {
+			return branchService.getBranches(token);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
