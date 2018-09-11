@@ -274,6 +274,8 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 							newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
 				}
 				
+				
+				
 				/* Save Family Details */
 				if(propFamDetailsModels != null && !propFamDetailsModels.isEmpty()) {
 					famDetailsDao.save(propFamDetailsModels);
@@ -542,7 +544,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 					InOcuLoadDetModel detModel = detModels.get(0);
 					for (InPropLoadingModel propLoadingModel : inPropLoadingModels) {
 						if (propLoadingModel.getInPropLoadingPK().getRidcod().equals(benfDto.getRiderCode())) {
-							propLoadingModel.setOculod(Double.parseDouble(detModel.getOcucod()));
+							propLoadingModel.setOculod(Double.parseDouble(detModel.getLodcls()));
 							propLoadingModel.setInstyp(insType);
 
 						}
