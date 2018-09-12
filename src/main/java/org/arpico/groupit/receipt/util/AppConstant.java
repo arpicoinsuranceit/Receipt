@@ -14,6 +14,7 @@ public class AppConstant {
 	public static final String NULL = null;
 	public static final Double ZERO_FOR_DECIMAL = 0.0000;
 	public static final Double ZERO_TWO_DECIMAL = 0.00;
+	public static final Double ZERO_ZERO_DECIMAL = new Double("0");
 	public static final String DOC_CODE_QUOT = "QUOT";
 	public static final String SYSTEM_CREATE = "system";
 	
@@ -29,6 +30,9 @@ public class AppConstant {
 	
 	public static final String DOC_CODE_FOR_RECEIPT = "RCPP";
 	public static final String POLICY_STATUS_PLISU = "PLISU";
+	public static final String DOC_CODE_OIIS = "OIIS";
+	public static final String LIFE = "LI";
+	
 	
 	
 }

@@ -5,6 +5,8 @@ public class ExpenseDto {
 	private String expenseId;
 	private String description;
 	private Double amount;
+	private String remark;
+	private Integer qty;
 
 	public String getExpenseId() {
 		return expenseId;
@@ -30,9 +32,26 @@ public class ExpenseDto {
 		this.amount = amount;
 	}
 
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public Integer getQty() {
+		return qty;
+	}
+
+	public void setQty(Integer qty) {
+		this.qty = qty;
+	}
+
 	@Override
 	public String toString() {
-		return "ExpenseDto [expenseId=" + expenseId + ", description=" + description + ", amount=" + amount + "]";
+		return "ExpenseDto [expenseId=" + expenseId + ", description=" + description + ", amount=" + amount
+				+ ", remark=" + remark + ", qty=" + qty + "]";
 	}
 
 }

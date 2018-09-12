@@ -1,8 +1,5 @@
 package org.arpico.groupit.receipt.dao.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.arpico.groupit.receipt.dao.ExpenseDao;

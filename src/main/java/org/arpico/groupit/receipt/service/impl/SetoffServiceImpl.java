@@ -1,8 +1,5 @@
 package org.arpico.groupit.receipt.service.impl;
 
-import static org.assertj.core.api.Assertions.shouldHaveThrown;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -362,7 +359,7 @@ public class SetoffServiceImpl implements SetoffService {
 			}
 		}
 
-		Integer j = 0;
+		//Integer j = 0;
 
 		while (amount >= invoiceAmount) {
 			

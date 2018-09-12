@@ -1,18 +1,11 @@
 package org.arpico.groupit.receipt.service.impl;
 
-/*import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;*/
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.transaction.Transactional;
-/*
-import org.arpico.groupit.receipt.dao.CommisDaoCustom;*/
+
 import org.arpico.groupit.receipt.dao.InAgentMastDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsDao;
@@ -23,14 +16,13 @@ import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
 import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
 import org.arpico.groupit.receipt.dto.ProposalNoSeqNoDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
-import org.arpico.groupit.receipt.model.AgentMastModel;/*
-														import org.arpico.groupit.receipt.model.CommisModel;*/
+import org.arpico.groupit.receipt.model.AgentMastModel;
 import org.arpico.groupit.receipt.model.InBillingTransactionsModel;
 import org.arpico.groupit.receipt.model.InProposalBasicsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.InTransactionsModel;
-import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;/*
-																import org.arpico.groupit.receipt.model.ReFundModel;*/
+import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;
+																
 import org.arpico.groupit.receipt.model.pk.InBillingTransactionsModelPK;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.InTransactionService;
@@ -163,7 +155,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 			inBillingTransactionDao.save(deposit);
 
-			if (saveReceiptDto.equals("CQ")) {
+			if (!saveReceiptDto.equals("CQ")) {
 				setoff(inProposalsModel, agentCode, locCode, saveReceiptDto, deposit, 0.0);
 			}
 

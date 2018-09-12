@@ -1,7 +1,5 @@
 package org.arpico.groupit.receipt.dao.impl;
 
-import static org.mockito.Matchers.contains;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
