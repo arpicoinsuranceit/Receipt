@@ -13,6 +13,7 @@ import org.arpico.groupit.receipt.util.AppConstant;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 @Component
@@ -214,6 +215,26 @@ public class QuotationClient {
 			RestTemplate restTemplate = new RestTemplate();
 			Integer result = restTemplate.postForObject(AppConstant.URI_QUOTATION_DETAILS_FROM_SEQNO, map,
 					Integer.class);
+			System.out.println(result);
+			return result;
+		} catch (Exception e) {
+
+		}
+		return null;
+	}
+	
+	public String checkNicValidation(String nic,String gender,String age,String seqNo, String qId) {
+		MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+		map.add("nic", nic);
+		map.add("gender", gender);
+		map.add("age", age);
+		map.add("seqNo", seqNo);
+		map.add("qId", qId);
+		
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			String result = restTemplate.postForObject(AppConstant.URI_CHECK_NIC_VALIDATION, map,
+					String.class);
 			System.out.println(result);
 			return result;
 		} catch (Exception e) {
