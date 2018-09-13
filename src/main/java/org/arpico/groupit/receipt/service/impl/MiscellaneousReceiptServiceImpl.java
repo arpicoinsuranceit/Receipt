@@ -33,7 +33,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Service
 @Transactional
 public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptService {
@@ -52,15 +51,16 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 
 	@Autowired
 	private RmsDocTxnmDao rmsDocTxnmDao;
-	
+
 	@Autowired
 	private RmsDocTxnmCustomDao rmsDocTxnmCustomDao;
+
 
 	@Override
 	public ResponseEntity<Object> save(MiscellaneousReceiptInvDto dto, String token) throws Exception {
 
 		ResponseDto responseDto = null;
-		
+
 		String user = decoder.generate(token);
 
 		String[] numberGen = numberGenerator.generateNewId("", "", "SQOIIS", "");
@@ -92,6 +92,12 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 					return new ResponseEntity<>(responseDto, HttpStatus.OK);
 				}
 			}
+		} else {
+			responseDto = new ResponseDto();
+			responseDto.setCode("204");
+			responseDto.setStatus("Error");
+			responseDto.setMessage("Number Gereration Error");
+			return new ResponseEntity<>(responseDto, HttpStatus.OK);
 		}
 
 		return new ResponseEntity<>("Error", HttpStatus.INTERNAL_SERVER_ERROR);

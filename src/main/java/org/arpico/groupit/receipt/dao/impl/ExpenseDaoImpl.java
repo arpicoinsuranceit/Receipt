@@ -10,15 +10,27 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ExpenseDaoImpl implements ExpenseDao{
+public class ExpenseDaoImpl implements ExpenseDao {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-	
+
 	@Override
 	public List<ExpenseModel> getExpenceModels() throws Exception {
-		List<ExpenseModel> expenseModels = jdbcTemplate.query("select ITEM_CODE, ITM_DESC, UNIT_PRICE from rms_itmmaster where ITM_GROUP in ('COM')", new ExpenceRowMapper());
-		
+		List<ExpenseModel> expenseModels = jdbcTemplate.query(
+				"select ITEM_CODE, ITM_DESC, UNIT_PRICE from rms_itmmaster where ITM_GROUP in ('COM')",
+				new ExpenceRowMapper());
+
+		return expenseModels;
+	}
+
+	@Override
+	public List<ExpenseModel> getExpenceModel(String code) throws Exception {
+		List<ExpenseModel> expenseModels = jdbcTemplate.query(
+				"select ITEM_CODE, ITM_DESC, UNIT_PRICE from rms_itmmaster where ITM_GROUP in ('COM') and ITEM_CODE = '"
+						+ code + "'",
+				new ExpenceRowMapper());
+
 		return expenseModels;
 	}
 }

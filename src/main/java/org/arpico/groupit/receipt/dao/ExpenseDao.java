@@ -7,4 +7,6 @@ import org.arpico.groupit.receipt.model.ExpenseModel;
 public interface ExpenseDao {
 
 	List<ExpenseModel> getExpenceModels() throws Exception;
+
+	List<ExpenseModel> getExpenceModel(String itemCode) throws Exception;
 }

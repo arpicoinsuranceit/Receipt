@@ -4,9 +4,12 @@ import java.util.List;
 
 import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
 import org.arpico.groupit.receipt.dto.ProposalNoSeqNoDto;
+import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.service.ProposalServce;
+import org.arpico.groupit.receipt.validation.CommonValidations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +27,9 @@ public class ProposalReceiptController {
 	@Autowired
 	private ProposalServce proposalServce;
 
+	@Autowired
+	private CommonValidations commonValidations;
+	
 	@RequestMapping(value = "/getProposal/{val}", method = RequestMethod.GET)
 	public List<ProposalNoSeqNoDto> getProposalNSeqNo(@PathVariable String val) {
 		System.out.println(val);
@@ -51,11 +57,22 @@ public class ProposalReceiptController {
 		System.out.println(saveReceiptDto.toString());
 		 
 		try {
-			return proposalServce.saveProposal(saveReceiptDto);
+			String validity = commonValidations.validateProposalReceiptInputs(saveReceiptDto);
+			
+			if(validity.equalsIgnoreCase("ok")) {
+				return proposalServce.saveProposal(saveReceiptDto);
+			} else {
+				ResponseDto responseDto = new ResponseDto();
+				responseDto.setCode("204");
+				responseDto.setStatus("Error");
+				responseDto.setMessage(validity);
+				return new ResponseEntity<>(responseDto, HttpStatus.OK);
+			}
+			
+			
 		} catch (Exception e) {
-			e.printStackTrace();
+			return new ResponseEntity<>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return null;
 	}
 
 }

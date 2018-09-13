@@ -26,4 +26,6 @@ public interface InProposalCustomDao {
 	
 	List<InPropPreviousPolModel> getPreviousPolicies(String sbu,String nic)throws Exception;
 
+	List<ProposalNoSeqNoModel> getProposalNoSeqNoModel(String pprNo) throws Exception;
+
 }

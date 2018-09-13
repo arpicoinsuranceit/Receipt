@@ -7,4 +7,6 @@ import org.arpico.groupit.receipt.dto.ExpenseDto;
 public interface ExpenseService {
 
 	List<ExpenseDto> getExpense() throws Exception;
+	
+	ExpenseDto findByCode (String itemCode) throws Exception;
 }

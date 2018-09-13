@@ -1,12 +1,12 @@
 package org.arpico.groupit.receipt.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
 import org.arpico.groupit.receipt.dto.MiscellaneousReceiptInvDto;
+import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.dto.RmsDocTxnmGridDto;
 import org.arpico.groupit.receipt.service.MiscellaneousReceiptService;
+import org.arpico.groupit.receipt.validation.CommonValidations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,13 +25,28 @@ public class MiscellaneousReceiptInvController {
 	@Autowired
 	private MiscellaneousReceiptService miscellaneousReceiptService;
 	
+	@Autowired
+	private CommonValidations commonValidations;
+	
 	@RequestMapping(value = "/misinvreceiptsave/{token:.+}", method = RequestMethod.POST)
 	public ResponseEntity<Object> saveReceipt (@RequestBody MiscellaneousReceiptInvDto dto, @PathVariable String token) throws Exception{
 		
 		System.out.println(dto);
 		System.out.println(token);
 		
-		return miscellaneousReceiptService.save(dto, token);
+		String validity = commonValidations.validateMiscellaneousReceiptInvInputs(dto, token);
+		
+		if(validity.equalsIgnoreCase("ok")){
+			return miscellaneousReceiptService.save(dto, token);
+		}else {
+			ResponseDto responseDto = new ResponseDto();
+			responseDto.setCode("204");
+			responseDto.setStatus("Error");
+			responseDto.setMessage(validity);
+			return new ResponseEntity<>(responseDto, HttpStatus.OK);
+		}
+		
+		
 	}
 	
 	

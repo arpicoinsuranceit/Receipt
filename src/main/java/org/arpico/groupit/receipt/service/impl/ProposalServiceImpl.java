@@ -35,6 +35,7 @@ import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
 import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
 import org.arpico.groupit.receipt.dto.ProposalL3Dto;
 import org.arpico.groupit.receipt.dto.ProposalNoSeqNoDto;
+import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.model.AgentMastModel;
 import org.arpico.groupit.receipt.model.InBillingTransactionsModel;
@@ -239,14 +240,27 @@ public class ProposalServiceImpl implements ProposalServce {
 							inBillingTransactionsModel);
 				}
 
-				return new ResponseEntity<>("Success", HttpStatus.OK);
+				ResponseDto responseDto = new ResponseDto();
+				responseDto.setCode("200");
+				responseDto.setStatus("Success");
+				responseDto.setMessage(inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum().toString());
+				return new ResponseEntity<>(responseDto, HttpStatus.OK);
+				
 
 			} else {
-				return new ResponseEntity<>("Proposal Not Found", HttpStatus.NOT_FOUND);
+				ResponseDto responseDto = new ResponseDto();
+				responseDto.setCode("204");
+				responseDto.setStatus("Error");
+				responseDto.setMessage("Proposal Not Found");
+				return new ResponseEntity<>(responseDto, HttpStatus.OK);
 			}
 
 		} else {
-			return new ResponseEntity<>("User Not Found", HttpStatus.NOT_FOUND);
+			ResponseDto responseDto = new ResponseDto();
+			responseDto.setCode("204");
+			responseDto.setStatus("Error");
+			responseDto.setMessage("User or Location Not Found");
+			return new ResponseEntity<>(responseDto, HttpStatus.OK);
 		}
 
 	}
@@ -561,6 +575,19 @@ public class ProposalServiceImpl implements ProposalServce {
 			return null;
 		}
 
+	}
+
+	@Override
+	public ProposalNoSeqNoDto getProposalNoSeqNoDto(String pprNo) throws Exception {
+		ProposalNoSeqNoDto proposalNoSeqNoDtos = null;
+
+		List<ProposalNoSeqNoModel> list = inProposalCustomDao.getProposalNoSeqNoModel(pprNo);
+
+		if(list != null && !(list.isEmpty())) {
+			proposalNoSeqNoDtos = getProposalNoSeqNoDto(list.get(0));
+		}
+
+		return proposalNoSeqNoDtos;
 	}
 
 }

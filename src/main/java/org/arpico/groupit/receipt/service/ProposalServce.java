@@ -11,6 +11,8 @@ public interface ProposalServce {
 
 	List<ProposalNoSeqNoDto> getProposalNoSeqNoDtoList(String val) throws Exception;
 	
+	ProposalNoSeqNoDto getProposalNoSeqNoDto(String pprNo) throws Exception;
+	
 	ProposalBasicDetailsDto getBasicDetails(Integer pprNum, Integer seqNum) throws Exception;
 
 	ResponseEntity<Object> saveProposal(SaveReceiptDto saveReceiptDto) throws Exception;

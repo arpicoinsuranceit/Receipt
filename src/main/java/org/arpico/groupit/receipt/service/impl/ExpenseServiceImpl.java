@@ -41,4 +41,15 @@ public class ExpenseServiceImpl implements ExpenseService {
 		return expenseDto;
 	}
 
+	@Override
+	public ExpenseDto findByCode(String itemCode) throws Exception {
+		List<ExpenseModel> expenseModels = expenseDao.getExpenceModel(itemCode);
+		ExpenseDto expenseDto = null;
+		if (expenseModels != null && expenseModels.size() > 0) {
+			expenseDto = getExpenceDto(expenseModels.get(0));
+		}
+
+		return expenseDto;
+	}
+
 }
