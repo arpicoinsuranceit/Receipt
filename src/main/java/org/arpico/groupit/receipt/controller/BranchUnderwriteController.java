@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -129,6 +130,19 @@ public class BranchUnderwriteController {
 		
 		try {
 			return quotationClient.getQuotationDetailFromSeqNo(seqNo, qId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	@RequestMapping(value = "/checkNicValidation/{nic}/{gender}/{age}/{seqNo}/{qId}", method = RequestMethod.GET)
+	public String checkNicValidation (@PathVariable("nic") String nic,@PathVariable("gender") String gender,@PathVariable("age") String age,@PathVariable("seqNo") String seqNo, @PathVariable("qId") String qId){
+		System.out.println("checkNicValidation");
+		
+		try {
+			return quotationClient.checkNicValidation(nic, gender, age, seqNo, qId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
