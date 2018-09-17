@@ -1,5 +1,6 @@
 package org.arpico.groupit.receipt.util;
 
+import java.net.URI;
 import java.util.Date;
 
 
@@ -27,11 +28,13 @@ public class AppConstant {
 	public static final String URI_QUOTATION_NOMINEE_DETAILS = "http://10.10.10.120:8084/Quotation/getNominee";
 	public static final String URI_UPDATE_STATUS = "http://10.10.10.120:8084/Quotation/updateStatus";
 	public static final String URI_QUOTATION_DETAILS_FROM_SEQNO = "http://10.10.10.120:8084/Quotation/getQuotationDetailFromSeqNo";
+	public static final String URI_CHECK_NIC_VALIDATION = "http://10.10.10.120:8084/Quotation/checkNicValidation";
 	
 	public static final String DOC_CODE_FOR_RECEIPT = "RCPP";
 	public static final String POLICY_STATUS_PLISU = "PLISU";
 	public static final String DOC_CODE_OIIS = "OIIS";
 	public static final String LIFE = "LI";
+	
 	
 	
 	
