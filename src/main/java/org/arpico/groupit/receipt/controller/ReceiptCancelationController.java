@@ -1,6 +1,8 @@
 package org.arpico.groupit.receipt.controller;
 
 import java.util.List;
+
+import org.arpico.groupit.receipt.dto.CanceledReceiptDto;
 import org.arpico.groupit.receipt.service.ReceiptCancelationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +36,18 @@ public class ReceiptCancelationController {
 		
 		try {
 			return receiptCancelationService.saveRequest(receiptNo, reason,token);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	@RequestMapping(value = "/getPendingRequest/{token:.+}", method = RequestMethod.GET)
+	public List<CanceledReceiptDto> getPendingRequest (@PathVariable("token") String token){
+		
+		try {
+			return receiptCancelationService.findPendingRequest(token);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
