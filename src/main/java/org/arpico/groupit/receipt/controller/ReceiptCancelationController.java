@@ -18,7 +18,7 @@ public class ReceiptCancelationController {
 	private ReceiptCancelationService receiptCancelationService;
 	
 	@RequestMapping(value = "/getReceipts/{token}/{receiptId}", method = RequestMethod.GET)
-	public List<String> getAgentDtos (@PathVariable("token") String token,@PathVariable("receiptId") String receiptId){
+	public List<String> getReceipts (@PathVariable("token") String token,@PathVariable("receiptId") String receiptId){
 		
 		try {
 			return receiptCancelationService.findReceiptLikeReceiptId(receiptId, token);

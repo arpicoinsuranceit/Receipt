@@ -2,7 +2,6 @@ package org.arpico.groupit.receipt.client;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.arpico.groupit.receipt.dto.MedicalRequirementsDto;
 import org.arpico.groupit.receipt.dto.NomineeDto;
 import org.arpico.groupit.receipt.dto.PensionSheduleDto;
@@ -13,7 +12,6 @@ import org.arpico.groupit.receipt.util.AppConstant;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 @Component
