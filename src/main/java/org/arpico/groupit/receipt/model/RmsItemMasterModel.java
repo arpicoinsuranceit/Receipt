@@ -3,6 +3,7 @@ package org.arpico.groupit.receipt.model;
 public class RmsItemMasterModel {
 
 	private String itemCode;
+	private String itemName;
 	private String pluCode;
 	private String unit;
 	private Double unitPrice;
@@ -16,6 +17,14 @@ public class RmsItemMasterModel {
 
 	public void setItemCode(String itemCode) {
 		this.itemCode = itemCode;
+	}
+
+	public String getItemName() {
+		return itemName;
+	}
+
+	public void setItemName(String itemName) {
+		this.itemName = itemName;
 	}
 
 	public String getPluCode() {
@@ -68,8 +77,11 @@ public class RmsItemMasterModel {
 
 	@Override
 	public String toString() {
-		return "RmsItemMasterModel [itemCode=" + itemCode + ", pluCode=" + pluCode + ", unit=" + unit + ", unitPrice="
-				+ unitPrice + ", avgPrice=" + avgPrice + ", glGroup=" + glGroup + ", itmGroup=" + itmGroup + "]";
+		return "RmsItemMasterModel [itemCode=" + itemCode + ", itemName=" + itemName + ", pluCode=" + pluCode
+				+ ", unit=" + unit + ", unitPrice=" + unitPrice + ", avgPrice=" + avgPrice + ", glGroup=" + glGroup
+				+ ", itmGroup=" + itmGroup + "]";
 	}
+
+	
 
 }

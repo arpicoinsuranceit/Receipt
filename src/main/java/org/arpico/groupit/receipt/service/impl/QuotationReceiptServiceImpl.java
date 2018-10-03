@@ -29,6 +29,8 @@ import org.arpico.groupit.receipt.dto.MedicalRequirementsDto;
 import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
 import org.arpico.groupit.receipt.dto.QuoBenfDto;
 import org.arpico.groupit.receipt.dto.QuoChildBenefDto;
+import org.arpico.groupit.receipt.dto.ReceiptPrintDto;
+import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.dto.SheduleDto;
 import org.arpico.groupit.receipt.dto.SurrenderValsDto;
@@ -51,6 +53,7 @@ import org.arpico.groupit.receipt.model.pk.InPropMedicalReqModelPK;
 import org.arpico.groupit.receipt.model.pk.InPropSchedulesModelPK;
 import org.arpico.groupit.receipt.model.pk.InPropSurrenderValsPK;
 import org.arpico.groupit.receipt.model.pk.InProposalsModelPK;
+import org.arpico.groupit.receipt.print.ItextReceipt;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.NumberGenerator;
 import org.arpico.groupit.receipt.service.QuotationReceiptService;
@@ -109,26 +112,31 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 	@Autowired
 	private CommonMethodsUtility commonethodUtility;
-	
+
 	@Autowired
 	private CustomerDao customerDao;
-	
+
 	@Autowired
 	private RmsUserDao rmsUserDao;
-	
+
 	@Autowired
 	private BranchUnderwriteDao branchUnderwriteDao;
 
+	@Autowired
+	private ItextReceipt itextReceipt;
+
 	@Override
-	public String saveQuotationReceipt(SaveReceiptDto saveReceiptDto) throws Exception {
+	public ResponseDto saveQuotationReceipt(SaveReceiptDto saveReceiptDto) throws Exception {
 
 		List<AgentModel> agentModels = agentDao.findAgentByCode(saveReceiptDto.getAgentCode());
-		
+
 		String agentCode = new JwtDecoder().generate(saveReceiptDto.getToken());
 
 		System.out.println(agentCode);
 		String locCode = rmsUserDao.getLocation(agentCode);
-		
+
+		ResponseDto responseDto = new ResponseDto();
+
 		if (locCode != null) {
 			if (agentModels != null && agentModels.size() > 0) {
 
@@ -148,8 +156,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 							saveReceiptDto.getQuotationId());
 
 					List<SurrenderValsDto> surrenderValsDtos = quotationClient
-							.getSurrenderVals(saveReceiptDto.getSeqNo(),
-									saveReceiptDto.getQuotationId());
+							.getSurrenderVals(saveReceiptDto.getSeqNo(), saveReceiptDto.getQuotationId());
 
 					// System.out.println(sheduleDtos.size());
 					// Primary Keys
@@ -236,9 +243,9 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					final List<InPropMedicalReqModel> inPropMedicalReqModels = new ArrayList<>();
 
 					if (medicalRequirementsDtos != null && medicalRequirementsDtos.size() > 0) {
-						medicalRequirementsDtos.forEach(
-								mediReq -> inPropMedicalReqModels.add(getMediReq(mediReq, inProposalsModelPK.getPprnum(),
-										inProposalsModelPK.getPrpseq(), saveReceiptDto.getBranchCode())));
+						medicalRequirementsDtos.forEach(mediReq -> inPropMedicalReqModels
+								.add(getMediReq(mediReq, inProposalsModelPK.getPprnum(), inProposalsModelPK.getPrpseq(),
+										saveReceiptDto.getBranchCode())));
 					}
 
 					final List<InPropSurrenderValsModel> inPropSurrenderValsModels = new ArrayList<>();
@@ -249,13 +256,11 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 										saveReceiptDto.getQuotationId(), surVal, inProposalsModelPK.getPprnum(),
 										inProposalsModelPK.getPrpseq(), saveReceiptDto.getBranchCode())));
 					}
-					
+
 					/////////// When Ho //////////
-					
+
 					inProposalsModel.setPprsta("L1");
 					inProposalsModel.setProsta("L1");
-					
-					
 
 					inProposalDao.save(inProposalsModel);
 					inPropAddBenefictDao.save(addBenefitModels);
@@ -280,26 +285,92 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					inTransactionDao.save(inTransactionsModel);
 					inBillingTransactionDao.save(inBillingTransactionsModel);
 					inPropSurrenderValsDao.save(inPropSurrenderValsModels);
+
+					ReceiptPrintDto dto = getReceiptPrintDto(inProposalsModel, inTransactionsModel, agentCode, locCode,
+							false, agentModels.get(0));
+
 					try {
-						quotationClient.updateStatus(saveReceiptDto.getSeqNo(),
-								saveReceiptDto.getQuotationId());
+						quotationClient.updateStatus(saveReceiptDto.getSeqNo(), saveReceiptDto.getQuotationId());
 					} catch (Exception e) {
-						return "Receipt Save Successfully, Error at change Quotation Status";
+
+						responseDto.setCode("200");
+						responseDto.setStatus("Error at Quotation update");
+						;
+						responseDto.setMessage(numberGen[1]);
+						responseDto.setData(itextReceipt.createReceipt(dto));
+
 					}
-					return "Work";
+					responseDto.setCode("200");
+					responseDto.setStatus("Success");
+					;
+					responseDto.setMessage(numberGen[1]);
+					responseDto.setData(itextReceipt.createReceipt(dto));
+
 				} else {
 
-					return "Number Generation Error";
+					responseDto.setCode("204");
+					responseDto.setStatus("Error");
+					;
+					responseDto.setMessage("Number Generation Error");
+
 				}
 			} else {
-				return "Agent not Found";
+				responseDto.setCode("204");
+				responseDto.setStatus("Error");
+				;
+				responseDto.setMessage("Agent not Found");
 			}
 		} else {
-			return "User not Found";
+			responseDto.setCode("204");
+			responseDto.setStatus("Error");
+			;
+			responseDto.setMessage("User not Found");
 		}
 
-		
+		return responseDto;
 
+	}
+
+	private ReceiptPrintDto getReceiptPrintDto(InProposalsModel inProposalsModel,
+			InTransactionsModel inTransactionsModel, String agentCode, String locCode, boolean isDuplicate,
+			AgentModel agentModel) throws Exception {
+		ReceiptPrintDto printDto = new ReceiptPrintDto();
+
+		String userName = rmsUserDao.getName(agentCode);
+
+		printDto.setAgtCode(agentModel.getAgentCode());
+		printDto.setAgtName(agentModel.getAgentName());
+		printDto.setAmt(inTransactionsModel.getTotprm());
+		printDto.setAmtInWord(inTransactionsModel.getAmtwrd());
+
+		printDto.setCusAddress1(inProposalsModel.getPpdad1());
+		printDto.setCusAddress2(inProposalsModel.getPpdad2());
+		printDto.setCusAddress3(inProposalsModel.getPpdad3());
+		printDto.setCusCode(Integer.parseInt(inProposalsModel.getCscode()));
+		printDto.setCusName(inProposalsModel.getPpdnam());
+		printDto.setCusTitle(inProposalsModel.getNtitle());
+		printDto.setDocCode(inTransactionsModel.getInTransactionsModelPK().getDoccod());
+		printDto.setDocNum(inTransactionsModel.getInTransactionsModelPK().getDocnum());
+		printDto.setLocation(locCode);
+		printDto.setPayMode(inTransactionsModel.getPaymod());
+		printDto.setPropNum(Integer.parseInt(inTransactionsModel.getPprnum()));
+		printDto.setQuoNum(inProposalsModel.getQuonum());
+		printDto.setQdId(inProposalsModel.getInProposalsModelPK().getPrpseq());
+		printDto.setRctDate(inTransactionsModel.getCreadt());
+		printDto.setRctStatus("");
+		printDto.setRemark(inTransactionsModel.getRemark());
+		printDto.setUserName(userName);
+		if (inTransactionsModel.getChqnum() != null) {
+			printDto.setChqNo(Integer.parseInt(inTransactionsModel.getChqnum()));
+		}
+		if (inTransactionsModel.getChqdat() != null) {
+			printDto.setChqDate(new SimpleDateFormat("dd/MM/yyyy").format(inTransactionsModel.getChqdat()));
+		}
+		if (inTransactionsModel.getChqbnk() != null) {
+			printDto.setBankCode(Integer.parseInt(inTransactionsModel.getChqbnk()));
+		}
+
+		return printDto;
 	}
 
 	private InPropSurrenderValsModel getSurrenderVals(String agentCode, Integer QuoId, SurrenderValsDto surVal,
@@ -383,7 +454,8 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					break;
 				}
 
-				List<InOcuLoadDetModel> detModels = occuLoadDatdao.inOccuLoadDatDaosByOccupation(ocuCode, benfDto.getRiderCode());
+				List<InOcuLoadDetModel> detModels = occuLoadDatdao.inOccuLoadDatDaosByOccupation(ocuCode,
+						benfDto.getRiderCode());
 				if (detModels.size() > 0) {
 					InOcuLoadDetModel detModel = detModels.get(0);
 					for (InPropLoadingModel propLoadingModel : inPropLoadingModels) {
@@ -509,8 +581,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		return addBenefitModels;
 	}
 
-	private InProposalsModel getProposalModel(ViewQuotationDto resp, SaveReceiptDto saveReceiptDto)
-			throws Exception {
+	private InProposalsModel getProposalModel(ViewQuotationDto resp, SaveReceiptDto saveReceiptDto) throws Exception {
 		InProposalsModel inProposalsModel = new InProposalsModel();
 
 		System.out.println(resp.get_mainlife().get_mDob());
@@ -548,7 +619,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		inProposalsModel.setSumrkm(resp.get_plan().getSumatRiskMain());
 		inProposalsModel.setPprsta("L0");
 		inProposalsModel.setProsta("L0");
-		
+
 		inProposalsModel
 				.setSumrks(resp.get_plan().getSumatRiskSpouse() != null ? resp.get_plan().getSumatRiskSpouse() : 0.0);
 
@@ -587,7 +658,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 			inProposalsModel.setSpodob(new SimpleDateFormat("dd-MM-yyyy").parse(resp.get_spouse().get_sDob()));
 			inProposalsModel.setSagnxt(Integer.parseInt(resp.get_spouse().get_sAge()));
 			inProposalsModel.setSpoocu(resp.get_spouse().getOccuCode());
-		}else {
+		} else {
 			inProposalsModel.setSpoocu(Integer.toString(0));
 		}
 
@@ -607,7 +678,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		if (resp.get_mainlife().get_mCustCode() == null || resp.get_mainlife().get_mCustCode().length() == 0) {
 			CustomerModel customerModel = getCustomer(resp);
 			inProposalsModel.setCscode(customerModel.getCscode());
-			
+
 		} else {
 			inProposalsModel.setCscode(resp.get_mainlife().get_mCustCode());
 		}
@@ -626,26 +697,26 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 		return inProposalsModelPK;
 	}
-	
+
 	private CustomerModel getCustomer(ViewQuotationDto resp) throws Exception {
-		
+
 		String[] numberGen = numberGenerator.generateNewId("450", "", "CSPINSQ", "");
 
 		System.out.println(numberGen[0]);
-		
+
 		CustomerModel customerModel = new CustomerModel();
 		customerModel.setSbucod(AppConstant.SBU_CODE);
 		customerModel.setCreaby("system");
 		customerModel.setCreadt(new Date());
 		if (numberGen[0].equals("Success")) {
 			customerModel.setCscode(numberGen[1]);
-		}else {
+		} else {
 			throw new RuntimeException(numberGen[0]);
 		}
-		
+
 		customerModel.setLockin(new Date());
 		customerModel.setNtitle(resp.get_mainlife().get_mTitle());
-		customerModel.setNumchl(resp.get_children()!= null ? resp.get_children().size() : 0);
+		customerModel.setNumchl(resp.get_children() != null ? resp.get_children().size() : 0);
 		customerModel.setPpdcst(resp.get_mainlife().get_mCivilStatus());
 		try {
 			customerModel.setPpddob(new SimpleDateFormat("dd-MM-yyyy").parse(resp.get_mainlife().get_mDob()));
@@ -658,7 +729,8 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		customerModel.setPpdnic(resp.get_mainlife().get_mNic());
 		customerModel.setPpdsex(resp.get_mainlife().get_mGender());
 		customerModel.setPpdtel(resp.get_mainlife().get_mMobile());
-		if(resp.get_spouse() != null && resp.get_spouse().get_sAge()!= null &&  resp.get_spouse().get_sGender() != null && resp.get_spouse().getOccuCode() != null) {
+		if (resp.get_spouse() != null && resp.get_spouse().get_sAge() != null && resp.get_spouse().get_sGender() != null
+				&& resp.get_spouse().getOccuCode() != null) {
 			System.out.println(resp.get_spouse().toString());
 			customerModel.setSagnxt(Integer.parseInt(resp.get_spouse().get_sAge()));
 			try {
@@ -668,7 +740,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 			}
 			customerModel.setSponam(resp.get_spouse().get_sName());
 			customerModel.setSponic(resp.get_spouse().get_sNic());
-			
+
 		}
 		customerDao.save(customerModel);
 		return customerModel;
@@ -676,7 +748,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 	@Override
 	public ProposalBasicDetailsDto getBasicDetails(Integer quoId, Integer seqId) throws Exception {
-		
+
 		return null;
 	}
 

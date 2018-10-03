@@ -48,7 +48,10 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 		
 		//System.out.println(models.size());
 		
+		System.out.println(models.size());
+		
 		if(!models.isEmpty()) {
+			System.out.println("if");
 			return models.get(0);
 		}
 		
@@ -123,7 +126,7 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 	@Override
 	public List<ProposalNoSeqNoModel> getProposalNoSeqNoModel(String pprNo) throws Exception {
 		List<ProposalNoSeqNoModel> list = jdbcTemplate.query(
-				"select pprnum, prpseq from inproposals where sbucod = '450' and pprnum = '" + pprNo + "%' and pprsta not in ('PLISU', 'PLAPS', 'INAC', 'EXPI', 'MATU')", new ProposalNoSeqNoRowMapper());
+				"select pprnum, prpseq from inproposals where sbucod = '450' and pprnum = '" + pprNo + "' and pprsta not in ('PLISU', 'PLAPS', 'INAC', 'EXPI', 'MATU')", new ProposalNoSeqNoRowMapper());
 		return list;
 	}
 

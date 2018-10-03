@@ -2,10 +2,13 @@ package org.arpico.groupit.receipt.dto;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class ReceiptPrintDto {
 
-	private ArrayList<InventoryDetailsDto> inventoryDtl;
+	private List<InventoryDetailsDto> inventoryDtl;
+
+	private List<AccountGLDto> accounts;
 
 	private Integer cusCode;
 	private String cusName;
@@ -234,11 +237,11 @@ public class ReceiptPrintDto {
 		this.cusTitle = cusTitle;
 	}
 
-	public ArrayList<InventoryDetailsDto> getInventoryDtl() {
+	public List<InventoryDetailsDto> getInventoryDtl() {
 		return inventoryDtl;
 	}
 
-	public void setInventoryDtl(ArrayList<InventoryDetailsDto> inventoryDtl) {
+	public void setInventoryDtl(List<InventoryDetailsDto> inventoryDtl) {
 		this.inventoryDtl = inventoryDtl;
 	}
 
@@ -248,6 +251,26 @@ public class ReceiptPrintDto {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	public List<AccountGLDto> getAccounts() {
+		return accounts;
+	}
+
+	public void setAccounts(List<AccountGLDto> accounts) {
+		this.accounts = accounts;
+	}
+
+	@Override
+	public String toString() {
+		return "ReceiptPrintDto [inventoryDtl=" + inventoryDtl + ", accounts=" + accounts + ", cusCode=" + cusCode
+				+ ", cusName=" + cusName + ", cusAddress1=" + cusAddress1 + ", cusAddress2=" + cusAddress2
+				+ ", cusAddress3=" + cusAddress3 + ", payMode=" + payMode + ", amt=" + amt + ", amtInWord=" + amtInWord
+				+ ", docCode=" + docCode + ", docNum=" + docNum + ", rctDate=" + rctDate + ", location=" + location
+				+ ", quoNum=" + quoNum + ", qdId=" + qdId + ", polNum=" + polNum + ", propNum=" + propNum
+				+ ", settlement=" + settlement + ", chqNo=" + chqNo + ", bankCode=" + bankCode + ", chqDate=" + chqDate
+				+ ", agtCode=" + agtCode + ", agtName=" + agtName + ", userName=" + userName + ", rctStatus="
+				+ rctStatus + ", cusTitle=" + cusTitle + ", remark=" + remark + "]";
 	}
 
 }

@@ -18,23 +18,37 @@ public class BranchServiceImpl implements BranchService {
 
 	@Autowired
 	private BranchDao branchDao;
-	
+
 	@Autowired
 	private JwtDecoder jwtDecoder;
-	
+
 	@Override
 	public List<BranchDto> getBranches(String token) throws Exception {
-		
+
 		List<BranchDto> branchDtos = new ArrayList<>();
-		
-		String userCode =  jwtDecoder.generate(token);
-		
+
+		String userCode = jwtDecoder.generate(token);
+
 		List<BranchModel> branchModels = branchDao.getBranchs(userCode);
-		
-		branchModels.forEach(e -> {
-			branchDtos.add(getBranchDto(e));
-		});
-		
+
+		Boolean isHo = false;
+
+		for (BranchModel branchModel : branchModels) {
+			if (branchModel.getId().equalsIgnoreCase("HO")) {
+				isHo = true;
+			}
+		}
+		if (isHo) {
+			List<BranchModel> branchModels2 = branchDao.getAllBranchs();
+			branchModels2.forEach(e -> {
+				branchDtos.add(getBranchDto(e));
+			});
+		} else {
+			branchModels.forEach(e -> {
+				branchDtos.add(getBranchDto(e));
+			});
+		}
+
 		return branchDtos;
 	}
 

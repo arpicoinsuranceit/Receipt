@@ -4,9 +4,9 @@ import org.arpico.groupit.receipt.dto.ReceiptPrintDto;
 import org.arpico.groupit.receipt.print.ItextReceipt;
 import org.arpico.groupit.receipt.print.ReceiptPrintService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class ItextReceiptImpl implements ItextReceipt {
 
 	@Autowired
@@ -17,27 +17,26 @@ public class ItextReceiptImpl implements ItextReceipt {
 
 		if (receiptPrintDto != null) {
 			System.out.println(receiptPrintDto.getDocCode());
-
-			if (receiptPrintDto.getDocCode().equalsIgnoreCase("RCNB")) {
+			
+			switch (receiptPrintDto.getDocCode()) {
+			case "RCNB":
 				return receiptPrintService.createNewBusinessReceipt(receiptPrintDto);
-
-			} else if (receiptPrintDto.getDocCode().equalsIgnoreCase("RCPP")) {
+			case "RCPP":
 				return receiptPrintService.createProposalReceipt(receiptPrintDto);
-
-			} else if (receiptPrintDto.getDocCode().equalsIgnoreCase("RCPL")) {
+			case "RCPL":
 				return receiptPrintService.createPremiumReceipt(receiptPrintDto);
-
-			} else if (receiptPrintDto.getDocCode().equalsIgnoreCase("OIIS")) {
+			case "OIIS":
 				return receiptPrintService.createMiscInvtReceipt(receiptPrintDto);
-
-			} else if (receiptPrintDto.getDocCode().equalsIgnoreCase("GLRC")) {
+			case "GLRC":
 				return receiptPrintService.createGLRCReceipt(receiptPrintDto);
-
+			default:
+				return null;
 			}
 
+		} else {
+			return null;
 		}
 
-		return new byte[] {};
 	}
 
 }

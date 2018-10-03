@@ -3,6 +3,7 @@ package org.arpico.groupit.receipt.controller;
 import java.util.List;
 
 import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
+import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.service.QuotationReceiptService;
 import org.arpico.groupit.receipt.validation.CommonValidations;
@@ -42,9 +43,9 @@ public class QuotationReceiptController {
 		System.out.println(valid);
 		try {
 			if (valid.equalsIgnoreCase("ok")) {
-				String resp = quotationReceiptService.saveQuotationReceipt(saveReceiptDto);
+				ResponseDto resp = quotationReceiptService.saveQuotationReceipt(saveReceiptDto);
 				System.out.println(resp);
-				if (resp.equalsIgnoreCase("WORK")) {
+				if (resp.getCode().equalsIgnoreCase("200")) {
 					
 					return new ResponseEntity<>(resp, HttpStatus.OK);
 				} else {

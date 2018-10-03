@@ -9,24 +9,31 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.RmsDocTxndDao;
 import org.arpico.groupit.receipt.dao.RmsDocTxnmCustomDao;
 import org.arpico.groupit.receipt.dao.RmsDocTxnmDao;
 import org.arpico.groupit.receipt.dao.RmsItemMasterCustomDao;
+import org.arpico.groupit.receipt.dao.RmsUserDao;
 import org.arpico.groupit.receipt.dto.ExpenseDto;
+import org.arpico.groupit.receipt.dto.InventoryDetailsDto;
 import org.arpico.groupit.receipt.dto.MiscellaneousReceiptInvDto;
+import org.arpico.groupit.receipt.dto.ReceiptPrintDto;
 import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.dto.RmsDocTxnmGridDto;
+import org.arpico.groupit.receipt.model.AgentModel;
 import org.arpico.groupit.receipt.model.RmsDocTxndModel;
 import org.arpico.groupit.receipt.model.RmsDocTxnmGridModel;
 import org.arpico.groupit.receipt.model.RmsDocTxnmModel;
 import org.arpico.groupit.receipt.model.RmsItemMasterModel;
 import org.arpico.groupit.receipt.model.pk.RmsDocTxndModelPK;
 import org.arpico.groupit.receipt.model.pk.RmsDocTxnmModelPK;
+import org.arpico.groupit.receipt.print.ItextReceipt;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.MiscellaneousReceiptService;
 import org.arpico.groupit.receipt.service.NumberGenerator;
 import org.arpico.groupit.receipt.util.AppConstant;
+import org.arpico.groupit.receipt.util.CurrencyFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,6 +62,17 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 	@Autowired
 	private RmsDocTxnmCustomDao rmsDocTxnmCustomDao;
 
+	@Autowired
+	private AgentDao agentDao;
+
+	@Autowired
+	private RmsUserDao rmsUserDao;
+
+	@Autowired
+	private CurrencyFormat currencyFormat;
+	
+	@Autowired
+	private ItextReceipt itextReceipt;
 
 	@Override
 	public ResponseEntity<Object> save(MiscellaneousReceiptInvDto dto, String token) throws Exception {
@@ -72,23 +90,35 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 			String docNo = numberGen[1];
 
 			RmsDocTxnmModel docTxnmModel = getRmsDocTxnmModelInv(dto, user, docNo);
-
+			List<RmsItemMasterModel> itemList = new ArrayList<>();
 			List<RmsDocTxndModel> docTxndModels = new ArrayList<>();
 
 			for (int i = 0; i < dto.getExpencess().size(); i++) {
 				ExpenseDto e = dto.getExpencess().get(i);
-				docTxndModels.add(getDocTxndModelInv(dto, user, docNo, e, i));
+				RmsItemMasterModel itemMasterModel = rmsItemMasterCustomDao.findbyId(e.getExpenseId());
+				itemList.add(itemMasterModel);
+				docTxndModels.add(getDocTxndModelInv(dto, user, docNo, e, i, itemMasterModel));
 			}
 
 			RmsDocTxnmModel docTxnmModel2 = rmsDocTxnmDao.save(docTxnmModel);
 			List<RmsDocTxndModel> docTxndModels2 = (List<RmsDocTxndModel>) rmsDocTxndDao.save(docTxndModels);
 
+			ReceiptPrintDto printDto = null;
+
 			if (docTxnmModel2 != null) {
 				if (docTxndModels2 != null) {
+
+					try {
+						printDto = getReceiptPrintDto(docTxnmModel, docTxndModels, user, itemList, dto, false);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
 					responseDto = new ResponseDto();
 					responseDto.setCode("200");
 					responseDto.setStatus("Success");
 					responseDto.setMessage(docNo);
+					responseDto.setData(itextReceipt.createReceipt(printDto));
 					return new ResponseEntity<>(responseDto, HttpStatus.OK);
 				}
 			}
@@ -103,10 +133,80 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		return new ResponseEntity<>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
+	private ReceiptPrintDto getReceiptPrintDto(RmsDocTxnmModel docTxnmModel, List<RmsDocTxndModel> docTxndModels,
+			String user, List<RmsItemMasterModel> itemList, MiscellaneousReceiptInvDto miscellaneousReceiptInvDto,
+			boolean b) throws Exception {
+		ReceiptPrintDto printDto = new ReceiptPrintDto();
+
+		List<InventoryDetailsDto> detailsDtos = new ArrayList<>();
+
+		List<AgentModel> agentModels = agentDao.findAgentByCodeAll(docTxnmModel.getRef1());
+
+		String userName = rmsUserDao.getName(user);
+
+		printDto.setAgtCode(Integer.parseInt(docTxnmModel.getRef1()));
+		printDto.setAgtName(agentModels.get(0).getAgentName());
+		printDto.setAmt(docTxnmModel.getAmtfcu());
+		printDto.setAmtInWord(currencyFormat.numberToWords(docTxnmModel.getAmtfcu()));
+		printDto.setDocCode(docTxnmModel.getRmsDocTxnmModelPK().getDocCode());
+		printDto.setDocNum(docTxnmModel.getRmsDocTxnmModelPK().getDocNo());
+		printDto.setLocation(docTxndModels.get(0).getDimm04());
+		printDto.setPayMode(docTxnmModel.getRef2());
+		printDto.setRctDate(docTxnmModel.getCreDate());
+		printDto.setRctStatus("");
+		printDto.setRemark(docTxnmModel.getRemarks());
+		printDto.setUserName(userName);
+		
+		
+		System.out.println(miscellaneousReceiptInvDto.getChqNo());
+		if (miscellaneousReceiptInvDto.getChqNo() != null && !miscellaneousReceiptInvDto.getChqNo().equals("")) {
+			printDto.setChqNo(Integer.parseInt(miscellaneousReceiptInvDto.getChqNo()));
+		}
+		if (miscellaneousReceiptInvDto.getChqDate() != null && !miscellaneousReceiptInvDto.getChqDate().equals("")) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			printDto.setChqDate(new SimpleDateFormat("dd/MM/yyyy").format(sdf.parse(miscellaneousReceiptInvDto.getChqDate())));
+		}
+		if (miscellaneousReceiptInvDto.getChqBank() != null && !miscellaneousReceiptInvDto.getChqBank().equals("")) {
+			printDto.setBankCode(Integer.parseInt(miscellaneousReceiptInvDto.getChqBank()));
+		}
+		
+		System.out.println("Item List");
+
+		docTxndModels.forEach(System.out::println);
+		
+		for (RmsDocTxndModel docTxndModel : docTxndModels) {
+			InventoryDetailsDto detailsDto = new InventoryDetailsDto();
+			detailsDto.setItemCod(docTxndModel.getItemCode());
+
+			itemList.forEach(e -> {
+				if (e.getItemCode().equals(docTxndModel.getItemCode())) {
+					detailsDto.setUntPrice(e.getUnitPrice());
+					detailsDto.setUntPriceTot(new BigDecimal(docTxndModel.getQty().intValue())
+							.multiply(new BigDecimal(e.getUnitPrice())).setScale(2, RoundingMode.HALF_UP)
+							.doubleValue());
+					detailsDto.setItemName(e.getItemName());
+
+				}
+			});
+
+			detailsDto.setQty(docTxndModel.getQty().intValue());
+			detailsDto.setQtyTot(docTxndModel.getAmtfcu());
+			detailsDto.setSubTot(docTxnmModel.getAmtfcu());
+			detailsDto.setSubTotInWrd(currencyFormat.numberToWords(docTxnmModel.getAmtfcu()));
+			
+			detailsDtos.add(detailsDto);
+		}
+		
+		printDto.setInventoryDtl(detailsDtos);
+		
+		detailsDtos.forEach(System.out::println);
+
+		return printDto;
+	}
+
 	private RmsDocTxndModel getDocTxndModelInv(MiscellaneousReceiptInvDto dto, String user, String docNo, ExpenseDto e,
-			Integer seqNo) throws Exception {
+			Integer seqNo, RmsItemMasterModel itemMasterModel) throws Exception {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		RmsItemMasterModel itemMasterModel = rmsItemMasterCustomDao.findbyId(e.getExpenseId());
 
 		RmsDocTxndModelPK pk = new RmsDocTxndModelPK();
 		pk.setDocCode(AppConstant.DOC_CODE_OIIS);

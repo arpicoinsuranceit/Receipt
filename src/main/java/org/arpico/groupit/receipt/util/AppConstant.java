@@ -1,6 +1,5 @@
 package org.arpico.groupit.receipt.util;
 
-import java.net.URI;
 import java.util.Date;
 
 
@@ -33,7 +32,10 @@ public class AppConstant {
 	public static final String DOC_CODE_FOR_RECEIPT = "RCPP";
 	public static final String POLICY_STATUS_PLISU = "PLISU";
 	public static final String DOC_CODE_OIIS = "OIIS";
+	public static final String DOC_CODE_GLRC = "GLRC";
 	public static final String LIFE = "LI";
+	public static final String ONE_TIME_CUSTOMER = "999999";
+	public static final String DOC_CODE_GLRB = "GLRB";
 	
 	
 	

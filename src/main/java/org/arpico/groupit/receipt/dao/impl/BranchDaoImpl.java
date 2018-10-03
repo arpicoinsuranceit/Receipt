@@ -21,4 +21,10 @@ public class BranchDaoImpl implements BranchDao{
 		return branchModels;
 	}
 
+	@Override
+	public List<BranchModel> getAllBranchs() throws Exception {
+		List<BranchModel> branchModels = jdbcTemplate.query("SELECT l.loc_code, l.loc_name FROM rms_locations l where l.sbucod='450' ", new BranchRowMapper());
+		return branchModels;
+	}
+
 }

@@ -15,80 +15,30 @@ import org.arpico.groupit.receipt.model.pk.RmsRecmModelPK;
 public class RmsRecmModel implements Serializable {
 
 	private RmsRecmModelPK rmsRecmModelPK;
-
-	@Column(name = "AMTFCU")
 	private Double amtfcu;
-
-	@Column(name = "BATCNO")
 	private Double batcno;
-
-	@Column(name = "BATTYP")
 	private String battyp;
-
-	@Column(name = "CRE_BY")
 	private String creBy;
-
-	@Column(name = "CRE_DATE")
 	private Date creDate;
-
-	@Column(name = "CS_CODE")
 	private String cscode;
-
-	@Column(name = "CURR_CODE")
 	private String currCode;
-
-	@Column(name = "CUST_SUP")
 	private String custSup;
-
-	@Column(name = "EXCRAT")
 	private String excrat;
-
-	@Column(name = "glgrup")
 	private String glgrup;
-
-	@Column(name = "GLUPDT")
 	private String glupdt;
-
-	@Column(name = "JOB_NO")
 	private String jobNo;
-
-	@Column(name = "MOD_BY")
 	private String modBy;
-
-	@Column(name = "MOD_DATE")
-	private Date modDate;
-
-	@Column(name = "MSTAT")
+	private String modDate;
 	private String mstat;
-
-	@Column(name = "old_remark")
 	private String oldRemark;
-
-	@Column(name = "PD_BAL")
 	private Double pdBal;
-
-	@Column(name = "PD_CHQ")
 	private String pdChq;
-
-	@Column(name = "REC_AMT")
 	private Double recAmt;
-
-	@Column(name = "REC_BAL")
 	private Double recBal;
-
-	@Column(name = "REMARK")
 	private String remark;
-
-	@Column(name = "REP_ID")
 	private String repId;
-
-	@Column(name = "REP_MAN_FLG")
 	private String repManFlg;
-
-	@Column(name = "sysupload")
 	private String sysupload;
-
-	@Column(name = "TXN_DATE")
 	private Date txnDate;
 
 	@EmbeddedId
@@ -100,6 +50,7 @@ public class RmsRecmModel implements Serializable {
 		this.rmsRecmModelPK = rmsRecmModelPK;
 	}
 
+	@Column(name = "AMTFCU")
 	public Double getAmtfcu() {
 		return amtfcu;
 	}
@@ -108,6 +59,7 @@ public class RmsRecmModel implements Serializable {
 		this.amtfcu = amtfcu;
 	}
 
+	@Column(name = "BATCNO")
 	public Double getBatcno() {
 		return batcno;
 	}
@@ -116,6 +68,7 @@ public class RmsRecmModel implements Serializable {
 		this.batcno = batcno;
 	}
 
+	@Column(name = "BATTYP")
 	public String getBattyp() {
 		return battyp;
 	}
@@ -124,6 +77,7 @@ public class RmsRecmModel implements Serializable {
 		this.battyp = battyp;
 	}
 
+	@Column(name = "CRE_BY")
 	public String getCreBy() {
 		return creBy;
 	}
@@ -132,6 +86,7 @@ public class RmsRecmModel implements Serializable {
 		this.creBy = creBy;
 	}
 
+	@Column(name = "CRE_DATE")
 	public Date getCreDate() {
 		return creDate;
 	}
@@ -140,6 +95,7 @@ public class RmsRecmModel implements Serializable {
 		this.creDate = creDate;
 	}
 
+	@Column(name = "CS_CODE")
 	public String getCscode() {
 		return cscode;
 	}
@@ -148,6 +104,7 @@ public class RmsRecmModel implements Serializable {
 		this.cscode = cscode;
 	}
 
+	@Column(name = "CURR_CODE")
 	public String getCurrCode() {
 		return currCode;
 	}
@@ -156,6 +113,7 @@ public class RmsRecmModel implements Serializable {
 		this.currCode = currCode;
 	}
 
+	@Column(name = "CUST_SUP")
 	public String getCustSup() {
 		return custSup;
 	}
@@ -164,6 +122,7 @@ public class RmsRecmModel implements Serializable {
 		this.custSup = custSup;
 	}
 
+	@Column(name = "EXCRAT")
 	public String getExcrat() {
 		return excrat;
 	}
@@ -172,6 +131,7 @@ public class RmsRecmModel implements Serializable {
 		this.excrat = excrat;
 	}
 
+	@Column(name = "glgrup")
 	public String getGlgrup() {
 		return glgrup;
 	}
@@ -180,6 +140,7 @@ public class RmsRecmModel implements Serializable {
 		this.glgrup = glgrup;
 	}
 
+	@Column(name = "GLUPDT")
 	public String getGlupdt() {
 		return glupdt;
 	}
@@ -188,6 +149,7 @@ public class RmsRecmModel implements Serializable {
 		this.glupdt = glupdt;
 	}
 
+	@Column(name = "JOB_NO")
 	public String getJobNo() {
 		return jobNo;
 	}
@@ -196,6 +158,7 @@ public class RmsRecmModel implements Serializable {
 		this.jobNo = jobNo;
 	}
 
+	@Column(name = "MOD_BY")
 	public String getModBy() {
 		return modBy;
 	}
@@ -204,14 +167,16 @@ public class RmsRecmModel implements Serializable {
 		this.modBy = modBy;
 	}
 
-	public Date getModDate() {
+	@Column(name = "MOD_DATE")
+	public String getModDate() {
 		return modDate;
 	}
 
-	public void setModDate(Date modDate) {
+	public void setModDate(String modDate) {
 		this.modDate = modDate;
 	}
 
+	@Column(name = "MSTAT")
 	public String getMstat() {
 		return mstat;
 	}
@@ -220,6 +185,7 @@ public class RmsRecmModel implements Serializable {
 		this.mstat = mstat;
 	}
 
+	@Column(name = "old_remark")
 	public String getOldRemark() {
 		return oldRemark;
 	}
@@ -228,6 +194,7 @@ public class RmsRecmModel implements Serializable {
 		this.oldRemark = oldRemark;
 	}
 
+	@Column(name = "PD_BAL")
 	public Double getPdBal() {
 		return pdBal;
 	}
@@ -236,6 +203,7 @@ public class RmsRecmModel implements Serializable {
 		this.pdBal = pdBal;
 	}
 
+	@Column(name = "PD_CHQ")
 	public String getPdChq() {
 		return pdChq;
 	}
@@ -244,6 +212,7 @@ public class RmsRecmModel implements Serializable {
 		this.pdChq = pdChq;
 	}
 
+	@Column(name = "REC_AMT")
 	public Double getRecAmt() {
 		return recAmt;
 	}
@@ -252,6 +221,7 @@ public class RmsRecmModel implements Serializable {
 		this.recAmt = recAmt;
 	}
 
+	@Column(name = "REC_BAL")
 	public Double getRecBal() {
 		return recBal;
 	}
@@ -260,6 +230,7 @@ public class RmsRecmModel implements Serializable {
 		this.recBal = recBal;
 	}
 
+	@Column(name = "REMARK")
 	public String getRemark() {
 		return remark;
 	}
@@ -268,6 +239,7 @@ public class RmsRecmModel implements Serializable {
 		this.remark = remark;
 	}
 
+	@Column(name = "REP_ID")
 	public String getRepId() {
 		return repId;
 	}
@@ -276,6 +248,7 @@ public class RmsRecmModel implements Serializable {
 		this.repId = repId;
 	}
 
+	@Column(name = "REP_MAN_FLG")
 	public String getRepManFlg() {
 		return repManFlg;
 	}
@@ -284,6 +257,7 @@ public class RmsRecmModel implements Serializable {
 		this.repManFlg = repManFlg;
 	}
 
+	@Column(name = "sysupload")
 	public String getSysupload() {
 		return sysupload;
 	}
@@ -292,6 +266,7 @@ public class RmsRecmModel implements Serializable {
 		this.sysupload = sysupload;
 	}
 
+	@Column(name = "TXN_DATE")
 	public Date getTxnDate() {
 		return txnDate;
 	}

@@ -19,6 +19,7 @@ public class RmsItemmasterRowMapper implements RowMapper<RmsItemMasterModel>{
 		itemMasterModel.setItmGroup(rst.getString("ITM_GROUP"));
 		itemMasterModel.setPluCode(rst.getString("PLU_CODE"));
 		itemMasterModel.setUnitPrice(rst.getDouble("UNIT_PRICE"));
+		itemMasterModel.setItemName(rst.getString("ITM_DESC"));
 		
 		return itemMasterModel;
 	}

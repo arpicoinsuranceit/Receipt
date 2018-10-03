@@ -33,5 +33,25 @@ public class RmsUserDaoImpl implements RmsUserDao{
 		});
 		return userLocList;
 	}
+	
+	@Override
+	public String getName(String userCode) throws Exception {
+		String userLocList = null;
+		
+		userLocList = jdbcTemplate.query("SELECT USER_NAME FROM marksys.rms_users where USER_ID = '"+userCode+"' and SBU_CODE='450' and active=1 ", new ResultSetExtractor<String>() {
+
+			@Override
+			public String extractData(ResultSet rs) throws SQLException, DataAccessException {
+				String userLocListTemp = null;
+				if(rs.next()) {
+					
+					return rs.getString("USER_NAME");
+				}
+				return userLocListTemp;
+			}
+		});
+		return userLocList;
+	}
+	
 
 }

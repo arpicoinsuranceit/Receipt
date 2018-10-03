@@ -69,7 +69,6 @@ public class ProposalReceiptController {
 				return new ResponseEntity<>(responseDto, HttpStatus.OK);
 			}
 			
-			
 		} catch (Exception e) {
 			return new ResponseEntity<>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
 		}

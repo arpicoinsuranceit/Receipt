@@ -15,6 +15,7 @@ public class MiscellaneousReceiptInvDto {
 	private Double amount;
 	private String amtInWord;
 	private List<ExpenseDto> expencess;
+	private List<AccountGLDto> accounts;
 
 	public String getBranch() {
 		return branch;
@@ -104,11 +105,20 @@ public class MiscellaneousReceiptInvDto {
 		this.expencess = expencess;
 	}
 
+	public List<AccountGLDto> getAccounts() {
+		return accounts;
+	}
+
+	public void setAccounts(List<AccountGLDto> accounts) {
+		this.accounts = accounts;
+	}
+
 	@Override
 	public String toString() {
 		return "MiscellaneousReceiptInvDto [branch=" + branch + ", bank=" + bank + ", agent=" + agent + ", remark="
 				+ remark + ", paymode=" + paymode + ", chqNo=" + chqNo + ", chqDate=" + chqDate + ", chqBank=" + chqBank
-				+ ", amount=" + amount + ", amtInWord=" + amtInWord + ", expencess=" + expencess + "]";
+				+ ", amount=" + amount + ", amtInWord=" + amtInWord + ", expencess=" + expencess + ", accounts="
+				+ accounts + "]";
 	}
 
 }

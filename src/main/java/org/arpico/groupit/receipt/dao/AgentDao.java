@@ -8,6 +8,8 @@ public interface AgentDao {
 
 	List<AgentModel> findAgentLikeAgentCode(Integer agentCode) throws Exception;
 
-	List<AgentModel> findAgentByCode(String agentCode);
+	List<AgentModel> findAgentByCode(String agentCode) throws Exception;
+
+	List<AgentModel> findAgentByCodeAll(String advcod) throws Exception;
 	
 }

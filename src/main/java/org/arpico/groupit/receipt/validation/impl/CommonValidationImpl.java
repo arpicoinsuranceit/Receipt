@@ -1,8 +1,13 @@
 package org.arpico.groupit.receipt.validation.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.arpico.groupit.receipt.client.QuotationClient;
+import org.arpico.groupit.receipt.dto.AccountGLDto;
 import org.arpico.groupit.receipt.dto.ExpenseDto;
 import org.arpico.groupit.receipt.dto.MiscellaneousReceiptInvDto;
+import org.arpico.groupit.receipt.dto.ProposalNoSeqNoDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.service.AgentService;
 import org.arpico.groupit.receipt.service.BankService;
@@ -15,7 +20,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
-@PropertySource("classpath:errormessages.properties")
+@PropertySource({ "classpath:errormessages.properties", "applicationpara.properties" })
 public class CommonValidationImpl implements CommonValidations {
 
 	@Value("${quotationnotavailable}")
@@ -38,9 +43,12 @@ public class CommonValidationImpl implements CommonValidations {
 
 	@Value("${expenceNotAvailable}")
 	private String expenceNotAvailable;
-	
+
 	@Value("${proposalnotavailable}")
 	private String proposalnotavailable;
+
+	@Value("${gl_acc_param}")
+	private String gl_acc_param;
 
 	private String ok = "ok";
 
@@ -55,7 +63,7 @@ public class CommonValidationImpl implements CommonValidations {
 
 	@Autowired
 	private ExpenseService expenseService;
-	
+
 	@Autowired
 	private ProposalServce proposalServce;
 
@@ -118,20 +126,53 @@ public class CommonValidationImpl implements CommonValidations {
 			} else {
 				return agentNotAvailable;
 			}
-		}else {
+		} else {
 			return bankNotAvailable;
 		}
 	}
 
 	@Override
 	public String validateProposalReceiptInputs(SaveReceiptDto saveReceiptDto) throws Exception {
+
+		ProposalNoSeqNoDto obj = proposalServce.getProposalNoSeqNoDto(Integer.toString(saveReceiptDto.getPropId()));
+
 		if (bankService.findBankById(saveReceiptDto.getBankCode())) {
-			if(proposalServce.getProposalNoSeqNoDto(Integer.toString(saveReceiptDto.getPropId()))!= null ) {
+			if (obj != null) {
+
+				System.out.println("if");
+
 				return ok;
-			}else {
+			} else {
+
+				System.out.println("else");
+
 				return proposalnotavailable;
 			}
-		}else {
+		} else {
+			return bankNotAvailable;
+		}
+	}
+
+	@Override
+	public String validateMiscellaneousReceiptGlInputs(MiscellaneousReceiptInvDto dto, String token) throws Exception {
+		if (bankService.findBankById(dto.getBank())) {
+
+			String[] accIdTmp = gl_acc_param.split(",");
+
+			List<Integer> accIds = new ArrayList<>();
+			for (String id : accIdTmp) {
+				accIds.add(Integer.parseInt(id));
+			}
+
+			for (AccountGLDto accountGLDto : dto.getAccounts()) {
+				if (!accIds.contains(accountGLDto.getId())) {
+					return expenceNotAvailable;
+				}
+			}
+
+			return ok;
+
+		} else {
 			return bankNotAvailable;
 		}
 	}

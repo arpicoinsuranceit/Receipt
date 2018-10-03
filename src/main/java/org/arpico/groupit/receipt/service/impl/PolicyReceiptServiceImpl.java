@@ -1,11 +1,12 @@
 package org.arpico.groupit.receipt.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-
+import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.InAgentMastDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsDao;
@@ -15,8 +16,11 @@ import org.arpico.groupit.receipt.dao.RmsUserDao;
 import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
 import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
 import org.arpico.groupit.receipt.dto.ProposalNoSeqNoDto;
+import org.arpico.groupit.receipt.dto.ReceiptPrintDto;
+import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.model.AgentMastModel;
+import org.arpico.groupit.receipt.model.AgentModel;
 import org.arpico.groupit.receipt.model.InBillingTransactionsModel;
 import org.arpico.groupit.receipt.model.InProposalBasicsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
@@ -24,6 +28,7 @@ import org.arpico.groupit.receipt.model.InTransactionsModel;
 import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;
 																
 import org.arpico.groupit.receipt.model.pk.InBillingTransactionsModelPK;
+import org.arpico.groupit.receipt.print.ItextReceipt;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.InTransactionService;
 import org.arpico.groupit.receipt.service.NumberGenerator;
@@ -59,6 +64,9 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 	@Autowired
 	private NumberGenerator numberGenerator;
+	
+	@Autowired
+	private AgentDao agentDao;
 
 	@Autowired
 	private InTransactionService inTransactionService;
@@ -73,6 +81,9 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 	@Autowired
 	SetoffService setoffService;
 
+	@Autowired
+	private ItextReceipt itextReceipt;
+	
 	@Override
 	public List<ProposalNoSeqNoDto> getPolicyNoSeqNoDtoList(String val) throws Exception {
 
@@ -124,6 +135,8 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 	@Override
 	public ResponseEntity<Object> savePolicyReceipt(SaveReceiptDto saveReceiptDto) throws Exception {
 
+		ResponseDto dto = null;
+		
 		InProposalsModel inProposalsModel = inProposalCustomDao.getProposalBuPolicy(saveReceiptDto.getPolId(),
 				saveReceiptDto.getPolSeq());
 
@@ -158,10 +171,74 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 			if (!saveReceiptDto.equals("CQ")) {
 				setoff(inProposalsModel, agentCode, locCode, saveReceiptDto, deposit, 0.0);
 			}
+			
+			ReceiptPrintDto printDto = null;
 
-			return new ResponseEntity<>("Success", HttpStatus.OK);
+			try {
+				printDto = getReceiptPrintDto(inProposalsModel, inTransactionsModel, agentCode, locCode, false);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			dto = new ResponseDto();
+			dto.setCode("200");
+			dto.setStatus("Success");
+			dto.setMessage(deposit.getBillingTransactionsModelPK().getDocnum().toString());
+			dto.setData(itextReceipt.createReceipt(printDto));
+
+			return new ResponseEntity<>(dto, HttpStatus.OK);
 		}
-		return null;
+		
+		dto = new ResponseDto();
+		dto.setCode("204");
+		dto.setStatus("Error");
+		dto.setMessage("Location Not Found");
+		
+		return new ResponseEntity<>(dto, HttpStatus.NOT_FOUND);
+	}
+
+	private ReceiptPrintDto getReceiptPrintDto(InProposalsModel inProposalsModel,
+			InTransactionsModel inTransactionsModel, String agentCode, String locCode, boolean b) throws Exception {
+		ReceiptPrintDto printDto = new ReceiptPrintDto();
+
+		List<AgentModel> agentModels = agentDao.findAgentByCodeAll(inProposalsModel.getAdvcod());
+		
+		System.out.println(inProposalsModel.getAdvcod());
+
+		String userName = rmsUserDao.getName(agentCode);
+
+		printDto.setAgtCode(Integer.parseInt(inProposalsModel.getAdvcod()));
+		printDto.setAgtName(agentModels.get(0).getAgentName());
+		printDto.setAmt(inTransactionsModel.getTotprm());
+		printDto.setAmtInWord(inTransactionsModel.getAmtwrd());
+		printDto.setCusAddress1(inProposalsModel.getPpdad1());
+		printDto.setCusAddress2(inProposalsModel.getPpdad2());
+		printDto.setCusAddress3(inProposalsModel.getPpdad3());
+		printDto.setCusCode(Integer.parseInt(inProposalsModel.getCscode()));
+		printDto.setCusName(inProposalsModel.getPpdini());
+		printDto.setCusTitle(inProposalsModel.getNtitle());
+		printDto.setPolNum(Integer.parseInt(inProposalsModel.getPolnum()));
+		printDto.setDocCode(inTransactionsModel.getInTransactionsModelPK().getDoccod());
+		printDto.setDocNum(inTransactionsModel.getInTransactionsModelPK().getDocnum());
+		printDto.setLocation(locCode);
+		printDto.setPayMode(inTransactionsModel.getPaymod());
+		printDto.setPropNum(Integer.parseInt(inTransactionsModel.getPprnum()));
+		printDto.setQuoNum(inProposalsModel.getQuonum());
+		printDto.setQdId(inProposalsModel.getInProposalsModelPK().getPrpseq());
+		printDto.setRctDate(inTransactionsModel.getCreadt());
+		printDto.setRctStatus("");
+		printDto.setRemark(inTransactionsModel.getRemark());
+		printDto.setUserName(userName);
+		if (inTransactionsModel.getChqnum() != null) {
+			printDto.setChqNo(Integer.parseInt(inTransactionsModel.getChqnum()));
+		}
+		if (inTransactionsModel.getChqdat() != null) {
+			printDto.setChqDate(new SimpleDateFormat("dd/MM/yyyy").format(inTransactionsModel.getChqdat()));
+		}
+		if (inTransactionsModel.getChqbnk() != null) {
+			printDto.setBankCode(Integer.parseInt(inTransactionsModel.getChqbnk()));
+		}
+		return printDto;
 	}
 
 	private void setoff(InProposalsModel inProposalsModel, String agentCode, String locCode,

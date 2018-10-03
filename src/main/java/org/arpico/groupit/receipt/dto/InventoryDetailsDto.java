@@ -2,20 +2,20 @@ package org.arpico.groupit.receipt.dto;
 
 public class InventoryDetailsDto {
 
-	private Integer itemCod;
+	private String itemCod;
 	private String itemName;
 	private Integer qty;
 	private Double untPrice;
 	private Double untPriceTot;
-	private Integer qtyTot;
+	private Double qtyTot;
 	private Double subTot;
 	private String subTotInWrd;
 
-	public Integer getItemCod() {
+	public String getItemCod() {
 		return itemCod;
 	}
 
-	public void setItemCod(Integer itemCod) {
+	public void setItemCod(String itemCod) {
 		this.itemCod = itemCod;
 	}
 
@@ -51,11 +51,11 @@ public class InventoryDetailsDto {
 		this.untPriceTot = untPriceTot;
 	}
 
-	public Integer getQtyTot() {
+	public Double getQtyTot() {
 		return qtyTot;
 	}
 
-	public void setQtyTot(Integer qtyTot) {
+	public void setQtyTot(Double qtyTot) {
 		this.qtyTot = qtyTot;
 	}
 

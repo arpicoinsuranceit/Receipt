@@ -1,5 +1,8 @@
 package org.arpico.groupit.receipt.util;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class DaoParameters {
 
 	public String getParaForIn(String paraList) {

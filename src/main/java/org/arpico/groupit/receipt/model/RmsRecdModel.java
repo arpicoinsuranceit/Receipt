@@ -12,64 +12,26 @@ import org.arpico.groupit.receipt.model.pk.RmsRecdModelPK;
 @Entity
 @Table(name = "rms_recd")
 public class RmsRecdModel {
-	
-	private RmsRecdModelPK rmsRecdModelPK;
-	
-	@Column(name = "AMT")
-	private Double amt;
-	
-	@Column(name = "AMTFCU")
-	private Double amtfcu;
-	
-	@Column(name = "BANK_BRA")
-	private String bankBra;
-	
-	@Column(name = "BANK_CODE")
-	private String bankCode;
-	
-	@Column(name = "BNK_DT")
-	private Date bnkDt;
-	
-	@Column(name = "CRD_TYP")
-	private String crdTyp;
-	
-	@Column(name = "CRE_BY")
-	private String creBy;
-	
-	@Column(name = "CRE_DATE")
-	private Date creDate;
-	
-	@Column(name = "dimm04")
-	private String dimm04;
-	
-	@Column(name = "dimm05")
-	private String dimm05;
-	
-	@Column(name = "MOD_BY")
-	private String modBy;
-	
-	@Column(name = "MOD_DATE")
-	private Date modDate;
-	
-	@Column(name = "old_bkdt")
-	private Date oldBkDt;
-	
-	@Column(name = "PAY_MODE")
-	private String payMode;
-	
-	@Column(name = "PD_CHQDT")
-	private Date pcChqDt;
 
-	@Column(name = "REMERKS")
+	private RmsRecdModelPK rmsRecdModelPK;
+	private Double amt;
+	private Double amtfcu;
+	private String bankBra;
+	private String bankCode;
+	private Date bnkDt;
+	private String crdTyp;
+	private String creBy;
+	private Date creDate;
+	private String dimm04;
+	private String dimm05;
+	private String modBy;
+	private String modDate;
+	private String oldBkDt;
+	private String payMode;
+	private Date pcChqDt;
 	private String remarks;
-	
-	@Column(name = "VOUCHER_NO")
 	private String voucherNo;
-	
-	@Column(name = "VOUSEQ")
 	private Integer vouSeq;
-	
-	
 
 	@EmbeddedId
 	public RmsRecdModelPK getRmsRecdModelPK() {
@@ -80,6 +42,7 @@ public class RmsRecdModel {
 		this.rmsRecdModelPK = rmsRecdModelPK;
 	}
 
+	@Column(name = "AMT")
 	public Double getAmt() {
 		return amt;
 	}
@@ -88,6 +51,7 @@ public class RmsRecdModel {
 		this.amt = amt;
 	}
 
+	@Column(name = "AMTFCU")
 	public Double getAmtfcu() {
 		return amtfcu;
 	}
@@ -96,6 +60,7 @@ public class RmsRecdModel {
 		this.amtfcu = amtfcu;
 	}
 
+	@Column(name = "BANK_BRA")
 	public String getBankBra() {
 		return bankBra;
 	}
@@ -104,6 +69,7 @@ public class RmsRecdModel {
 		this.bankBra = bankBra;
 	}
 
+	@Column(name = "BANK_CODE")
 	public String getBankCode() {
 		return bankCode;
 	}
@@ -112,6 +78,7 @@ public class RmsRecdModel {
 		this.bankCode = bankCode;
 	}
 
+	@Column(name = "BNK_DT")
 	public Date getBnkDt() {
 		return bnkDt;
 	}
@@ -120,6 +87,7 @@ public class RmsRecdModel {
 		this.bnkDt = bnkDt;
 	}
 
+	@Column(name = "CRD_TYP")
 	public String getCrdTyp() {
 		return crdTyp;
 	}
@@ -128,6 +96,7 @@ public class RmsRecdModel {
 		this.crdTyp = crdTyp;
 	}
 
+	@Column(name = "CRE_BY")
 	public String getCreBy() {
 		return creBy;
 	}
@@ -136,6 +105,7 @@ public class RmsRecdModel {
 		this.creBy = creBy;
 	}
 
+	@Column(name = "CRE_DATE")
 	public Date getCreDate() {
 		return creDate;
 	}
@@ -144,6 +114,7 @@ public class RmsRecdModel {
 		this.creDate = creDate;
 	}
 
+	@Column(name = "dimm04")
 	public String getDimm04() {
 		return dimm04;
 	}
@@ -152,6 +123,7 @@ public class RmsRecdModel {
 		this.dimm04 = dimm04;
 	}
 
+	@Column(name = "dimm05")
 	public String getDimm05() {
 		return dimm05;
 	}
@@ -160,6 +132,7 @@ public class RmsRecdModel {
 		this.dimm05 = dimm05;
 	}
 
+	@Column(name = "MOD_BY")
 	public String getModBy() {
 		return modBy;
 	}
@@ -168,22 +141,25 @@ public class RmsRecdModel {
 		this.modBy = modBy;
 	}
 
-	public Date getModDate() {
+	@Column(name = "MOD_DATE")
+	public String getModDate() {
 		return modDate;
 	}
 
-	public void setModDate(Date modDate) {
+	public void setModDate(String modDate) {
 		this.modDate = modDate;
 	}
 
-	public Date getOldBkDt() {
+	@Column(name = "old_bkdt")
+	public String getOldBkDt() {
 		return oldBkDt;
 	}
 
-	public void setOldBkDt(Date oldBkDt) {
+	public void setOldBkDt(String oldBkDt) {
 		this.oldBkDt = oldBkDt;
 	}
 
+	@Column(name = "PAY_MODE")
 	public String getPayMode() {
 		return payMode;
 	}
@@ -192,6 +168,7 @@ public class RmsRecdModel {
 		this.payMode = payMode;
 	}
 
+	@Column(name = "PD_CHQDT")
 	public Date getPcChqDt() {
 		return pcChqDt;
 	}
@@ -200,6 +177,7 @@ public class RmsRecdModel {
 		this.pcChqDt = pcChqDt;
 	}
 
+	@Column(name = "REMERKS")
 	public String getRemarks() {
 		return remarks;
 	}
@@ -208,6 +186,7 @@ public class RmsRecdModel {
 		this.remarks = remarks;
 	}
 
+	@Column(name = "VOUCHER_NO")
 	public String getVoucherNo() {
 		return voucherNo;
 	}
@@ -216,6 +195,7 @@ public class RmsRecdModel {
 		this.voucherNo = voucherNo;
 	}
 
+	@Column(name = "VOUSEQ")
 	public Integer getVouSeq() {
 		return vouSeq;
 	}
@@ -233,5 +213,4 @@ public class RmsRecdModel {
 				+ ", remarks=" + remarks + ", voucherNo=" + voucherNo + ", vouSeq=" + vouSeq + "]";
 	}
 
-	
 }

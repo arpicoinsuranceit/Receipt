@@ -1,5 +1,6 @@
 package org.arpico.groupit.receipt.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -7,6 +8,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.InAgentMastDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsDao;
@@ -35,9 +37,11 @@ import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
 import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
 import org.arpico.groupit.receipt.dto.ProposalL3Dto;
 import org.arpico.groupit.receipt.dto.ProposalNoSeqNoDto;
+import org.arpico.groupit.receipt.dto.ReceiptPrintDto;
 import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.model.AgentMastModel;
+import org.arpico.groupit.receipt.model.AgentModel;
 import org.arpico.groupit.receipt.model.InBillingTransactionsModel;
 import org.arpico.groupit.receipt.model.InPropAddBenefitModel;
 import org.arpico.groupit.receipt.model.InPropFamDetailsModel;
@@ -54,6 +58,7 @@ import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;/*
 																import org.arpico.groupit.receipt.model.ReFundModel;*/
 import org.arpico.groupit.receipt.model.pk.InBillingTransactionsModelPK;
 import org.arpico.groupit.receipt.model.pk.InShortPremiumModelPK;
+import org.arpico.groupit.receipt.print.ItextReceipt;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.InTransactionService;
 import org.arpico.groupit.receipt.service.NumberGenerator;
@@ -109,6 +114,9 @@ public class ProposalServiceImpl implements ProposalServce {
 	private InPropMedicalReqDao propMedicalReqDao;
 
 	@Autowired
+	private AgentDao agentDao;
+
+	@Autowired
 	private InPropMedicalReqCustomDao propMedicalReqCustomDao;
 
 	@Autowired
@@ -152,6 +160,9 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	@Autowired
 	private InShortPremiumActProductDao actProductDao;
+
+	@Autowired
+	private ItextReceipt itextReceipt;
 
 	@Override
 	public List<ProposalNoSeqNoDto> getProposalNoSeqNoDtoList(String val) throws Exception {
@@ -233,6 +244,8 @@ public class ProposalServiceImpl implements ProposalServce {
 				inTransactionDao.save(inTransactionsModel);
 				inBillingTransactionDao.save(inBillingTransactionsModel);
 
+				System.out.println("save in");
+
 				///////////////// end save billing ///////////////
 
 				if (!saveReceiptDto.getPayMode().equals("CQ")) {
@@ -240,12 +253,23 @@ public class ProposalServiceImpl implements ProposalServce {
 							inBillingTransactionsModel);
 				}
 
+				System.out.println("dto");
+
+				ReceiptPrintDto dto = null;
+
+				try {
+					dto = getReceiptPrintDto(inProposalsModel, inTransactionsModel, agentCode, locCode, false);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
 				ResponseDto responseDto = new ResponseDto();
 				responseDto.setCode("200");
 				responseDto.setStatus("Success");
 				responseDto.setMessage(inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum().toString());
-				return new ResponseEntity<>(responseDto, HttpStatus.OK);
+				responseDto.setData(itextReceipt.createReceipt(dto));
 				
+				return new ResponseEntity<>(responseDto, HttpStatus.OK);
 
 			} else {
 				ResponseDto responseDto = new ResponseDto();
@@ -263,6 +287,51 @@ public class ProposalServiceImpl implements ProposalServce {
 			return new ResponseEntity<>(responseDto, HttpStatus.OK);
 		}
 
+	}
+
+	private ReceiptPrintDto getReceiptPrintDto(InProposalsModel inProposalsModel,
+			InTransactionsModel inTransactionsModel, String agentCode, String locCode, boolean b) throws Exception {
+
+		ReceiptPrintDto printDto = new ReceiptPrintDto();
+
+		List<AgentModel> agentModels = agentDao.findAgentByCodeAll(inProposalsModel.getAdvcod());
+		
+		System.out.println(inProposalsModel.getAdvcod());
+
+		String userName = rmsUserDao.getName(agentCode);
+
+		printDto.setAgtCode(Integer.parseInt(inProposalsModel.getAdvcod()));
+		printDto.setAgtName(agentModels.get(0).getAgentName());
+		printDto.setAmt(inTransactionsModel.getTotprm());
+		printDto.setAmtInWord(inTransactionsModel.getAmtwrd());
+		printDto.setCusAddress1(inProposalsModel.getPpdad1());
+		printDto.setCusAddress2(inProposalsModel.getPpdad2());
+		printDto.setCusAddress3(inProposalsModel.getPpdad3());
+		printDto.setCusCode(Integer.parseInt(inProposalsModel.getCscode()));
+		printDto.setCusName(inProposalsModel.getPpdini());
+		printDto.setCusTitle(inProposalsModel.getNtitle());
+		printDto.setDocCode(inTransactionsModel.getInTransactionsModelPK().getDoccod());
+		printDto.setDocNum(inTransactionsModel.getInTransactionsModelPK().getDocnum());
+		printDto.setLocation(locCode);
+		printDto.setPayMode(inTransactionsModel.getPaymod());
+		printDto.setPolNum(inTransactionsModel.getPolnum());
+		printDto.setPropNum(Integer.parseInt(inTransactionsModel.getPprnum()));
+		printDto.setQuoNum(inProposalsModel.getQuonum());
+		printDto.setQdId(inProposalsModel.getInProposalsModelPK().getPrpseq());
+		printDto.setRctDate(inTransactionsModel.getCreadt());
+		printDto.setRctStatus("");
+		printDto.setRemark(inTransactionsModel.getRemark());
+		printDto.setUserName(userName);
+		if (inTransactionsModel.getChqnum() != null) {
+			printDto.setChqNo(Integer.parseInt(inTransactionsModel.getChqnum()));
+		}
+		if (inTransactionsModel.getChqdat() != null) {
+			printDto.setChqDate(new SimpleDateFormat("dd/MM/yyyy").format(inTransactionsModel.getChqdat()));
+		}
+		if (inTransactionsModel.getChqbnk() != null) {
+			printDto.setBankCode(Integer.parseInt(inTransactionsModel.getChqbnk()));
+		}
+		return printDto;
 	}
 
 	@Transactional
@@ -583,7 +652,9 @@ public class ProposalServiceImpl implements ProposalServce {
 
 		List<ProposalNoSeqNoModel> list = inProposalCustomDao.getProposalNoSeqNoModel(pprNo);
 
-		if(list != null && !(list.isEmpty())) {
+		System.out.println(list.size());
+
+		if (list != null && !(list.isEmpty())) {
 			proposalNoSeqNoDtos = getProposalNoSeqNoDto(list.get(0));
 		}
 

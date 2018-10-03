@@ -29,4 +29,11 @@ public class AgentDaoImpl implements AgentDao {
 				new AgentRowMapper());
 	}
 
+	@Override
+	public List<AgentModel> findAgentByCodeAll(String advcod) throws Exception {
+		return jdbcTemplate.query("SELECT agncod, shrtnm, loccod FROM marksys.inagentmast "
+				+ "where sbucod = '450' and agncod = '" + advcod + "' order by agncod;",
+				new AgentRowMapper());
+	}
+
 }
