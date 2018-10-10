@@ -1,6 +1,5 @@
 package org.arpico.groupit.receipt.dto;
 
-import java.io.Serializable;
 import java.util.Date;
 
 public class NomineeDto{
