@@ -60,7 +60,7 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 			args.add(pprNo);
 
 			amount = jdbcTemplate.query(
-					"SELECT sum(amount) `sum` FROM marksys.inbillingtransactions where sbucod = '450' and pprnum = ? and "
+					"SELECT sum(amount) `sum` FROM inbillingtransactions where sbucod = '450' and pprnum = ? and "
 							+ "txnyer <= year(curdate()) and txnmth <= month(curdate())",
 					args.toArray(), new ResultSetExtractor<Double>() {
 

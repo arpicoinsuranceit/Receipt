@@ -1,5 +1,6 @@
 package org.arpico.groupit.receipt.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.arpico.groupit.receipt.model.DashboardCashFlowSummeryModel;
@@ -38,4 +39,10 @@ public interface DashboardDao {
 	public List<DashboardCashFlowSummeryModel> getCashFlowRecm(String user, String to, String from) throws Exception;
 
 	public List<DashboardCashFlowSummeryModel> getCashFlowTxnm(String user, String to, String from) throws Exception;
+
+	public List<DashboardDetailsModel> getCashFlowGridInTrans(String to, String from, String user, String type) throws Exception;
+
+	public List<DashboardDetailsModel> getCashFlowGridTxnm(String toDate, String fromDate, String user, String type) throws Exception;
+
+	public List<DashboardDetailsModel> getCashFlowGridRecm(String toDate, String fromDate, String user, String type) throws Exception;
 }

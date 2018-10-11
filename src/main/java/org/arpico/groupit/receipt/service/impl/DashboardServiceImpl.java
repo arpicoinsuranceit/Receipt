@@ -1,6 +1,8 @@
 package org.arpico.groupit.receipt.service.impl;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,7 +36,13 @@ public class DashboardServiceImpl implements DashboardService {
 
 	@Override
 	public DashboardPieDto getDashboardPie(Date to, Date from, String token) throws Exception {
-
+		
+		Date toInTran = to;
+		Calendar c = Calendar.getInstance();
+		c.setTime(to);
+		c.add(Calendar.DATE, 1);
+		toInTran = c.getTime();
+		
 		DashboardPieDto dashboardPieDto = new DashboardPieDto();
 
 		String user = jwtDecoder.generate(token);
@@ -54,9 +62,10 @@ public class DashboardServiceImpl implements DashboardService {
 		Double total = 0.00;
 
 		String toDate = format.format(to);
+		String toDateInTran = format.format(toInTran);
 		String fromDate = format.format(from);
 
-		List<DashboardPieModel> translist = dashboardDao.getFromInTransaction(toDate, fromDate, user);
+		List<DashboardPieModel> translist = dashboardDao.getFromInTransaction(toDateInTran, fromDate, user);
 
 		for (DashboardPieModel e : translist) {
 			switch (e.getDocCode()) {
@@ -130,10 +139,17 @@ public class DashboardServiceImpl implements DashboardService {
 		List<String> datesInRange = new ArrayList<>();
 
 		String[] receiptModels = { "New Business", "Proposal", "Policy", "Misc. INV", "Misc. GL" };
+		
+		Date toInTran = to;
+		Calendar c = Calendar.getInstance();
+		c.setTime(to);
+		c.add(Calendar.DATE, 1);
+		toInTran = c.getTime();
 
 		///////////////////// Date Convert to String///////////////////////////
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		String toDate = format.format(to);
+		String toDateInTran = format.format(toInTran);
 		String fromDate = format.format(from);
 		String user = jwtDecoder.generate(token);
 
@@ -183,7 +199,7 @@ public class DashboardServiceImpl implements DashboardService {
 			sql2 = ", year(CRE_DATE)";
 		}
 
-		List<DashboardGridModel> models = dashboardDao.getFromInTransactionsGrid(toDate, fromDate, user, sql);
+		List<DashboardGridModel> models = dashboardDao.getFromInTransactionsGrid(toDateInTran, fromDate, user, sql);
 		List<DashboardGridModel> modelsRecm = dashboardDao.getFromRecmGrid(toDate, fromDate, user, sql2);
 		List<DashboardGridModel> modelsTxnm = dashboardDao.getFromTxnmGrid(toDate, fromDate, user, sql2);
 		//////////////////////////// initialize Dates to
@@ -292,13 +308,19 @@ public class DashboardServiceImpl implements DashboardService {
 	public List<LastReceiptSummeryDto> getDetails(String token, Date toDate, Date fromDate, String type)
 			throws Exception {
 		String user = jwtDecoder.generate(token);
+		
+		Date toDateInTran = toDate;
+		Calendar c = Calendar.getInstance();
+		c.setTime(toDate);
+		c.add(Calendar.DATE, 1);
+		toDateInTran = c.getTime();
 
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		String to = format.format(toDate);
 		String from = format.format(fromDate);
-
-		System.out.println(to);
-		System.out.println(from);
+		String toInTran = format.format(toDateInTran);
+		
+		
 
 		List<LastReceiptSummeryDto> dtos = new ArrayList<>();
 
@@ -307,17 +329,17 @@ public class DashboardServiceImpl implements DashboardService {
 		switch (type) {
 		case "RCNB":
 
-			dashboardDetailsModels = dashboardDao.getDashDetailsInTrans(to, from, user, type);
+			dashboardDetailsModels = dashboardDao.getDashDetailsInTrans(toInTran, from, user, type);
 
 			break;
 		case "RCPP":
 
-			dashboardDetailsModels = dashboardDao.getDashDetailsInTrans(to, from, user, type);
+			dashboardDetailsModels = dashboardDao.getDashDetailsInTrans(toInTran, from, user, type);
 
 			break;
 		case "RCPL":
 
-			dashboardDetailsModels = dashboardDao.getDashDetailsInTrans(to, from, user, type);
+			dashboardDetailsModels = dashboardDao.getDashDetailsInTrans(toInTran, from, user, type);
 
 			break;
 		case "GLRC":
@@ -367,30 +389,34 @@ public class DashboardServiceImpl implements DashboardService {
 
 		String user = jwtDecoder.generate(token);
 
+		Date toDateInTran = toDate;
+		Calendar c = Calendar.getInstance();
+		c.setTime(toDate);
+		c.add(Calendar.DATE, 1);
+		toDateInTran = c.getTime();
+
+		
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		String to = format.format(toDate);
 		String from = format.format(fromDate);
+		String toInTran = format.format(toDateInTran);
 
-		System.out.println(to);
-		System.out.println(from);
-
-		List<DashboardCashFlowSummeryModel> inTranModels = dashboardDao.getCashFlowInTrans(user, to, from);
+		List<DashboardCashFlowSummeryModel> inTranModels = dashboardDao.getCashFlowInTrans(user, toInTran, from);
 		List<DashboardCashFlowSummeryModel> inRecmModels = dashboardDao.getCashFlowRecm(user, to, from);
 		List<DashboardCashFlowSummeryModel> inTxnmModels = dashboardDao.getCashFlowTxnm(user, to, from);
 
-		
 		System.out.println(inTranModels.size());
 		inTranModels.forEach(System.out::println);
-		
+
 		System.out.println(inRecmModels.size());
 		inRecmModels.forEach(System.out::println);
-		
+
 		System.out.println(inTxnmModels.size());
 		inTxnmModels.forEach(System.out::println);
-		
+
 		inTranModels.forEach(e -> {
 			if (e.getPayMode().equalsIgnoreCase("CS")) {
-				
+
 				NameValuePairDto dto = dtos.get(0);
 
 				Integer count = Integer.parseInt(dto.getCount()) + e.getCount();
@@ -437,15 +463,15 @@ public class DashboardServiceImpl implements DashboardService {
 			}
 
 		});
-		
+
 		inRecmModels.forEach(e -> {
-			
+
 			System.out.println(e);
-			
+
 			if (e.getPayMode().equalsIgnoreCase("CS")) {
-				
+
 				System.out.println(e);
-				
+
 				NameValuePairDto dto = dtos.get(0);
 
 				Integer count = Integer.parseInt(dto.getCount()) + e.getCount();
@@ -492,10 +518,10 @@ public class DashboardServiceImpl implements DashboardService {
 			}
 
 		});
-		
+
 		inTxnmModels.forEach(e -> {
 			if (e.getPayMode().equalsIgnoreCase("02.CASH")) {
-				
+
 				NameValuePairDto dto = dtos.get(0);
 
 				Integer count = Integer.parseInt(dto.getCount()) + e.getCount();
@@ -518,7 +544,7 @@ public class DashboardServiceImpl implements DashboardService {
 
 				dtos.set(1, dto);
 			}
-			if (e.getPayMode().equalsIgnoreCase("01.CHEQUE") || e.getPayMode().equalsIgnoreCase("04.CHEQUE")  ) {
+			if (e.getPayMode().equalsIgnoreCase("01.CHEQUE") || e.getPayMode().equalsIgnoreCase("04.CHEQUE")) {
 				NameValuePairDto dto = dtos.get(2);
 
 				Integer count = Integer.parseInt(dto.getCount()) + e.getCount();
@@ -542,6 +568,68 @@ public class DashboardServiceImpl implements DashboardService {
 			}
 
 		});
+
+		return dtos;
+	}
+
+	@Override
+	public List<LastReceiptSummeryDto> getCashFlowDateilGrid(String type, Date to, Date from, String token)
+			throws Exception {
+
+		Date toInTran = to;
+		Calendar c = Calendar.getInstance();
+		c.setTime(to);
+		c.add(Calendar.DATE, 1);
+		toInTran = c.getTime();
+		
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String toDate = format.format(to);
+		String toDateInTran = format.format(toInTran);
+		String fromDate = format.format(from);
+
+		/*String payModeInTran = "";*/
+		String payModeTxnm = "";
+
+		switch (type) {
+		case "CS":
+			payModeTxnm = "'02.CASH'";
+			break;
+		case "CR":
+			payModeTxnm = "'03. CREDIT CARD'";
+			break;
+		case "CQ":
+			payModeTxnm = "'01.CHEQUE', '04.CHEQUE'";
+			break;
+		case "DD":
+			payModeTxnm = "'Direct deposit'";
+			break;
+
+		default:
+			break;
+		}
+
+		List<LastReceiptSummeryDto> dtos = new ArrayList<>();
+
+		String user = jwtDecoder.generate(token);
+		List<DashboardDetailsModel> inTransModels = dashboardDao.getCashFlowGridInTrans(toDateInTran, fromDate, user, type);
+		List<DashboardDetailsModel> txnmModels = dashboardDao.getCashFlowGridTxnm(toDate, fromDate, user, payModeTxnm);
+		List<DashboardDetailsModel> recmModels = dashboardDao.getCashFlowGridRecm(toDate, fromDate, user, type);
+
+		if (inTransModels != null) {
+			inTransModels.forEach(e -> {
+				dtos.add(getLastReceipt(e));
+			});
+		}
+		if (txnmModels != null) {
+			txnmModels.forEach(e -> {
+				dtos.add(getLastReceipt(e));
+			});
+		}
+		if (recmModels != null) {
+			recmModels.forEach(e -> {
+				dtos.add(getLastReceipt(e));
+			});
+		}
 
 		return dtos;
 	}

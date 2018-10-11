@@ -18,7 +18,7 @@ public class RmsDocTxnmCustomDaoImpl implements RmsDocTxnmCustomDao{
 	@Override
 	public List<RmsDocTxnmGridModel> findTop10(String creBy) throws Exception {
 		
-		String sql = "select REF1, CRE_DATE, DOC_CODE, amtfcu, DOC_NO  from marksys.rms_doc_txnm M WHERE M.CRE_BY = '"+creBy+"' ORDER BY CRE_DATE DESC, DOC_NO DESC  LIMIT 10";
+		String sql = "select REF1, CRE_DATE, DOC_CODE, amtfcu, DOC_NO  from rms_doc_txnm M WHERE M.CRE_BY = '"+creBy+"' ORDER BY CRE_DATE DESC, DOC_NO DESC  LIMIT 10";
 		
 		List<RmsDocTxnmGridModel> gridModels = jdbcTemplate.query(sql, new RmsDocTxnmGridRowMapper());
 		return gridModels;

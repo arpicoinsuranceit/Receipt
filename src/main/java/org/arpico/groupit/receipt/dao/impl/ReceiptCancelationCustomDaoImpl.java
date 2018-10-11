@@ -21,7 +21,7 @@ public class ReceiptCancelationCustomDaoImpl implements ReceiptCancelationCustom
 	public List<String> findReceiptLikeReceiptId(String receiptId,String loccodes) throws Exception {
 		List<String> receiptIdList = null;
 		
-		receiptIdList = jdbcTemplate.query("select docnum from marksys.intransactions where sbucod='450' and loccod in ("+loccodes+") and docnum like '"+receiptId+"%' ;", new ResultSetExtractor<List<String>>() {
+		receiptIdList = jdbcTemplate.query("select docnum from intransactions where sbucod='450' and loccod in ("+loccodes+") and docnum like '"+receiptId+"%' ;", new ResultSetExtractor<List<String>>() {
 
 			@Override
 			public List<String> extractData(ResultSet rs) throws SQLException, DataAccessException {

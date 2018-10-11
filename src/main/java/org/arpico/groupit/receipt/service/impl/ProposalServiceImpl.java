@@ -242,6 +242,9 @@ public class ProposalServiceImpl implements ProposalServce {
 				inBillingTransactionsModel.setPolfee(0.0);
 
 				inTransactionDao.save(inTransactionsModel);
+				
+				System.out.println(inBillingTransactionsModel.toString());
+				
 				inBillingTransactionDao.save(inBillingTransactionsModel);
 
 				System.out.println("save in");

@@ -149,5 +149,38 @@ public class DashboardController {
 		return dashboardService.getCashFlowDateils(to, from, token);
 		
 	}
+	
+	
+	@RequestMapping(value = "/getCashFlowDetailGrid/{type}/{toDate}/{fromDate}/{token:.+}", method = RequestMethod.GET)
+	public List<LastReceiptSummeryDto> getCashFlowDetailGrid (@PathVariable String type, @PathVariable String toDate,
+			@PathVariable String fromDate, @PathVariable String token) throws Exception{
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss");
+		
+		System.out.println(toDate);
+		System.out.println(fromDate);
+		System.out.println(token);
+		
+		Date to = null;
+		
+		try {
+			to = sdf.parse(toDate);
+		} catch (Exception e) {
+			to = new Date(Long.parseLong(toDate));
+		}
+		
+
+		Date from = null;
+		try {
+			from = sdf.parse(fromDate);
+		} catch (Exception e) {
+			from = new Date(Long.parseLong(fromDate));
+		}
+		
+		
+		
+		return dashboardService.getCashFlowDateilGrid(type,to, from, token);
+		
+	}
 
 }

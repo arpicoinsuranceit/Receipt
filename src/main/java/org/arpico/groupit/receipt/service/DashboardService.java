@@ -18,6 +18,8 @@ public interface DashboardService {
 
 	List<NameValuePairDto> getCashFlowDateils(Date to, Date from, String token) throws Exception;
 
+	List<LastReceiptSummeryDto> getCashFlowDateilGrid(String type, Date to, Date from, String token) throws Exception;
+
 
 	
 }

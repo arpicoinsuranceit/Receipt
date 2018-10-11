@@ -314,14 +314,8 @@ public class SetoffServiceImpl implements SetoffService {
 				try {
 					InBillingTransactionsModel model = billingTransactionsCustomDao
 							.getTxnYearDate(inProposalsModel.getInProposalsModelPK().getPprnum());
-
-					if (model.getTxnmth() >= 12) {
-						billingTransactionsModel.setTxnyer(model.getTxnyer() + 1);
-						billingTransactionsModel.setTxnmth(1);
-					} else {
 						billingTransactionsModel.setTxnyer(model.getTxnyer());
-						billingTransactionsModel.setTxnmth(model.getTxnmth() + 1);
-					}
+						billingTransactionsModel.setTxnmth(model.getTxnmth());
 				} catch (Exception e) {
 					billingTransactionsModel.setTxnyer(Calendar.getInstance().get(Calendar.YEAR));
 					billingTransactionsModel.setTxnmth(Calendar.getInstance().get(Calendar.MONTH) + 1);

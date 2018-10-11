@@ -23,10 +23,10 @@ public class ReceiptInquiryCustomDaoImpl implements ReceiptInquiryCustomDao {
 	@Override
 	public List<ReceiptDetailsModel> getAllReceiptDetails(Integer offset,String loccodes,boolean isHO,Integer limit) throws Exception {
 		if(isHO) {
-			return jdbcTemplate.query("select doccod,docnum,txndat,totprm,paymod,chqnum,chqrel,pprnum,polnum,ppdnam,advcod from marksys.intransactions where sbucod='450' order by creadt desc LIMIT "+limit+" OFFSET "+offset+";",
+			return jdbcTemplate.query("select doccod,docnum,txndat,totprm,paymod,chqnum,chqrel,pprnum,polnum,ppdnam,advcod from intransactions where sbucod='450' order by creadt desc LIMIT "+limit+" OFFSET "+offset+";",
 					new ReceiptDetailsRowMapper());
 		}else {
-			return jdbcTemplate.query("select doccod,docnum,txndat,totprm,paymod,chqnum,chqrel,pprnum,polnum,ppdnam,advcod from marksys.intransactions where sbucod='450' and loccod in ("+loccodes+") order by creadt desc LIMIT "+limit+" OFFSET "+offset+";",
+			return jdbcTemplate.query("select doccod,docnum,txndat,totprm,paymod,chqnum,chqrel,pprnum,polnum,ppdnam,advcod from intransactions where sbucod='450' and loccod in ("+loccodes+") order by creadt desc LIMIT "+limit+" OFFSET "+offset+";",
 					new ReceiptDetailsRowMapper());
 		}
 		
@@ -36,10 +36,10 @@ public class ReceiptInquiryCustomDaoImpl implements ReceiptInquiryCustomDao {
 	public Integer getAllReceiptCount(String loccodes, boolean isHO) throws Exception {
 		Integer count=0;
 		if(isHO) {
-			count=jdbcTemplate.queryForObject("select count(*) from marksys.intransactions where sbucod='450' ", Integer.class);
+			count=jdbcTemplate.queryForObject("select count(*) from intransactions where sbucod='450' ", Integer.class);
 			return count;
 		}else {
-			count=jdbcTemplate.queryForObject("select count(*) from marksys.intransactions where sbucod='450' and loccod in ("+loccodes+") ", Integer.class);
+			count=jdbcTemplate.queryForObject("select count(*) from intransactions where sbucod='450' and loccod in ("+loccodes+") ", Integer.class);
 			return count;
 		}
 	}

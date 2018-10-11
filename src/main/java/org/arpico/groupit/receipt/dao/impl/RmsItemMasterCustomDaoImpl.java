@@ -22,7 +22,7 @@ public class RmsItemMasterCustomDaoImpl implements RmsItemMasterCustomDao {
 		List<Object> args = new ArrayList<>();
 		args.add(itemCode);
 
-		String sql = "select ITEM_CODE, PLU_CODE, ITM_DESC, UNIT, UNIT_PRICE, AVG_PRICE, glgrup, ITM_GROUP from marksys.rms_itmmaster where ITEM_CODE = '"
+		String sql = "select ITEM_CODE, PLU_CODE, ITM_DESC, UNIT, UNIT_PRICE, AVG_PRICE, glgrup, ITM_GROUP from rms_itmmaster where ITEM_CODE = '"
 				+ itemCode + "' limit 1";
 
 		RmsItemMasterModel itemMasterModel = jdbcTemplate.queryForObject(sql, new RmsItemmasterRowMapper());
