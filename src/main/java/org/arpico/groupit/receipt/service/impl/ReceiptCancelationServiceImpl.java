@@ -1,5 +1,6 @@
 package org.arpico.groupit.receipt.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.arpico.groupit.receipt.dao.BranchUnderwriteDao;
@@ -7,6 +8,7 @@ import org.arpico.groupit.receipt.dao.InTransactionCustomDao;
 import org.arpico.groupit.receipt.dao.ReceiptCancelationCustomDao;
 import org.arpico.groupit.receipt.dao.ReceiptCancelationDao;
 import org.arpico.groupit.receipt.dao.UserDao;
+import org.arpico.groupit.receipt.dto.CanceledReceiptDto;
 import org.arpico.groupit.receipt.model.CanceledReceiptModel;
 import org.arpico.groupit.receipt.model.LastReceiptSummeryModel;
 import org.arpico.groupit.receipt.security.JwtDecoder;
@@ -97,6 +99,52 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 			}
 		}
 		
+		
+		return null;
+	}
+
+	@Override
+	public List<CanceledReceiptDto> findPendingRequest(String token) throws Exception {
+		
+		String userCode=new JwtDecoder().generate(token);
+		
+		if(userCode!=null) {
+			List<String> loccodes=branchUnderwriteDao.findLocCodes(userCode);
+			String locations="";
+			if(loccodes != null) {
+				for (String string : loccodes) {
+					locations+="'"+string+"'"+",";
+				}
+			}
+			
+			locations=locations.replaceAll(",$", "");
+			
+			System.out.println(locations);
+			
+			if(locations != "") {
+				
+				List<CanceledReceiptModel> canceledReceiptModels= receiptCancelationCustomDao.findPendingRequest(locations, "PENDING");
+				List<CanceledReceiptDto> canceledReceiptDtos=new ArrayList<>();
+				
+				canceledReceiptModels.forEach(ca->{
+					CanceledReceiptDto canceledReceiptDto=new CanceledReceiptDto();
+					canceledReceiptDto.setLocCode(ca.getLocCode());
+					canceledReceiptDto.setPolNum(ca.getPolNum());
+					canceledReceiptDto.setPprNum(ca.getPprNum());
+					canceledReceiptDto.setReason(ca.getReason());
+					canceledReceiptDto.setReceiptNo(ca.getReceiptNo());
+					canceledReceiptDto.setRequestBy(ca.getRequestBy());
+					canceledReceiptDto.setRequestDate(ca.getRequestDate());
+					canceledReceiptDto.setSbuCode(ca.getSbuCode());
+					canceledReceiptDto.setStatus(ca.getStatus());
+					
+					canceledReceiptDtos.add(canceledReceiptDto);
+				});
+				
+				return canceledReceiptDtos;
+				
+			}
+		}
 		
 		return null;
 	}

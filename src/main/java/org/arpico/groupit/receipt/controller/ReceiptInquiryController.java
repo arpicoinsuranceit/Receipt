@@ -22,55 +22,35 @@ public class ReceiptInquiryController {
 	
 	
 	@RequestMapping(value = "/loadReceiptInquiryDetails/{token}/{pageNum}/{limit}", method = RequestMethod.GET)
-	public LoadReceiptInquiryDetailsDto getAllReceiptDetails (@PathVariable("token") String token,@PathVariable("pageNum") Integer pageNum,@PathVariable("limit") Integer limit){
+	public LoadReceiptInquiryDetailsDto getAllReceiptDetails (@PathVariable("token") String token,@PathVariable("pageNum") Integer pageNum,@PathVariable("limit") Integer limit) throws Exception{
 		System.out.println("loadReceiptInquiryDetails");
 		
-		try {
-			return receiptInquiryService.getAllReceiptDetails(token, pageNum,limit);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		return receiptInquiryService.getAllReceiptDetails(token, pageNum,limit);
 		
-		return null;
 	}
 	
 	@RequestMapping(value = "/loadBankDetails/{docCode}/{docNum}", method = RequestMethod.GET)
-	public BankDetailsDto getAllBankDetails (@PathVariable("docCode") String docCode,@PathVariable("docNum") Integer docNum){
+	public BankDetailsDto getAllBankDetails (@PathVariable("docCode") String docCode,@PathVariable("docNum") Integer docNum) throws Exception{
 		System.out.println("getAllBankDetails");
 		
-		try {
-			return receiptInquiryService.getBankDetails(docCode, docNum);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		return receiptInquiryService.getBankDetails(docCode, docNum);
 		
-		return null;
 	}
 	
 	@RequestMapping(value = "/loadPolicyDetails/{docCode}/{docNum}", method = RequestMethod.GET)
-	public List<PolicyDetailsDto> getAllPolicyDetails (@PathVariable("docCode") String docCode,@PathVariable("docNum") Integer docNum){
+	public List<PolicyDetailsDto> getAllPolicyDetails (@PathVariable("docCode") String docCode,@PathVariable("docNum") Integer docNum) throws Exception{
 		System.out.println("getAllPolicyDetails");
 		
-		try {
-			return receiptInquiryService.getAllPolicyDetails(docCode, docNum);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		return receiptInquiryService.getAllPolicyDetails(docCode, docNum);
 		
-		return null;
 	}
 	
 	@RequestMapping(value = "/loadAccountDetails/{docCode}/{docNum}", method = RequestMethod.GET)
-	public List<AccountDetailsDto> getAllAccountDetails (@PathVariable("docCode") String docCode,@PathVariable("docNum") Integer docNum){
+	public List<AccountDetailsDto> getAllAccountDetails (@PathVariable("docCode") String docCode,@PathVariable("docNum") Integer docNum) throws Exception{
 		System.out.println("getAllAccountDetails");
 		
-		try {
-			return receiptInquiryService.getAllAccountDetails(docCode, docNum);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return null;
+		return receiptInquiryService.getAllAccountDetails(docCode, docNum);
+
 	}
 	
 	

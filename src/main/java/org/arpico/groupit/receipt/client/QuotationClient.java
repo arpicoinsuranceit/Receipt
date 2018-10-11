@@ -2,7 +2,6 @@ package org.arpico.groupit.receipt.client;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.arpico.groupit.receipt.dto.MedicalRequirementsDto;
 import org.arpico.groupit.receipt.dto.NomineeDto;
 import org.arpico.groupit.receipt.dto.PensionSheduleDto;

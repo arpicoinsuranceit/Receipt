@@ -13,6 +13,7 @@ import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.BranchUnderwriteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,121 +33,77 @@ public class BranchUnderwriteController {
 	private QuotationClient quotationClient;
 	
 	@RequestMapping(value = "/loadProposalToUnderwrite/{token:.+}/{pageIndex}/{pageSize}", method = RequestMethod.GET)
-	public UnderwriteDto getProposalsToUnderwrite (@PathVariable("token") String token,@PathVariable("pageIndex") Integer pageIndex,@PathVariable("pageSize") Integer pageSize){
+	public UnderwriteDto getProposalsToUnderwrite (@PathVariable("token") String token,@PathVariable("pageIndex") Integer pageIndex,@PathVariable("pageSize") Integer pageSize) throws Exception{
 		System.out.println("loadProposalToUnderwrite");
 		
-		try {
-			String userCode=new JwtDecoder().generate(token);
-			return branchUnderwriteService.getProposalToUnderwrite(userCode,pageIndex,pageSize);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		String userCode=new JwtDecoder().generate(token);
+		return branchUnderwriteService.getProposalToUnderwrite(userCode,pageIndex,pageSize);
 		
-		return null;
 	}
 	
 	@RequestMapping(value = "/loadProposalDetails/{proposalNo}/{seqNo}", method = RequestMethod.GET)
-	public InProposalsModel getProposalDetails (@PathVariable("proposalNo") String proposalNo,@PathVariable("seqNo") String seqNo){
+	public InProposalsModel getProposalDetails (@PathVariable("proposalNo") String proposalNo,@PathVariable("seqNo") String seqNo) throws Exception{
 		System.out.println("getProposalDetails");
 		
-		try {
-			return branchUnderwriteService.getInProposalDetails(Integer.valueOf(proposalNo), Integer.valueOf(seqNo));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return null;
+		return branchUnderwriteService.getInProposalDetails(Integer.valueOf(proposalNo), Integer.valueOf(seqNo));
+
 	}
 	
 	@RequestMapping(value = "/getQuotationDetails/{seqNo}/{qId}", method = RequestMethod.GET)
-	public ViewQuotationDto getQuotationDetails (@PathVariable("seqNo") String seqNo,@PathVariable("qId") String qId){
+	public ViewQuotationDto getQuotationDetails (@PathVariable("seqNo") String seqNo,@PathVariable("qId") String qId)throws Exception{
 		System.out.println("getQuotationDetails");
 		
-		try {
-			return quotationClient.getQuotation(Integer.valueOf(seqNo), Integer.valueOf(qId));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		return quotationClient.getQuotation(Integer.valueOf(seqNo), Integer.valueOf(qId));
 		
-		return null;
 	}
 	
 	@RequestMapping(value = "/getPensionShedule/{seqNo}/{qId}", method = RequestMethod.GET)
-	public List<PensionSheduleDto> getPensionShedule (@PathVariable("seqNo") Integer seqNo,@PathVariable("qId") Integer qId){
+	public List<PensionSheduleDto> getPensionShedule (@PathVariable("seqNo") Integer seqNo,@PathVariable("qId") Integer qId)throws Exception{
 		System.out.println("getPensionShedule");
 		
-		try {
-			return quotationClient.getPensionShedule(seqNo, qId);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		return quotationClient.getPensionShedule(seqNo, qId);
 		
-		return null;
 	}
 	
 	@RequestMapping(value = "/getShedule/{seqNo}/{qId}", method = RequestMethod.GET)
-	public List<SheduleDto> getShedule (@PathVariable("seqNo") Integer seqNo,@PathVariable("qId") Integer qId){
+	public List<SheduleDto> getShedule (@PathVariable("seqNo") Integer seqNo,@PathVariable("qId") Integer qId)throws Exception{
 		System.out.println("getShedule");
 		
-		try {
-			return quotationClient.getShedule(seqNo, qId);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		return quotationClient.getShedule(seqNo, qId);
 		
-		return null;
 	}
 	
 	@RequestMapping(value = "/getSurrenderVals/{seqNo}/{qId}", method = RequestMethod.GET)
-	public List<SurrenderValsDto> getSurrenderVals (@PathVariable("seqNo") Integer seqNo,@PathVariable("qId") Integer qId){
+	public List<SurrenderValsDto> getSurrenderVals (@PathVariable("seqNo") Integer seqNo,@PathVariable("qId") Integer qId)throws Exception{
 		System.out.println("getSurrenderVals");
 		
-		try {
-			return quotationClient.getSurrenderVals(seqNo, qId);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		return quotationClient.getSurrenderVals(seqNo, qId);
 		
-		return null;
 	}
 	
 	@RequestMapping(value = "/getNominee/{seqNo}/{qId}", method = RequestMethod.GET)
-	public List<NomineeDto> getNominee (@PathVariable("seqNo") Integer seqNo,@PathVariable("qId") Integer qId){
+	public List<NomineeDto> getNominee (@PathVariable("seqNo") Integer seqNo,@PathVariable("qId") Integer qId)throws Exception{
 		System.out.println("getNominee");
 		
-		try {
-			return quotationClient.getNominee(seqNo, qId);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		return quotationClient.getNominee(seqNo, qId);
 		
-		return null;
 	}
 	
 	@RequestMapping(value = "/getQuotationDetailFromSeqNo/{seqNo}/{qId}", method = RequestMethod.GET)
-	public Integer getQuotationDetailFromSeqNo (@PathVariable("seqNo") Integer seqNo,@PathVariable("qId") Integer qId){
+	public Integer getQuotationDetailFromSeqNo (@PathVariable("seqNo") Integer seqNo,@PathVariable("qId") Integer qId)throws Exception{
 		System.out.println("getQuotationDetailFromSeqNo");
 		
-		try {
-			return quotationClient.getQuotationDetailFromSeqNo(seqNo, qId);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		return quotationClient.getQuotationDetailFromSeqNo(seqNo, qId);
 		
-		return null;
 	}
 	
 	@RequestMapping(value = "/checkNicValidation/{nic}/{gender}/{age}/{seqNo}/{qId}", method = RequestMethod.GET)
-	public String checkNicValidation (@PathVariable("nic") String nic,@PathVariable("gender") String gender,@PathVariable("age") String age,@PathVariable("seqNo") String seqNo, @PathVariable("qId") String qId){
+	public String checkNicValidation (@PathVariable("nic") String nic,@PathVariable("gender") String gender,@PathVariable("age") String age,@PathVariable("seqNo") String seqNo, @PathVariable("qId") String qId)
+			throws Exception{
 		System.out.println("checkNicValidation");
 		
-		try {
-			return quotationClient.checkNicValidation(nic, gender, age, seqNo, qId);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		return quotationClient.checkNicValidation(nic, gender, age, seqNo, qId);
 		
-		return null;
 	}
 	
 	@RequestMapping(value = "/saveUnderwrite", method = RequestMethod.POST)
@@ -156,9 +113,8 @@ public class BranchUnderwriteController {
 		try {
 			return branchUnderwriteService.saveUnderwrite(saveUnderwriteDto);
 		} catch (Exception e) {
-			e.printStackTrace();
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return null;
 		
 	}
 	

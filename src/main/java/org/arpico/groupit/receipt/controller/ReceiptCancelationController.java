@@ -1,8 +1,10 @@
 package org.arpico.groupit.receipt.controller;
 
 import java.util.List;
+import org.arpico.groupit.receipt.dto.CanceledReceiptDto;
 import org.arpico.groupit.receipt.service.ReceiptCancelationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,15 +20,9 @@ public class ReceiptCancelationController {
 	private ReceiptCancelationService receiptCancelationService;
 	
 	@RequestMapping(value = "/getReceipts/{token}/{receiptId}", method = RequestMethod.GET)
-	public List<String> getAgentDtos (@PathVariable("token") String token,@PathVariable("receiptId") String receiptId){
+	public List<String> getReceipts (@PathVariable("token") String token,@PathVariable("receiptId") String receiptId) throws Exception{
 		
-		try {
-			return receiptCancelationService.findReceiptLikeReceiptId(receiptId, token);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return null;
+		return receiptCancelationService.findReceiptLikeReceiptId(receiptId, token);
 	}
 	
 	@RequestMapping(value = "/saveRequest/{token}/{receiptNo}/{reason}", method = RequestMethod.GET)
@@ -35,10 +31,16 @@ public class ReceiptCancelationController {
 		try {
 			return receiptCancelationService.saveRequest(receiptNo, reason,token);
 		} catch (Exception e) {
-			e.printStackTrace();
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		return null;
+	}
+	
+	@RequestMapping(value = "/getPendingRequest/{token:.+}", method = RequestMethod.GET)
+	public List<CanceledReceiptDto> getPendingRequest (@PathVariable("token") String token) throws Exception{
+		
+		return receiptCancelationService.findPendingRequest(token);
+		
 	}
 	
 }
