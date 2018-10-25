@@ -28,4 +28,13 @@ public class UserDaoImpl implements UserDao {
 		return location;
 	}
 
+	@Override
+	public String getUserEmail(String userCode) throws Exception {
+		String email = jdbcTemplate
+				.queryForObject("select r.EMAIL from rms_users r where SBU_CODE = '450' and USER_ID = '" + userCode
+						+ "' " + "and active = 1 ", String.class);
+		
+		return email;
+	}
+
 }
