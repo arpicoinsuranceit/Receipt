@@ -587,6 +587,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		System.out.println(resp.get_mainlife().get_mDob());
 		// System.out.println(resp.);
 
+		inProposalsModel.setPpdini(resp.get_mainlife().get_mName());
 		inProposalsModel.setPpdnam(resp.get_mainlife().get_mName());
 		inProposalsModel.setPpddob(new SimpleDateFormat("dd-MM-yyyy").parse(resp.get_mainlife().get_mDob()));
 		inProposalsModel.setPpdnag(Integer.parseInt(resp.get_mainlife().get_mAge()));

@@ -1,6 +1,5 @@
 package org.arpico.groupit.receipt.dao;
 
-import java.util.Date;
 import java.util.List;
 
 import org.arpico.groupit.receipt.model.DashboardCashFlowSummeryModel;

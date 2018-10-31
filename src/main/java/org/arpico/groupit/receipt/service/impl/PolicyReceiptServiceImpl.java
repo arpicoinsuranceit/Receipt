@@ -26,7 +26,7 @@ import org.arpico.groupit.receipt.model.InProposalBasicsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.InTransactionsModel;
 import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;
-																
+
 import org.arpico.groupit.receipt.model.pk.InBillingTransactionsModelPK;
 import org.arpico.groupit.receipt.print.ItextReceipt;
 import org.arpico.groupit.receipt.security.JwtDecoder;
@@ -40,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PolicyReceiptServiceImpl implements PolicyReceiptService {
@@ -64,7 +65,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 	@Autowired
 	private NumberGenerator numberGenerator;
-	
+
 	@Autowired
 	private AgentDao agentDao;
 
@@ -83,7 +84,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 	@Autowired
 	private ItextReceipt itextReceipt;
-	
+
 	@Override
 	public List<ProposalNoSeqNoDto> getPolicyNoSeqNoDtoList(String val) throws Exception {
 
@@ -136,7 +137,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 	public ResponseEntity<Object> savePolicyReceipt(SaveReceiptDto saveReceiptDto) throws Exception {
 
 		ResponseDto dto = null;
-		
+
 		InProposalsModel inProposalsModel = inProposalCustomDao.getProposalBuPolicy(saveReceiptDto.getPolId(),
 				saveReceiptDto.getPolSeq());
 
@@ -150,7 +151,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 					saveReceiptDto, agentCode, locCode);
 
 			inTransactionsModel.getInTransactionsModelPK().setDoccod("RCPL");
-			inTransactionDao.save(inTransactionsModel);
+			// inTransactionDao.save(inTransactionsModel);
 
 			System.out.println("transaction model save");
 
@@ -166,35 +167,54 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 			deposit.setPolfee(0.0);
 			deposit.setTxntyp("POLDEP");
 
-			inBillingTransactionDao.save(deposit);
-
-			if (!saveReceiptDto.equals("CQ")) {
-				setoff(inProposalsModel, agentCode, locCode, saveReceiptDto, deposit, 0.0);
-			}
-			
+			// inBillingTransactionDao.save(deposit);
 			ReceiptPrintDto printDto = null;
-
 			try {
-				printDto = getReceiptPrintDto(inProposalsModel, inTransactionsModel, agentCode, locCode, false);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			dto = new ResponseDto();
-			dto.setCode("200");
-			dto.setStatus("Success");
-			dto.setMessage(deposit.getBillingTransactionsModelPK().getDocnum().toString());
-			dto.setData(itextReceipt.createReceipt(printDto));
+				saveReceipt(inTransactionsModel, deposit);
+				if (!saveReceiptDto.equals("CQ")) {
+					setoff(inProposalsModel, agentCode, locCode, saveReceiptDto, deposit, 0.0);
+				}
+				try {
+					printDto = getReceiptPrintDto(inProposalsModel, inTransactionsModel, agentCode, locCode, false);
+				} catch (Exception e) {
+					e.printStackTrace();
+					dto = new ResponseDto();
+					dto.setCode("500");
+					dto.setStatus("Error");
+					dto.setMessage("Error at print receipt");
+				}
 
-			return new ResponseEntity<>(dto, HttpStatus.OK);
+				dto = new ResponseDto();
+				dto.setCode("200");
+				dto.setStatus("Success");
+				dto.setMessage(deposit.getBillingTransactionsModelPK().getDocnum().toString());
+				dto.setData(itextReceipt.createReceipt(printDto));
+
+				return new ResponseEntity<>(dto, HttpStatus.OK);
+				
+			} catch (Exception e) {
+				dto = new ResponseDto();
+				dto.setCode("500");
+				dto.setStatus("Error");
+				dto.setMessage("Error at receipt Saving");
+				dto.setData(itextReceipt.createReceipt(printDto));
+				return new ResponseEntity<>(dto, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+
 		}
-		
+
 		dto = new ResponseDto();
 		dto.setCode("204");
 		dto.setStatus("Error");
 		dto.setMessage("Location Not Found");
-		
+
 		return new ResponseEntity<>(dto, HttpStatus.NOT_FOUND);
+	}
+
+	@Transactional
+	private void saveReceipt(InTransactionsModel inTransactionsModel, InBillingTransactionsModel deposit) {
+		inTransactionDao.save(inTransactionsModel);
+		inBillingTransactionDao.save(deposit);
 	}
 
 	private ReceiptPrintDto getReceiptPrintDto(InProposalsModel inProposalsModel,
@@ -202,7 +222,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		ReceiptPrintDto printDto = new ReceiptPrintDto();
 
 		List<AgentModel> agentModels = agentDao.findAgentByCodeAll(inProposalsModel.getAdvcod());
-		
+
 		System.out.println(inProposalsModel.getAdvcod());
 
 		String userName = rmsUserDao.getName(agentCode);

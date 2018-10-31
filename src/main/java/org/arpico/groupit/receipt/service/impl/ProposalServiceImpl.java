@@ -241,38 +241,55 @@ public class ProposalServiceImpl implements ProposalServce {
 				inBillingTransactionsModel.setAdmfee(0.0);
 				inBillingTransactionsModel.setPolfee(0.0);
 
-				inTransactionDao.save(inTransactionsModel);
-				
-				System.out.println(inBillingTransactionsModel.toString());
-				
-				inBillingTransactionDao.save(inBillingTransactionsModel);
 
-				System.out.println("save in");
+				System.out.println(inBillingTransactionsModel.toString());
+				try {
+					saveReceipt(inTransactionsModel, inBillingTransactionsModel);
+
+					System.out.println("save in");
+					
+					if (!saveReceiptDto.getPayMode().equals("CQ")) {
+						checkPolicy(inProposalsModel, pprNo, seqNo, saveReceiptDto, agentCode, locCode,
+								inBillingTransactionsModel);
+					}
+
+					System.out.println("dto");
+
+					ReceiptPrintDto dto = null;
+
+					try {
+						dto = getReceiptPrintDto(inProposalsModel, inTransactionsModel, agentCode, locCode, false);
+					} catch (Exception e) {
+						e.printStackTrace();
+						ResponseDto responseDto = new ResponseDto();
+						responseDto.setCode("500");
+						responseDto.setStatus("Error");
+						responseDto.setMessage("Error at print receipt");
+						return new ResponseEntity<>(responseDto, HttpStatus.INTERNAL_SERVER_ERROR);
+					}
+
+					ResponseDto responseDto = new ResponseDto();
+					responseDto.setCode("200");
+					responseDto.setStatus("Success");
+					responseDto.setMessage(inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum().toString());
+					responseDto.setData(itextReceipt.createReceipt(dto));
+					
+					return new ResponseEntity<>(responseDto, HttpStatus.OK);
+					
+				}catch (Exception e) {
+					e.printStackTrace();
+					ResponseDto responseDto = new ResponseDto();
+					responseDto.setCode("500");
+					responseDto.setStatus("Error");
+					responseDto.setMessage("Error at save receipt");
+					return new ResponseEntity<>(responseDto, HttpStatus.INTERNAL_SERVER_ERROR);
+				}
+				
+				
 
 				///////////////// end save billing ///////////////
 
-				if (!saveReceiptDto.getPayMode().equals("CQ")) {
-					checkPolicy(inProposalsModel, pprNo, seqNo, saveReceiptDto, agentCode, locCode,
-							inBillingTransactionsModel);
-				}
-
-				System.out.println("dto");
-
-				ReceiptPrintDto dto = null;
-
-				try {
-					dto = getReceiptPrintDto(inProposalsModel, inTransactionsModel, agentCode, locCode, false);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-				ResponseDto responseDto = new ResponseDto();
-				responseDto.setCode("200");
-				responseDto.setStatus("Success");
-				responseDto.setMessage(inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum().toString());
-				responseDto.setData(itextReceipt.createReceipt(dto));
 				
-				return new ResponseEntity<>(responseDto, HttpStatus.OK);
 
 			} else {
 				ResponseDto responseDto = new ResponseDto();
@@ -289,6 +306,15 @@ public class ProposalServiceImpl implements ProposalServce {
 			responseDto.setMessage("User or Location Not Found");
 			return new ResponseEntity<>(responseDto, HttpStatus.OK);
 		}
+
+	}
+
+	@Transactional
+	private void saveReceipt(InTransactionsModel inTransactionsModel,
+			InBillingTransactionsModel inBillingTransactionsModel) {
+		inTransactionDao.save(inTransactionsModel);
+		
+		inBillingTransactionDao.save(inBillingTransactionsModel);
 
 	}
 

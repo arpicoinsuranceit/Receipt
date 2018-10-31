@@ -29,6 +29,8 @@ public class AppConstant {
 	public static final String URI_QUOTATION_DETAILS_FROM_SEQNO = "http://10.10.10.120:8084/Quotation/getQuotationDetailFromSeqNo";
 	public static final String URI_CHECK_NIC_VALIDATION = "http://10.10.10.120:8084/Quotation/checkNicValidation";
 	
+	public static final String URI_BRANCH_FIND = "http://localhost:8086/User/findbranch";
+	
 	public static final String DOC_CODE_FOR_RECEIPT = "RCPP";
 	public static final String POLICY_STATUS_PLISU = "PLISU";
 	public static final String DOC_CODE_OIIS = "OIIS";

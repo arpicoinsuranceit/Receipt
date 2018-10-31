@@ -2,6 +2,7 @@ package org.arpico.groupit.receipt.dao;
 
 import java.util.List;
 
+import org.arpico.groupit.receipt.model.InTransactionsModel;
 import org.arpico.groupit.receipt.model.LastReceiptSummeryModel;
 
 public interface InTransactionCustomDao {
@@ -13,5 +14,7 @@ public interface InTransactionCustomDao {
 	List<LastReceiptSummeryModel> getLastReceiptsByPolNo(String polNo)throws Exception;
 
 	List<LastReceiptSummeryModel> getReceiptsByDocNum(String docnum)throws Exception;
+	
+	InTransactionsModel getTransaction (String type, Integer no) throws Exception;
 	
 }

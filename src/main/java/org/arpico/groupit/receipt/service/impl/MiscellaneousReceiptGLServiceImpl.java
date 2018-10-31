@@ -190,7 +190,7 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 		pk.setDocCod(AppConstant.DOC_CODE_GLRC);
 		pk.setDocNum(Integer.parseInt(docNo));
 		pk.setLinNum(1);
-		pk.setLocCode("");
+		pk.setLocCode("HO");
 		pk.setSbuCode(AppConstant.SBU_CODE);
 		pk.setSeqNum(i);
 
@@ -244,7 +244,7 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 		pk.setDocCod(AppConstant.DOC_CODE_GLRC);
 		pk.setDocNum(Integer.parseInt(docNo));
 		pk.setLinNum(1);
-		pk.setLocCode("");
+		pk.setLocCode("HO");
 		pk.setSbuCode(AppConstant.SBU_CODE);
 		pk.setSeqNum(i + 2);
 
@@ -323,7 +323,7 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 
 		modelPK.setDocCode(AppConstant.DOC_CODE_GLRC);
 		modelPK.setDocNo(Integer.parseInt(docNo));
-		modelPK.setLocCode("");
+		modelPK.setLocCode("HO");
 		modelPK.setSbuCode(AppConstant.SBU_CODE);
 		modelPK.setSeqNo(i + 1);
 
@@ -344,7 +344,7 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 		model.setBnkDt(new Date());
 		model.setVouSeq(0);
 		model.setOldBkDt("0000-00-00");
-		model.setDimm04(AppConstant.EMPTY_STRING);
+		model.setDimm04(dto.getBranch());
 		model.setDimm05(AppConstant.EMPTY_STRING);
 		model.setAmtfcu(e.getAmount());
 		model.setPayMode(dto.getPaymode());
@@ -356,19 +356,24 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 
 		RmsRecmModelPK modelPK = new RmsRecmModelPK();
 		modelPK.setDocCode(AppConstant.DOC_CODE_GLRC);
-		modelPK.setLocCode("");
+		modelPK.setLocCode("HO");
 		modelPK.setDocNo(Integer.parseInt(docNo));
 		modelPK.setSbuCode(AppConstant.SBU_CODE);
 
 		RmsRecmModel model = new RmsRecmModel();
 
+		String data = "";
+		if(dto.getPaymode().equalsIgnoreCase("CQ")) {
+			data = " ("+dto.getChqNo()+")";
+		}
+		
 		model.setRmsRecmModelPK(modelPK);
 
 		model.setAmtfcu(dto.getAmount());
 		model.setTxnDate(new Date());
 		model.setCustSup("C");
 		model.setCscode(AppConstant.ONE_TIME_CUSTOMER);
-		model.setRemark(dto.getRemark());
+		model.setRemark(dto.getRemark() + data);
 		model.setCreBy(user);
 		model.setCreDate(new Date());
 		model.setModBy(AppConstant.EMPTY_STRING);
