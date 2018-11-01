@@ -18,11 +18,14 @@ public class DocumentTypeModel {
 	
 	private Integer docTypeId;
 	private String docName;
+	private String docTypeCode;
 	private boolean active;
 	private Date createDate;
 	private String createBy;
 	private Date modifyDate;
 	private String modifyBy;
+	private Integer parent;
+	private Integer isDoc;
 	
 	private List<SubDepartmentDocumentModel> subDepartmentDocument=new ArrayList<>();
 	
@@ -41,6 +44,13 @@ public class DocumentTypeModel {
 	}
 	public void setDocName(String docName) {
 		this.docName = docName;
+	}
+	@Column(name="doctypecod")
+	public String getDocTypeCode() {
+		return docTypeCode;
+	}
+	public void setDocTypeCode(String docTypeCode) {
+		this.docTypeCode = docTypeCode;
 	}
 	@Column(name="isactive")
 	public boolean isActive() {
@@ -86,16 +96,27 @@ public class DocumentTypeModel {
 	public void setSubDepartmentDocument(List<SubDepartmentDocumentModel> subDepartmentDocument) {
 		this.subDepartmentDocument = subDepartmentDocument;
 	}
+	@Column(name="parent")
+	public Integer getParent() {
+		return parent;
+	}
+	public void setParent(Integer parent) {
+		this.parent = parent;
+	}
+	@Column(name="isDoc")
+	public Integer getIsDoc() {
+		return isDoc;
+	}
+	public void setIsDoc(Integer isDoc) {
+		this.isDoc = isDoc;
+	}
 	@Override
 	public String toString() {
-		return "DocumentType [docTypeId=" + docTypeId + ", docName=" + docName + ", active=" + active + ", createDate="
-				+ createDate + ", createBy=" + createBy + ", modifyDate=" + modifyDate + ", modifyBy=" + modifyBy
-				+ ", subDepartmentDocument=" + subDepartmentDocument + "]";
+		return "DocumentTypeModel [docTypeId=" + docTypeId + ", docName=" + docName + ", active=" + active
+				+ ", createDate=" + createDate + ", createBy=" + createBy + ", modifyDate=" + modifyDate + ", modifyBy="
+				+ modifyBy + ", parent=" + parent + ", isDoc=" + isDoc + ", subDepartmentDocument="
+				+ subDepartmentDocument + "]";
 	}
-	
-	
-	
-	
 	
 
 }

@@ -108,7 +108,7 @@ public class DepartmentCourierServiceImpl implements DepartmentCourierService{
 				});
 
 				for (Entry<String, ArrayList<SubDepartmentDocumentCourierHelperDto>> entry : subDepDocMap.entrySet()) {
-				    System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+				    //System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
 				    SubDepartmentHelperDto subDepartmentHelperDto=new SubDepartmentHelperDto();
 				    subDepartmentHelperDto.setSudDepName(entry.getKey());
 				    subDepartmentHelperDto.setSubDepartmentDocumentCourierDtos(entry.getValue());

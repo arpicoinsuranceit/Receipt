@@ -45,17 +45,20 @@ public class SubDepartmentDocumentServiceImpl implements SubDepartmentDocumentSe
 			DocumentTypeModel documentTypeModel=sdd.getDocumentType();
 			
 			if(documentTypeModel.isActive()) {
-				DocumentTypeDto documentTypeDto=new DocumentTypeDto();
+				if(documentTypeModel.getParent() == 0) {
+					DocumentTypeDto documentTypeDto=new DocumentTypeDto();
+					
+					documentTypeDto.setActive(documentTypeModel.isActive());
+					documentTypeDto.setCreateBy(documentTypeModel.getCreateBy());
+					documentTypeDto.setCreateDate(documentTypeModel.getCreateDate());
+					documentTypeDto.setDocName(documentTypeModel.getDocName());
+					documentTypeDto.setDocTypeId(documentTypeModel.getDocTypeId());
+					documentTypeDto.setModifyBy(documentTypeModel.getModifyBy());
+					//documentTypeDto.setModifyDate(documentTypeModel.getModifyDate());
+					
+					documentTypeDtos.add(documentTypeDto);
+				}
 				
-				documentTypeDto.setActive(documentTypeModel.isActive());
-				documentTypeDto.setCreateBy(documentTypeModel.getCreateBy());
-				documentTypeDto.setCreateDate(documentTypeModel.getCreateDate());
-				documentTypeDto.setDocName(documentTypeModel.getDocName());
-				documentTypeDto.setDocTypeId(documentTypeModel.getDocTypeId());
-				documentTypeDto.setModifyBy(documentTypeModel.getModifyBy());
-				//documentTypeDto.setModifyDate(documentTypeModel.getModifyDate());
-				
-				documentTypeDtos.add(documentTypeDto);
 			}
 			
 			

@@ -83,9 +83,9 @@ public class SubDepartmentDocumentCourierServiceImpl implements SubDepartmentDoc
 			CourierModel courierModel=courierModels.get(0);
 			
 			List<DepartmentCourierModel> depCouriers=courierModel.getDepartmentCourier();
-
+			
 			depCouriers.forEach(dc-> {
-				if(depId.equals(dc.getCourierDepartmentId())) {
+				if(depId.equals(dc.getDepartment().getDepartmentId())) {
 					departmentCourierModel=dc;
 					isExistDepartment=true;
 				}
@@ -108,6 +108,7 @@ public class SubDepartmentDocumentCourierServiceImpl implements SubDepartmentDoc
 				subDepDocCouModel.setUnderwriterEmail(underwriterEmail);
 				subDepDocCouModel.setReferenceType(subDepDocCouDto.getReferenceType());
 				
+				isExistDepartment=false;
 				return subDepartmentDocumentCourierDao.save(subDepDocCouModel) != null ? "200":"204";
 				
 				

@@ -25,5 +25,7 @@ public interface InProposalCustomDao {
 	InProposalBasicsModel geInPolicyBasics(int polNo, int seqNo) throws Exception;
 	
 	List<InPropPreviousPolModel> getPreviousPolicies(String sbu,String nic)throws Exception;
+	
+	List<InPropPreviousPolModel> getAllPreviousPolicies(String sbu,String nic)throws Exception;
 
 }

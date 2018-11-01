@@ -6,13 +6,13 @@ import org.arpico.groupit.receipt.dto.CourierDetailsHelperDto;
 import org.arpico.groupit.receipt.dto.CourierDto;
 import org.arpico.groupit.receipt.dto.DepartmentDto;
 import org.arpico.groupit.receipt.dto.DocumentTypeDto;
-import org.arpico.groupit.receipt.dto.RefTypeDto;
 import org.arpico.groupit.receipt.dto.SubDepartmentDocumentCourierDto;
 import org.arpico.groupit.receipt.dto.SubDepartmentDto;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.CourierService;
 import org.arpico.groupit.receipt.service.DepartmentCourierService;
 import org.arpico.groupit.receipt.service.DepartmentService;
+import org.arpico.groupit.receipt.service.DocumentTypeService;
 import org.arpico.groupit.receipt.service.RefTypeService;
 import org.arpico.groupit.receipt.service.SubDepartmentDocumentCourierService;
 import org.arpico.groupit.receipt.service.SubDepartmentDocumentService;
@@ -50,6 +50,9 @@ public class CourierController {
 	@Autowired
 	private RefTypeService refTypeService;
 	
+	@Autowired
+	private DocumentTypeService documentTypeService;
+	
 	@RequestMapping(value="/courier/department",method=RequestMethod.GET)
 	public List<DepartmentDto> getAllDepartment() throws Exception{
 		
@@ -68,6 +71,13 @@ public class CourierController {
 	public List<DocumentTypeDto> getSubDepartmentDocument(@PathVariable("subDepId")Integer subDepId) throws Exception{
 		
 		return subDepartmentDocumentService.findBySubDepartment(subDepId);
+		
+	}
+	
+	@RequestMapping(value="/courier/childdocument/{parent}",method=RequestMethod.GET)
+	public List<DocumentTypeDto> getChildDocumentFromParent(@PathVariable("parent")Integer parent) throws Exception{
+		
+		return documentTypeService.findByParent(parent);
 		
 	}
 	

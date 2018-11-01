@@ -7,4 +7,6 @@ public interface DocumentTypeService {
 
 	public List<DocumentTypeDto> getAllDocumentType()throws Exception;
 	
+	public List<DocumentTypeDto> findByParent(Integer parent)throws Exception;
+	
 }

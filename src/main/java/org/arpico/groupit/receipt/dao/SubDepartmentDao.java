@@ -9,5 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 public interface SubDepartmentDao extends CrudRepository<SubDepartmentModel, Integer>{
 	
 	public List<SubDepartmentModel> findByDepId(DepartmentModel depId)throws Exception;
+	
+	public List<SubDepartmentModel> findBySudDepNameContaining(String sudDepName)throws Exception;
 
 }

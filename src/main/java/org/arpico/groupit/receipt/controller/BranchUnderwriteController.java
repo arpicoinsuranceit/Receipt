@@ -44,6 +44,8 @@ public class BranchUnderwriteController {
 	@RequestMapping(value = "/loadProposalDetails/{proposalNo}/{seqNo}", method = RequestMethod.GET)
 	public InProposalsModel getProposalDetails (@PathVariable("proposalNo") String proposalNo,@PathVariable("seqNo") String seqNo) throws Exception{
 		System.out.println("getProposalDetails");
+		System.out.println(proposalNo);
+		System.out.println(proposalNo);
 		
 		return branchUnderwriteService.getInProposalDetails(Integer.valueOf(proposalNo), Integer.valueOf(seqNo));
 
@@ -113,6 +115,7 @@ public class BranchUnderwriteController {
 		try {
 			return branchUnderwriteService.saveUnderwrite(saveUnderwriteDto);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
