@@ -13,6 +13,7 @@ public class InPropPreviousPolsCompleteRowMapper implements RowMapper<InPropPrev
 		
 		InPropPreviousPolModel model = new InPropPreviousPolModel();
 		
+		
 		model.setPolnum(rs.getInt("polnum"));
 		model.setPplinf(rs.getString("pplinf"));
 		model.setPrdcod(rs.getString("prdcod"));
