@@ -40,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-@PropertySource("classpath:applicationpara.properties")
+@PropertySource("classpath:application.properties")
 public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGLService {
 
 	@Value("${gl_acc_param}")

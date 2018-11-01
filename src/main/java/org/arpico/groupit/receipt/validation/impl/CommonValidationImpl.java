@@ -20,7 +20,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
-@PropertySource({ "classpath:errormessages.properties", "applicationpara.properties" })
+@PropertySource({ "classpath:errormessages.properties", "classpath:application.properties" })
 public class CommonValidationImpl implements CommonValidations {
 
 	@Value("${quotationnotavailable}")

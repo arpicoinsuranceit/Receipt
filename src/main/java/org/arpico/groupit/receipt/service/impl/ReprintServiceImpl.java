@@ -44,7 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @Service
-@PropertySource("classpath:applicationpara.properties")
+@PropertySource("classpath:application.properties")
 public class ReprintServiceImpl implements ReprintService {
 
 	@Autowired
