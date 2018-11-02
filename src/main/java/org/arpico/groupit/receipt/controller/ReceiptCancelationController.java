@@ -43,4 +43,11 @@ public class ReceiptCancelationController {
 		
 	}
 	
+	@RequestMapping(value = "/getCanceledRequest/{token:.+}", method = RequestMethod.GET)
+	public List<CanceledReceiptDto> getCanceledRequest (@PathVariable("token") String token) throws Exception{
+		
+		return receiptCancelationService.findCanceledRequest(token);
+		
+	}
+	
 }

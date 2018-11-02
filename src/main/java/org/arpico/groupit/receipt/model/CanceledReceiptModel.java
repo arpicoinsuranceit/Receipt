@@ -30,6 +30,8 @@ public class CanceledReceiptModel {
 	private Date modifyDate;
 	private String hoRemark;
 	private String gmRemark;
+	private Double amount;
+	private String docCode;
 	
 	@Column(name="sbucod")
 	public String getSbuCode() {
@@ -183,6 +185,22 @@ public class CanceledReceiptModel {
 	public void setGmRemark(String gmRemark) {
 		this.gmRemark = gmRemark;
 	}
+	
+	@Column(name="amount")
+	public Double getAmount() {
+		return amount;
+	}
+	public void setAmount(Double amount) {
+		this.amount = amount;
+	}
+	
+	@Column(name="doccod")
+	public String getDocCode() {
+		return docCode;
+	}
+	public void setDocCode(String docCode) {
+		this.docCode = docCode;
+	}
 	@Override
 	public String toString() {
 		return "CanceledReceiptModel [sbuCode=" + sbuCode + ", locCode=" + locCode + ", receiptNo=" + receiptNo
@@ -190,10 +208,9 @@ public class CanceledReceiptModel {
 				+ ", requestBy=" + requestBy + ", requestDate=" + requestDate + ", gmApprovedBy=" + gmApprovedBy
 				+ ", gmApprovedDate=" + gmApprovedDate + ", hoApprovedBy=" + hoApprovedBy + ", hoApprovedDate="
 				+ hoApprovedDate + ", createDate=" + createDate + ", createBy=" + createBy + ", modifyBy=" + modifyBy
-				+ ", modifyDate=" + modifyDate + ", hoRemark=" + hoRemark + ", gmRemark=" + gmRemark + "]";
+				+ ", modifyDate=" + modifyDate + ", hoRemark=" + hoRemark + ", gmRemark=" + gmRemark + ", amount="
+				+ amount + ", docCode=" + docCode + "]";
 	}
-	
-	
 	
 
 

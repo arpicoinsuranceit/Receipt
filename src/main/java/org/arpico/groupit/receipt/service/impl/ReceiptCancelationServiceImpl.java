@@ -3,13 +3,18 @@ package org.arpico.groupit.receipt.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.arpico.groupit.receipt.client.InfosysWSClient;
 import org.arpico.groupit.receipt.dao.BranchUnderwriteDao;
 import org.arpico.groupit.receipt.dao.InTransactionCustomDao;
 import org.arpico.groupit.receipt.dao.ReceiptCancelationCustomDao;
 import org.arpico.groupit.receipt.dao.ReceiptCancelationDao;
 import org.arpico.groupit.receipt.dao.UserDao;
 import org.arpico.groupit.receipt.dto.CanceledReceiptDto;
+import org.arpico.groupit.receipt.dto.EmailDto;
+import org.arpico.groupit.receipt.dto.EmailResponseDto;
 import org.arpico.groupit.receipt.model.CanceledReceiptModel;
+import org.arpico.groupit.receipt.model.InTransactionsModel;
 import org.arpico.groupit.receipt.model.LastReceiptSummeryModel;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.ReceiptCancelationService;
@@ -37,6 +42,9 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 	
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+	private InfosysWSClient infosysWSClient;
 
 	@Override
 	public List<String> findReceiptLikeReceiptId(String receiptId,String token) throws Exception {
@@ -56,7 +64,12 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 			System.out.println(locations);
 			
 			if(locations != "") {
-				return receiptCancelationCustomDao.findReceiptLikeReceiptId(receiptId, locations);
+				boolean isHo=false;
+				if(loccodes.contains("HO")) {
+					isHo=true;
+					return receiptCancelationCustomDao.findReceiptLikeReceiptId(receiptId, locations,isHo);
+				}
+				
 			}
 		}
 		
@@ -74,6 +87,8 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 		canceledReceiptModel.setReason(reason);
 		canceledReceiptModel.setReceiptNo(receiptNo);
 		
+		InTransactionsModel inTransactionsModel=receiptCancelationCustomDao.findTransctionRow("450", receiptNo);
+		
 		if(userCode != null) {
 			String locCode=userDao.getUserLocations(userCode);
 			
@@ -89,9 +104,33 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 				canceledReceiptModel.setLocCode(locCode);
 				canceledReceiptModel.setSbuCode("450");
 				canceledReceiptModel.setStatus("PENDING");
+				canceledReceiptModel.setDocCode(inTransactionsModel.getInTransactionsModelPK().getDoccod());
+				canceledReceiptModel.setAmount(inTransactionsModel.getTotprm());
 				
 				
 				if(receiptCancelationDao.save(canceledReceiptModel) != null) {
+					
+					String toEmail=receiptCancelationCustomDao.findGMEmail("450", locCode);
+					System.out.println(toEmail + " To Email"); 
+					EmailDto emailDto=new EmailDto();
+					if(toEmail != null && toEmail != "") {
+						emailDto.setAttachments(null);
+						emailDto.setCcMails(null);
+						emailDto.setFromMail(null);
+						emailDto.setToMail(toEmail);
+						emailDto.setToken(token);
+						emailDto.setSubject("Receipt Cancelation Approval Request");
+						emailDto.setBody(canceledReceiptModel.toString());
+						emailDto.setDepartment("Finance");
+						
+						System.out.println(canceledReceiptModel.toString());
+						System.out.println(emailDto.toString());
+						
+						EmailResponseDto responseDto=infosysWSClient.sendEmail(emailDto);
+						System.out.println(responseDto.toString());
+						
+					}
+					
 					return new ResponseEntity<>("Success", HttpStatus.OK);
 				}
 				
@@ -123,7 +162,53 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 			
 			if(locations != "") {
 				
-				List<CanceledReceiptModel> canceledReceiptModels= receiptCancelationCustomDao.findPendingRequest(locations, "PENDING");
+				List<CanceledReceiptModel> canceledReceiptModels= receiptCancelationCustomDao.findPendingRequest(locations, "PENDING",loccodes.contains("HO"));
+				List<CanceledReceiptDto> canceledReceiptDtos=new ArrayList<>();
+				
+				canceledReceiptModels.forEach(ca->{
+					CanceledReceiptDto canceledReceiptDto=new CanceledReceiptDto();
+					canceledReceiptDto.setLocCode(ca.getLocCode());
+					canceledReceiptDto.setPolNum(ca.getPolNum());
+					canceledReceiptDto.setPprNum(ca.getPprNum());
+					canceledReceiptDto.setReason(ca.getReason());
+					canceledReceiptDto.setReceiptNo(ca.getReceiptNo());
+					canceledReceiptDto.setRequestBy(ca.getRequestBy());
+					canceledReceiptDto.setRequestDate(ca.getRequestDate());
+					canceledReceiptDto.setSbuCode(ca.getSbuCode());
+					canceledReceiptDto.setStatus(ca.getStatus());
+					
+					canceledReceiptDtos.add(canceledReceiptDto);
+				});
+				
+				return canceledReceiptDtos;
+				
+			}
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public List<CanceledReceiptDto> findCanceledRequest(String token) throws Exception {
+		
+		String userCode=new JwtDecoder().generate(token);
+		
+		if(userCode!=null) {
+			List<String> loccodes=branchUnderwriteDao.findLocCodes(userCode);
+			String locations="";
+			if(loccodes != null) {
+				for (String string : loccodes) {
+					locations+="'"+string+"'"+",";
+				}
+			}
+			
+			locations=locations.replaceAll(",$", "");
+			
+			System.out.println(locations);
+			
+			if(locations != "") {
+				
+				List<CanceledReceiptModel> canceledReceiptModels= receiptCancelationCustomDao.findPendingRequest(locations, "CANCELED",loccodes.contains("HO"));
 				List<CanceledReceiptDto> canceledReceiptDtos=new ArrayList<>();
 				
 				canceledReceiptModels.forEach(ca->{

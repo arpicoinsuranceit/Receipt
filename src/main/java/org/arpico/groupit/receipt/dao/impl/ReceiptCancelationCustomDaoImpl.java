@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.arpico.groupit.receipt.dao.ReceiptCancelationCustomDao;
 import org.arpico.groupit.receipt.dao.rowmapper.CanceledReceiptRowMapper;
+import org.arpico.groupit.receipt.dao.rowmapper.InTransactionRowMapper;
 import org.arpico.groupit.receipt.model.CanceledReceiptModel;
+import org.arpico.groupit.receipt.model.InTransactionsModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,10 +22,17 @@ public class ReceiptCancelationCustomDaoImpl implements ReceiptCancelationCustom
 	private JdbcTemplate jdbcTemplate;
 
 	@Override
-	public List<String> findReceiptLikeReceiptId(String receiptId,String loccodes) throws Exception {
+	public List<String> findReceiptLikeReceiptId(String receiptId,String loccodes,boolean isHo) throws Exception {
 		List<String> receiptIdList = null;
+		String sql="";
 		
-		receiptIdList = jdbcTemplate.query("select docnum from intransactions where sbucod='450' and loccod in ("+loccodes+") and docnum like '"+receiptId+"%' ;", new ResultSetExtractor<List<String>>() {
+		if(isHo) {
+			sql="select docnum from intransactions where sbucod='450' and docnum like '"+receiptId+"%' ";
+		}else {
+			sql="select docnum from intransactions where sbucod='450' and loccod in ("+loccodes+") and docnum like '"+receiptId+"%' ";
+		}
+		
+		receiptIdList = jdbcTemplate.query(sql, new ResultSetExtractor<List<String>>() {
 
 			@Override
 			public List<String> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -40,13 +49,40 @@ public class ReceiptCancelationCustomDaoImpl implements ReceiptCancelationCustom
 	}
 
 	@Override
-	public List<CanceledReceiptModel> findPendingRequest(String loccodes, String status) throws Exception {
+	public List<CanceledReceiptModel> findPendingRequest(String loccodes, String status,boolean isHo) throws Exception {
 		List<CanceledReceiptModel> canceledReceiptModels=null;
 		
-		canceledReceiptModels=jdbcTemplate.query("select sbucod,loccod,polnum,pprnum,reason,docnum,rqstby,rqstdt,status from marksys.inreceiptauth where sbucod='450' and loccod in ("+loccodes+") and status='"+status+"' ", new CanceledReceiptRowMapper());
+		String sql="select sbucod,loccod,polnum,pprnum,reason,docnum,rqstby,rqstdt,status from inreceiptauth where sbucod='450' and loccod in ("+loccodes+") and status='"+status+"' ";
+		
+		if(isHo) {
+			sql="select sbucod,loccod,polnum,pprnum,reason,docnum,rqstby,rqstdt,status from inreceiptauth where sbucod='450' and status='"+status+"' ";
+		}
+		
+		canceledReceiptModels=jdbcTemplate.query(sql, new CanceledReceiptRowMapper());
 		
 		return canceledReceiptModels;
 	}
 
+	@Override
+	public String findGMEmail(String sbucode, String loccode) throws Exception {
+		
+		String email=jdbcTemplate.queryForObject("select ig.email from ingmzone ig " + 
+				"inner join inzonemast z on ig.zoncod=z.zoncod and ig.sbucod=z.sbucod " + 
+				"inner join inregion r on z.zoncod=r.zoncod and z.sbucod=r.sbucod " + 
+				"inner join rms_locations l on r.rgncod=l.rgncod and r.sbucod=l.sbu_code " + 
+				"where l.loccod='"+loccode+"' and l.sbu_code='"+sbucode+"' ", String.class);
+		
+		return email;
+	}
+	
+	
+	@Override
+	public InTransactionsModel findTransctionRow(String sbucode, String docnum) throws Exception {
+		
+		InTransactionsModel transaction=jdbcTemplate.queryForObject("SELECT * FROM intransactions where sbucod='"+sbucode+"' and docnum='"+docnum+"' ", new InTransactionRowMapper());
+		
+		return transaction;
+	}
+	
 
 }
