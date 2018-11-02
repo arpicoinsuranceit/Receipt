@@ -22,6 +22,9 @@ public class QuotationClient {
 		MultiValueMap<String, Integer> map = new LinkedMultiValueMap<String, Integer>();
 		map.add("seqNo", seqNo);
 		map.add("qId", qId);
+		
+		System.out.println("seqNo" +  seqNo);
+		System.out.println("qId" +  qId);
 
 		try {
 			RestTemplate restTemplate = new RestTemplate();

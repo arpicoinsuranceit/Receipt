@@ -6,6 +6,8 @@ public class InPropPreviousPolModel {
 	private Integer bassum;	
 	private Integer sumrkm;	
 	private String pplinf;
+	private Integer pprnum;
+	private Integer prpseq;
 	
 	public String getPrdcod() {
 		return prdcod;
@@ -36,6 +38,18 @@ public class InPropPreviousPolModel {
 	}
 	public void setPplinf(String pplinf) {
 		this.pplinf = pplinf;
+	}
+	public Integer getPprnum() {
+		return pprnum;
+	}
+	public void setPprnum(Integer pprnum) {
+		this.pprnum = pprnum;
+	}
+	public Integer getPrpseq() {
+		return prpseq;
+	}
+	public void setPrpseq(Integer prpseq) {
+		this.prpseq = prpseq;
 	}
 	
 	
