@@ -52,10 +52,10 @@ public class ReceiptCancelationCustomDaoImpl implements ReceiptCancelationCustom
 	public List<CanceledReceiptModel> findPendingRequest(String loccodes, String status,boolean isHo) throws Exception {
 		List<CanceledReceiptModel> canceledReceiptModels=null;
 		
-		String sql="select sbucod,loccod,polnum,pprnum,reason,docnum,rqstby,rqstdt,status from inreceiptauth where sbucod='450' and loccod in ("+loccodes+") and status='"+status+"' ";
+		String sql="select sbucod,loccod,polnum,pprnum,reason,docnum,rqstby,rqstdt,status,amount,doccod from inreceiptauth where sbucod='450' and loccod in ("+loccodes+") and status='"+status+"' order by rqstdt desc";
 		
 		if(isHo) {
-			sql="select sbucod,loccod,polnum,pprnum,reason,docnum,rqstby,rqstdt,status from inreceiptauth where sbucod='450' and status='"+status+"' ";
+			sql="select sbucod,loccod,polnum,pprnum,reason,docnum,rqstby,rqstdt,status,amount,doccod from inreceiptauth where sbucod='450' and status='"+status+"' order by rqstdt desc";
 		}
 		
 		canceledReceiptModels=jdbcTemplate.query(sql, new CanceledReceiptRowMapper());

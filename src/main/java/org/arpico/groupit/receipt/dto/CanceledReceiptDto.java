@@ -13,6 +13,8 @@ public class CanceledReceiptDto {
 	private String status;
 	private String requestBy;
 	private Date requestDate;
+	private Double amount;
+	private String docCode;
 	
 	public String getSbuCode() {
 		return sbuCode;
@@ -68,13 +70,25 @@ public class CanceledReceiptDto {
 	public void setRequestDate(Date requestDate) {
 		this.requestDate = requestDate;
 	}
+	
+	public Double getAmount() {
+		return amount;
+	}
+	public void setAmount(Double amount) {
+		this.amount = amount;
+	}
+	public String getDocCode() {
+		return docCode;
+	}
+	public void setDocCode(String docCode) {
+		this.docCode = docCode;
+	}
 	@Override
 	public String toString() {
 		return "CanceledReceiptDto [sbuCode=" + sbuCode + ", locCode=" + locCode + ", receiptNo=" + receiptNo
 				+ ", polNum=" + polNum + ", pprNum=" + pprNum + ", reason=" + reason + ", status=" + status
-				+ ", requestBy=" + requestBy + ", requestDate=" + requestDate + "]";
+				+ ", requestBy=" + requestBy + ", requestDate=" + requestDate + ", amount=" + amount + ", docCode="
+				+ docCode + "]";
 	}
 	
-	
-
 }

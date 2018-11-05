@@ -20,6 +20,8 @@ public class CanceledReceiptRowMapper implements RowMapper<CanceledReceiptModel>
 		receiptModel.setRequestBy(rs.getString("rqstby"));
 		receiptModel.setRequestDate(rs.getDate("rqstdt"));
 		receiptModel.setStatus(rs.getString("status"));
+		receiptModel.setAmount(rs.getDouble("amount"));
+		receiptModel.setDocCode(rs.getString("doccod"));
 		
 		
 		return receiptModel;

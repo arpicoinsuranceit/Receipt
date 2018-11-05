@@ -111,12 +111,14 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 				if(receiptCancelationDao.save(canceledReceiptModel) != null) {
 					
 					String toEmail=receiptCancelationCustomDao.findGMEmail("450", locCode);
+					String fromEmail=userDao.getUserEmail(userCode);
+					
 					System.out.println(toEmail + " To Email"); 
 					EmailDto emailDto=new EmailDto();
 					if(toEmail != null && toEmail != "") {
 						emailDto.setAttachments(null);
 						emailDto.setCcMails(null);
-						emailDto.setFromMail(null);
+						emailDto.setFromMail(fromEmail);
 						emailDto.setToMail(toEmail);
 						emailDto.setToken(token);
 						emailDto.setSubject("Receipt Cancelation Approval Request");
@@ -126,8 +128,8 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 						System.out.println(canceledReceiptModel.toString());
 						System.out.println(emailDto.toString());
 						
-						EmailResponseDto responseDto=infosysWSClient.sendEmail(emailDto);
-						System.out.println(responseDto.toString());
+						//EmailResponseDto responseDto=infosysWSClient.sendEmail(emailDto);
+						//System.out.println(responseDto.toString());
 						
 					}
 					
@@ -176,6 +178,8 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 					canceledReceiptDto.setRequestDate(ca.getRequestDate());
 					canceledReceiptDto.setSbuCode(ca.getSbuCode());
 					canceledReceiptDto.setStatus(ca.getStatus());
+					canceledReceiptDto.setAmount(ca.getAmount());
+					canceledReceiptDto.setDocCode(ca.getDocCode());
 					
 					canceledReceiptDtos.add(canceledReceiptDto);
 				});
@@ -222,6 +226,8 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 					canceledReceiptDto.setRequestDate(ca.getRequestDate());
 					canceledReceiptDto.setSbuCode(ca.getSbuCode());
 					canceledReceiptDto.setStatus(ca.getStatus());
+					canceledReceiptDto.setAmount(ca.getAmount());
+					canceledReceiptDto.setDocCode(ca.getDocCode());
 					
 					canceledReceiptDtos.add(canceledReceiptDto);
 				});
