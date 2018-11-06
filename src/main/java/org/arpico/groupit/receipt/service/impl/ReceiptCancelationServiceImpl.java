@@ -113,23 +113,46 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 					String toEmail=receiptCancelationCustomDao.findGMEmail("450", locCode);
 					String fromEmail=userDao.getUserEmail(userCode);
 					
+					String body="";
+					
 					System.out.println(toEmail + " To Email"); 
 					EmailDto emailDto=new EmailDto();
-					if(toEmail != null && toEmail != "") {
+					if(toEmail != null && toEmail != "" && fromEmail != null && fromEmail != "") {
 						emailDto.setAttachments(null);
 						emailDto.setCcMails(null);
 						emailDto.setFromMail(fromEmail);
 						emailDto.setToMail(toEmail);
 						emailDto.setToken(token);
+						emailDto.setUserCode(userCode);
 						emailDto.setSubject("Receipt Cancelation Approval Request");
-						emailDto.setBody(canceledReceiptModel.toString());
+						
+						body+="Receipt Code : "+ inTransactionsModel.getInTransactionsModelPK().getDoccod() + "/n";
+						body+="Receipt Number : "+ receiptNo + "/n";
+						body+="Receipted Amount : "+ inTransactionsModel.getTotprm() + "/n";
+						body+="Receipted Date : "+ inTransactionsModel.getCreadt() + "/n";
+						
+						if(inTransactionsModel.getChqnum() != null) {
+							body+="Cheque Number : "+ inTransactionsModel.getChqnum() + "/n";
+						}
+						
+						if(lastReceiptSummeryModel.getPprnum() != null) {
+							body+="Proposal Number : "+ lastReceiptSummeryModel.getPprnum() + "/n";
+						}
+						
+						if(lastReceiptSummeryModel.getPolnum() != null) {
+							body+="Policy Number : "+ lastReceiptSummeryModel.getPolnum() + "/n";
+						}
+						
+						body+="Cancellation Reason : "+ reason + "/n";
+						
+						emailDto.setBody(body);
 						emailDto.setDepartment("Finance");
 						
 						System.out.println(canceledReceiptModel.toString());
 						System.out.println(emailDto.toString());
 						
-						//EmailResponseDto responseDto=infosysWSClient.sendEmail(emailDto);
-						//System.out.println(responseDto.toString());
+//						EmailResponseDto responseDto=infosysWSClient.sendEmail(emailDto);
+//						System.out.println(responseDto.toString());
 						
 					}
 					
