@@ -182,5 +182,36 @@ public class DashboardController {
 		return dashboardService.getCashFlowDateilGrid(type,to, from, token);
 		
 	}
+	
+	@RequestMapping(value = "/datevspaymode/{toDate}/{fromDate}/{token:.+}/{type}", method = RequestMethod.GET)
+	public List<NameSeriesDto> dateVsPayMode(@PathVariable String toDate, @PathVariable String fromDate,
+			@PathVariable String token, @PathVariable String type) throws Exception {
+
+		System.out.println(token);
+		System.out.println(toDate);
+		System.out.println(fromDate);
+		System.out.println(type);
+		SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss");
+
+		Date to = null;
+		
+		try {
+			to = sdf.parse(toDate);
+		} catch (Exception e) {
+			to = new Date(Long.parseLong(toDate));
+		}
+		
+
+		Date from = null;
+		try {
+			from = sdf.parse(fromDate);
+		} catch (Exception e) {
+			from = new Date(Long.parseLong(fromDate));
+		}
+
+		List<NameSeriesDto> dashboardPieDto = dashboardService.getDashboardPayMode(to, from, token, type);
+
+		return dashboardPieDto;
+	}
 
 }
