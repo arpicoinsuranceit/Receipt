@@ -6,6 +6,7 @@ import org.arpico.groupit.receipt.model.DashboardCashFlowSummeryModel;
 import org.arpico.groupit.receipt.model.DashboardDetailsModel;
 import org.arpico.groupit.receipt.model.DashboardGridModel;
 import org.arpico.groupit.receipt.model.DashboardPieModel;
+import org.arpico.groupit.receipt.model.PayModeGridModel;
 
 public interface DashboardDao {
 
@@ -44,4 +45,11 @@ public interface DashboardDao {
 	public List<DashboardDetailsModel> getCashFlowGridTxnm(String toDate, String fromDate, String user, String type) throws Exception;
 
 	public List<DashboardDetailsModel> getCashFlowGridRecm(String toDate, String fromDate, String user, String type) throws Exception;
+
+	public List<PayModeGridModel> getPayModeFromInTransactionsGrid(String toDateInTran, String fromDate, String user,
+			String sql) throws Exception;
+
+	public List<PayModeGridModel> getPayModeFromFromRecmGrid(String toDate, String fromDate, String user, String sql2) throws Exception;
+
+	public List<PayModeGridModel> getPayModeFromTxnmGrid(String toDate, String fromDate, String user, String sql2) throws Exception;
 }

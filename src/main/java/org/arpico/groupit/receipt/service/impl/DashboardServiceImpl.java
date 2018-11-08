@@ -16,6 +16,7 @@ import org.arpico.groupit.receipt.model.DashboardCashFlowSummeryModel;
 import org.arpico.groupit.receipt.model.DashboardDetailsModel;
 import org.arpico.groupit.receipt.model.DashboardGridModel;
 import org.arpico.groupit.receipt.model.DashboardPieModel;
+import org.arpico.groupit.receipt.model.PayModeGridModel;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +35,13 @@ public class DashboardServiceImpl implements DashboardService {
 
 	@Override
 	public DashboardPieDto getDashboardPie(Date to, Date from, String token) throws Exception {
-		
+
 		Date toInTran = to;
 		Calendar c = Calendar.getInstance();
 		c.setTime(to);
 		c.add(Calendar.DATE, 1);
 		toInTran = c.getTime();
-		
+
 		DashboardPieDto dashboardPieDto = new DashboardPieDto();
 
 		String user = jwtDecoder.generate(token);
@@ -137,7 +138,7 @@ public class DashboardServiceImpl implements DashboardService {
 		List<String> datesInRange = new ArrayList<>();
 
 		String[] receiptModels = { "New Business", "Proposal", "Policy", "Misc. INV", "Misc. GL" };
-		
+
 		Date toInTran = to;
 		Calendar c = Calendar.getInstance();
 		c.setTime(to);
@@ -306,7 +307,7 @@ public class DashboardServiceImpl implements DashboardService {
 	public List<LastReceiptSummeryDto> getDetails(String token, Date toDate, Date fromDate, String type)
 			throws Exception {
 		String user = jwtDecoder.generate(token);
-		
+
 		Date toDateInTran = toDate;
 		Calendar c = Calendar.getInstance();
 		c.setTime(toDate);
@@ -317,8 +318,6 @@ public class DashboardServiceImpl implements DashboardService {
 		String to = format.format(toDate);
 		String from = format.format(fromDate);
 		String toInTran = format.format(toDateInTran);
-		
-		
 
 		List<LastReceiptSummeryDto> dtos = new ArrayList<>();
 
@@ -393,7 +392,6 @@ public class DashboardServiceImpl implements DashboardService {
 		c.add(Calendar.DATE, 1);
 		toDateInTran = c.getTime();
 
-		
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		String to = format.format(toDate);
 		String from = format.format(fromDate);
@@ -579,13 +577,13 @@ public class DashboardServiceImpl implements DashboardService {
 		c.setTime(to);
 		c.add(Calendar.DATE, 1);
 		toInTran = c.getTime();
-		
+
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		String toDate = format.format(to);
 		String toDateInTran = format.format(toInTran);
 		String fromDate = format.format(from);
 
-		/*String payModeInTran = "";*/
+		/* String payModeInTran = ""; */
 		String payModeTxnm = "";
 
 		switch (type) {
@@ -609,7 +607,8 @@ public class DashboardServiceImpl implements DashboardService {
 		List<LastReceiptSummeryDto> dtos = new ArrayList<>();
 
 		String user = jwtDecoder.generate(token);
-		List<DashboardDetailsModel> inTransModels = dashboardDao.getCashFlowGridInTrans(toDateInTran, fromDate, user, type);
+		List<DashboardDetailsModel> inTransModels = dashboardDao.getCashFlowGridInTrans(toDateInTran, fromDate, user,
+				type);
 		List<DashboardDetailsModel> txnmModels = dashboardDao.getCashFlowGridTxnm(toDate, fromDate, user, payModeTxnm);
 		List<DashboardDetailsModel> recmModels = dashboardDao.getCashFlowGridRecm(toDate, fromDate, user, type);
 
@@ -630,6 +629,204 @@ public class DashboardServiceImpl implements DashboardService {
 		}
 
 		return dtos;
+	}
+
+	@Override
+	public List<NameSeriesDto> getDashboardPayMode(Date to, Date from, String token, String type) throws Exception {
+		List<NameSeriesDto> nameSeriesDtos = new ArrayList<>();
+		List<String> datesInRange = new ArrayList<>();
+
+		String[] receiptModels = { "Cash", "Cheque", "Direct Deposit", "Credit Card" };
+
+		Date toInTran = to;
+		Calendar c = Calendar.getInstance();
+		c.setTime(to);
+		c.add(Calendar.DATE, 1);
+		toInTran = c.getTime();
+
+		///////////////////// Date Convert to String///////////////////////////
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String toDate = format.format(to);
+		String toDateInTran = format.format(toInTran);
+		String fromDate = format.format(from);
+		String user = jwtDecoder.generate(token);
+
+		//////////////////// Get Date List and Sql for Dao /////////////////
+
+		SimpleDateFormat sdf = null;
+		String sql = "";
+		String sql2 = "";
+
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(from);
+
+		Calendar endCalendar = new GregorianCalendar();
+		endCalendar.setTime(to);
+
+		if (type.equalsIgnoreCase("d")) {
+			sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+			while (calendar.before(endCalendar)) {
+				Date result = calendar.getTime();
+				datesInRange.add(sdf.format(result));
+				calendar.add(Calendar.DATE, 1);
+			}
+			sql = ", year(creadt), month(creadt), day(creadt)";
+			sql2 = ", year(CRE_DATE), month(CRE_DATE), day(CRE_DATE)";
+
+		} else if (type.equalsIgnoreCase("m")) {
+			sdf = new SimpleDateFormat("yyyy-MM");
+
+			while (calendar.before(endCalendar)) {
+				Date result = calendar.getTime();
+				datesInRange.add(sdf.format(result));
+				calendar.add(Calendar.MONTH, 1);
+			}
+			sql = ", year(creadt), month(creadt)";
+			sql2 = ", year(CRE_DATE), month(CRE_DATE)";
+
+		} else if (type.equalsIgnoreCase("y")) {
+			sdf = new SimpleDateFormat("yyyy");
+
+			while (calendar.before(endCalendar)) {
+				Date result = calendar.getTime();
+				datesInRange.add(sdf.format(result));
+				calendar.add(Calendar.YEAR, 1);
+			}
+			sql = ", year(creadt)";
+			sql2 = ", year(CRE_DATE)";
+		}
+
+		List<PayModeGridModel> models = dashboardDao.getPayModeFromInTransactionsGrid(toDateInTran, fromDate, user,
+				sql);
+		List<PayModeGridModel> modelsRecm = dashboardDao.getPayModeFromFromRecmGrid(toDate, fromDate, user, sql2);
+		List<PayModeGridModel> modelsTxnm = dashboardDao.getPayModeFromTxnmGrid(toDate, fromDate, user, sql2);
+		//////////////////////////// initialize Dates to
+		//////////////////////////// nameSeriesDtos////////////////////////////////////
+
+		datesInRange.forEach(e -> {
+			NameSeriesDto seriesDto = new NameSeriesDto();
+
+			seriesDto.setName(e);
+
+			Double cash = 0.0;
+			Double cheque = 0.0;
+			Double directDep = 0.0;
+			Double credit = 0.0;
+
+			for (PayModeGridModel model : models) {
+				if (e.equals(getDate(model, type))) {
+					switch (model.getPayMode()) {
+
+					case "CS":
+						cash = cash + model.getAmount();
+						break;
+					case "CQ":
+						cheque = cheque + model.getAmount();
+						break;
+					case "DD":
+						directDep = directDep + model.getAmount();
+						break;
+					case "CR":
+						credit = credit + model.getAmount();
+						break;
+
+					default:
+						break;
+					}
+				}
+			}
+
+			for (PayModeGridModel model : modelsRecm) {
+				if (e.equals(getDate(model, type))) {
+					if (model.getPayMode().equalsIgnoreCase("CS")) {
+						cash = cash + model.getAmount();
+					}
+					if (model.getPayMode().equalsIgnoreCase("CR")) {
+						credit = credit + model.getAmount();
+					}
+					if (model.getPayMode().equalsIgnoreCase("DD")) {
+						directDep = directDep + model.getAmount();
+					}
+					if (model.getPayMode().equalsIgnoreCase("CQ")) {
+						cheque = cheque + model.getAmount();
+					}
+
+				}
+			}
+			
+			for (PayModeGridModel model : modelsTxnm) {
+				if (e.equals(getDate(model, type))) {
+					if (model.getPayMode().equalsIgnoreCase("02.CASH")) {
+						cash = cash + model.getAmount();
+					}
+					if (model.getPayMode().equalsIgnoreCase("03. CREDIT CARD")) {
+						credit = credit + model.getAmount();
+					}
+					if (model.getPayMode().equalsIgnoreCase("Direct deposit")) {
+						directDep = directDep + model.getAmount();
+					}
+					if (model.getPayMode().equalsIgnoreCase("01.CHEQUE") || model.getPayMode().equalsIgnoreCase("04.CHEQUE")) {
+						cheque = cheque + model.getAmount();
+					}
+
+				}
+			}
+
+			List<NameValueDto> dtos = new ArrayList<>();
+
+			for (int i = 0; i < receiptModels.length; i++) {
+
+				NameValueDto dto = new NameValueDto();
+				dto.setName(receiptModels[i]);
+
+				switch (i) {
+				case 0:
+					dto.setValue(cash.toString());
+					break;
+				case 1:
+					dto.setValue(cheque.toString());
+					break;
+				case 2:
+					dto.setValue(directDep.toString());
+					break;
+				case 3:
+					dto.setValue(credit.toString());
+					break;
+				default:
+					break;
+				}
+
+				dtos.add(dto);
+			}
+
+			seriesDto.setSeries(dtos);
+			nameSeriesDtos.add(seriesDto);
+
+		});
+
+		return nameSeriesDtos;
+	}
+
+	private String getDate(PayModeGridModel model, String type) {
+		String date = "";
+
+		String day = model.getDay();
+		day = day.length() < 2 ? "0" + day : day;
+
+		String month = model.getMonth();
+		month = month.length() < 2 ? "0" + month : month;
+
+		String year = model.getYear();
+
+		if (type.equalsIgnoreCase("d")) {
+			date = year + "-" + month + "-" + day;
+		} else if (type.equalsIgnoreCase("m")) {
+			date = year + "-" + month;
+		} else if (type.equalsIgnoreCase("y")) {
+			date = year;
+		}
+		return date;
 	}
 
 }
