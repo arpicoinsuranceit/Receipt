@@ -9,4 +9,6 @@ public interface BranchDao {
 	List<BranchModel> getBranchs(String userCode) throws Exception;
 
 	List<BranchModel> getAllBranchs() throws Exception;
+
+	String getBranchName(String branchCode) throws Exception;
 }

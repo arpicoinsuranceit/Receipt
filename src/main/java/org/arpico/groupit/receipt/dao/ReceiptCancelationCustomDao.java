@@ -12,7 +12,7 @@ public interface ReceiptCancelationCustomDao {
 	
 	String findGMEmail(String sbucode,String loccode) throws Exception;
 
-	InTransactionsModel findTransctionRow(String sbucode, String docnum) throws Exception;
+	InTransactionsModel findTransctionRow(String sbucode, String docnum,String doccod) throws Exception;
 	
 	
 }

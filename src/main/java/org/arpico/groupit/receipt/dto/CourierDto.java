@@ -13,6 +13,7 @@ public class CourierDto {
 	private String createBy;
 	private Date modifyDate;
 	private String modifyBy;
+	private String toBranch;
 	
 	public Integer getCourierId() {
 		return courierId;
@@ -69,13 +70,19 @@ public class CourierDto {
 	public void setModifyBy(String modifyBy) {
 		this.modifyBy = modifyBy;
 	}
+	
+	public String getToBranch() {
+		return toBranch;
+	}
+	public void setToBranch(String toBranch) {
+		this.toBranch = toBranch;
+	}
 	@Override
 	public String toString() {
-		return "CourierDto [courierId=" + courierId + ", token=" + token + ", branchCode=" + branchCode + ", remark="
-				+ remark + ", createDate=" + createDate + ", createBy=" + createBy + ", modifyDate=" + modifyDate
-				+ ", modifyBy=" + modifyBy + "]";
+		return "CourierDto [courierId=" + courierId + ", token=" + token + ", branchCode=" + branchCode
+				+ ", courierStatus=" + courierStatus + ", remark=" + remark + ", createDate=" + createDate
+				+ ", createBy=" + createBy + ", modifyDate=" + modifyDate + ", modifyBy=" + modifyBy + ", toBranch="
+				+ toBranch + "]";
 	}
 	
-	
-
 }

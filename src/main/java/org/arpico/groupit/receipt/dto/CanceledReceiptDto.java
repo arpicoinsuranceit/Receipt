@@ -15,6 +15,9 @@ public class CanceledReceiptDto {
 	private Date requestDate;
 	private Double amount;
 	private String docCode;
+	private String approvedBy;
+	private Date approvedDate;
+	private String gmRemark;
 	
 	public String getSbuCode() {
 		return sbuCode;
@@ -83,12 +86,34 @@ public class CanceledReceiptDto {
 	public void setDocCode(String docCode) {
 		this.docCode = docCode;
 	}
+	
+	public String getApprovedBy() {
+		return approvedBy;
+	}
+	public void setApprovedBy(String approvedBy) {
+		this.approvedBy = approvedBy;
+	}
+	public Date getApprovedDate() {
+		return approvedDate;
+	}
+	public void setApprovedDate(Date approvedDate) {
+		this.approvedDate = approvedDate;
+	}
+	
+	public String getGmRemark() {
+		return gmRemark;
+	}
+	public void setGmRemark(String gmRemark) {
+		this.gmRemark = gmRemark;
+	}
 	@Override
 	public String toString() {
 		return "CanceledReceiptDto [sbuCode=" + sbuCode + ", locCode=" + locCode + ", receiptNo=" + receiptNo
 				+ ", polNum=" + polNum + ", pprNum=" + pprNum + ", reason=" + reason + ", status=" + status
 				+ ", requestBy=" + requestBy + ", requestDate=" + requestDate + ", amount=" + amount + ", docCode="
-				+ docCode + "]";
+				+ docCode + ", approvedBy=" + approvedBy + ", approvedDate=" + approvedDate + ", gmRemark=" + gmRemark
+				+ "]";
 	}
+	
 	
 }

@@ -26,5 +26,14 @@ public class BranchDaoImpl implements BranchDao{
 		List<BranchModel> branchModels = jdbcTemplate.query("SELECT l.loc_code, l.loc_name FROM rms_locations l where l.sbucod='450' ", new BranchRowMapper());
 		return branchModels;
 	}
+	
+	@Override
+	public String getBranchName(String branchCode) throws Exception {
+		String brnCode = jdbcTemplate
+				.queryForObject("select r.locnam from rms_locations r where SBU_CODE = '450' and loccod = '" + branchCode
+						+ "' ", String.class);
+		
+		return brnCode;
+	}
 
 }

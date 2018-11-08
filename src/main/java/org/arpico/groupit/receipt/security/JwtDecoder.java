@@ -30,4 +30,5 @@ public class JwtDecoder {
 		}
 		return usercode;
 	}
+	
 }

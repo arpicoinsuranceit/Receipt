@@ -5,7 +5,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.arpico.groupit.receipt.client.InfosysWSClient;
+import org.arpico.groupit.receipt.dao.BranchDao;
 import org.arpico.groupit.receipt.dao.BranchUnderwriteDao;
+import org.arpico.groupit.receipt.dao.InPropMedicalReqDao;
+import org.arpico.groupit.receipt.dao.InProposalCustomDao;
 import org.arpico.groupit.receipt.dao.InTransactionCustomDao;
 import org.arpico.groupit.receipt.dao.ReceiptCancelationCustomDao;
 import org.arpico.groupit.receipt.dao.ReceiptCancelationDao;
@@ -13,11 +16,16 @@ import org.arpico.groupit.receipt.dao.UserDao;
 import org.arpico.groupit.receipt.dto.CanceledReceiptDto;
 import org.arpico.groupit.receipt.dto.EmailDto;
 import org.arpico.groupit.receipt.dto.EmailResponseDto;
+import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.model.CanceledReceiptModel;
+import org.arpico.groupit.receipt.model.InPropMedicalReqModel;
+import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.InTransactionsModel;
 import org.arpico.groupit.receipt.model.LastReceiptSummeryModel;
+import org.arpico.groupit.receipt.model.pk.InPropMedicalReqModelPK;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.ReceiptCancelationService;
+import org.arpico.groupit.receipt.util.AppConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +52,16 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 	private UserDao userDao;
 	
 	@Autowired
+	private BranchDao branchDao;
+	
+	@Autowired
 	private InfosysWSClient infosysWSClient;
+	
+	@Autowired
+	private InProposalCustomDao inProposalCustomDao;
+	
+	@Autowired
+	private InPropMedicalReqDao propMedicalReqDao;
 
 	@Override
 	public List<String> findReceiptLikeReceiptId(String receiptId,String token) throws Exception {
@@ -61,8 +78,6 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 			
 			locations=locations.replaceAll(",$", "");
 			
-			System.out.println(locations);
-			
 			if(locations != "") {
 				boolean isHo=false;
 				if(loccodes.contains("HO")) {
@@ -77,28 +92,77 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 	}
 
 	@Override
-	public ResponseEntity<Object> saveRequest(String receiptNo, String reason, String token) throws Exception {
+	public ResponseEntity<Object> saveRequest(String receiptNo, String reason, String token,String doccod) throws Exception {
+		ResponseDto dto = null;
+
+		InTransactionsModel inTransactionsModel=null;
 		
-		List<LastReceiptSummeryModel> lastReceiptSummeryModels= inTransactionCustomDao.getReceiptsByDocNum(receiptNo);
-		
-		String userCode=new JwtDecoder().generate(token);
-		
-		CanceledReceiptModel canceledReceiptModel=new CanceledReceiptModel();
-		canceledReceiptModel.setReason(reason);
-		canceledReceiptModel.setReceiptNo(receiptNo);
-		
-		InTransactionsModel inTransactionsModel=receiptCancelationCustomDao.findTransctionRow("450", receiptNo);
-		
-		if(userCode != null) {
-			String locCode=userDao.getUserLocations(userCode);
+		try {
+			inTransactionsModel=receiptCancelationCustomDao.findTransctionRow("450", receiptNo,doccod);
 			
-			if(lastReceiptSummeryModels.size() > 0) {
+		}catch(Exception e) {
+			dto = new ResponseDto();
+			dto.setCode("204");
+			dto.setStatus("Error");
+			dto.setMessage("Receipt Not Found");
+			return new ResponseEntity<>(dto, HttpStatus.OK);
+		}
+		
+		
+		if(inTransactionsModel != null) {
+			
+			if(doccod.equals("RCPP") || doccod.equals("RCNB")) {
+				InProposalsModel inProposalsModel=inProposalCustomDao.getProposalFromPprnum(Integer.valueOf(inTransactionsModel.getPprnum()));
 				
-				LastReceiptSummeryModel lastReceiptSummeryModel=lastReceiptSummeryModels.get(0);
+				if(inProposalsModel.getPolnum() != null && inProposalsModel.getPolnum() != "") {
+					dto = new ResponseDto();
+					dto.setCode("204");
+					dto.setStatus("Error");
+					dto.setMessage("Unable to cancel this Receipt.");
+					return new ResponseEntity<>(dto, HttpStatus.OK);
+				}else {
+					InPropMedicalReqModelPK inPropMedicalReqModelPK = new InPropMedicalReqModelPK();
+
+					inPropMedicalReqModelPK.setInstyp("main");
+					inPropMedicalReqModelPK.setLoccod(inProposalsModel.getInProposalsModelPK().getLoccod());
+					inPropMedicalReqModelPK.setMedcod("AD-RC");
+					inPropMedicalReqModelPK.setPprnum(Integer.parseInt(inTransactionsModel.getPprnum()));
+					inPropMedicalReqModelPK.setPrpseq(inProposalsModel.getInProposalsModelPK().getPrpseq());
+					inPropMedicalReqModelPK.setSbucod(AppConstant.SBU_CODE);
+
+					InPropMedicalReqModel inPropMedicalReqModel = new InPropMedicalReqModel();
+
+					inPropMedicalReqModel.setInPropMedicalReqModelPK(inPropMedicalReqModelPK);
+					inPropMedicalReqModel.setLockin(new Date());
+					inPropMedicalReqModel.setTessta("N");
+					inPropMedicalReqModel.setHoscod("NA");
+					inPropMedicalReqModel.setPaysta("");
+					inPropMedicalReqModel.setMedorg("Requested");
+					inPropMedicalReqModel.setPayamt(0.00);
+					inPropMedicalReqModel.setAddnot("Receipt Cancelation Requirement");
+					inPropMedicalReqModel.setMednam("Additional Benefit Receipt Cancelation");
+
+					propMedicalReqDao.save(inPropMedicalReqModel);
+				}
+				
+			}
+
+			String userCode=new JwtDecoder().generate(token);
+			
+			String userName=userDao.getUserFullName(userCode);
+
+			if(userCode != null) {
+				String locCode=userDao.getUserLocations(userCode);
+				
+				String branchName=branchDao.getBranchName(locCode);
+				
+				CanceledReceiptModel canceledReceiptModel=new CanceledReceiptModel();
+				canceledReceiptModel.setReason(reason);
+				canceledReceiptModel.setReceiptNo(receiptNo);
 				canceledReceiptModel.setCreateBy(userCode);
 				canceledReceiptModel.setCreateDate(new Date());
-				canceledReceiptModel.setPolNum(String.valueOf(lastReceiptSummeryModel.getPolnum()));
-				canceledReceiptModel.setPprNum(lastReceiptSummeryModel.getPprnum());
+				canceledReceiptModel.setPolNum(String.valueOf(inTransactionsModel.getPolnum()));
+				canceledReceiptModel.setPprNum(inTransactionsModel.getPprnum());
 				canceledReceiptModel.setRequestBy(userCode);
 				canceledReceiptModel.setRequestDate(new Date());
 				canceledReceiptModel.setLocCode(locCode);
@@ -106,65 +170,84 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 				canceledReceiptModel.setStatus("PENDING");
 				canceledReceiptModel.setDocCode(inTransactionsModel.getInTransactionsModelPK().getDoccod());
 				canceledReceiptModel.setAmount(inTransactionsModel.getTotprm());
-				
-				
+								
 				if(receiptCancelationDao.save(canceledReceiptModel) != null) {
 					
 					String toEmail=receiptCancelationCustomDao.findGMEmail("450", locCode);
 					String fromEmail=userDao.getUserEmail(userCode);
 					
-					String body="";
+					String body="Dear Sir , \n\n Receipt Cancelation Request from "+branchName+" branch. \n Cancelation reason for "+reason + ".\n\n";
 					
-					System.out.println(toEmail + " To Email"); 
 					EmailDto emailDto=new EmailDto();
 					if(toEmail != null && toEmail != "" && fromEmail != null && fromEmail != "") {
-						emailDto.setAttachments(null);
-						emailDto.setCcMails(null);
+						List<String> ccMails=new ArrayList<>();
+						ccMails.add(fromEmail);
+						
+						emailDto.setAttachments(new ArrayList<>());
+						emailDto.setCcMails(ccMails);
 						emailDto.setFromMail(fromEmail);
 						emailDto.setToMail(toEmail);
 						emailDto.setToken(token);
 						emailDto.setUserCode(userCode);
-						emailDto.setSubject("Receipt Cancelation Approval Request");
+						emailDto.setSubject("Receipt Cancelation Approval ("+inTransactionsModel.getInTransactionsModelPK().getDoccod() + "/"+ receiptNo+" - "+branchName+")");
 						
-						body+="Receipt Code : "+ inTransactionsModel.getInTransactionsModelPK().getDoccod() + "/n";
-						body+="Receipt Number : "+ receiptNo + "/n";
-						body+="Receipted Amount : "+ inTransactionsModel.getTotprm() + "/n";
-						body+="Receipted Date : "+ inTransactionsModel.getCreadt() + "/n";
+						
+						body+=" Receipt Number : "+inTransactionsModel.getInTransactionsModelPK().getDoccod() + "/"+ receiptNo + "\n";
+						body+=" Receipted Amount : "+ inTransactionsModel.getTotprm() + "\n";
+						body+=" Receipted Date : "+ inTransactionsModel.getCreadt() + "\n";
 						
 						if(inTransactionsModel.getChqnum() != null) {
-							body+="Cheque Number : "+ inTransactionsModel.getChqnum() + "/n";
+							body+=" Cheque Number : "+ inTransactionsModel.getChqnum() + "\n";
 						}
 						
-						if(lastReceiptSummeryModel.getPprnum() != null) {
-							body+="Proposal Number : "+ lastReceiptSummeryModel.getPprnum() + "/n";
+						if(inTransactionsModel.getPprnum() != null) {
+							body+=" Proposal Number : "+ inTransactionsModel.getPprnum() + "\n";
 						}
 						
-						if(lastReceiptSummeryModel.getPolnum() != null) {
-							body+="Policy Number : "+ lastReceiptSummeryModel.getPolnum() + "/n";
+						if(inTransactionsModel.getPolnum() != null) {
+							body+=" Policy Number : "+ inTransactionsModel.getPolnum() + "\n";
 						}
 						
-						body+="Cancellation Reason : "+ reason + "/n";
+						body+=" User : "+ userName + "\n";
+						body+=" Branch : "+ branchName + "\n\n\n";
 						
+						body+="Thanks."+ "\n\n";
+						body+="This is system generated email. Do not reply.";
+						
+	
 						emailDto.setBody(body);
-						emailDto.setDepartment("Finance");
+						emailDto.setDepartment(AppConstant.EMAIL_DEP_CODE_FINANCE);
+	
+						EmailResponseDto responseDto=infosysWSClient.sendEmail(emailDto);
 						
-						System.out.println(canceledReceiptModel.toString());
-						System.out.println(emailDto.toString());
+						if(responseDto.getMessage() == "Success") {
+							dto = new ResponseDto();
+							dto.setCode("200");
+							dto.setStatus("Success");
+							dto.setMessage("Success");
+							return new ResponseEntity<>(dto, HttpStatus.OK);
+						}
 						
-//						EmailResponseDto responseDto=infosysWSClient.sendEmail(emailDto);
-//						System.out.println(responseDto.toString());
-						
+						dto = new ResponseDto();
+						dto.setCode("200");
+						dto.setStatus("Success");
+						dto.setMessage("Success");
+						return new ResponseEntity<>(dto, HttpStatus.OK);
 					}
 					
-					return new ResponseEntity<>("Success", HttpStatus.OK);
+					
 				}
-				
-				
+
 			}
+		}else {
+			dto = new ResponseDto();
+			dto.setCode("204");
+			dto.setStatus("Error");
+			dto.setMessage("Receipt Not Found");
 		}
 		
 		
-		return null;
+		return new ResponseEntity<>(dto, HttpStatus.NOT_FOUND);
 	}
 
 	@Override
@@ -182,8 +265,6 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 			}
 			
 			locations=locations.replaceAll(",$", "");
-			
-			System.out.println(locations);
 			
 			if(locations != "") {
 				
@@ -203,6 +284,9 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 					canceledReceiptDto.setStatus(ca.getStatus());
 					canceledReceiptDto.setAmount(ca.getAmount());
 					canceledReceiptDto.setDocCode(ca.getDocCode());
+					canceledReceiptDto.setGmRemark(ca.getApproverRemark());
+					canceledReceiptDto.setApprovedDate(ca.getApprovedDate());
+					canceledReceiptDto.setApprovedBy(ca.getApprovedBy());
 					
 					canceledReceiptDtos.add(canceledReceiptDto);
 				});
@@ -230,9 +314,7 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 			}
 			
 			locations=locations.replaceAll(",$", "");
-			
-			System.out.println(locations);
-			
+						
 			if(locations != "") {
 				
 				List<CanceledReceiptModel> canceledReceiptModels= receiptCancelationCustomDao.findPendingRequest(locations, "CANCELED",loccodes.contains("HO"));
@@ -251,6 +333,9 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 					canceledReceiptDto.setStatus(ca.getStatus());
 					canceledReceiptDto.setAmount(ca.getAmount());
 					canceledReceiptDto.setDocCode(ca.getDocCode());
+					canceledReceiptDto.setGmRemark(ca.getApproverRemark());
+					canceledReceiptDto.setApprovedDate(ca.getApprovedDate());
+					canceledReceiptDto.setApprovedBy(ca.getApprovedBy());
 					
 					canceledReceiptDtos.add(canceledReceiptDto);
 				});

@@ -8,7 +8,7 @@ public interface ReceiptCancelationService {
 	
 	List<String> findReceiptLikeReceiptId(String receiptId,String token) throws Exception;
 	
-	ResponseEntity<Object> saveRequest(String receiptNo,String reason, String token)throws Exception;
+	ResponseEntity<Object> saveRequest(String receiptNo,String reason, String token,String doccod)throws Exception;
 	
 	List<CanceledReceiptDto> findPendingRequest(String token) throws Exception;
 

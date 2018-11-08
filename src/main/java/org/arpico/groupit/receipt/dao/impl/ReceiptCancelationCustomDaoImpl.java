@@ -77,9 +77,9 @@ public class ReceiptCancelationCustomDaoImpl implements ReceiptCancelationCustom
 	
 	
 	@Override
-	public InTransactionsModel findTransctionRow(String sbucode, String docnum) throws Exception {
-		
-		InTransactionsModel transaction=jdbcTemplate.queryForObject("SELECT * FROM intransactions where sbucod='"+sbucode+"' and docnum='"+docnum+"' ", new InTransactionRowMapper());
+	public InTransactionsModel findTransctionRow(String sbucode, String docnum,String doccod) throws Exception {
+		InTransactionsModel transaction=null;
+		transaction=jdbcTemplate.queryForObject("SELECT * FROM intransactions where sbucod='"+sbucode+"' and docnum='"+docnum+"' and doccod='"+doccod+"'", new InTransactionRowMapper());
 		
 		return transaction;
 	}

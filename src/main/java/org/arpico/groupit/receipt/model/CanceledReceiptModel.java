@@ -20,16 +20,13 @@ public class CanceledReceiptModel {
 	private String status;
 	private String requestBy;
 	private Date requestDate;
-	private String gmApprovedBy;
-	private Date gmApprovedDate;
-	private String hoApprovedBy;
-	private Date hoApprovedDate;
+	private String approvedBy;
+	private Date approvedDate;
 	private Date createDate;
 	private String createBy;
 	private String modifyBy;
 	private Date modifyDate;
-	private String hoRemark;
-	private String gmRemark;
+	private String approverRemark;
 	private Double amount;
 	private String docCode;
 	
@@ -106,36 +103,19 @@ public class CanceledReceiptModel {
 		this.requestDate = requestDate;
 	}
 	
-	@Column(name="gmapby")
-	public String getGmApprovedBy() {
-		return gmApprovedBy;
+	@Column(name="appby")
+	public String getApprovedBy() {
+		return approvedBy;
 	}
-	public void setGmApprovedBy(String gmApprovedBy) {
-		this.gmApprovedBy = gmApprovedBy;
+	public void setApprovedBy(String approvedBy) {
+		this.approvedBy = approvedBy;
 	}
-	
-	@Column(name="gmapdt")
-	public Date getGmApprovedDate() {
-		return gmApprovedDate;
+	@Column(name="appdt")
+	public Date getApprovedDate() {
+		return approvedDate;
 	}
-	public void setGmApprovedDate(Date gmApprovedDate) {
-		this.gmApprovedDate = gmApprovedDate;
-	}
-	
-	@Column(name="hoapby")
-	public String getHoApprovedBy() {
-		return hoApprovedBy;
-	}
-	public void setHoApprovedBy(String hoApprovedBy) {
-		this.hoApprovedBy = hoApprovedBy;
-	}
-	
-	@Column(name="hoapdt")
-	public Date getHoApprovedDate() {
-		return hoApprovedDate;
-	}
-	public void setHoApprovedDate(Date hoApprovedDate) {
-		this.hoApprovedDate = hoApprovedDate;
+	public void setApprovedDate(Date approvedDate) {
+		this.approvedDate = approvedDate;
 	}
 	
 	@Column(name="creadt")
@@ -170,22 +150,13 @@ public class CanceledReceiptModel {
 		this.modifyDate = modifyDate;
 	}
 
-	@Column(name="hormk")
-	public String getHoRemark() {
-		return hoRemark;
+	@Column(name="apprmk")
+	public String getApproverRemark() {
+		return approverRemark;
 	}
-	public void setHoRemark(String hoRemark) {
-		this.hoRemark = hoRemark;
+	public void setApproverRemark(String approverRemark) {
+		this.approverRemark = approverRemark;
 	}
-	
-	@Column(name="gmrmk")
-	public String getGmRemark() {
-		return gmRemark;
-	}
-	public void setGmRemark(String gmRemark) {
-		this.gmRemark = gmRemark;
-	}
-	
 	@Column(name="amount")
 	public Double getAmount() {
 		return amount;
@@ -205,13 +176,10 @@ public class CanceledReceiptModel {
 	public String toString() {
 		return "CanceledReceiptModel [sbuCode=" + sbuCode + ", locCode=" + locCode + ", receiptNo=" + receiptNo
 				+ ", polNum=" + polNum + ", pprNum=" + pprNum + ", reason=" + reason + ", status=" + status
-				+ ", requestBy=" + requestBy + ", requestDate=" + requestDate + ", gmApprovedBy=" + gmApprovedBy
-				+ ", gmApprovedDate=" + gmApprovedDate + ", hoApprovedBy=" + hoApprovedBy + ", hoApprovedDate="
-				+ hoApprovedDate + ", createDate=" + createDate + ", createBy=" + createBy + ", modifyBy=" + modifyBy
-				+ ", modifyDate=" + modifyDate + ", hoRemark=" + hoRemark + ", gmRemark=" + gmRemark + ", amount="
-				+ amount + ", docCode=" + docCode + "]";
+				+ ", requestBy=" + requestBy + ", requestDate=" + requestDate + ", approvedBy=" + approvedBy
+				+ ", approvedDate=" + approvedDate + ", createDate=" + createDate + ", createBy=" + createBy
+				+ ", modifyBy=" + modifyBy + ", modifyDate=" + modifyDate + ", approverRemark=" + approverRemark
+				+ ", amount=" + amount + ", docCode=" + docCode + "]";
 	}
 	
-
-
 }
