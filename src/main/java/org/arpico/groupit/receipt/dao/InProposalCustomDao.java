@@ -32,4 +32,6 @@ public interface InProposalCustomDao {
 
 	InProposalsModel getProposalFromPprnum(Integer pprnum) throws Exception;
 
+	InProposalsModel getProposalFromPolnum(Integer polnum) throws Exception;
+
 }
