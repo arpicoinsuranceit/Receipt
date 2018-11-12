@@ -4,16 +4,19 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+
 @Entity
-@Table(name = "inreceiptauth")
-public class CanceledReceiptModel {
+@Table(name = "incodetrans")
+public class CodeTransferModel {
 	
+	private Integer codeTransferId;
 	private String sbuCode;
 	private String locCode;
-	private String receiptNo;
 	private String polNum;
 	private String pprNum;
 	private String reason;
@@ -27,9 +30,18 @@ public class CanceledReceiptModel {
 	private String modifyBy;
 	private Date modifyDate;
 	private String approverRemark;
-	private Double amount;
-	private String docCode;
+	private String oldAgentCode;
+	private String newAgentCode;
 	
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="id")
+	public Integer getCodeTransferId() {
+		return codeTransferId;
+	}
+	public void setCodeTransferId(Integer codeTransferId) {
+		this.codeTransferId = codeTransferId;
+	}
 	@Column(name="sbucod")
 	public String getSbuCode() {
 		return sbuCode;
@@ -45,16 +57,7 @@ public class CanceledReceiptModel {
 	public void setLocCode(String locCode) {
 		this.locCode = locCode;
 	}
-	
-	@Id
-	@Column(name="docnum")
-	public String getReceiptNo() {
-		return receiptNo;
-	}
-	public void setReceiptNo(String receiptNo) {
-		this.receiptNo = receiptNo;
-	}
-	
+		
 	@Column(name="polnum")
 	public String getPolNum() {
 		return polNum;
@@ -110,6 +113,7 @@ public class CanceledReceiptModel {
 	public void setApprovedBy(String approvedBy) {
 		this.approvedBy = approvedBy;
 	}
+	
 	@Column(name="appdt")
 	public Date getApprovedDate() {
 		return approvedDate;
@@ -157,29 +161,31 @@ public class CanceledReceiptModel {
 	public void setApproverRemark(String approverRemark) {
 		this.approverRemark = approverRemark;
 	}
-	@Column(name="amount")
-	public Double getAmount() {
-		return amount;
+	
+	@Column(name="oldagncod")
+	public String getOldAgentCode() {
+		return oldAgentCode;
 	}
-	public void setAmount(Double amount) {
-		this.amount = amount;
+	public void setOldAgentCode(String oldAgentCode) {
+		this.oldAgentCode = oldAgentCode;
 	}
 	
-	@Column(name="doccod")
-	public String getDocCode() {
-		return docCode;
+	@Column(name="newagncod")
+	public String getNewAgentCode() {
+		return newAgentCode;
 	}
-	public void setDocCode(String docCode) {
-		this.docCode = docCode;
+	public void setNewAgentCode(String newAgentCode) {
+		this.newAgentCode = newAgentCode;
 	}
+	
 	@Override
 	public String toString() {
-		return "CanceledReceiptModel [sbuCode=" + sbuCode + ", locCode=" + locCode + ", receiptNo=" + receiptNo
-				+ ", polNum=" + polNum + ", pprNum=" + pprNum + ", reason=" + reason + ", status=" + status
-				+ ", requestBy=" + requestBy + ", requestDate=" + requestDate + ", approvedBy=" + approvedBy
-				+ ", approvedDate=" + approvedDate + ", createDate=" + createDate + ", createBy=" + createBy
-				+ ", modifyBy=" + modifyBy + ", modifyDate=" + modifyDate + ", approverRemark=" + approverRemark
-				+ ", amount=" + amount + ", docCode=" + docCode + "]";
+		return "CodeTransferModel [sbuCode=" + sbuCode + ", locCode=" + locCode + ", polNum=" + polNum + ", pprNum="
+				+ pprNum + ", reason=" + reason + ", status=" + status + ", requestBy=" + requestBy + ", requestDate="
+				+ requestDate + ", approvedBy=" + approvedBy + ", approvedDate=" + approvedDate + ", createDate="
+				+ createDate + ", createBy=" + createBy + ", modifyBy=" + modifyBy + ", modifyDate=" + modifyDate
+				+ ", approverRemark=" + approverRemark + ", oldAgentCode=" + oldAgentCode + ", newAgentCode="
+				+ newAgentCode + "]";
 	}
 	
 }

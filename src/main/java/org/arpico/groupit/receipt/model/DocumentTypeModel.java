@@ -26,6 +26,7 @@ public class DocumentTypeModel {
 	private String modifyBy;
 	private Integer parent;
 	private Integer isDoc;
+	private String docTypeRef;
 	
 	private List<SubDepartmentDocumentModel> subDepartmentDocument=new ArrayList<>();
 	
@@ -109,6 +110,13 @@ public class DocumentTypeModel {
 	}
 	public void setIsDoc(Integer isDoc) {
 		this.isDoc = isDoc;
+	}
+	@Column(name="docTypRef")
+	public String getDocTypeRef() {
+		return docTypeRef;
+	}
+	public void setDocTypeRef(String docTypeRef) {
+		this.docTypeRef = docTypeRef;
 	}
 	@Override
 	public String toString() {

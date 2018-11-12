@@ -25,6 +25,7 @@ public class CourierModel {
 	private String createBy;
 	private Date modifyDate;
 	private String modifyBy;
+	private String toBranch;
 	
 	private List<DepartmentCourierModel> departmentCourier=new ArrayList<>();
 	
@@ -95,6 +96,13 @@ public class CourierModel {
 		this.modifyBy = modifyBy;
 	}
 	
+	@Column(name="tobrncod")
+	public String getToBranch() {
+		return toBranch;
+	}
+	public void setToBranch(String toBranch) {
+		this.toBranch = toBranch;
+	}
 	@OneToMany(mappedBy="courier")
 	@Column(name="depcouid")
 	public List<DepartmentCourierModel> getDepartmentCourier() {
@@ -103,12 +111,12 @@ public class CourierModel {
 	public void setDepartmentCourier(List<DepartmentCourierModel> departmentCourier) {
 		this.departmentCourier = departmentCourier;
 	}
-	
 	@Override
 	public String toString() {
-		return "Courier [courierId=" + courierId + ", token=" + token + ", branchCode=" + branchCode + ", remark="
-				+ remark + ", createDate=" + createDate + ", createBy=" + createBy + ", modifyDate=" + modifyDate
-				+ ", modifyBy=" + modifyBy + "]";
+		return "CourierModel [courierId=" + courierId + ", token=" + token + ", branchCode=" + branchCode
+				+ ", courierStatus=" + courierStatus + ", remark=" + remark + ", createDate=" + createDate
+				+ ", createBy=" + createBy + ", modifyDate=" + modifyDate + ", modifyBy=" + modifyBy + ", toBranch="
+				+ toBranch + ", departmentCourier=" + departmentCourier + "]";
 	}
 	
 	

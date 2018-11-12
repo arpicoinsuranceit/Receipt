@@ -25,15 +25,18 @@ public class ReceiptCancelationController {
 		return receiptCancelationService.findReceiptLikeReceiptId(receiptId, token);
 	}
 	
-	@RequestMapping(value = "/saveRequest/{token}/{receiptNo}/{reason}", method = RequestMethod.GET)
-	public ResponseEntity<Object> saveRequest(@PathVariable("receiptNo") String receiptNo,@PathVariable("reason") String reason,@PathVariable("token") String token){
-		
+	@RequestMapping(value = "/saveRequest/{token}/{receiptNo}/{reason}/{doccod}", method = RequestMethod.GET)
+	public ResponseEntity<Object> saveRequest(@PathVariable("receiptNo") String receiptNo,@PathVariable("reason") String reason,@PathVariable("token") String token
+			,@PathVariable("doccod")String doccod){
+		System.out.println("called...");
 		try {
-			return receiptCancelationService.saveRequest(receiptNo, reason,token);
+			System.out.println("called...");
+			return receiptCancelationService.saveRequest(receiptNo, reason,token,doccod);
 		} catch (Exception e) {
-			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			e.printStackTrace();
+			
 		}
-		
+		return null;
 	}
 	
 	@RequestMapping(value = "/getPendingRequest/{token:.+}", method = RequestMethod.GET)

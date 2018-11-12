@@ -24,6 +24,7 @@ public class SubDepartmentDocumentModel {
 	private String createBy;
 	private Date modifyDate;
 	private String modifyBy;
+	private String email;
 	
 	private SubDepartmentModel subDepartment;
 	private DocumentTypeModel documentType;
@@ -73,7 +74,13 @@ public class SubDepartmentDocumentModel {
 	public void setModifyBy(String modifyBy) {
 		this.modifyBy = modifyBy;
 	}
-	
+	@Column(name="email")
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
 	@ManyToOne
 	@JoinColumn(nullable = false,name="subdepid")
 	public SubDepartmentModel getSubDepartment() {
@@ -100,13 +107,14 @@ public class SubDepartmentDocumentModel {
 	public void setSubDepartmentDocumentCourier(List<SubDepartmentDocumentCourierModel> subDepartmentDocumentCourier) {
 		this.subDepartmentDocumentCourier = subDepartmentDocumentCourier;
 	}
-	
 	@Override
 	public String toString() {
-		return "SubDepartmentDocument [subDepDocId=" + subDepDocId + ", active=" + active + ", createDate=" + createDate
-				+ ", createBy=" + createBy + ", modifyDate=" + modifyDate + ", modifyBy=" + modifyBy
-				+ ", subDepartment=" + subDepartment + ", documentType=" + documentType + "]";
+		return "SubDepartmentDocumentModel [subDepDocId=" + subDepDocId + ", active=" + active + ", createDate="
+				+ createDate + ", createBy=" + createBy + ", modifyDate=" + modifyDate + ", modifyBy=" + modifyBy
+				+ ", email=" + email + ", subDepartment=" + subDepartment + ", documentType=" + documentType
+				+ ", subDepartmentDocumentCourier=" + subDepartmentDocumentCourier + "]";
 	}
+	
 	
 	
 

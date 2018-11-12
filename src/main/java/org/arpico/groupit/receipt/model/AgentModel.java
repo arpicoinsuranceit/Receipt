@@ -5,6 +5,7 @@ public class AgentModel {
 	private Integer agentCode;
 	private String agentName;
 	private String location;
+	private String designation;
 	
 	public Integer getAgentCode() {
 		return agentCode;
@@ -23,6 +24,12 @@ public class AgentModel {
 	}
 	public void setLocation(String location) {
 		this.location = location;
+	}
+	public String getDesignation() {
+		return designation;
+	}
+	public void setDesignation(String designation) {
+		this.designation = designation;
 	}
 	
 }

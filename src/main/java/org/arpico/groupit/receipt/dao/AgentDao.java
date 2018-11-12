@@ -11,5 +11,9 @@ public interface AgentDao {
 	List<AgentModel> findAgentByCode(String agentCode) throws Exception;
 
 	List<AgentModel> findAgentByCodeAll(String advcod) throws Exception;
+
+	AgentModel findPropAgent(String agentCode)throws Exception;
+
+	List<AgentModel> getAllAgents() throws Exception;
 	
 }

@@ -30,4 +30,8 @@ public interface InProposalCustomDao {
 
 	List<ProposalNoSeqNoModel> getProposalNoSeqNoModel(String pprNo) throws Exception;
 
+	InProposalsModel getProposalFromPprnum(Integer pprnum) throws Exception;
+
+	InProposalsModel getProposalFromPolnum(Integer polnum) throws Exception;
+
 }

@@ -208,7 +208,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		if (locCode != null ) {
 		
 			/* load InProposalDetails from marksys */
-			InProposalsModel inProposalsModel=getInProposalDetails(saveUnderwriteDto.getProposalNo(), saveUnderwriteDto.getQuoSeqNo());
+			InProposalsModel inProposalsModel=getInProposalDetails(saveUnderwriteDto.getProposalNo(), saveUnderwriteDto.getSeqNo());
 			
 			if(inProposalsModel != null) {
 				
@@ -307,14 +307,14 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 				
 				/* Get Medical Requirements From Quotation DB */
 				List<MedicalRequirementsDto> medicalRequirementsDtos = quotationClient
-						.getMediReq(saveUnderwriteDto.getQuoSeqNo(),saveUnderwriteDto.getQuotationNo());
+						.getMediReq(saveUnderwriteDto.getSeqNo(),saveUnderwriteDto.getQuotationNo());
 				
 				/* Get Schedule Details From Quotation DB */
-				List<SheduleDto> sheduleDtos = quotationClient.getShedule(saveUnderwriteDto.getQuoSeqNo(),saveUnderwriteDto.getQuotationNo());
+				List<SheduleDto> sheduleDtos = quotationClient.getShedule(saveUnderwriteDto.getSeqNo(),saveUnderwriteDto.getQuotationNo());
 		
 				/* Get Surrender Values From Quotation DB */
 				List<SurrenderValsDto> surrenderValsDtos = quotationClient
-						.getSurrenderVals(saveUnderwriteDto.getQuoSeqNo(),saveUnderwriteDto.getQuotationNo());
+						.getSurrenderVals(saveUnderwriteDto.getSeqNo(),saveUnderwriteDto.getQuotationNo());
 				
 				List<InPropSchedulesModel> inPropScheduleList = null;
 		

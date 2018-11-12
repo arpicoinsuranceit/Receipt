@@ -31,7 +31,7 @@ public class AppConstant {
 	
 	public static final String URI_BRANCH_FIND = "http://10.10.10.120:8084/UserManagement/findbranch";
 	
-	public static final String URI_SEND_EMAIL = "http://localhost:8089/InfoswsWS/sendEmail";
+	public static final String URI_SEND_EMAIL = "http://10.10.10.12:8080/InfosysWS/sendEmail";
 	
 	public static final String DOC_CODE_FOR_RECEIPT = "RCPP";
 	public static final String POLICY_STATUS_PLISU = "PLISU";
@@ -40,6 +40,8 @@ public class AppConstant {
 	public static final String LIFE = "LI";
 	public static final String ONE_TIME_CUSTOMER = "999999";
 	public static final String DOC_CODE_GLRB = "GLRB";
+	
+	public static final String EMAIL_DEP_CODE_FINANCE = "FINANCE";
 	
 	
 	
