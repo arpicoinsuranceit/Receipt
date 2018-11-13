@@ -26,8 +26,17 @@ public class BankServiceImpl implements BankService {
 	@Override
 	public List<BankDto> getBanksByUser(String userCode) throws Exception {
 
-		String locationsTemp = userDao.getUserLocations(userCode);
-		String location = new DaoParameters().getParaForIn(locationsTemp);
+		List<String> locationsTemp = userDao.getUserLocations(userCode);
+		
+		String [] data = new String[locationsTemp.size()];
+		
+		int count = 0;
+		for (String string : locationsTemp) {
+			data[count] = string;
+			count ++;
+		}
+		
+		String location = new DaoParameters().getParaForIn(data);
 		String dataSql = "where SBUCOD = '450' ";
 		if (!location.contains("HO")) {
 			dataSql += " and loccod in (" + location + ")";

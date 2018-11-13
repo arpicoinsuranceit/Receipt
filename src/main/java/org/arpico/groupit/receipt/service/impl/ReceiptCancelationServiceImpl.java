@@ -152,9 +152,8 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 			String userName=userDao.getUserFullName(userCode);
 
 			if(userCode != null) {
-				String locCode=userDao.getUserLocations(userCode);
 				
-				String branchName=branchDao.getBranchName(locCode);
+				String branchName=branchDao.getBranchName(inTransactionsModel.getInTransactionsModelPK().getLoccod());
 				
 				CanceledReceiptModel canceledReceiptModel=new CanceledReceiptModel();
 				canceledReceiptModel.setReason(reason);
@@ -165,7 +164,7 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 				canceledReceiptModel.setPprNum(inTransactionsModel.getPprnum());
 				canceledReceiptModel.setRequestBy(userCode);
 				canceledReceiptModel.setRequestDate(new Date());
-				canceledReceiptModel.setLocCode(locCode);
+				canceledReceiptModel.setLocCode(inTransactionsModel.getInTransactionsModelPK().getLoccod());
 				canceledReceiptModel.setSbuCode("450");
 				canceledReceiptModel.setStatus("PENDING");
 				canceledReceiptModel.setDocCode(inTransactionsModel.getInTransactionsModelPK().getDoccod());
@@ -173,7 +172,7 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 								
 				if(receiptCancelationDao.save(canceledReceiptModel) != null) {
 					
-					String toEmail=receiptCancelationCustomDao.findGMEmail("450", locCode);
+					String toEmail=receiptCancelationCustomDao.findGMEmail("450", inTransactionsModel.getInTransactionsModelPK().getLoccod());
 					String fromEmail=userDao.getUserEmail(userCode);
 					
 					String body="Dear Sir , \n\n Receipt Cancelation Request from "+branchName+" branch. \n Cancelation reason for "+reason + ".\n\n";

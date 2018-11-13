@@ -6,14 +6,14 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class SpringBootWebApplication extends SpringBootServletInitializer{
+public class ReceiptMain extends SpringBootServletInitializer{
 
 	public static void main (String args[]) {
-		SpringApplication.run(SpringBootWebApplication.class, args);
+		SpringApplication.run(ReceiptMain.class, args);
 	}
 	
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-		return builder.sources(SpringBootWebApplication.class);
+		return builder.sources(ReceiptMain.class);
 	}
 }

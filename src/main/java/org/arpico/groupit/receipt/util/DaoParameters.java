@@ -14,4 +14,13 @@ public class DaoParameters {
 		return returnPara.substring(0, (returnPara.length()-1));
 	}
 	
+	
+	public String getParaForIn(String[] paras) {
+		String returnPara ="";
+		for (String para : paras) {
+			returnPara = returnPara+"'"+para+"',";
+		}
+		return returnPara.substring(0, (returnPara.length()-1));
+	}
+	
 }
