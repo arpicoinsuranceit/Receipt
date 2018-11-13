@@ -206,163 +206,182 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		String agentCode = decoder.generate(saveUnderwriteDto.getToken());
 
 		System.out.println(agentCode);
-		String locCode = decoder.generateLoc(saveUnderwriteDto.getToken());
+		//String locCode = decoder.generateLoc(saveUnderwriteDto.getToken());
+
 		
-		if (locCode != null ) {
+		/* load InProposalDetails from marksys */
+		InProposalsModel inProposalsModel=getInProposalDetails(saveUnderwriteDto.getProposalNo(), saveUnderwriteDto.getSeqNo());
 		
-			/* load InProposalDetails from marksys */
-			InProposalsModel inProposalsModel=getInProposalDetails(saveUnderwriteDto.getProposalNo(), saveUnderwriteDto.getSeqNo());
+		
+		if(inProposalsModel != null) {
+			String locCode = inProposalsModel.getInProposalsModelPK().getLoccod();
+			/* load Quotation Details From QuotationDB */
+			ViewQuotationDto quotationDto=quotationClient.getQuotation(saveUnderwriteDto.getQuoSeqNo(), saveUnderwriteDto.getQuotationNo());
 			
-			if(inProposalsModel != null) {
-				
-				/* load Quotation Details From QuotationDB */
-				ViewQuotationDto quotationDto=quotationClient.getQuotation(saveUnderwriteDto.getQuoSeqNo(), saveUnderwriteDto.getQuotationNo());
-				
-				
-				/* Set new primary key for inproposal */
-				InProposalsModelPK newInProposalsModelPK= new InProposalsModelPK();
-				newInProposalsModelPK.setPprnum(inProposalsModel.getInProposalsModelPK().getPprnum());
-				newInProposalsModelPK.setLoccod(locCode);
-				newInProposalsModelPK.setDoccod("PROP");
-				newInProposalsModelPK.setPrpseq(inProposalsModel.getInProposalsModelPK().getPrpseq() + 1);
-				newInProposalsModelPK.setSbucod(inProposalsModel.getInProposalsModelPK().getSbucod());
-				
-				/* Set new Proposal model to save */
-				InProposalsModel newInProposalsModel=getInProposalModel(inProposalsModel,saveUnderwriteDto,quotationDto);
-				newInProposalsModel.setInProposalsModelPK(newInProposalsModelPK);
-				newInProposalsModel.setCurusr(agentCode);
-				newInProposalsModel.setCreaby(agentCode);
-				
-				if(saveUnderwriteDto.getSendToApprove()) {
-					newInProposalsModel.setPprsta("L1");
-				}else {
-					newInProposalsModel.setPprsta("L0");
-				}
-				
-				List<InPropLoadingModel> inPropLoadingModels = new ArrayList<>();
-				
-				/* Get benefit and prop loading to save */
-				List<InPropAddBenefitModel> addBenefitModels = benefictDetailsDao
-						.getBenefictByProduct(quotationDto.getProductCode());
+			
+			/* Set new primary key for inproposal */
+			InProposalsModelPK newInProposalsModelPK= new InProposalsModelPK();
+			newInProposalsModelPK.setPprnum(inProposalsModel.getInProposalsModelPK().getPprnum());
+			newInProposalsModelPK.setLoccod(inProposalsModel.getInProposalsModelPK().getLoccod());
+			newInProposalsModelPK.setDoccod("PROP");
+			newInProposalsModelPK.setPrpseq(inProposalsModel.getInProposalsModelPK().getPrpseq() + 1);
+			newInProposalsModelPK.setSbucod(inProposalsModel.getInProposalsModelPK().getSbucod());
+			
+			/* Set new Proposal model to save */
+			InProposalsModel newInProposalsModel=getInProposalModel(inProposalsModel,saveUnderwriteDto,quotationDto);
+			newInProposalsModel.setInProposalsModelPK(newInProposalsModelPK);
+			newInProposalsModel.setCurusr(agentCode);
+			newInProposalsModel.setCreaby(agentCode);
+			
+			if(saveUnderwriteDto.getSendToApprove()) {
+				newInProposalsModel.setPprsta("L1");
+			}else {
+				newInProposalsModel.setPprsta("L0");
+			}
+			
+			List<InPropLoadingModel> inPropLoadingModels = new ArrayList<>();
+			
+			/* Get benefit and prop loading to save */
+			List<InPropAddBenefitModel> addBenefitModels = benefictDetailsDao
+					.getBenefictByProduct(quotationDto.getProductCode());
 
-				for (InPropAddBenefitModel inPropAddBenefitModel : addBenefitModels) {
-					inPropAddBenefitModel.getInPropAddBenefitPK().setLoccod(newInProposalsModelPK.getLoccod());
-					inPropAddBenefitModel.getInPropAddBenefitPK()
-							.setPprnum(Integer.parseInt(newInProposalsModelPK.getPprnum()));
-					inPropAddBenefitModel.getInPropAddBenefitPK().setPrpseq(newInProposalsModelPK.getPrpseq());
-					inPropAddBenefitModel.setRidtrm(0);
-					inPropAddBenefitModel.setSumasu(0.0);
-					inPropAddBenefitModel.setRdrprm(0.0);
-					inPropAddBenefitModel.setPrmmth(0.0);
-					inPropAddBenefitModel.setPrmqat(0.0);
-					inPropAddBenefitModel.setPrmhlf(0.0);
-					inPropAddBenefitModel.setPrmyer(0.0);
+			for (InPropAddBenefitModel inPropAddBenefitModel : addBenefitModels) {
+				inPropAddBenefitModel.getInPropAddBenefitPK().setLoccod(newInProposalsModelPK.getLoccod());
+				inPropAddBenefitModel.getInPropAddBenefitPK()
+						.setPprnum(Integer.parseInt(newInProposalsModelPK.getPprnum()));
+				inPropAddBenefitModel.getInPropAddBenefitPK().setPrpseq(newInProposalsModelPK.getPrpseq());
+				inPropAddBenefitModel.setRidtrm(0);
+				inPropAddBenefitModel.setSumasu(0.0);
+				inPropAddBenefitModel.setRdrprm(0.0);
+				inPropAddBenefitModel.setPrmmth(0.0);
+				inPropAddBenefitModel.setPrmqat(0.0);
+				inPropAddBenefitModel.setPrmhlf(0.0);
+				inPropAddBenefitModel.setPrmyer(0.0);
 
-					InPropLoadingModelPK inPropLoadingModelPK = new InPropLoadingModelPK();
-					inPropLoadingModelPK.setLoccod(newInProposalsModelPK.getLoccod());
-					inPropLoadingModelPK.setPprnum(Integer.parseInt(newInProposalsModelPK.getPprnum()));
-					inPropLoadingModelPK.setRidcod(inPropAddBenefitModel.getInPropAddBenefitPK().getRidcod());
-					inPropLoadingModelPK.setSbucod(AppConstant.SBU_CODE);
-					inPropLoadingModelPK.setPrpseq(newInProposalsModelPK.getPrpseq());
+				InPropLoadingModelPK inPropLoadingModelPK = new InPropLoadingModelPK();
+				inPropLoadingModelPK.setLoccod(newInProposalsModelPK.getLoccod());
+				inPropLoadingModelPK.setPprnum(Integer.parseInt(newInProposalsModelPK.getPprnum()));
+				inPropLoadingModelPK.setRidcod(inPropAddBenefitModel.getInPropAddBenefitPK().getRidcod());
+				inPropLoadingModelPK.setSbucod(AppConstant.SBU_CODE);
+				inPropLoadingModelPK.setPrpseq(newInProposalsModelPK.getPrpseq());
 
-					InPropLoadingModel inPropLoadingModel = new InPropLoadingModel();
-					inPropLoadingModel.setInPropLoadingPK(inPropLoadingModelPK);
-					inPropLoadingModel.setRidnam(inPropAddBenefitModel.getRidnam());
-					inPropLoadingModel.setGrdord(inPropAddBenefitModel.getGrdord());
-					inPropLoadingModel.setLockin(new Date());
-					inPropLoadingModel.setInstyp(inPropAddBenefitModel.getInstyp());
-					inPropLoadingModel.setRidtyp(inPropAddBenefitModel.getRidtyp());
+				InPropLoadingModel inPropLoadingModel = new InPropLoadingModel();
+				inPropLoadingModel.setInPropLoadingPK(inPropLoadingModelPK);
+				inPropLoadingModel.setRidnam(inPropAddBenefitModel.getRidnam());
+				inPropLoadingModel.setGrdord(inPropAddBenefitModel.getGrdord());
+				inPropLoadingModel.setLockin(new Date());
+				inPropLoadingModel.setInstyp(inPropAddBenefitModel.getInstyp());
+				inPropLoadingModel.setRidtyp(inPropAddBenefitModel.getRidtyp());
 
-					inPropLoadingModels.add(inPropLoadingModel);
+				inPropLoadingModels.add(inPropLoadingModel);
 
-				}
+			}
 
-				/* get mainlife benefits */
-				for (QuoBenfDto benfDto : quotationDto.get_mainLifeBenefits()) {
-					getInPropAddBebefit(benfDto, addBenefitModels, "main", quotationDto.get_plan().get_frequance(),
-							inPropLoadingModels, quotationDto.get_mainlife().get_occuCode());
-				}
-				/* get spouse benefits */
-				for (QuoBenfDto benfDto : quotationDto.get_spouseBenefits()) {
-					getInPropAddBebefit(benfDto, addBenefitModels, "spouse", quotationDto.get_plan().get_frequance(),
-							inPropLoadingModels, quotationDto.get_spouse().getOccuCode());
-				}
-				/* get children benefits */
-				addBenefitModels = getChildBenefits(quotationDto.get_childrenBenefits(), addBenefitModels, "children",
-						quotationDto.get_plan().get_frequance(), inPropLoadingModels);
-				
-				
-				List<InPropFamDetailsModel> propFamDetailsModels = new ArrayList<>();
-				/* Load Family Details */
-				
-				for (ChildrenDto childrenDto : quotationDto.get_children()) {
-					for (ChildrenDto childrenDto1 : saveUnderwriteDto.getChildren()) {
-						if(childrenDto.get_cTitle().equals(childrenDto1.get_cTitle()) && childrenDto.get_cAge().equals(childrenDto1.get_cAge()) 
-								) {
-							childrenDto.set_cName(childrenDto1.get_cName());
-						}
+			/* get mainlife benefits */
+			for (QuoBenfDto benfDto : quotationDto.get_mainLifeBenefits()) {
+				getInPropAddBebefit(benfDto, addBenefitModels, "main", quotationDto.get_plan().get_frequance(),
+						inPropLoadingModels, quotationDto.get_mainlife().get_occuCode());
+			}
+			/* get spouse benefits */
+			for (QuoBenfDto benfDto : quotationDto.get_spouseBenefits()) {
+				getInPropAddBebefit(benfDto, addBenefitModels, "spouse", quotationDto.get_plan().get_frequance(),
+						inPropLoadingModels, quotationDto.get_spouse().getOccuCode());
+			}
+			/* get children benefits */
+			addBenefitModels = getChildBenefits(quotationDto.get_childrenBenefits(), addBenefitModels, "children",
+					quotationDto.get_plan().get_frequance(), inPropLoadingModels);
+			
+			
+			List<InPropFamDetailsModel> propFamDetailsModels = new ArrayList<>();
+			/* Load Family Details */
+			
+			for (ChildrenDto childrenDto : quotationDto.get_children()) {
+				for (ChildrenDto childrenDto1 : saveUnderwriteDto.getChildren()) {
+					if(childrenDto.get_cTitle().equals(childrenDto1.get_cTitle()) && childrenDto.get_cAge().equals(childrenDto1.get_cAge()) 
+							) {
+						childrenDto.set_cName(childrenDto1.get_cName());
 					}
-					
-					propFamDetailsModels.add(getFamily(childrenDto, newInProposalsModelPK.getPprnum(),
+				}
+				
+				propFamDetailsModels.add(getFamily(childrenDto, newInProposalsModelPK.getPprnum(),
+						newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
+			}
+			
+			
+			/* Get Medical Requirements From Quotation DB */
+			List<MedicalRequirementsDto> medicalRequirementsDtos = quotationClient
+					.getMediReq(saveUnderwriteDto.getSeqNo(),saveUnderwriteDto.getQuotationNo());
+			
+			/* Get Schedule Details From Quotation DB */
+			List<SheduleDto> sheduleDtos = quotationClient.getShedule(saveUnderwriteDto.getSeqNo(),saveUnderwriteDto.getQuotationNo());
+	
+			/* Get Surrender Values From Quotation DB */
+			List<SurrenderValsDto> surrenderValsDtos = quotationClient
+					.getSurrenderVals(saveUnderwriteDto.getSeqNo(),saveUnderwriteDto.getQuotationNo());
+			
+			List<InPropSchedulesModel> inPropScheduleList = null;
+	
+			/* Set Proposal Schedules */
+			if (sheduleDtos != null && sheduleDtos.size() > 0) {
+				inPropScheduleList = new ArrayList<>();
+				for (SheduleDto sheduleDto : sheduleDtos) {
+					inPropScheduleList.add(getPropShedule(sheduleDto, newInProposalsModelPK.getPprnum(),
+							newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
+				}
+	
+			}
+			
+			final List<InPropMedicalReqModel> inPropMedicalReqModels = new ArrayList<>();
+			/* Set Medical Requirements */
+			if (medicalRequirementsDtos != null && medicalRequirementsDtos.size() > 0) {
+				medicalRequirementsDtos.forEach(
+						mediReq -> inPropMedicalReqModels.add(getMediReq(mediReq, newInProposalsModelPK.getPprnum(),
+								newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod())));
+			}
+			
+			/* Save Additional Requirements */
+			List<InPropPreviousPolModel> inPropPrePolsModelsML=inProposalCustomDao.getAllPreviousPolicies("450", newInProposalsModel.getPpdnic());
+			//main life age proof
+			if(inPropPrePolsModelsML.isEmpty()) {
+				inPropMedicalReqModels.add(getAdditionalReq("main", "AD-99", "Additional Requirement","Age Proof Main Life", newInProposalsModelPK.getPprnum(),
+						newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
+			}
+			//spouse age proof
+			List<InPropPreviousPolModel> inPropPrePolsModelsSP=null;
+			if(newInProposalsModel.getSponic() != null && newInProposalsModel.getSponic() != "") {
+				inPropPrePolsModelsSP=inProposalCustomDao.getAllPreviousPolicies("450", newInProposalsModel.getSponic());
+				
+				if(inPropPrePolsModelsSP.isEmpty()) {
+					inPropMedicalReqModels.add(getAdditionalReq("spouse", "AD-99","Additional Requirement", "Age Proof Spouse", newInProposalsModelPK.getPprnum(),
 							newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
 				}
 				
-				
-				/* Get Medical Requirements From Quotation DB */
-				List<MedicalRequirementsDto> medicalRequirementsDtos = quotationClient
-						.getMediReq(saveUnderwriteDto.getSeqNo(),saveUnderwriteDto.getQuotationNo());
-				
-				/* Get Schedule Details From Quotation DB */
-				List<SheduleDto> sheduleDtos = quotationClient.getShedule(saveUnderwriteDto.getSeqNo(),saveUnderwriteDto.getQuotationNo());
-		
-				/* Get Surrender Values From Quotation DB */
-				List<SurrenderValsDto> surrenderValsDtos = quotationClient
-						.getSurrenderVals(saveUnderwriteDto.getSeqNo(),saveUnderwriteDto.getQuotationNo());
-				
-				List<InPropSchedulesModel> inPropScheduleList = null;
-		
-				/* Set Proposal Schedules */
-				if (sheduleDtos != null && sheduleDtos.size() > 0) {
-					inPropScheduleList = new ArrayList<>();
-					for (SheduleDto sheduleDto : sheduleDtos) {
-						inPropScheduleList.add(getPropShedule(sheduleDto, newInProposalsModelPK.getPprnum(),
-								newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
+			}
+			
+			//children age proof
+			inPropPrePolsModelsML.forEach(ml -> {
+				if(!propFamDetailsModels.isEmpty()) {
+					try {
+						List<InPropFamDetailsModel> famDetailsModels=famDetailsCustomDao.getFamilyByPprNoAndSeqNo(ml.getPprnum(), ml.getPrpseq());
+						famDetailsModels.forEach(fam -> {
+							propFamDetailsModels.forEach(propFam -> {
+								if(propFam.getFmldob().equals(fam.getFmldob())) {
+									propFamDetailsModels.remove(propFam);
+								}
+							});
+							
+						});
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-		
 				}
-				
-				final List<InPropMedicalReqModel> inPropMedicalReqModels = new ArrayList<>();
-				/* Set Medical Requirements */
-				if (medicalRequirementsDtos != null && medicalRequirementsDtos.size() > 0) {
-					medicalRequirementsDtos.forEach(
-							mediReq -> inPropMedicalReqModels.add(getMediReq(mediReq, newInProposalsModelPK.getPprnum(),
-									newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod())));
-				}
-				
-				/* Save Additional Requirements */
-				List<InPropPreviousPolModel> inPropPrePolsModelsML=inProposalCustomDao.getAllPreviousPolicies("450", newInProposalsModel.getPpdnic());
-				//main life age proof
-				if(inPropPrePolsModelsML.isEmpty()) {
-					inPropMedicalReqModels.add(getAdditionalReq("main", "AD-99", "Additional Requirement","Age Proof Main Life", newInProposalsModelPK.getPprnum(),
-							newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
-				}
-				//spouse age proof
-				List<InPropPreviousPolModel> inPropPrePolsModelsSP=null;
-				if(newInProposalsModel.getSponic() != null && newInProposalsModel.getSponic() != "") {
-					inPropPrePolsModelsSP=inProposalCustomDao.getAllPreviousPolicies("450", newInProposalsModel.getSponic());
-					
-					if(inPropPrePolsModelsSP.isEmpty()) {
-						inPropMedicalReqModels.add(getAdditionalReq("spouse", "AD-99","Additional Requirement", "Age Proof Spouse", newInProposalsModelPK.getPprnum(),
-								newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
-					}
-					
-				}
-				
-				//children age proof
-				inPropPrePolsModelsML.forEach(ml -> {
+			});
+			
+			if(inPropPrePolsModelsSP != null) {
+				inPropPrePolsModelsSP.forEach(sp -> {
 					if(!propFamDetailsModels.isEmpty()) {
 						try {
-							List<InPropFamDetailsModel> famDetailsModels=famDetailsCustomDao.getFamilyByPprNoAndSeqNo(ml.getPprnum(), ml.getPrpseq());
+							List<InPropFamDetailsModel> famDetailsModels=famDetailsCustomDao.getFamilyByPprNoAndSeqNo(sp.getPprnum(), sp.getPrpseq());
 							famDetailsModels.forEach(fam -> {
 								propFamDetailsModels.forEach(propFam -> {
 									if(propFam.getFmldob().equals(fam.getFmldob())) {
@@ -376,113 +395,90 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 						}
 					}
 				});
-				
-				if(inPropPrePolsModelsSP != null) {
-					inPropPrePolsModelsSP.forEach(sp -> {
-						if(!propFamDetailsModels.isEmpty()) {
-							try {
-								List<InPropFamDetailsModel> famDetailsModels=famDetailsCustomDao.getFamilyByPprNoAndSeqNo(sp.getPprnum(), sp.getPrpseq());
-								famDetailsModels.forEach(fam -> {
-									propFamDetailsModels.forEach(propFam -> {
-										if(propFam.getFmldob().equals(fam.getFmldob())) {
-											propFamDetailsModels.remove(propFam);
-										}
-									});
-									
-								});
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-					});
-				}
-				
-				if(propFamDetailsModels != null) {
-					propFamDetailsModels.forEach(fam -> {
-						inPropMedicalReqModels.add(getAdditionalReq("children", "AD-99","Additional Requirement", "Age Proof Child", newInProposalsModelPK.getPprnum(),
-								newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
-					});
-				}
-				
-				
-				/* HB and CIC Questionnaire */
-				if(!propFamDetailsModels.isEmpty()) {
-					propFamDetailsModels.forEach(fam -> {
-						if(fam.getHbcapp() == "Y") {
-							inPropMedicalReqModels.add(getAdditionalReq("children", "AD168", "Additional Requirement","HB Questionnire for Child", newInProposalsModelPK.getPprnum(),
-									newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
-						}
-						
-						if(fam.getCicapp() == "Y") {
-							inPropMedicalReqModels.add(getAdditionalReq("children", "AD19", "Additional Requirement","CIC Questionnire for Child", newInProposalsModelPK.getPprnum(),
-									newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
-						}
-					});
-				}
-				
-				/* Financial Questionnaire */
-				if(newInProposalsModel.getSumrkm() >= 5000000 || newInProposalsModel.getSumrks() >= 5000000) {
-					inPropMedicalReqModels.add(getAdditionalReq("main", "AD69", "Additional Requirement","FINANCIAL QUESTIONNAIRE (TOTAL SUM@RISK OVER 5MILLION)", newInProposalsModelPK.getPprnum(),
+			}
+			
+			if(propFamDetailsModels != null) {
+				propFamDetailsModels.forEach(fam -> {
+					inPropMedicalReqModels.add(getAdditionalReq("children", "AD-99","Additional Requirement", "Age Proof Child", newInProposalsModelPK.getPprnum(),
 							newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
-				}
-				
-				/* KYC Form */
-				if(newInProposalsModel.getTotprm() >= 1000000 ) {
-					inPropMedicalReqModels.add(getAdditionalReq("main", "AD3","Additional Requirement", "KYC Form", newInProposalsModelPK.getPprnum(),
-							newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
-				}
-				
-				/* Travel Questionnaire */
-				if(newInProposalsModel.getPpdocu() == "67") {
-					inPropMedicalReqModels.add(getAdditionalReq("main", "AD121","Additional Requirement", "Travel questionnaire", newInProposalsModelPK.getPprnum(),
-							newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
-				}
-				
-				if(newInProposalsModel.getSpoocu() == "67") {
-					inPropMedicalReqModels.add(getAdditionalReq("spouse", "AD121", "Additional Requirement","Travel questionnaire", newInProposalsModelPK.getPprnum(),
-							newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
-				}
-				
-				
-				final List<InPropSurrenderValsModel> inPropSurrenderValsModels = new ArrayList<>();
-				/* Set Surrender Values */
-				if (surrenderValsDtos != null && surrenderValsDtos.size() > 0) {
-					surrenderValsDtos.forEach(
-							surVal -> inPropSurrenderValsModels.add(getSurrenderVals(newInProposalsModel.getAdvcod(),
-									saveUnderwriteDto.getQuotationNo(), surVal, newInProposalsModelPK.getPprnum(),
-									newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod())));
-				}
-				
-				
-				/* Get Nominee Details */
-				List<InPropNomDetailsModel> nomDetailsModels=getNomineeDetails(saveUnderwriteDto, newInProposalsModelPK.getPprnum(), newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod());
-				
-				/* Get Previous Policies Passing NIC */
-				List<InPropPreviousPolModel> inPropPrePolsModels=inProposalCustomDao.getPreviousPolicies("450", newInProposalsModel.getPpdnic());
-				List<InPropPrePolsModel> prePolsModels=new ArrayList<>();
-				
-				/* Set Previous Policies To Save */
-				if(inPropPrePolsModels!=null && !inPropPrePolsModels.isEmpty()) {
-					prePolsModels=getPreviousPol(inPropPrePolsModels,newInProposalsModel);
-				}
-				
-				inProposalsModel.setPprsta("INAC");
-				inProposalsModel.setLockin(new Date());
-				
-				saveProposal(inProposalsModel,newInProposalsModel,inPropLoadingModels,addBenefitModels,propFamDetailsModels,inPropScheduleList,inPropMedicalReqModels,inPropSurrenderValsModels,nomDetailsModels,prePolsModels);
-				saveCourierDocument(Integer.valueOf(newInProposalsModelPK.getPprnum()), newInProposalsModelPK.getPrpseq(), locCode, agentCode);
-				
-				return new ResponseEntity<>("Success", HttpStatus.OK);
-				
-				
-			}else {
-				return new ResponseEntity<>("Proposal Not Found", HttpStatus.NOT_FOUND);
+				});
 			}
 			
 			
+			/* HB and CIC Questionnaire */
+			if(!propFamDetailsModels.isEmpty()) {
+				propFamDetailsModels.forEach(fam -> {
+					if(fam.getHbcapp() == "Y") {
+						inPropMedicalReqModels.add(getAdditionalReq("children", "AD168", "Additional Requirement","HB Questionnire for Child", newInProposalsModelPK.getPprnum(),
+								newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
+					}
+					
+					if(fam.getCicapp() == "Y") {
+						inPropMedicalReqModels.add(getAdditionalReq("children", "AD19", "Additional Requirement","CIC Questionnire for Child", newInProposalsModelPK.getPprnum(),
+								newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
+					}
+				});
+			}
+			
+			/* Financial Questionnaire */
+			if(newInProposalsModel.getSumrkm() >= 5000000 || newInProposalsModel.getSumrks() >= 5000000) {
+				inPropMedicalReqModels.add(getAdditionalReq("main", "AD69", "Additional Requirement","FINANCIAL QUESTIONNAIRE (TOTAL SUM@RISK OVER 5MILLION)", newInProposalsModelPK.getPprnum(),
+						newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
+			}
+			
+			/* KYC Form */
+			if(newInProposalsModel.getTotprm() >= 1000000 ) {
+				inPropMedicalReqModels.add(getAdditionalReq("main", "AD3","Additional Requirement", "KYC Form", newInProposalsModelPK.getPprnum(),
+						newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
+			}
+			
+			/* Travel Questionnaire */
+			if(newInProposalsModel.getPpdocu() == "67") {
+				inPropMedicalReqModels.add(getAdditionalReq("main", "AD121","Additional Requirement", "Travel questionnaire", newInProposalsModelPK.getPprnum(),
+						newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
+			}
+			
+			if(newInProposalsModel.getSpoocu() == "67") {
+				inPropMedicalReqModels.add(getAdditionalReq("spouse", "AD121", "Additional Requirement","Travel questionnaire", newInProposalsModelPK.getPprnum(),
+						newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
+			}
+			
+			
+			final List<InPropSurrenderValsModel> inPropSurrenderValsModels = new ArrayList<>();
+			/* Set Surrender Values */
+			if (surrenderValsDtos != null && surrenderValsDtos.size() > 0) {
+				surrenderValsDtos.forEach(
+						surVal -> inPropSurrenderValsModels.add(getSurrenderVals(newInProposalsModel.getAdvcod(),
+								saveUnderwriteDto.getQuotationNo(), surVal, newInProposalsModelPK.getPprnum(),
+								newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod())));
+			}
+			
+			
+			/* Get Nominee Details */
+			List<InPropNomDetailsModel> nomDetailsModels=getNomineeDetails(saveUnderwriteDto, newInProposalsModelPK.getPprnum(), newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod());
+			
+			/* Get Previous Policies Passing NIC */
+			List<InPropPreviousPolModel> inPropPrePolsModels=inProposalCustomDao.getPreviousPolicies("450", newInProposalsModel.getPpdnic());
+			List<InPropPrePolsModel> prePolsModels=new ArrayList<>();
+			
+			/* Set Previous Policies To Save */
+			if(inPropPrePolsModels!=null && !inPropPrePolsModels.isEmpty()) {
+				prePolsModels=getPreviousPol(inPropPrePolsModels,newInProposalsModel);
+			}
+			
+			inProposalsModel.setPprsta("INAC");
+			inProposalsModel.setLockin(new Date());
+			
+			saveProposal(inProposalsModel,newInProposalsModel,inPropLoadingModels,addBenefitModels,propFamDetailsModels,inPropScheduleList,inPropMedicalReqModels,inPropSurrenderValsModels,nomDetailsModels,prePolsModels);
+			saveCourierDocument(Integer.valueOf(newInProposalsModelPK.getPprnum()), newInProposalsModelPK.getPrpseq(), locCode, agentCode);
+			
+			return new ResponseEntity<>("Success", HttpStatus.OK);
+			
+			
 		}else {
-			return new ResponseEntity<>("User Not Found", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("Proposal Not Found", HttpStatus.NOT_FOUND);
 		}
+			
 
 	}
 

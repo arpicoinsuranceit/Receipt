@@ -26,7 +26,7 @@ public class InPropMedicalReqCustomDaoImpl implements InPropMedicalReqCustomDao 
 	public InPropMedicalReqModel getMedicalReq(Integer pprNo, Integer seqNo,String medcod,String testStatus) throws Exception {
 
 		return jdbcTemplate.queryForObject(
-				"select * from inpropmedicalreq where sbucod = '450' and pprnum = " + pprNo + " and prpseq = " + seqNo + "and medcod = '"+medcod+"' and tessta ='"+testStatus+"' ",
+				"select * from inpropmedicalreq where sbucod = '450' and pprnum = " + pprNo + " and prpseq = " + seqNo + " and medcod = '"+medcod+"' and tessta ='"+testStatus+"' ",
 				new InPropMedicalReqRowMapper());
 	}
 
