@@ -31,4 +31,22 @@ public class JwtDecoder {
 		return usercode;
 	}
 	
+	public String generateLoc(String token) {
+		String usercode = null;
+
+		Jwt jwtToken = JwtHelper.decode(token);
+		String claims = jwtToken.getClaims();
+		try {
+			HashMap claimsMap = new ObjectMapper().readValue(claims, HashMap.class);
+			usercode = claimsMap.get("locCode").toString();
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return usercode;
+	}
+	
 }

@@ -1,8 +1,10 @@
 package org.arpico.groupit.receipt.dao;
 
+import java.util.List;
+
 public interface RmsUserDao {
 
-	String getLocation (String userCode) throws Exception;
+	List<String> getLocation (String userCode) throws Exception;
 	
 	String getName (String userCode) throws Exception;
 }

@@ -74,6 +74,10 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 	@Autowired
 	private RmsUserDao rmsUserDao;
+	
+	@Autowired
+	private JwtDecoder decoder;
+
 
 	/*
 	 * @Autowired private CommisDaoCustom commisDaoCustom;
@@ -141,9 +145,9 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		InProposalsModel inProposalsModel = inProposalCustomDao.getProposalBuPolicy(saveReceiptDto.getPolId(),
 				saveReceiptDto.getPolSeq());
 
-		String agentCode = new JwtDecoder().generate(saveReceiptDto.getToken());
+		String agentCode = decoder.generate(saveReceiptDto.getToken());
 
-		String locCode = rmsUserDao.getLocation(agentCode);
+		String locCode = decoder.generateLoc(saveReceiptDto.getToken());
 
 		if (locCode != null) {
 

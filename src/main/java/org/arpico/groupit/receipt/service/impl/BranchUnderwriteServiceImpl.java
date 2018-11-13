@@ -153,6 +153,9 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	@Autowired
 	private DepartmentCourierDao departmentCourierDao;
 	
+	@Autowired
+	private JwtDecoder decoder;
+	
 	private boolean isExistDepartment=false;
 	
 	private DepartmentCourierModel departmentCourierModel=null;
@@ -200,10 +203,10 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	@Override
 	public ResponseEntity<Object> saveUnderwrite(SaveUnderwriteDto saveUnderwriteDto) throws Exception {
 		
-		String agentCode = new JwtDecoder().generate(saveUnderwriteDto.getToken());
+		String agentCode = decoder.generate(saveUnderwriteDto.getToken());
 
 		System.out.println(agentCode);
-		String locCode = rmsUserDao.getLocation(agentCode);
+		String locCode = decoder.generateLoc(saveUnderwriteDto.getToken());
 		
 		if (locCode != null ) {
 		

@@ -124,17 +124,19 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 	@Autowired
 	private ItextReceipt itextReceipt;
+	
+	@Autowired
+	private JwtDecoder decoder;
 
 	@Override
 	public ResponseDto saveQuotationReceipt(SaveReceiptDto saveReceiptDto) throws Exception {
 
 		List<AgentModel> agentModels = agentDao.findAgentByCode(saveReceiptDto.getAgentCode());
 
-		String agentCode = new JwtDecoder().generate(saveReceiptDto.getToken());
+		String agentCode = decoder.generate(saveReceiptDto.getToken());
 
-		System.out.println(agentCode);
-		String locCode = rmsUserDao.getLocation(agentCode);
-
+		String locCode = decoder.generateLoc(saveReceiptDto.getToken());
+		
 		ResponseDto responseDto = new ResponseDto();
 
 		if (locCode != null) {
@@ -160,7 +162,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 					// System.out.println(sheduleDtos.size());
 					// Primary Keys
-					InProposalsModelPK inProposalsModelPK = getProposalModelPK(saveReceiptDto, locCode);
+					InProposalsModelPK inProposalsModelPK = getProposalModelPK(saveReceiptDto, agentModels.get(0).getLocation());
 					inProposalsModelPK.setPprnum(numberGen[1]);
 
 					System.out.println(inProposalsModelPK.getPprnum());

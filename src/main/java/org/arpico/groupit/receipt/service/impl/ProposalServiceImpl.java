@@ -163,6 +163,9 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	@Autowired
 	private ItextReceipt itextReceipt;
+	
+	@Autowired
+	private JwtDecoder decoder;
 
 	@Override
 	public List<ProposalNoSeqNoDto> getProposalNoSeqNoDtoList(String val) throws Exception {
@@ -212,9 +215,9 @@ public class ProposalServiceImpl implements ProposalServce {
 	@Override
 	public ResponseEntity<Object> saveProposal(SaveReceiptDto saveReceiptDto) throws Exception {
 
-		String agentCode = new JwtDecoder().generate(saveReceiptDto.getToken());
+		String agentCode = decoder.generate(saveReceiptDto.getToken());
 
-		String locCode = rmsUserDao.getLocation(agentCode);
+		String locCode = decoder.generateLoc(saveReceiptDto.getToken());
 
 		if (locCode != null) {
 
