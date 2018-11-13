@@ -79,12 +79,7 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 			locations=locations.replaceAll(",$", "");
 			
 			if(locations != "") {
-				boolean isHo=false;
-				if(loccodes.contains("HO")) {
-					isHo=true;
-					return receiptCancelationCustomDao.findReceiptLikeReceiptId(receiptId, locations,isHo);
-				}
-				
+				return receiptCancelationCustomDao.findReceiptLikeReceiptId(receiptId, locations,loccodes.contains("HO"));
 			}
 		}
 		

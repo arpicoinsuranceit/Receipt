@@ -4,7 +4,6 @@ import java.util.List;
 import org.arpico.groupit.receipt.dto.CanceledReceiptDto;
 import org.arpico.groupit.receipt.service.ReceiptCancelationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;

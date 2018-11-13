@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -11,6 +13,7 @@ import javax.persistence.Table;
 @Table(name = "inreceiptauth")
 public class CanceledReceiptModel {
 	
+	private Integer receiptAuthId;
 	private String sbuCode;
 	private String locCode;
 	private String receiptNo;
@@ -30,6 +33,15 @@ public class CanceledReceiptModel {
 	private Double amount;
 	private String docCode;
 	
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="rcptauthid")
+	public Integer getReceiptAuthId() {
+		return receiptAuthId;
+	}
+	public void setReceiptAuthId(Integer receiptAuthId) {
+		this.receiptAuthId = receiptAuthId;
+	}
 	@Column(name="sbucod")
 	public String getSbuCode() {
 		return sbuCode;
@@ -45,8 +57,7 @@ public class CanceledReceiptModel {
 	public void setLocCode(String locCode) {
 		this.locCode = locCode;
 	}
-	
-	@Id
+
 	@Column(name="docnum")
 	public String getReceiptNo() {
 		return receiptNo;
