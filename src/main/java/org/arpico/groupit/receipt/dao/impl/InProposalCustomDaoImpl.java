@@ -45,7 +45,7 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 
 	@Override
 	public InProposalsModel getProposal(Integer propId, Integer propSeq) throws Exception {
-		List<InProposalsModel> models = jdbcTemplate.query("select * from inproposals where pprnum = '"+propId+"' and prpseq = '"+propSeq+"' and sbucod = '450'", new InProposalsRowMapper());
+		List<InProposalsModel> models = jdbcTemplate.query("select * from inproposals where sbucod = '450' and pprnum = '"+propId+"' and prpseq = '"+propSeq+"' ", new InProposalsRowMapper());
 		
 		System.out.println(models.size());
 		

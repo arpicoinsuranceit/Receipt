@@ -22,5 +22,12 @@ public class InPropFamDetailsCustomDaoImpl implements InPropFamDetailsCustomDao 
 				"select * from inpropfamdetails where sbucod = '450' and pprnum = " + pprNo + " and prpseq = " + seqNo,
 				new InPropFamDetailsRowMapper());
 	}
+	
+	@Override
+	public void removeFamilyByPprNoAndSeqNo(Integer pprNo, Integer seqNo) throws Exception {
+
+		jdbcTemplate.execute(
+				"delete from inpropfamdetails where sbucod = '450' and pprnum = " + pprNo + " and prpseq = " + seqNo );
+	}
 
 }

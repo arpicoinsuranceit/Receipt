@@ -22,5 +22,12 @@ public class InPropLoadingCustomDaoImpl implements InPropLoadingCustomDao {
 				"select * from inproploading where sbucod = '450' and pprnum = " + pprNo + " and prpseq =" + seqNo,
 				new InPropLoadingRowMapper());
 	}
+	
+	@Override
+	public void removePropLoadingByPprNumAndSeq(Integer pprNo, Integer seqNo) throws Exception {
+
+		jdbcTemplate.execute(
+				"delete from inproploading where sbucod = '450' and pprnum = " + pprNo + " and prpseq =" + seqNo );
+	}
 
 }

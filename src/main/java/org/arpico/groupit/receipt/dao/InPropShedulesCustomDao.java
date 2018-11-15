@@ -7,4 +7,6 @@ import org.arpico.groupit.receipt.model.InPropSchedulesModel;
 public interface InPropShedulesCustomDao {
 
 	List<InPropSchedulesModel> getScheduleBuPprNoAndSeqNo(Integer pprNo, Integer seqNo) throws Exception;
+
+	void removeScheduleByPprNoAndSeqNo(Integer pprNo, Integer seqNo) throws Exception;
 }

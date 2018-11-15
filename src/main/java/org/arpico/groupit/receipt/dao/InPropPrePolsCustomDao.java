@@ -7,5 +7,7 @@ import org.arpico.groupit.receipt.model.InPropPrePolsModel;
 public interface InPropPrePolsCustomDao {
 
 	List<InPropPrePolsModel> getPrePolByPprNoAndPprSeq(Integer pprNo, Integer pprSeq) throws Exception;
+
+	void removePrePolByPprNoAndPprSeq(Integer pprNo, Integer pprSeq) throws Exception;
 	
 }

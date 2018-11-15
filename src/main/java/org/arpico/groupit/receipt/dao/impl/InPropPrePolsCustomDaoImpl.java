@@ -22,5 +22,12 @@ public class InPropPrePolsCustomDaoImpl implements InPropPrePolsCustomDao {
 				"select * from inpropprepols where sbucod = '450' and pprnum = " + pprNo + " and prpseq =" + pprSeq,
 				new InPropPrePolsRowMapper());
 	}
+	
+	@Override
+	public void removePrePolByPprNoAndPprSeq(Integer pprNo, Integer pprSeq) throws Exception {
+
+		jdbcTemplate.execute(
+				"delete from inpropprepols where sbucod = '450' and pprnum = " + pprNo + " and prpseq =" + pprSeq );
+	}
 
 }

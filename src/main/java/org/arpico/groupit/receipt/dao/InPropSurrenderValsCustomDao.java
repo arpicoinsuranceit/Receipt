@@ -7,4 +7,6 @@ import org.arpico.groupit.receipt.model.InPropSurrenderValsModel;
 public interface InPropSurrenderValsCustomDao {
 
 	List<InPropSurrenderValsModel> getSurrenderValByInpprNoAndSeq(Integer pprNo, Integer seqNo) throws Exception;
+
+	void removeSurrenderValByInpprNoAndSeq(Integer pprNo, Integer seqNo) throws Exception;
 }
