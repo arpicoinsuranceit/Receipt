@@ -22,5 +22,12 @@ public class InPropShedulesCustomDaoImpl implements InPropShedulesCustomDao {
 				"select * from inpropschedules where sbucod = '450' and pprnum = " + pprNo + " and prpseq =" + seqNo,
 				new InPropScheduleRowMapper());
 	}
+	
+	@Override
+	public void removeScheduleByPprNoAndSeqNo(Integer pprNo, Integer seqNo) throws Exception {
+
+		jdbcTemplate.execute(
+				"delete from inpropschedules where sbucod = '450' and pprnum = " + pprNo + " and prpseq =" + seqNo );
+	}
 
 }

@@ -7,4 +7,6 @@ import org.arpico.groupit.receipt.model.InPropLoadingModel;
 public interface InPropLoadingCustomDao {
 	
 	List<InPropLoadingModel> getPropLoadingBuPprNumAndSeq(Integer pprNo, Integer seqNo) throws Exception;
+
+	void removePropLoadingByPprNumAndSeq(Integer pprNo, Integer seqNo) throws Exception;
 }
