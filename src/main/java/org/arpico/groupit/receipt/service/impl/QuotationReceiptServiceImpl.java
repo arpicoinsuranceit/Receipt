@@ -261,9 +261,12 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 					/////////// When Ho //////////
 
-					inProposalsModel.setPprsta("L1");
-					inProposalsModel.setProsta("L1");
-
+					if(locCode.equalsIgnoreCase("HO")) {
+						inProposalsModel.setPprsta("L1");
+					}else {
+						inProposalsModel.setProsta("L1");
+					}
+					
 					inProposalDao.save(inProposalsModel);
 					inPropAddBenefictDao.save(addBenefitModels);
 					if (inPropScheduleList != null) {

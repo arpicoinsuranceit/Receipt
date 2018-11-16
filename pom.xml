@@ -15,7 +15,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-		<start-class>org.arpicoinsurance.groupit.dashboard.Main</start-class>
+		<start-class>org.arpico.groupit.receipt.ReceiptMain</start-class>
 	</properties>
 	
 	<dependencies>
@@ -150,6 +150,19 @@
 			<groupId>com.itextpdf</groupId>
 			<artifactId>pdftest</artifactId>
 			<version>7.0.4</version>
+		</dependency>
+		
+		<!-- log4j -->
+		
+		<dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-api</artifactId>
+		    <version>2.11.1</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-core</artifactId>
+		    <version>2.11.1</version>
 		</dependency>
 		
 	</dependencies>
