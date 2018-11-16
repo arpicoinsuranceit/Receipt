@@ -17,8 +17,13 @@ public class ExpenseDaoImpl implements ExpenseDao {
 
 	@Override
 	public List<ExpenseModel> getExpenceModels() throws Exception {
+
+//		List<ExpenseModel> expenseModels = jdbcTemplate.query(
+//				"select ITEM_CODE, ITM_DESC, UNIT_PRICE from rms_itmmaster where ITM_GROUP in ('COM')",
+//				new ExpenceRowMapper());
+
 		List<ExpenseModel> expenseModels = jdbcTemplate.query(
-				"select ITEM_CODE, ITM_DESC, UNIT_PRICE from rms_itmmaster where ITM_GROUP in ('COM')",
+				"select ITEM_CODE, ITM_DESC, UNIT_PRICE from rms_itmmaster where SBU_CODE = '450' and ITM_GROUP in ('COM')",
 				new ExpenceRowMapper());
 
 		return expenseModels;
@@ -26,9 +31,15 @@ public class ExpenseDaoImpl implements ExpenseDao {
 
 	@Override
 	public List<ExpenseModel> getExpenceModel(String code) throws Exception {
+		/*
+		 * List<ExpenseModel> expenseModels = jdbcTemplate.query(
+		 * "select ITEM_CODE, ITM_DESC, UNIT_PRICE from rms_itmmaster where ITM_GROUP in ('COM') and ITEM_CODE = '"
+		 * + code + "'", new ExpenceRowMapper());
+		 */
+
 		List<ExpenseModel> expenseModels = jdbcTemplate.query(
-				"select ITEM_CODE, ITM_DESC, UNIT_PRICE from rms_itmmaster where ITM_GROUP in ('COM') and ITEM_CODE = '"
-						+ code + "'",
+				"select ITEM_CODE, ITM_DESC, UNIT_PRICE from rms_itmmaster where SBU_CODE = '450' and ITEM_CODE = '"
+						+ code + "' and  ITM_GROUP in ('COM')",
 				new ExpenceRowMapper());
 
 		return expenseModels;

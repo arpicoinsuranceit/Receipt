@@ -17,7 +17,11 @@ public class BranchDaoImpl implements BranchDao{
 	
 	@Override
 	public List<BranchModel> getBranchs(String userCode) throws Exception {
-		List<BranchModel> branchModels = jdbcTemplate.query("SELECT l.loc_code, l.loc_name FROM rms_users u, rms_locations l where u.loc_code = l.loc_code and u.USER_ID = '"+userCode+"' and u.SBU_CODE='450' and u.active='1'", new BranchRowMapper());
+		
+		String query = "select l.loc_code, l.loc_name from rms_locations l inner join rms_users u on l.sbu_code=u.sbu_code and u.loc_code = l.loc_code\r\n" + 
+				"    where u.sbu_code='450' and u.user_id = '"+userCode+"' and u.active='1'";
+		
+		List<BranchModel> branchModels = jdbcTemplate.query(query, new BranchRowMapper());
 		return branchModels;
 	}
 

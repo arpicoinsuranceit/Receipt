@@ -18,16 +18,19 @@ public class InPropShedulesCustomDaoImpl implements InPropShedulesCustomDao {
 	@Override
 	public List<InPropSchedulesModel> getScheduleBuPprNoAndSeqNo(Integer pprNo, Integer seqNo) throws Exception {
 
-		return jdbcTemplate.query(
-				"select * from inpropschedules where sbucod = '450' and pprnum = " + pprNo + " and prpseq =" + seqNo,
-				new InPropScheduleRowMapper());
+//		return jdbcTemplate.query(
+//				"select * from inpropschedules where sbucod = '450' and pprnum = " + pprNo + " and prpseq =" + seqNo,
+//				new InPropScheduleRowMapper());
+
+		return jdbcTemplate.query("select * from inpropschedules where sbucod = '450' and pprnum = '" + pprNo
+				+ "' and prpseq = '" + seqNo + "'", new InPropScheduleRowMapper());
 	}
-	
+
 	@Override
 	public void removeScheduleByPprNoAndSeqNo(Integer pprNo, Integer seqNo) throws Exception {
 
 		jdbcTemplate.execute(
-				"delete from inpropschedules where sbucod = '450' and pprnum = " + pprNo + " and prpseq =" + seqNo );
+				"delete from inpropschedules where sbucod = '450' and pprnum = " + pprNo + " and prpseq =" + seqNo);
 	}
 
 }

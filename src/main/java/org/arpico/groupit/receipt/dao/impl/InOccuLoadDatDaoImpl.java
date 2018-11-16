@@ -17,6 +17,12 @@ public class InOccuLoadDatDaoImpl implements InOccuLoadDatDao {
 
 	@Override
 	public List<InOcuLoadDetModel> inOccuLoadDatDaosByOccupation(String ocuCode, String ridCode) throws Exception {
+		/*
+		 * List<InOcuLoadDetModel> datDaos = jdbcTemplate
+		 * .query("select * from inoculoaddet where sbucod = '450' and ocucod = '" +
+		 * ocuCode + "' and ridcod = '" + ridCode + "'", new InOccuLoadDatRowMapper());
+		 */
+
 		List<InOcuLoadDetModel> datDaos = jdbcTemplate
 				.query("select * from inoculoaddet where sbucod = '450' and ocucod = '" + ocuCode + "' and ridcod = '"
 						+ ridCode + "'", new InOccuLoadDatRowMapper());

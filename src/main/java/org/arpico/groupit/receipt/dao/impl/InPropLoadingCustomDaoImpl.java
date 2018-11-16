@@ -17,17 +17,23 @@ public class InPropLoadingCustomDaoImpl implements InPropLoadingCustomDao {
 
 	@Override
 	public List<InPropLoadingModel> getPropLoadingBuPprNumAndSeq(Integer pprNo, Integer seqNo) throws Exception {
+		/*
+		 * return jdbcTemplate.query(
+		 * "select * from inproploading where sbucod = '450' and pprnum = " + pprNo +
+		 * " and prpseq =" + seqNo, new InPropLoadingRowMapper());
+		 */
 
 		return jdbcTemplate.query(
-				"select * from inproploading where sbucod = '450' and pprnum = " + pprNo + " and prpseq =" + seqNo,
+				"select * from inproploading where sbucod = '450' and pprnum = '" + pprNo + "' and prpseq =" + seqNo,
 				new InPropLoadingRowMapper());
+
 	}
-	
+
 	@Override
 	public void removePropLoadingByPprNumAndSeq(Integer pprNo, Integer seqNo) throws Exception {
 
 		jdbcTemplate.execute(
-				"delete from inproploading where sbucod = '450' and pprnum = " + pprNo + " and prpseq =" + seqNo );
+				"delete from inproploading where sbucod = '450' and pprnum = " + pprNo + " and prpseq =" + seqNo);
 	}
 
 }

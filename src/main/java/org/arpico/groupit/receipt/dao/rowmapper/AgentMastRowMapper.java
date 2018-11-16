@@ -12,7 +12,7 @@ public class AgentMastRowMapper implements RowMapper<AgentMastModel>{
 	public AgentMastModel mapRow(ResultSet rs, int rowNum) throws SQLException {
 		AgentMastModel agentMastModel = new AgentMastModel();
 		agentMastModel.setAgncls(rs.getString("agncls"));
-		agentMastModel.setBrnmanager(rs.getString("brnmanager"));
+//		agentMastModel.setBrnmanager(rs.getString("brnmanager"));
 		agentMastModel.setLocation(rs.getString("location"));
 		agentMastModel.setUnlcod(rs.getString("unlcod"));
 		return agentMastModel;

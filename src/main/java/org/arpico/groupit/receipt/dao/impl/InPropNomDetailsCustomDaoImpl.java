@@ -18,11 +18,14 @@ public class InPropNomDetailsCustomDaoImpl implements InPropNomDetailsCustomDao 
 	@Override
 	public List<InPropNomDetailsModel> getNomByPprNoAndPprSeq(Integer pprNo, Integer pprSeq) throws Exception {
 
-		return jdbcTemplate.query(
-				"select * from inpropnomdetails where sbucod = '450' and pprnum = " + pprNo + " and prpseq =" + pprSeq,
-				new InPropNomDetailsRowMapper());
+//		return jdbcTemplate.query(
+//				"select * from inpropnomdetails where sbucod = '450' and pprnum = " + pprNo + " and prpseq =" + pprSeq,
+//				new InPropNomDetailsRowMapper());
+
+		return jdbcTemplate.query("select * from inpropnomdetails where sbucod = '450' and pprnum = '" + pprNo
+				+ "' and prpseq =" + pprSeq, new InPropNomDetailsRowMapper());
 	}
-	
+
 	@Override
 	public void removeNomByPprNoAndPprSeq(Integer pprNo, Integer pprSeq) throws Exception {
 

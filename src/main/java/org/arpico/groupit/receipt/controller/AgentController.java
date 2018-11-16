@@ -19,10 +19,10 @@ public class AgentController {
 	private AgentService agentService;
 	
 	@RequestMapping(value = "/getAgents", method = RequestMethod.POST)
-	public List<AgentDto> getAgentDtos (@RequestParam Integer agentCode){
+	public List<AgentDto> getAgentDtos (@RequestParam Integer agentCode, @RequestParam String token){
 		
 		try {
-			return agentService.getAgentList(agentCode);
+			return agentService.getAgentList(agentCode, token);
 		} catch (Exception e) {
 			e.printStackTrace();
 		};

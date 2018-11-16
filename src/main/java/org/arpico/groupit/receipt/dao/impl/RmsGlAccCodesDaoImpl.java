@@ -16,7 +16,7 @@ public class RmsGlAccCodesDaoImpl implements RmsGlAccCodesDao {
 		String accCode = null;
 
 		accCode = jdbcTemplate.queryForObject(
-				"select acc_code from rms_gl_acc_codes where doc_code = '" + docCode + "'", String.class);
+				"select acc_code from rms_gl_acc_codes where SBU_CODE = '450' and doc_code = '" + docCode + "'", String.class);
 
 		return accCode;
 	}

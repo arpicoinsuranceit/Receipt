@@ -6,7 +6,7 @@ import org.arpico.groupit.receipt.model.AgentModel;
 
 public interface AgentDao {
 
-	List<AgentModel> findAgentLikeAgentCode(Integer agentCode) throws Exception;
+	List<AgentModel> findAgentLikeAgentCode(Integer agentCode, String sql) throws Exception;
 
 	List<AgentModel> findAgentByCode(String agentCode) throws Exception;
 
