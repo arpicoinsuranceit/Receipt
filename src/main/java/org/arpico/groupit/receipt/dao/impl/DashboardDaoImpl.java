@@ -258,8 +258,8 @@ public class DashboardDaoImpl implements DashboardDao {
 			throws Exception {
 
 		String query = "SELECT doccod as DOCCODE, docnum as DOCNUM, pprnum as REMARK, totprm as AMOUNT, creadt as CREATEDT  FROM intransactions "
-				+ "    where sbucod = '450' and creaby = '" + type + "' and date_format(creadt,'%Y-%m-%d') between '"
-				+ user + "' and  '" + from + "' and paymod = 'CQ'";
+				+ "    where sbucod = '450' and creaby = '" + user + "' and date_format(creadt,'%Y-%m-%d') between '"
+				+ from + "' and  '" + to + "' and paymod = '"+type+"' order by creadt";
 
 		/*
 		 * String sql =
@@ -280,7 +280,7 @@ public class DashboardDaoImpl implements DashboardDao {
 
 		String query = "SELECT DOC_CODE as DOCCODE, DOC_NO as DOCNUM, REMARKS as REMARK, AMTFCU as AMOUNT, CRE_DATE as CREATEDT  FROM rms_doc_txnm "
 				+ "    where SBU_CODE = '450' and DOC_CODE = 'OIIS' and CRE_BY = '" + user + "' and CRE_DATE between '"
-				+ fromDate + "' and  '" + toDate + "' and REF2 in (" + type + ")";
+				+ fromDate + "' and  '" + toDate + "' and REF2 in (" + type + ") order by CRE_DATE";
 
 		/*
 		 * String query =
@@ -302,7 +302,7 @@ public class DashboardDaoImpl implements DashboardDao {
 		String query = "SELECT rm.DOC_CODE as DOCCODE, rm.DOC_NO as DOCNUM, rm.REMARK as REMARK, rm.AMTFCU as AMOUNT, rm.CRE_DATE as CREATEDT "
 				+ "    FROM rms_recm rm inner join rms_recd rd on rm.SBU_CODE=rd.SBU_CODE and rm.LOC_CODE=rd.LOC_CODE and rm.DOC_CODE = rd.DOC_CODE and rm.DOC_NO = rd.DOC_NO "
 				+ "    where rm.SBU_CODE = '450' and rm.DOC_CODE = 'GLRC'  and rm.CRE_BY = '" + user
-				+ "' and rm.CRE_DATE between '" + fromDate + "' and  '" + toDate + "' and rd.PAY_MODE = '" + type + "'";
+				+ "' and rm.CRE_DATE between '" + fromDate + "' and  '" + toDate + "' and rd.PAY_MODE = '" + type + "' order by CRE_BY";
 
 //		String sql = "SELECT rm.DOC_CODE as DOCCODE, rm.DOC_NO as DOCNUM, rm.REMARK as REMARK, rm.AMTFCU as AMOUNT, rm.CRE_DATE as CREATEDT FROM rms_recm rm, rms_recd rd "
 //				+ "where rm.SBU_CODE = '450' and rm.DOC_CODE = 'GLRC' and rm.DOC_CODE = rd.DOC_CODE and rm.DOC_NO = rd.DOC_NO and rm.CRE_BY = '"
