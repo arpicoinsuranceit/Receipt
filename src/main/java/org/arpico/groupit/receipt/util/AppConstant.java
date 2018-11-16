@@ -26,6 +26,7 @@ public class AppConstant {
 	public static final String URI_QUOTATION_SURRENDER_VALS = "http://10.10.10.11:8086/getSurrenderVals";
 	public static final String URI_QUOTATION_PENSION_SHEDULE = "http://10.10.10.11:8086/getPensionShedule";
 	public static final String URI_QUOTATION_NOMINEE_DETAILS = "http://10.10.10.11:8086/getNominee";
+	public static final String URI_QUOTATION_MEDICAL_REQUIREMENTS = "http://10.10.10.11:8086/getMediDetails";
 	public static final String URI_UPDATE_STATUS = "http://10.10.10.11:8086/updateStatus";
 	public static final String URI_QUOTATION_DETAILS_FROM_SEQNO = "http://10.10.10.11:8086/getQuotationDetailFromSeqNo";
 	public static final String URI_CHECK_NIC_VALIDATION = "http://10.10.10.11:8086/checkNicValidation";
