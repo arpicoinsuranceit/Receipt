@@ -302,7 +302,7 @@ public class DashboardDaoImpl implements DashboardDao {
 		String query = "SELECT rm.DOC_CODE as DOCCODE, rm.DOC_NO as DOCNUM, rm.REMARK as REMARK, rm.AMTFCU as AMOUNT, rm.CRE_DATE as CREATEDT "
 				+ "    FROM rms_recm rm inner join rms_recd rd on rm.SBU_CODE=rd.SBU_CODE and rm.LOC_CODE=rd.LOC_CODE and rm.DOC_CODE = rd.DOC_CODE and rm.DOC_NO = rd.DOC_NO "
 				+ "    where rm.SBU_CODE = '450' and rm.DOC_CODE = 'GLRC'  and rm.CRE_BY = '" + user
-				+ "' and rm.CRE_DATE between '" + fromDate + "' and  '" + toDate + "' and rd.PAY_MODE = '" + type + "' order by CRE_BY";
+				+ "' and rm.CRE_DATE between '" + fromDate + "' and  '" + toDate + "' and rd.PAY_MODE = '" + type + "' order by rm.CRE_DATE";
 
 //		String sql = "SELECT rm.DOC_CODE as DOCCODE, rm.DOC_NO as DOCNUM, rm.REMARK as REMARK, rm.AMTFCU as AMOUNT, rm.CRE_DATE as CREATEDT FROM rms_recm rm, rms_recd rd "
 //				+ "where rm.SBU_CODE = '450' and rm.DOC_CODE = 'GLRC' and rm.DOC_CODE = rd.DOC_CODE and rm.DOC_NO = rd.DOC_NO and rm.CRE_BY = '"
