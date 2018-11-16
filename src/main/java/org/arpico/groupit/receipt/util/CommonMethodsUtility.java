@@ -155,12 +155,12 @@ public class CommonMethodsUtility {
 			billingTransactionsModel.setTaxamt(inProposalsModel.getTaxamt());
 			billingTransactionsModel.setToptrm(inProposalsModel.getToptrm());
 			billingTransactionsModel.setTxntyp("PROPDEP");
-			if (agentMastModel.getAgncls().equalsIgnoreCase("IC")) {
+//			if (agentMastModel.getAgncls().equalsIgnoreCase("IC")) {
 				billingTransactionsModel.setUnlcod(agentMastModel.getUnlcod());
-			}
-			if (agentMastModel.getAgncls().equalsIgnoreCase("UNL")) {
-				billingTransactionsModel.setUnlcod(agentMastModel.getBrnmanager());
-			}
+//			}
+//			if (agentMastModel.getAgncls().equalsIgnoreCase("UNL")) {
+//				billingTransactionsModel.setUnlcod(agentMastModel.getBrnmanager());
+//			}
 			billingTransactionsModel.setTxnyer(Calendar.getInstance().get(Calendar.YEAR));
 			billingTransactionsModel.setTxnmth(Calendar.getInstance().get(Calendar.MONTH)+1);
 			if(saveReceiptDto.getPayMode().equals("CQ")) {

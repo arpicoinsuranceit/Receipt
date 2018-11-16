@@ -18,8 +18,18 @@ public class InPropAddBenefictCustomDaoImpl implements InPropAddBenefictCustomDa
 	@Override
 	public List<InPropAddBenefitModel> getBenefByPprSeq(Integer pprNo, Integer seqNo) throws Exception {
 
-		return jdbcTemplate.query("select * from inpropaddbenefit where sbucod = '450' and pprnum = " + pprNo + " and prpseq = " + seqNo,
-				new InPropAddBenefitRowMapper());
+//		return jdbcTemplate.query("select * from inpropaddbenefit where sbucod = '450' and pprnum = " + pprNo + " and prpseq = " + seqNo,
+//				new InPropAddBenefitRowMapper());
+
+		return jdbcTemplate.query("select * from inpropaddbenefit where sbucod = '450' and pprnum = " + pprNo
+				+ " and prpseq = " + seqNo , new InPropAddBenefitRowMapper());
+	}
+
+	@Override
+	public void removeBenefByPprSeq(Integer pprNo, Integer seqNo) throws Exception {
+
+		jdbcTemplate.execute(
+				"delete from inpropaddbenefit where sbucod = '450' and  pprnum = " + pprNo + " and prpseq = " + seqNo);
 	}
 
 }

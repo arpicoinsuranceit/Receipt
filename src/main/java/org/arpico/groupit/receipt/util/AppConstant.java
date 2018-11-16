@@ -18,6 +18,7 @@ public class AppConstant {
 	public static final String DOC_CODE_QUOT = "QUOT";
 	public static final String SYSTEM_CREATE = "system";
 	
+
 	public static final String URI_GET_QUO_DETAILS = "http://10.10.10.11:8086/getQuoDetail";
 	public static final String URI_GET_QUO_SHEDULES = "http://10.10.10.11:8086/getShedule";
 	public static final String URI_GET_QUO_MEDILEIS = "http://10.10.10.11:8086/getMediDetails";
@@ -28,7 +29,7 @@ public class AppConstant {
 	public static final String URI_UPDATE_STATUS = "http://10.10.10.11:8086/updateStatus";
 	public static final String URI_QUOTATION_DETAILS_FROM_SEQNO = "http://10.10.10.11:8086/getQuotationDetailFromSeqNo";
 	public static final String URI_CHECK_NIC_VALIDATION = "http://10.10.10.11:8086/checkNicValidation";
-	
+
 	public static final String URI_BRANCH_FIND = "http://10.10.10.11:8088/findbranch";
 	
 	public static final String URI_SEND_EMAIL = "http://10.10.10.12:8080/InfosysWS/sendEmail";

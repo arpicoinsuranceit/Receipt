@@ -206,6 +206,29 @@ public class QuotationClient {
 		return null;
 	}
 	
+	public List<MedicalRequirementsDto> getMedicals(Integer seqNo, Integer qId) {
+
+		MultiValueMap<String, Integer> map = new LinkedMultiValueMap<String, Integer>();
+		map.add("seqNo", seqNo);
+		map.add("qId", qId);
+
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			MedicalRequirementsDto[] result = restTemplate.postForObject(AppConstant.URI_QUOTATION_MEDICAL_REQUIREMENTS, map,
+					MedicalRequirementsDto[].class);
+
+			List<MedicalRequirementsDto> medicalDtos = new ArrayList<>();
+			for (MedicalRequirementsDto medicalValsDto : result) {
+				medicalDtos.add(medicalValsDto);
+			}
+
+			return medicalDtos;
+		} catch (Exception e) {
+
+		}
+		return null;
+	}
+	
 	public Integer getQuotationDetailFromSeqNo(Integer seqNo, Integer qId) {
 
 		MultiValueMap<String, Integer> map = new LinkedMultiValueMap<String, Integer>();

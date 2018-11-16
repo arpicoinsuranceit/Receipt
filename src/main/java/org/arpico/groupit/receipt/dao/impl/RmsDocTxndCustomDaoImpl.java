@@ -17,7 +17,7 @@ public class RmsDocTxndCustomDaoImpl implements RmsDocTxndCustomDao{
 	
 	@Override
 	public List<RmsDocTxndModel> getDocTxndModels(String docCode, Integer docNum) throws Exception {
-		List<RmsDocTxndModel> models = jdbcTemplate.query("select * from rms_doc_txnd WHERE DOC_CODE = '"+docCode+"' and DOC_NO = '"+docNum+"'", new RmsDocTxndRowMapper());
+		List<RmsDocTxndModel> models = jdbcTemplate.query("select * from rms_doc_txnd WHERE SBU_CODE = '450' and DOC_CODE = '"+docCode+"' and DOC_NO = '"+docNum+"'", new RmsDocTxndRowMapper());
 		return models;
 	}
 

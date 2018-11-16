@@ -19,8 +19,18 @@ public class InPropSurrenderValsCustomDaoImpl implements InPropSurrenderValsCust
 	public List<InPropSurrenderValsModel> getSurrenderValByInpprNoAndSeq(Integer pprNo, Integer seqNo)
 			throws Exception {
 
-		return jdbcTemplate.query("select * from inpropsurrendervals where sbucod = '450' and pprnum = " + pprNo
-				+ " and prpseq =" + seqNo, new InPropSurrenderValsRowMapper());
+//		return jdbcTemplate.query("select * from inpropsurrendervals where sbucod = '450' and pprnum = " + pprNo
+//				+ " and prpseq =" + seqNo, new InPropSurrenderValsRowMapper());
+
+		return jdbcTemplate.query("select * from inpropsurrendervals where sbucod = '450' and pprnum = '" + pprNo
+				+ "' and prpseq = '" + seqNo + "'", new InPropSurrenderValsRowMapper());
+	}
+
+	@Override
+	public void removeSurrenderValByInpprNoAndSeq(Integer pprNo, Integer seqNo) throws Exception {
+
+		jdbcTemplate.execute(
+				"delete from inpropsurrendervals where sbucod = '450' and pprnum = " + pprNo + " and prpseq =" + seqNo);
 	}
 
 }

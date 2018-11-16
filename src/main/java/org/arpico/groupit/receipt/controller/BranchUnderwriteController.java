@@ -2,6 +2,7 @@ package org.arpico.groupit.receipt.controller;
 
 import java.util.List;
 import org.arpico.groupit.receipt.client.QuotationClient;
+import org.arpico.groupit.receipt.dto.MedicalRequirementsDto;
 import org.arpico.groupit.receipt.dto.NomineeDto;
 import org.arpico.groupit.receipt.dto.PensionSheduleDto;
 import org.arpico.groupit.receipt.dto.SaveUnderwriteDto;
@@ -9,6 +10,8 @@ import org.arpico.groupit.receipt.dto.SheduleDto;
 import org.arpico.groupit.receipt.dto.SurrenderValsDto;
 import org.arpico.groupit.receipt.dto.UnderwriteDto;
 import org.arpico.groupit.receipt.dto.ViewQuotationDto;
+import org.arpico.groupit.receipt.model.InPropFamDetailsModel;
+import org.arpico.groupit.receipt.model.InPropNomDetailsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.BranchUnderwriteService;
@@ -91,6 +94,14 @@ public class BranchUnderwriteController {
 		
 	}
 	
+	@RequestMapping(value = "/getMedicals/{seqNo}/{qId}", method = RequestMethod.GET)
+	public List<MedicalRequirementsDto> getMedicals(@PathVariable("seqNo") Integer seqNo,@PathVariable("qId") Integer qId)throws Exception{
+		System.out.println("getMedicals");
+		
+		return quotationClient.getMedicals(seqNo, qId);
+		
+	}
+	
 	@RequestMapping(value = "/getQuotationDetailFromSeqNo/{seqNo}/{qId}", method = RequestMethod.GET)
 	public Integer getQuotationDetailFromSeqNo (@PathVariable("seqNo") Integer seqNo,@PathVariable("qId") Integer qId)throws Exception{
 		System.out.println("getQuotationDetailFromSeqNo");
@@ -106,6 +117,20 @@ public class BranchUnderwriteController {
 		
 		return quotationClient.checkNicValidation(nic, gender, age, seqNo, qId);
 		
+	}
+	
+	@RequestMapping(value = "/loadProposalFamDetails/{proposalNo}/{seqNo}", method = RequestMethod.GET)
+	public List<InPropFamDetailsModel> getProposalFamDetails (@PathVariable("proposalNo") String proposalNo,@PathVariable("seqNo") String seqNo) throws Exception{
+
+		return branchUnderwriteService.getInProposalFamDetails(Integer.valueOf(proposalNo), Integer.valueOf(seqNo));
+
+	}
+	
+	@RequestMapping(value = "/loadProposalNomDetails/{proposalNo}/{seqNo}", method = RequestMethod.GET)
+	public List<InPropNomDetailsModel> getProposalNomDetails (@PathVariable("proposalNo") String proposalNo,@PathVariable("seqNo") String seqNo) throws Exception{
+
+		return branchUnderwriteService.getInProposalNomineeDetails(Integer.valueOf(proposalNo), Integer.valueOf(seqNo));
+
 	}
 	
 	@RequestMapping(value = "/saveUnderwrite", method = RequestMethod.POST)

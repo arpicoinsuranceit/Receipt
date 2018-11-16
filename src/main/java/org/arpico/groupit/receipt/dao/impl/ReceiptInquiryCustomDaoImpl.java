@@ -69,7 +69,7 @@ public class ReceiptInquiryCustomDaoImpl implements ReceiptInquiryCustomDao {
 
 	@Override
 	public BankDetailsModel getBankDetails(String docCode, Integer docNum) throws Exception {
-		return jdbcTemplate.queryForObject("select paymod,bancod,chqnum,chqbnk,txndat,totprm,rctsta,remark from intransactions where  sbucod='450' and doccod='"+docCode+"' and docnum="+docNum+" and totprm > 0 ; ",
+		return jdbcTemplate.queryForObject("select paymod,bancod,chqnum,chqbnk,txndat,totprm,rctsta,remark from intransactions where  sbucod='450' and docnum="+docNum+" and doccod='"+docCode+"'  and totprm > 0 ; ",
 				new BankDetailsRowMapper());
 	}
 

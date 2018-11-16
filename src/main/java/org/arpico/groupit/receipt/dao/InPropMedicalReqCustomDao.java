@@ -10,4 +10,6 @@ public interface InPropMedicalReqCustomDao {
 
 	InPropMedicalReqModel getMedicalReq(Integer pprNo, Integer seqNo, String medcod, String testStatus)
 			throws Exception;
+
+	void removeMedicalReqByPprNoAndSeq(Integer pprNo, Integer seqNo) throws Exception;
 }

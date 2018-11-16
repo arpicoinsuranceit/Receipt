@@ -24,29 +24,53 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 
 	@Override
 	public List<InBillingTransactionsModel> getUnSetOffs(String pprnum) throws Exception {
-		List<InBillingTransactionsModel> billingTransactionsModels = jdbcTemplate.query("select a.*\r\n"
-				+ "                 from inbillingtransactions a inner join \r\n" + "                 (select y.*\r\n"
-				+ "                 from inbillingtransactions y  where sbucod='450' and pprnum='" + pprnum + "'\r\n"
-				+ "                 group by sbucod,polnum,txnyer,txnmth having sum(amount) > 0) b\r\n"
-				+ "                 on a.sbucod=b.sbucod and a.polnum=b.polnum and a.txnyer=b.txnyer and a.txnmth=b.txnmth \r\n"
-				+ "                 \r\n" + "                 where a.sbucod='450' and a.doccod='PRMI' \r\n"
-				+ "                 order by a.polnum,a.txnyer,a.txnmth", new InBillingTransactionRowMapper());
+//		List<InBillingTransactionsModel> billingTransactionsModels = jdbcTemplate.query("select a.*\r\n"
+//				+ "                 from inbillingtransactions a inner join \r\n" + "                 (select y.*\r\n"
+//				+ "                 from inbillingtransactions y  where sbucod='450' and pprnum='" + pprnum + "'\r\n"
+//				+ "                 group by sbucod,polnum,txnyer,txnmth having sum(amount) > 0) b\r\n"
+//				+ "                 on a.sbucod=b.sbucod and a.polnum=b.polnum and a.txnyer=b.txnyer and a.txnmth=b.txnmth \r\n"
+//				+ "                 \r\n" + "                 where a.sbucod='450' and a.doccod='PRMI' \r\n"
+//				+ "                 order by a.polnum,a.txnyer,a.txnmth", new InBillingTransactionRowMapper());
+//		
+
+		List<InBillingTransactionsModel> billingTransactionsModels = jdbcTemplate.query(
+				"select a.* from inbillingtransactions a inner join "
+						+ "    (select y.* from inbillingtransactions y  where sbucod='450' and pprnum='" + pprnum
+						+ "' group by sbucod,polnum,txnyer,txnmth having sum(amount) > 0) b "
+						+ "    on a.sbucod=b.sbucod and a.pprnum=b.pprnum and a.txnyer=b.txnyer and a.txnmth=b.txnmth  "
+						+ "    where a.sbucod='450' and a.doccod='PRMI' order by a.polnum,a.txnyer,a.txnmth;",
+				new InBillingTransactionRowMapper());
+
 		return billingTransactionsModels;
 	}
 
 	@Override
 	public InBillingTransactionsModel getTxnYearDate(String pprnum) throws Exception {
+		/*
+		 * InBillingTransactionsModel billingTransactionsModels = jdbcTemplate
+		 * .queryForObject("select * from inbillingtransactions  where sbucod = '450' and pprnum = '"
+		 * + pprnum + "' order by creadt desc limit 1", new
+		 * InBillingTransactionRowMapper());
+		 */
+
 		InBillingTransactionsModel billingTransactionsModels = jdbcTemplate
-				.queryForObject("select * from inbillingtransactions  where sbucod = '450' and pprnum = '" + pprnum
+				.queryForObject("select * from inbillingtransactions  " + "where sbucod = '450' and pprnum = '" + pprnum
 						+ "' order by creadt desc limit 1", new InBillingTransactionRowMapper());
+
 		return billingTransactionsModels;
 	}
 
 	@Override
 	public List<ReFundModel> getRefundList(String pprNum) throws Exception {
+//		List<ReFundModel> reFundModels = jdbcTemplate.query(
+//				"select pprnum,doccod,docnum,(sum(depost)*-1) as refamount, max(linnum) as linnum , paymod from inbillingtransactions where sbucod='450' and pprnum='"
+//						+ pprNum + "'  group by docnum having sum(depost) <0 order by docnum",
+//				new ReFundAmntRowMapper());
+
 		List<ReFundModel> reFundModels = jdbcTemplate.query(
-				"select pprnum,doccod,docnum,(sum(depost)*-1) as refamount, max(linnum) as linnum , paymod from inbillingtransactions where sbucod='450' and pprnum='"
-						+ pprNum + "'  group by docnum having sum(depost) <0 order by docnum",
+				"select pprnum,doccod,docnum,(sum(depost)*-1) as refamount, max(linnum) as linnum , paymod from inbillingtransactions "
+						+ "where sbucod='450' and pprnum='" + pprNum
+						+ "'  group by docnum having sum(depost) <0 order by docnum",
 				new ReFundAmntRowMapper());
 		return reFundModels;
 	}
@@ -59,9 +83,24 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 			List<Object> args = new ArrayList<>();
 			args.add(pprNo);
 
+//			amount = jdbcTemplate.query(
+//					"SELECT sum(amount) `sum` FROM inbillingtransactions where sbucod = '450' and pprnum = ? and "
+//							+ "txnyer <= year(curdate()) and txnmth <= month(curdate())",
+//					args.toArray(), new ResultSetExtractor<Double>() {
+//
+//						@Override
+//						public Double extractData(ResultSet rs) throws SQLException, DataAccessException {
+//							Double amountTemp = 0.0;
+//							if (rs.next()) {
+//								amountTemp = rs.getDouble("sum");
+//							}
+//							return amountTemp;
+//						}
+//					});
+
 			amount = jdbcTemplate.query(
-					"SELECT sum(amount) `sum` FROM inbillingtransactions where sbucod = '450' and pprnum = ? and "
-							+ "txnyer <= year(curdate()) and txnmth <= month(curdate())",
+					"SELECT sum(amount) `sum` FROM inbillingtransactions "
+					+ " where sbucod = '450' and pprnum=? and  txnyer <= year(curdate()) and txnmth <= month(curdate())",
 					args.toArray(), new ResultSetExtractor<Double>() {
 
 						@Override
@@ -73,7 +112,6 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 							return amountTemp;
 						}
 					});
-
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -83,9 +121,18 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 
 	@Override
 	public InBillingTransactionsModel getLasiInvoice(String pprnum) throws Exception {
+//		InBillingTransactionsModel billingTransactionsModels = jdbcTemplate
+//				.queryForObject(
+//						"select * from inbillingtransactions  where sbucod = '450' and pprnum = '" + pprnum
+//								+ "' and refdoc = 'PRMI' order by creadt desc limit 1",
+//						new InBillingTransactionRowMapper());
+		
 		InBillingTransactionsModel billingTransactionsModels = jdbcTemplate
-				.queryForObject("select * from inbillingtransactions  where sbucod = '450' and pprnum = '" + pprnum
-						+ "' and refdoc = 'PRMI' order by creadt desc limit 1", new InBillingTransactionRowMapper());
+				.queryForObject(
+						"select * from inbillingtransactions  where sbucod = '450' and pprnum = '" + pprnum
+								+ "' and refdoc = 'PRMI' order by creadt desc limit 1",
+						new InBillingTransactionRowMapper());
+		
 		return billingTransactionsModels;
 	}
 

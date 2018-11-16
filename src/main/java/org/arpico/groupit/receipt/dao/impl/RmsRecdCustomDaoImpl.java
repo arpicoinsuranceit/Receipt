@@ -21,9 +21,15 @@ public class RmsRecdCustomDaoImpl implements RmsRecdCustomDao {
 
 	@Override
 	public List<MisGlItemModel> glItemModels(String docCode, Integer docNo) throws Exception {
-		return jdbcTemplate.query("select t.DOCNUM, t.AMOUNT, t.REMARK, c.DESCRI, t.INTERID, t.DIMM04 "
-				+ "from gltrantemp t, glcharofaccs c where t.INTERID = c.INTERID and " + "t.DOCCOD = '" + docCode
-				+ "' and t.DOCNUM = '" + docNo + "'", new MisGlItemRowMapper());
+//		return jdbcTemplate.query("select t.DOCNUM, t.AMOUNT, t.REMARK, c.DESCRI, t.INTERID, t.DIMM04 "
+//				+ "from gltrantemp t, glcharofaccs c where t.INTERID = c.INTERID and " + "t.DOCCOD = '" + docCode
+//				+ "' and t.DOCNUM = '" + docNo + "'", new MisGlItemRowMapper());
+
+		return jdbcTemplate.query(
+				"select t.DOCNUM, t.AMOUNT, t.REMARK, c.DESCRI, t.INTERID, t.DIMM04 from gltrantemp t inner join glcharofaccs c "
+						+ "	on  t.SBU_CODE=c.SBU_CODE and t.loc_code=c.loc_code and t.INTERID = c.INTERID  where t.SBU_COD='450' and  t.DOCCOD = '"
+						+ docCode + "' and t.DOCNUM = '" + docNo + "'",
+				new MisGlItemRowMapper());
 	}
 
 	@Override
@@ -31,7 +37,7 @@ public class RmsRecdCustomDaoImpl implements RmsRecdCustomDao {
 		String paymode = null;
 
 		paymode = jdbcTemplate.query(
-				"select PAY_MODE from rms_recd where DOC_CODE = '" + docCode + "' and DOC_NO = '" + docNo + "' limit 1",
+				"select PAY_MODE from rms_recd where SBU_COD='450' and  DOC_CODE = '" + docCode + "' and DOC_NO = '" + docNo + "' limit 1",
 				new ResultSetExtractor<String>() {
 
 					@Override
