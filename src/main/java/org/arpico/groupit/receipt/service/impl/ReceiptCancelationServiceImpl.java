@@ -91,9 +91,10 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 		ResponseDto dto = null;
 
 		InTransactionsModel inTransactionsModel=null;
+		String userCode=new JwtDecoder().generate(token);
 		
 		try {
-			inTransactionsModel=receiptCancelationCustomDao.findTransctionRow("450", receiptNo,doccod);
+			inTransactionsModel=receiptCancelationCustomDao.findTransctionRow("450", receiptNo,doccod,userCode);
 			
 		}catch(Exception e) {
 			dto = new ResponseDto();
@@ -142,12 +143,12 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 				
 			}
 
-			String userCode=new JwtDecoder().generate(token);
+			
 			
 			String userName=userDao.getUserFullName(userCode);
 
 			if(userCode != null) {
-				String locCode=userDao.getUserLocations(userCode);
+				String locCode=inTransactionsModel.getInTransactionsModelPK().getLoccod();
 				
 				String branchName=branchDao.getBranchName(locCode);
 				

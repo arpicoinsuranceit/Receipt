@@ -89,4 +89,12 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 		return billingTransactionsModels;
 	}
 
+	@Override
+	public List<InBillingTransactionsModel> getTransactionsByPprnum(String pprnum) throws Exception {
+		
+		return jdbcTemplate
+				.query("select * from inbillingtransactions  where sbucod = '450' and pprnum = '" + pprnum
+						+ "' ", new InBillingTransactionRowMapper());
+	}
+
 }
