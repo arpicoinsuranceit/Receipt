@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -68,23 +69,23 @@ public class CodeTransferController {
 		return codeTransferService.saveCodeTransferPrp(saveCodeTransferDto);
 	}
 	
-	@RequestMapping(value="/code_transfer/rejectCodeTran/{user}/{codeTransferId}/{remark}", method = RequestMethod.GET)
-	public ResponseEntity<Object> rejectCodeTran(@PathVariable("user")String user,@PathVariable("codeTransferId")Integer codeTransferId
-			,@PathVariable("remark")String remark)throws Exception{
+	@RequestMapping(value="/code_transfer/rejectCodeTran", method = RequestMethod.POST)
+	public ResponseEntity<Object> rejectCodeTran(@RequestParam("user")String user,@RequestParam("codeTransferId")String codeTransferId
+			,@RequestParam("remark")String remark)throws Exception{
 		
-		return codeTransferService.rejectCodeTransfer(user,codeTransferId,remark);
+		return codeTransferService.rejectCodeTransfer(user,Integer.valueOf(codeTransferId),remark);
 	}
 	
-	@RequestMapping(value="/code_transfer/approveCodeTran/{user}/{codeTransferId}/{remark}", method = RequestMethod.GET)
-	public ResponseEntity<Object> approveCodeTran(@PathVariable("user")String user,@PathVariable("codeTransferId")Integer codeTransferId
-			,@PathVariable("remark")String remark)throws Exception{
+	@RequestMapping(value="/code_transfer/approveCodeTran", method = RequestMethod.POST)
+	public ResponseEntity<Object> approveCodeTran(@RequestParam("user")String user,@RequestParam("codeTransferId")String codeTransferId
+			,@RequestParam("remark")String remark)throws Exception{
 		
-		return codeTransferService.approveCodeTransfer(user,codeTransferId,remark);
+		return codeTransferService.approveCodeTransfer(user,Integer.valueOf(codeTransferId),remark);
 	}
 	
-	@RequestMapping(value="/code_transfer/getCodeTransfersToApprove/{token:.+}", method = RequestMethod.GET)
-	public List<CodeTransferDto> getCodeTransfersToApprove(@PathVariable("token")String token)throws Exception{
-		return codeTransferService.getCodeTransfersToApprove(token);
+	@RequestMapping(value="/code_transfer/getCodeTransfersToApprove", method = RequestMethod.POST)
+	public List<CodeTransferDto> getCodeTransfersToApprove(@RequestParam("userCode")String userCode)throws Exception{
+		return codeTransferService.getCodeTransfersToApprove(userCode);
 	}
 
 }

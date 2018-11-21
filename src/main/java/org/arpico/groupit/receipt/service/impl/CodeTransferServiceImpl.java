@@ -789,8 +789,8 @@ public class CodeTransferServiceImpl implements CodeTransferService{
 	}
 
 	@Override
-	public List<CodeTransferDto> getCodeTransfersToApprove(String token) throws Exception {
-		String userCode=new JwtDecoder().generate(token);
+	public List<CodeTransferDto> getCodeTransfersToApprove(String userCode) throws Exception {
+//		String userCode=new JwtDecoder().generate(token);
 		if(userCode != null) {
 			List<String> loccodes=branchUnderwriteDao.findLocCodes(userCode);
 			
