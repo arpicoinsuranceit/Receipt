@@ -1,6 +1,7 @@
 package org.arpico.groupit.receipt.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -793,7 +794,11 @@ public class CodeTransferServiceImpl implements CodeTransferService{
 //		String userCode=new JwtDecoder().generate(token);
 		if(userCode != null) {
 			List<String> loccodes=branchUnderwriteDao.findLocCodes(userCode);
+
+			System.out.println("calles getCodeTransfersToApprove " + userCode );
 			
+			loccodes.forEach(System.out::println);
+				
 			List<CodeTransferModel> codeTransferModels=codeTransferDao.findByStatusAndLocCodeIn("PENDING", loccodes);
 			List<CodeTransferDto> codeTransferDtos=new ArrayList<>();
 			
