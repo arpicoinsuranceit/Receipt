@@ -341,12 +341,12 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 			billingTransactionsModel.setTaxamt(inProposalsModel.getTaxamt());
 			billingTransactionsModel.setToptrm(inProposalsModel.getToptrm());
 			billingTransactionsModel.setTxntyp("INVOICE");
-			if (agentMastModel.getAgncls().equalsIgnoreCase("IC")) {
+//			if (agentMastModel.getAgncls().equalsIgnoreCase("IC")) {
 				billingTransactionsModel.setUnlcod(agentMastModel.getUnlcod());
-			}
-			if (agentMastModel.getAgncls().equalsIgnoreCase("UNL")) {
-				billingTransactionsModel.setUnlcod(agentMastModel.getBrnmanager());
-			}
+//			}
+//			if (agentMastModel.getAgncls().equalsIgnoreCase("UNL")) {
+//				billingTransactionsModel.setUnlcod(agentMastModel.getBrnmanager());
+//			}
 
 			if (previousInvoice != null) {
 				if (previousInvoice.getTxnmth() >= 12) {

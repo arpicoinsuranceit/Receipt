@@ -17,17 +17,36 @@ public class InPropMedicalReqCustomDaoImpl implements InPropMedicalReqCustomDao 
 	@Override
 	public List<InPropMedicalReqModel> getMedicalReqByPprNoAndSeq(Integer pprNo, Integer seqNo) throws Exception {
 
-		return jdbcTemplate.query(
-				"select * from inpropmedicalreq where sbucod = '450' and pprnum = " + pprNo + " and prpseq = " + seqNo,
-				new InPropMedicalReqRowMapper());
+		/*
+		 * return jdbcTemplate.query(
+		 * "select * from inpropmedicalreq where sbucod = '450' and pprnum = " + pprNo +
+		 * " and prpseq = " + seqNo, new InPropMedicalReqRowMapper());
+		 */
+
+		return jdbcTemplate.query("select * from inpropmedicalreq where sbucod = '450' and pprnum = '" + pprNo
+				+ "' and prpseq = " + seqNo, new InPropMedicalReqRowMapper());
 	}
-	
+
 	@Override
-	public InPropMedicalReqModel getMedicalReq(Integer pprNo, Integer seqNo,String medcod,String testStatus) throws Exception {
+	public InPropMedicalReqModel getMedicalReq(Integer pprNo, Integer seqNo, String medcod, String testStatus)
+			throws Exception {
+//
+//		return jdbcTemplate.queryForObject(
+//				"select * from inpropmedicalreq where sbucod = '450' and pprnum = " + pprNo + " and prpseq = " + seqNo
+//						+ " and medcod = '" + medcod + "' and tessta ='" + testStatus + "' ",
+//				new InPropMedicalReqRowMapper());
 
 		return jdbcTemplate.queryForObject(
-				"select * from inpropmedicalreq where sbucod = '450' and pprnum = " + pprNo + " and prpseq = " + seqNo + " and medcod = '"+medcod+"' and tessta ='"+testStatus+"' ",
+				"select * from inpropmedicalreq where sbucod = '450' and pprnum = '" + pprNo + "' and prpseq = '"
+						+ seqNo + "' and medcod = '" + medcod + "' and tessta ='" + testStatus + "'",
 				new InPropMedicalReqRowMapper());
+	}
+
+	@Override
+	public void removeMedicalReqByPprNoAndSeq(Integer pprNo, Integer seqNo) throws Exception {
+
+		jdbcTemplate.execute(
+				"delete from inpropmedicalreq where sbucod = '450' and pprnum = " + pprNo + " and prpseq = " + seqNo);
 	}
 
 }

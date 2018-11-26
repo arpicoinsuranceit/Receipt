@@ -44,10 +44,10 @@ public class BranchUnderwriteDaoImpl implements BranchUnderwriteDao {
 			boolean isHO) {
 		
 		if(isHO) {
-			return jdbcTemplate.query("select pprnum,prpseq,polnum,cscode,ppdnam,advcod,brncod,loccod,ppdnic FROM inproposals where pprsta = 'L0' and sbucod = '450' order by creadt desc LIMIT "+limit+" OFFSET "+offset+";",
+			return jdbcTemplate.query("select pprnum,prpseq,polnum,cscode,ppdnam,advcod,brncod,loccod,ppdnic FROM inproposals where  sbucod = '450'  and pprsta = 'L0' order by creadt desc LIMIT "+limit+" OFFSET "+offset+";",
 					new InProposalUnderwriteRowMapper());
 		}else {
-			return jdbcTemplate.query("select pprnum,prpseq,polnum,cscode,ppdnam,advcod,brncod,loccod,ppdnic FROM inproposals where pprsta = 'L0' and sbucod = '450' and loccod in ("+locodes+") order by creadt desc LIMIT "+limit+" OFFSET "+offset+";",
+			return jdbcTemplate.query("select pprnum,prpseq,polnum,cscode,ppdnam,advcod,brncod,loccod,ppdnic FROM inproposals where sbucod = '450' and loccod in ("+locodes+") and  pprsta = 'L0' order by creadt desc LIMIT "+limit+" OFFSET "+offset+";",
 					new InProposalUnderwriteRowMapper());
 		}
 		
@@ -59,11 +59,11 @@ public class BranchUnderwriteDaoImpl implements BranchUnderwriteDao {
 	public Integer findProposalCount(boolean isHO,String locodes) {
 		Integer propCount = null;
 		if(isHO) {
-			propCount = jdbcTemplate.queryForObject("select count(*) FROM inproposals where pprsta = 'L0' and sbucod = '450'", Integer.class);
+			propCount = jdbcTemplate.queryForObject("select count(*) FROM inproposals where sbucod = '450' and pprsta = 'L0' ", Integer.class);
 			
 			return propCount;
 		}else {
-			propCount = jdbcTemplate.queryForObject("select count(*) FROM inproposals where pprsta = 'L0' and sbucod = '450' and loccod in ("+locodes+") ", Integer.class);
+			propCount = jdbcTemplate.queryForObject("select count(*) FROM inproposals where sbucod = '450' and loccod in ("+locodes+") and pprsta = 'L0' ", Integer.class);
 			
 			return propCount;
 		}

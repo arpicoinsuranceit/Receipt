@@ -1,6 +1,7 @@
 package org.arpico.groupit.receipt.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -27,19 +28,20 @@ public class DashboardController {
 	public DashboardPieDto dailyRep(@PathVariable String toDate, @PathVariable String fromDate,
 			@PathVariable String token) throws Exception {
 
+		System.out.println(1);
+
 		System.out.println(token);
 		System.out.println(toDate);
 		System.out.println(fromDate);
 		SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss");
 
 		Date to = null;
-		
+
 		try {
 			to = sdf.parse(toDate);
 		} catch (Exception e) {
 			to = new Date(Long.parseLong(toDate));
 		}
-		
 
 		Date from = null;
 		try {
@@ -47,17 +49,27 @@ public class DashboardController {
 		} catch (Exception e) {
 			from = new Date(Long.parseLong(fromDate));
 		}
+
+		System.out.println("from" + from);
+		System.out.println("to" + to);
+		
+		to = addDate(to);
+		from = addDate(from);
+		
+		System.out.println("from" + from);
+		System.out.println("to" + to);
+		
+		
 
 		DashboardPieDto dashboardPieDto = dashboardService.getDashboardPie(to, from, token);
 
 		return dashboardPieDto;
 	}
-	
-	
+
 	@RequestMapping(value = "/dashboarddiv2/{toDate}/{fromDate}/{token:.+}/{type}", method = RequestMethod.GET)
 	public List<NameSeriesDto> dateVsAmount(@PathVariable String toDate, @PathVariable String fromDate,
 			@PathVariable String token, @PathVariable String type) throws Exception {
-
+		System.out.println(2);
 		System.out.println(token);
 		System.out.println(toDate);
 		System.out.println(fromDate);
@@ -65,13 +77,12 @@ public class DashboardController {
 		SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss");
 
 		Date to = null;
-		
+
 		try {
 			to = sdf.parse(toDate);
 		} catch (Exception e) {
 			to = new Date(Long.parseLong(toDate));
 		}
-		
 
 		Date from = null;
 		try {
@@ -79,31 +90,40 @@ public class DashboardController {
 		} catch (Exception e) {
 			from = new Date(Long.parseLong(fromDate));
 		}
+
+		System.out.println("from" + from);
+		System.out.println("to" + to);
+		
+		to = addDate(to);
+		from = addDate(from);
+		
+		System.out.println("from" + from);
+		System.out.println("to" + to);
+		
 
 		List<NameSeriesDto> dashboardPieDto = dashboardService.getDashboardNameSeries(to, from, token, type);
 
 		return dashboardPieDto;
 	}
-	
+
 	@RequestMapping(value = "/dashboarddetails/{type}/{toDate}/{fromDate}/{token:.+}", method = RequestMethod.GET)
-	public List<LastReceiptSummeryDto> getDetails (@PathVariable String type, @PathVariable String toDate,
-			@PathVariable String fromDate, @PathVariable String token) throws Exception{
-		
+	public List<LastReceiptSummeryDto> getDetails(@PathVariable String type, @PathVariable String toDate,
+			@PathVariable String fromDate, @PathVariable String token) throws Exception {
+		System.out.println(3);
 		SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss");
-		
+
 		System.out.println(toDate);
 		System.out.println(fromDate);
 		System.out.println(token);
 		System.out.println(type);
-		
+
 		Date to = null;
-		
+
 		try {
 			to = sdf.parse(toDate);
 		} catch (Exception e) {
 			to = new Date(Long.parseLong(toDate));
 		}
-		
 
 		Date from = null;
 		try {
@@ -111,31 +131,38 @@ public class DashboardController {
 		} catch (Exception e) {
 			from = new Date(Long.parseLong(fromDate));
 		}
+
+		System.out.println("from" + from);
+		System.out.println("to" + to);
 		
+		to = addDate(to);
+		from = addDate(from);
 		
+		System.out.println("from" + from);
+		System.out.println("to" + to);
 		
+
 		return dashboardService.getDetails(token, to, from, type);
-		
+
 	}
-	
+
 	@RequestMapping(value = "/getCashFlowDetails/{toDate}/{fromDate}/{token:.+}", method = RequestMethod.GET)
-	public List<NameValuePairDto> getCashFlowDetails (@PathVariable String toDate,
-			@PathVariable String fromDate, @PathVariable String token) throws Exception{
-		
+	public List<NameValuePairDto> getCashFlowDetails(@PathVariable String toDate, @PathVariable String fromDate,
+			@PathVariable String token) throws Exception {
+		System.out.println(4);
 		SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss");
-		
+
 		System.out.println(toDate);
 		System.out.println(fromDate);
 		System.out.println(token);
-		
+
 		Date to = null;
-		
+
 		try {
 			to = sdf.parse(toDate);
 		} catch (Exception e) {
 			to = new Date(Long.parseLong(toDate));
 		}
-		
 
 		Date from = null;
 		try {
@@ -143,32 +170,37 @@ public class DashboardController {
 		} catch (Exception e) {
 			from = new Date(Long.parseLong(fromDate));
 		}
+
+		System.out.println("from" + from);
+		System.out.println("to" + to);
 		
+		to = addDate(to);
+		from = addDate(from);
 		
+		System.out.println("from" + from);
+		System.out.println("to" + to);
 		
 		return dashboardService.getCashFlowDateils(to, from, token);
-		
+
 	}
-	
-	
+
 	@RequestMapping(value = "/getCashFlowDetailGrid/{type}/{toDate}/{fromDate}/{token:.+}", method = RequestMethod.GET)
-	public List<LastReceiptSummeryDto> getCashFlowDetailGrid (@PathVariable String type, @PathVariable String toDate,
-			@PathVariable String fromDate, @PathVariable String token) throws Exception{
-		
+	public List<LastReceiptSummeryDto> getCashFlowDetailGrid(@PathVariable String type, @PathVariable String toDate,
+			@PathVariable String fromDate, @PathVariable String token) throws Exception {
+		System.out.println(5);
 		SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss");
-		
+
 		System.out.println(toDate);
 		System.out.println(fromDate);
 		System.out.println(token);
-		
+
 		Date to = null;
-		
+
 		try {
 			to = sdf.parse(toDate);
 		} catch (Exception e) {
 			to = new Date(Long.parseLong(toDate));
 		}
-		
 
 		Date from = null;
 		try {
@@ -176,17 +208,24 @@ public class DashboardController {
 		} catch (Exception e) {
 			from = new Date(Long.parseLong(fromDate));
 		}
+
+		System.out.println("from" + from);
+		System.out.println("to" + to);
 		
+		to = addDate(to);
+		from = addDate(from);
 		
+		System.out.println("from" + from);
+		System.out.println("to" + to);
 		
-		return dashboardService.getCashFlowDateilGrid(type,to, from, token);
-		
+		return dashboardService.getCashFlowDateilGrid(type, to, from, token);
+
 	}
-	
+
 	@RequestMapping(value = "/datevspaymode/{toDate}/{fromDate}/{token:.+}/{type}", method = RequestMethod.GET)
 	public List<NameSeriesDto> dateVsPayMode(@PathVariable String toDate, @PathVariable String fromDate,
 			@PathVariable String token, @PathVariable String type) throws Exception {
-
+		System.out.println(6);
 		System.out.println(token);
 		System.out.println(toDate);
 		System.out.println(fromDate);
@@ -194,13 +233,13 @@ public class DashboardController {
 		SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss");
 
 		Date to = null;
-		
+
 		try {
 			to = sdf.parse(toDate);
 		} catch (Exception e) {
 			to = new Date(Long.parseLong(toDate));
 		}
-		
+
 
 		Date from = null;
 		try {
@@ -208,10 +247,30 @@ public class DashboardController {
 		} catch (Exception e) {
 			from = new Date(Long.parseLong(fromDate));
 		}
+
+		System.out.println("from" + from);
+		System.out.println("to" + to);
+		
+		to = addDate(to);
+		from = addDate(from);
+		
+		System.out.println("from" + from);
+		System.out.println("to" + to);
+		
 
 		List<NameSeriesDto> dashboardPieDto = dashboardService.getDashboardPayMode(to, from, token, type);
 
 		return dashboardPieDto;
+	}
+
+	private Date addDate(Date dt) {
+
+		Calendar c = Calendar.getInstance();
+		c.setTime(dt);
+		c.add(Calendar.DATE, 1);
+		dt = c.getTime();
+
+		return dt;
 	}
 
 }

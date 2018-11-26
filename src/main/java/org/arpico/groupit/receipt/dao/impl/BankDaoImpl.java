@@ -25,7 +25,7 @@ public class BankDaoImpl implements BankDao{
 
 	@Override
 	public BankModel getBankById(String bankId) throws Exception {
-		return (BankModel) jdbcTemplate.queryForObject("select * from smbank where BANCOD='"+bankId+"' group by BANCOD", new BankRowMapper());
+		return (BankModel) jdbcTemplate.queryForObject("select * from smbank where SBUCOD = '450' and BANCOD='"+bankId+"' group by BANCOD", new BankRowMapper());
 	}
 	
 	

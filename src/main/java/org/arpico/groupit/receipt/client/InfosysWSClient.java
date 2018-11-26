@@ -10,13 +10,21 @@ import org.springframework.web.client.RestTemplate;
 public class InfosysWSClient {
 
 	public EmailResponseDto sendEmail(EmailDto emailDto) {
+		
+		System.out.println(emailDto.toString());
 
 		try {
+			
+			System.out.println("try");
+			
 			RestTemplate restTemplate = new RestTemplate();
 			EmailResponseDto result = restTemplate.postForObject(AppConstant.URI_SEND_EMAIL, emailDto,
 					EmailResponseDto.class);
+			
+			System.out.println(result.toString());
 			return result;
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
 		return null;

@@ -70,16 +70,16 @@ public class ReceiptCancelationCustomDaoImpl implements ReceiptCancelationCustom
 				"inner join inzonemast z on ig.zoncod=z.zoncod and ig.sbucod=z.sbucod " + 
 				"inner join inregion r on z.zoncod=r.zoncod and z.sbucod=r.sbucod " + 
 				"inner join rms_locations l on r.rgncod=l.rgncod and r.sbucod=l.sbu_code " + 
-				"where l.loccod='"+loccode+"' and l.sbu_code='"+sbucode+"' ", String.class);
+				"where l.sbu_code='"+sbucode+"' and  l.loccod='"+loccode+"' ", String.class);
 		
 		return email;
 	}
 	
 	
 	@Override
-	public InTransactionsModel findTransctionRow(String sbucode, String docnum,String doccod) throws Exception {
+	public InTransactionsModel findTransctionRow(String sbucode, String docnum,String doccod,String creby) throws Exception {
 		InTransactionsModel transaction=null;
-		transaction=jdbcTemplate.queryForObject("SELECT * FROM intransactions where sbucod='"+sbucode+"' and docnum='"+docnum+"' and doccod='"+doccod+"'", new InTransactionRowMapper());
+		transaction=jdbcTemplate.queryForObject("SELECT * FROM intransactions where sbucod='"+sbucode+"' and docnum='"+docnum+"' and doccod='"+doccod+"' and creaby='"+creby+"' ", new InTransactionRowMapper());
 		
 		return transaction;
 	}

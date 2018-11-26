@@ -6,6 +6,6 @@ import org.arpico.groupit.receipt.model.AgentMastModel;
 
 public interface InAgentMastDao {
 	
-	List<AgentMastModel> getAgentDetails (String agenCode) throws Exception;
+	List<AgentMastModel> getAgentDetails(String agenCode) throws Exception;
 
 }

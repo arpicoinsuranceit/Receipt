@@ -44,10 +44,7 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 	
 	@Autowired
 	private ReceiptCancelationDao receiptCancelationDao;
-	
-	@Autowired
-	private InTransactionCustomDao inTransactionCustomDao;
-	
+
 	@Autowired
 	private UserDao userDao;
 	
@@ -91,9 +88,10 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 		ResponseDto dto = null;
 
 		InTransactionsModel inTransactionsModel=null;
+		String userCode=new JwtDecoder().generate(token);
 		
 		try {
-			inTransactionsModel=receiptCancelationCustomDao.findTransctionRow("450", receiptNo,doccod);
+			inTransactionsModel=receiptCancelationCustomDao.findTransctionRow("450", receiptNo,doccod,userCode);
 			
 		}catch(Exception e) {
 			dto = new ResponseDto();
@@ -142,7 +140,7 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 				
 			}
 
-			String userCode=new JwtDecoder().generate(token);
+			
 			
 			String userName=userDao.getUserFullName(userCode);
 
@@ -168,7 +166,7 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService{
 				if(receiptCancelationDao.save(canceledReceiptModel) != null) {
 					
 					String toEmail=receiptCancelationCustomDao.findGMEmail("450", inTransactionsModel.getInTransactionsModelPK().getLoccod());
-					String fromEmail=userDao.getUserEmail(userCode);
+				 	String fromEmail=userDao.getUserEmail(userCode);
 					
 					String body="Dear Sir , \n\n Receipt Cancelation Request from "+branchName+" branch. \n Cancelation reason for "+reason + ".\n\n";
 					

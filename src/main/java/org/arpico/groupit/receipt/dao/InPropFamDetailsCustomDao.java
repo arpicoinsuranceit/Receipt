@@ -7,5 +7,7 @@ import org.arpico.groupit.receipt.model.InPropFamDetailsModel;
 public interface InPropFamDetailsCustomDao {
 
 	List<InPropFamDetailsModel> getFamilyByPprNoAndSeqNo (Integer pprNo, Integer seqNo) throws Exception;
+
+	void removeFamilyByPprNoAndSeqNo(Integer pprNo, Integer seqNo) throws Exception;
 	
 }
