@@ -14,24 +14,24 @@ public class InPropSurrenderValsRowMapper implements RowMapper<InPropSurrenderVa
 		
 		InPropSurrenderValsPK inPropSurrenderValsPK = new InPropSurrenderValsPK();
 		
-		inPropSurrenderValsPK.setPadtrm(rs.getString(""));
-		inPropSurrenderValsPK.setPolyer(rs.getInt(""));
-		inPropSurrenderValsPK.setPprnum(rs.getString(""));
-		inPropSurrenderValsPK.setPrpseq(rs.getInt(""));
-		inPropSurrenderValsPK.setQuonum(rs.getInt(""));
-		inPropSurrenderValsPK.setSbucod(rs.getString(""));
+		inPropSurrenderValsPK.setPadtrm(rs.getString("padtrm"));
+		inPropSurrenderValsPK.setPolyer(rs.getInt("polyer"));
+		inPropSurrenderValsPK.setPprnum(rs.getString("pprnum"));
+		inPropSurrenderValsPK.setPrpseq(rs.getInt("prpseq"));
+		inPropSurrenderValsPK.setQuonum(rs.getInt("quonum"));
+		inPropSurrenderValsPK.setSbucod(rs.getString("sbucod"));
 		
 		InPropSurrenderValsModel model = new InPropSurrenderValsModel();
 		
 		model.setInPropSurrenderValsPK(inPropSurrenderValsPK);
-		model.setAdvcod(rs.getString(""));
-		model.setIsumas(rs.getDouble(""));
-		model.setMature(rs.getDouble(""));
-		model.setPaidup(rs.getDouble(""));
-		model.setPolnum(rs.getString(""));
-		model.setPrmpad(rs.getDouble(""));
-		model.setPrmpyr(rs.getDouble(""));
-		model.setSurrnd(rs.getDouble(""));
+		model.setAdvcod(rs.getString("advcod"));
+		model.setIsumas(rs.getDouble("isumas"));
+		model.setMature(rs.getDouble("mature"));
+		model.setPaidup(rs.getDouble("paidup"));
+		model.setPolnum(rs.getString("polnum"));
+		model.setPrmpad(rs.getDouble("prmpad"));
+		model.setPrmpyr(rs.getDouble("prmpyr"));
+		model.setSurrnd(rs.getDouble("surrnd"));
 		
 		return model;
 	}
