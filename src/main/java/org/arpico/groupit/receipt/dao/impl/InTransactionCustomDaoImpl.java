@@ -86,4 +86,11 @@ public class InTransactionCustomDaoImpl implements InTransactionCustomDao {
 //				new InTransactionRowMapper());
 	}
 
+	@Override
+	public List<InTransactionsModel> getTransactionByPprNum(String pprNum) throws Exception {
+		return (List<InTransactionsModel>)jdbcTemplate.query(
+				"SELECT * FROM intransactions where sbucod = '450' and pprnum = '" + pprNum + "' ;",
+				new InTransactionRowMapper());
+	}
+
 }
