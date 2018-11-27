@@ -147,10 +147,11 @@ public class CodeTransferServiceImpl implements CodeTransferService{
 	public ResponseEntity<Object> getProposalDetails(String pprNum,String token) throws Exception {
 		ResponseDto dto = null;
 		String userCode=new JwtDecoder().generate(token);
+		List<String> locCodes=branchUnderwriteDao.findLocCodes(userCode);
 		try {
 			InProposalsModel inProposalsModel=inProposalCustomDao.getProposalFromPprnum(Integer.valueOf(pprNum));
 			if(inProposalsModel != null) {
-				if(inProposalsModel.getCreaby().equals(userCode)) {
+				if(locCodes.contains(inProposalsModel.getInProposalsModelPK().getLoccod())) {
 					
 					if(inProposalsModel.getPprsta().equals("L3")) {
 						try {
@@ -213,11 +214,12 @@ public class CodeTransferServiceImpl implements CodeTransferService{
 	public ResponseEntity<Object> getPolicyDetails(String polNum,String token) throws Exception {
 		ResponseDto dto = null;
 		String userCode=new JwtDecoder().generate(token);
+		List<String> locCodes=branchUnderwriteDao.findLocCodes(userCode);
 		try {
 			InProposalsModel inProposalsModel=inProposalCustomDao.getProposalFromPolnum(Integer.valueOf(polNum));
 			
 			if(inProposalsModel != null) {
-				if(inProposalsModel.getCreaby().equals(userCode)) {
+				if(locCodes.contains(inProposalsModel.getInProposalsModelPK().getLoccod())) {
 					CodeTransferHelperDto codeTransferHelperDto=new CodeTransferHelperDto();
 					codeTransferHelperDto.setAgentCode(inProposalsModel.getAdvcod());
 					codeTransferHelperDto.setPprNum(polNum);

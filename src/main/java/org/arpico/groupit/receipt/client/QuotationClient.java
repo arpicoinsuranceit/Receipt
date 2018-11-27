@@ -30,10 +30,29 @@ public class QuotationClient {
 			RestTemplate restTemplate = new RestTemplate();
 			ViewQuotationDto result = restTemplate.postForObject(AppConstant.URI_GET_QUO_DETAILS, map,
 					ViewQuotationDto.class);
-			System.out.println(result.toString());
+			//System.out.println(result.toString());
 			System.out.println(result.get_mainlife().toString());
 			System.out.println(result.get_spouse().toString());
 			System.out.println(result.get_plan().toString());
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public Integer getQuotationSeqnum(Integer qdId) {
+
+		MultiValueMap<String, Integer> map = new LinkedMultiValueMap<String, Integer>();
+		map.add("qdId", qdId);
+		
+		System.out.println("qdId" +  qdId);
+
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			Integer result = restTemplate.postForObject(AppConstant.URI_GET_QUO_SEQNUM, map,
+					Integer.class);
+			System.out.println(result);
 			return result;
 		} catch (Exception e) {
 			e.printStackTrace();

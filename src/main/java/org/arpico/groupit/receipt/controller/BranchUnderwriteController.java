@@ -62,6 +62,14 @@ public class BranchUnderwriteController {
 		
 	}
 	
+	@RequestMapping(value = "/getQuotationSeqnum/{qdId}", method = RequestMethod.GET)
+	public Integer getQuotationDetails (@PathVariable("qdId") String qdId)throws Exception{
+		System.out.println("getQuotationSeqnum");
+		
+		return quotationClient.getQuotationSeqnum(Integer.valueOf(qdId));
+		
+	}
+	
 	@RequestMapping(value = "/getPensionShedule/{seqNo}/{qId}", method = RequestMethod.GET)
 	public List<PensionSheduleDto> getPensionShedule (@PathVariable("seqNo") Integer seqNo,@PathVariable("qId") Integer qId)throws Exception{
 		System.out.println("getPensionShedule");

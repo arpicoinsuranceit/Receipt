@@ -32,7 +32,7 @@ public class UserDaoImpl implements UserDao {
 	public String getUserEmail(String userCode) throws Exception {
 		String email = jdbcTemplate
 				.queryForObject("select r.EMAIL from rms_users r where SBU_CODE = '450' and USER_ID = '" + userCode
-						+ "' " + "and active = 1 ", String.class);
+						+ "' " + "and active = 1 limit 1", String.class);
 		
 		return email;
 	}

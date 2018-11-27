@@ -26,6 +26,8 @@ public class CourierModel {
 	private Date modifyDate;
 	private String modifyBy;
 	private String toBranch;
+	private String receivedBy;
+	private Date receivedDate;
 	
 	private List<DepartmentCourierModel> departmentCourier=new ArrayList<>();
 	
@@ -103,6 +105,20 @@ public class CourierModel {
 	public void setToBranch(String toBranch) {
 		this.toBranch = toBranch;
 	}
+	@Column(name="rcvdby")
+	public String getReceivedBy() {
+		return receivedBy;
+	}
+	public void setReceivedBy(String receivedBy) {
+		this.receivedBy = receivedBy;
+	}
+	@Column(name="rcvddt")
+	public Date getReceivedDate() {
+		return receivedDate;
+	}
+	public void setReceivedDate(Date receivedDate) {
+		this.receivedDate = receivedDate;
+	}
 	@OneToMany(mappedBy="courier")
 	@Column(name="depcouid")
 	public List<DepartmentCourierModel> getDepartmentCourier() {
@@ -116,8 +132,10 @@ public class CourierModel {
 		return "CourierModel [courierId=" + courierId + ", token=" + token + ", branchCode=" + branchCode
 				+ ", courierStatus=" + courierStatus + ", remark=" + remark + ", createDate=" + createDate
 				+ ", createBy=" + createBy + ", modifyDate=" + modifyDate + ", modifyBy=" + modifyBy + ", toBranch="
-				+ toBranch + ", departmentCourier=" + departmentCourier + "]";
+				+ toBranch + ", receivedBy=" + receivedBy + ", receivedDate=" + receivedDate + ", departmentCourier="
+				+ departmentCourier + "]";
 	}
+	
 	
 	
 
