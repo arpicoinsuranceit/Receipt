@@ -25,6 +25,12 @@ public class InPromisesModel {
 	private Integer active;
 	private String custName;
 	private String custNic;
+	private String createBy;
+	private Date createDate;
+	private String updateBy;
+	private Date updateDate;
+	
+	
 
 	@Column(name = "sbucod")
 	public String getSbuCode() {
@@ -134,6 +140,42 @@ public class InPromisesModel {
 
 	public void setCustNic(String custNic) {
 		this.custNic = custNic;
+	}
+
+	@Column(name = "creaby")
+	public String getCreateBy() {
+		return createBy;
+	}
+
+	public void setCreateBy(String createBy) {
+		this.createBy = createBy;
+	}
+
+	@Column(name = "creadt")
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	@Column(name = "modiby")
+	public String getUpdateBy() {
+		return updateBy;
+	}
+
+	public void setUpdateBy(String updateBy) {
+		this.updateBy = updateBy;
+	}
+
+	@Column(name = "modidt")
+	public Date getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
 	}
 
 	@Override

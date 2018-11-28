@@ -9,6 +9,7 @@ public class PromisesGridDto {
 	private String pprNum;
 	private Date dueDate;
 	private Date promiseDate;
+	private Double amount;
 	private String phoneNum;
 	private String custName;
 	private String custNic;
@@ -53,6 +54,14 @@ public class PromisesGridDto {
 		this.promiseDate = promiseDate;
 	}
 
+	public Double getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Double amount) {
+		this.amount = amount;
+	}
+
 	public String getPhoneNum() {
 		return phoneNum;
 	}
@@ -80,8 +89,7 @@ public class PromisesGridDto {
 	@Override
 	public String toString() {
 		return "PromisesGridDto [id=" + id + ", polNum=" + polNum + ", pprNum=" + pprNum + ", dueDate=" + dueDate
-				+ ", promiseDate=" + promiseDate + ", phoneNum=" + phoneNum + ", custName=" + custName + ", custNic="
-				+ custNic + "]";
+				+ ", promiseDate=" + promiseDate + ", amount=" + amount + ", phoneNum=" + phoneNum + ", custName="
+				+ custName + ", custNic=" + custNic + "]";
 	}
-
 }
