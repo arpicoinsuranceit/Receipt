@@ -3,7 +3,6 @@ package org.arpico.groupit.receipt.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import javax.transaction.Transactional;
 import org.arpico.groupit.receipt.dao.BranchUnderwriteDao;
@@ -13,13 +12,13 @@ import org.arpico.groupit.receipt.dao.SubDepartmentDocumentCourierDao;
 import org.arpico.groupit.receipt.dto.CourierDetailsHelperDto;
 import org.arpico.groupit.receipt.dto.CourierDto;
 import org.arpico.groupit.receipt.dto.DepartmentHelperDto;
-import org.arpico.groupit.receipt.dto.SubDepartmentDocumentCourierDto;
 import org.arpico.groupit.receipt.dto.SubDepartmentDocumentCourierHelperDto;
 import org.arpico.groupit.receipt.dto.SubDepartmentHelperDto;
 import org.arpico.groupit.receipt.model.CourierModel;
 import org.arpico.groupit.receipt.model.DepartmentCourierModel;
 import org.arpico.groupit.receipt.model.SubDepartmentDocumentCourierModel;
 import org.arpico.groupit.receipt.service.CourierService;
+import org.arpico.groupit.receipt.service.NumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +37,9 @@ public class CourierServiceImpl implements CourierService{
 	
 	@Autowired
 	private SubDepartmentDocumentCourierDao subDepartmentDocumentCourierDao;
+	
+	@Autowired
+	private NumberGenerator numberGenerator;
 	
 	boolean mustSave=true;
 
@@ -121,13 +123,18 @@ public class CourierServiceImpl implements CourierService{
 		
 		if(courierModel!=null && !sendDepDocCou.isEmpty()) {
 			
+			String[] numberGenCourier = numberGenerator.generateNewId("", "", "COURIER", "");
+			
+			if (numberGenCourier[0].equals("Success")) {
+				
 			if(!notSendDepDocCou.isEmpty()) {
 				newCourierModel.setBranchCode(courierModel.getBranchCode());
 				newCourierModel.setCourierStatus(courierModel.getCourierStatus());
 				newCourierModel.setCreateBy(courierModel.getCreateBy());
 				newCourierModel.setCreateDate(new Date());
 				newCourierModel.setToBranch(courierModel.getToBranch());
-				newCourierModel.setToken(UUID.randomUUID().toString());
+				
+				newCourierModel.setToken(courierModel.getToken().substring(0, courierModel.getToken().length()-7) + numberGenCourier[1]);
 				
 				courierModel2=courierDao.save(newCourierModel);
 			}
@@ -210,7 +217,18 @@ public class CourierServiceImpl implements CourierService{
 						departmentCourier.setCreateBy(departmentCourierModel.getCreateBy());
 						departmentCourier.setCreateDate(new Date());
 						departmentCourier.setDepartment(departmentCourierModel.getDepartment());
-						departmentCourier.setToken(UUID.randomUUID().toString());
+						
+						
+						try {
+							String[] numberGenCourierDep = numberGenerator.generateNewId("", "", "COURIERDEP", "");
+							
+							if (numberGenCourierDep[0].equals("Success")) {
+								departmentCourier.setToken("DEP-"+numberGenCourierDep[1]);
+							}
+							
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 						
 						DepartmentCourierModel departmentCourierModel2=departmentCourierDao.save(departmentCourier);
 						notsend.setDepartmentCourier(departmentCourierModel2);
@@ -224,6 +242,7 @@ public class CourierServiceImpl implements CourierService{
 			
 			courierModel.setCourierStatus("SEND");
 			return courierDao.save(courierModel) != null ? "200":"204";
+			}
 		}
 		
 		return "204";
@@ -399,7 +418,7 @@ public class CourierServiceImpl implements CourierService{
 
 		if(courierModel != null) {
 			if(allDocumentsReceived) {
-				courierModel.setCourierStatus("CANCELED");
+				courierModel.setCourierStatus("COMPLETED");
 			}else {
 				courierModel.setCourierStatus("RECEIVED");
 			}
@@ -468,7 +487,6 @@ public class CourierServiceImpl implements CourierService{
 				
 			});
 			
-			return "200";
 		}
 		
 		allDocumentsReceived=true;
@@ -481,7 +499,7 @@ public class CourierServiceImpl implements CourierService{
 		
 		if(courierModel != null) {
 			if(allDocumentsReceived) {
-				courierModel.setCourierStatus("CANCELED");
+				courierModel.setCourierStatus("COMPLETED");
 			}
 			
 			courierModel.setModifyDate(new Date());
