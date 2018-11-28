@@ -36,7 +36,7 @@ public class QuotationClient {
 			System.out.println(result.get_plan().toString());
 			return result;
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return null;
 	}
