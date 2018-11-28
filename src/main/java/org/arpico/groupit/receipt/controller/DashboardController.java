@@ -269,6 +269,12 @@ public class DashboardController {
 		c.setTime(dt);
 		c.add(Calendar.DATE, 1);
 		dt = c.getTime();
+		
+		long milis = new Date().getTime() - dt.getTime();
+		
+		if(milis < 0) {
+			dt = new Date();
+		}
 
 		return dt;
 	}

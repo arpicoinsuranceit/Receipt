@@ -80,6 +80,9 @@ public class DepartmentCourierServiceImpl implements DepartmentCourierService{
 						dto.setSubDepartmentDocumentCourierId(sddcd.getSubDepartmentDocumentCourierId());
 						dto.setSubDepDocCouToken(sddcd.getSubDepDocCouToken());
 						dto.setUnderwriterEmail(sddcd.getUnderwriterEmail());
+						dto.setRcvdBy(sddcd.getReceivedBy());
+						dto.setRcvdDate(sddcd.getReceivedDate());
+						dto.setIsChecked("1");
 						
 						courierDtos.add(dto);
 						
@@ -99,6 +102,7 @@ public class DepartmentCourierServiceImpl implements DepartmentCourierService{
 						dto.setUnderwriterEmail(sddcd.getUnderwriterEmail());
 						dto.setRcvdBy(sddcd.getReceivedBy());
 						dto.setRcvdDate(sddcd.getReceivedDate());
+						dto.setIsChecked("1");
 						
 						courierDtos.add(dto);
 						

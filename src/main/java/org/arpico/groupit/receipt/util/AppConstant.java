@@ -20,6 +20,7 @@ public class AppConstant {
 	
 
 	public static final String URI_GET_QUO_DETAILS = "http://localhost:8084/getQuoDetail";
+	public static final String URI_GET_QUO_SEQNUM = "http://localhost:8084/getQuotationSeqnum";
 	public static final String URI_GET_QUO_SHEDULES = "http://localhost:8084/getShedule";
 	public static final String URI_GET_QUO_MEDILEIS = "http://localhost:8084/getMediDetails";
 	public static final String URI_QUOTATION_AVAILABLE = "http://localhost:8084/isavailable";

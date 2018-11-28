@@ -20,6 +20,7 @@ import org.arpico.groupit.receipt.service.SubDepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -67,10 +68,10 @@ public class CourierController {
 		
 	}
 	
-	@RequestMapping(value="/courier/subdepartmentdocument/{subDepId}",method=RequestMethod.GET)
-	public List<DocumentTypeDto> getSubDepartmentDocument(@PathVariable("subDepId")Integer subDepId) throws Exception{
+	@RequestMapping(value="/courier/subdepartmentdocument/{subDepId}/{isHOUser}",method=RequestMethod.GET)
+	public List<DocumentTypeDto> getSubDepartmentDocument(@PathVariable("subDepId")Integer subDepId,@PathVariable("isHOUser")Boolean isHOUser) throws Exception{
 		
-		return subDepartmentDocumentService.findBySubDepartment(subDepId);
+		return subDepartmentDocumentService.findBySubDepartment(subDepId,isHOUser);
 		
 	}
 	
@@ -81,11 +82,35 @@ public class CourierController {
 		
 	}
 	
-	@RequestMapping(value="/courier/branchcourier/{token:.+}",method=RequestMethod.GET)
-	public List<CourierDto> getAllPendingCourier(@PathVariable String token) throws Exception{
+	@RequestMapping(value="/courier/branchcourier/{token:.+}/{isHoUser}",method=RequestMethod.GET)
+	public List<CourierDto> getAllPendingCourier(@PathVariable String token,@PathVariable Boolean isHoUser) throws Exception{
 		
 		String userCode=new JwtDecoder().generate(token);
-		return courierService.findByCourierStatusAndBranchCodeIn(userCode);
+		return courierService.findByCourierStatusAndBranchCodeIn(userCode,isHoUser);
+		
+	}
+	
+	@RequestMapping(value="/courier/receivingcourier/{token:.+}/{isHoUser}",method=RequestMethod.GET)
+	public List<CourierDto> getAllReceivingCourier(@PathVariable String token,@PathVariable Boolean isHoUser) throws Exception{
+		
+		String userCode=new JwtDecoder().generate(token);
+		return courierService.findByCourierStatusAndToBranchIn(userCode,isHoUser,"SEND");
+		
+	}
+	
+	@RequestMapping(value="/courier/receivedcourier/{token:.+}/{isHoUser}",method=RequestMethod.GET)
+	public List<CourierDto> getAllReceivedCourier(@PathVariable String token,@PathVariable Boolean isHoUser) throws Exception{
+		
+		String userCode=new JwtDecoder().generate(token);
+		return courierService.findByCourierStatusAndToBranchIn(userCode,isHoUser,"RECEIVED");
+		
+	}
+	
+	@RequestMapping(value="/courier/canceledcourier/{token:.+}/{isHoUser}",method=RequestMethod.GET)
+	public List<CourierDto> getAllCanceledCourier(@PathVariable String token,@PathVariable Boolean isHoUser) throws Exception{
+		
+		String userCode=new JwtDecoder().generate(token);
+		return courierService.findByCourierStatusAndToBranchIn(userCode,isHoUser,"CANCELED");
 		
 	}
 	
@@ -106,7 +131,7 @@ public class CourierController {
 	
 	@RequestMapping(value="/courier/save",method=RequestMethod.POST)
 	public String saveCourier(@RequestParam("depId") Integer depId,@RequestParam("subDepId") Integer subDepId,@RequestParam("docId") Integer docId,@RequestParam("branch") String branch,
-			@RequestParam("refType") String refType,@RequestParam("refNo") String refNo,@RequestParam("remark") String remark,@RequestParam("token") String usertoken) throws Exception{
+			@RequestParam("refType") String refType,@RequestParam("refNo") String refNo,@RequestParam("remark") String remark,@RequestParam("token") String usertoken,@RequestParam("isHOUser") Boolean isHOUser) throws Exception{
 		
 		System.out.println(depId);
 		System.out.println(subDepId);
@@ -116,6 +141,7 @@ public class CourierController {
 		System.out.println(remark);
 		System.out.println(usertoken);
 		System.out.println(branch);
+		System.out.println(isHOUser);
 		
 		String userCode=new JwtDecoder().generate(usertoken);
 		
@@ -128,7 +154,9 @@ public class CourierController {
 		sddcd.setBranchCode(branch);
 		sddcd.setCreateBy(userCode);
 		
-		return subDepartmentDocumentCourierService.saveSubDepDocCourier(sddcd,depId,subDepId);
+		return subDepartmentDocumentCourierService.saveSubDepDocCourier(sddcd,depId,subDepId,isHOUser);
+		
+		//return null;
 		
 	}
 	
@@ -143,6 +171,29 @@ public class CourierController {
 	public String changeCourierStatus(@PathVariable Integer couId,@PathVariable String status) throws Exception{
 		
 		return courierService.updateStatus(couId, status);
+		
+	}
+	
+	@RequestMapping(value="/courier/sendCourier",method=RequestMethod.POST)
+	public String sendCouriers(@RequestBody CourierDetailsHelperDto courierDetailsHelperDto) throws Exception{
+		System.out.println(courierDetailsHelperDto.toString());
+		return courierService.sendCourier(courierDetailsHelperDto);
+		
+	}
+	
+	@RequestMapping(value="/courier/receiveCourier/{token:.+}",method=RequestMethod.POST)
+	public String receiveCouriers(@PathVariable String token,@RequestBody CourierDetailsHelperDto courierDetailsHelperDto) throws Exception{
+		System.out.println(courierDetailsHelperDto.toString());
+		String userCode=new JwtDecoder().generate(token);
+		return courierService.receiveCourier(courierDetailsHelperDto, userCode);
+		
+	}
+	
+	@RequestMapping(value="/courier/receiveCourierDocument/{token:.+}",method=RequestMethod.POST)
+	public String receiveCourierDocument(@PathVariable String token,@RequestBody CourierDetailsHelperDto courierDetailsHelperDto) throws Exception{
+		System.out.println(courierDetailsHelperDto.toString());
+		String userCode=new JwtDecoder().generate(token);
+		return courierService.receiveCourierDocument(courierDetailsHelperDto, userCode);
 		
 	}
 	

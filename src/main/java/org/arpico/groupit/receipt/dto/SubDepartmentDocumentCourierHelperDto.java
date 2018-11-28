@@ -16,7 +16,14 @@ public class SubDepartmentDocumentCourierHelperDto {
 	private String documentType;
 	private String rcvdBy;
 	private Date rcvdDate;
+	private String isChecked;
 	
+	public String getIsChecked() {
+		return isChecked;
+	}
+	public void setIsChecked(String isChecked) {
+		this.isChecked = isChecked;
+	}
 	public Integer getSubDepartmentDocumentCourierId() {
 		return subDepartmentDocumentCourierId;
 	}
@@ -103,8 +110,10 @@ public class SubDepartmentDocumentCourierHelperDto {
 				+ ", subDepDocCouToken=" + subDepDocCouToken + ", underwriterEmail=" + underwriterEmail + ", remark="
 				+ remark + ", status=" + status + ", referenceNo=" + referenceNo + ", referenceType=" + referenceType
 				+ ", branchCode=" + branchCode + ", createDate=" + createDate + ", createBy=" + createBy
-				+ ", documentType=" + documentType + ", rcvdBy=" + rcvdBy + ", rcvdDate=" + rcvdDate + "]";
+				+ ", documentType=" + documentType + ", rcvdBy=" + rcvdBy + ", rcvdDate=" + rcvdDate + ", isChecked="
+				+ isChecked + "]";
 	}
+	
 	
 	
 }
