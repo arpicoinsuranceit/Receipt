@@ -106,11 +106,11 @@ public class CourierController {
 		
 	}
 	
-	@RequestMapping(value="/courier/canceledcourier/{token:.+}/{isHoUser}",method=RequestMethod.GET)
-	public List<CourierDto> getAllCanceledCourier(@PathVariable String token,@PathVariable Boolean isHoUser) throws Exception{
+	@RequestMapping(value="/courier/completedcourier/{token:.+}/{isHoUser}",method=RequestMethod.GET)
+	public List<CourierDto> getAllCompletedCourier(@PathVariable String token,@PathVariable Boolean isHoUser) throws Exception{
 		
 		String userCode=new JwtDecoder().generate(token);
-		return courierService.findByCourierStatusAndToBranchIn(userCode,isHoUser,"CANCELED");
+		return courierService.findByCourierStatusAndToBranchIn(userCode,isHoUser,"COMPLETED");
 		
 	}
 	
