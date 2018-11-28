@@ -1,7 +1,6 @@
 package org.arpico.groupit.receipt.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -37,7 +36,6 @@ import org.arpico.groupit.receipt.dto.CodeTransferDto;
 import org.arpico.groupit.receipt.dto.CodeTransferGridDto;
 import org.arpico.groupit.receipt.dto.CodeTransferHelperDto;
 import org.arpico.groupit.receipt.dto.EmailDto;
-import org.arpico.groupit.receipt.dto.EmailResponseDto;
 import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.dto.SaveCodeTransferDto;
 import org.arpico.groupit.receipt.model.AgentMastModel;
@@ -159,13 +157,15 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 	public ResponseEntity<Object> getProposalDetails(String pprNum, String token) throws Exception {
 		ResponseDto dto = null;
 		String userCode = new JwtDecoder().generate(token);
-		List<String> locCodes=branchUnderwriteDao.findLocCodes(userCode);
+		List<String> locCodes = branchUnderwriteDao.findLocCodes(userCode);
+		
 		try {
 			InProposalsModel inProposalsModel = inProposalCustomDao.getProposalFromPprnum(Integer.valueOf(pprNum));
 			if (inProposalsModel != null) {
-				if(locCodes.contains(inProposalsModel.getInProposalsModelPK().getLoccod())) {
+				if (locCodes.contains(inProposalsModel.getInProposalsModelPK().getLoccod())) {
 
 					if (inProposalsModel.getPprsta().equals("L3")) {
+
 						try {
 
 							CodeTransferHelperDto codeTransferHelperDto = new CodeTransferHelperDto();
@@ -224,13 +224,16 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 	@Override
 	public ResponseEntity<Object> getPolicyDetails(String polNum, String token) throws Exception {
 		ResponseDto dto = null;
+
 		String userCode = new JwtDecoder().generate(token);
-		List<String> locCodes=branchUnderwriteDao.findLocCodes(userCode);
+		List<String> locCodes = branchUnderwriteDao.findLocCodes(userCode);
 		try {
 			InProposalsModel inProposalsModel = inProposalCustomDao.getProposalFromPolnum(Integer.valueOf(polNum));
 
 			if (inProposalsModel != null) {
-				if(locCodes.contains(inProposalsModel.getInProposalsModelPK().getLoccod())) {
+
+				if (locCodes.contains(inProposalsModel.getInProposalsModelPK().getLoccod())) {
+
 					CodeTransferHelperDto codeTransferHelperDto = new CodeTransferHelperDto();
 					codeTransferHelperDto.setAgentCode(inProposalsModel.getAdvcod());
 					codeTransferHelperDto.setPprNum(polNum);

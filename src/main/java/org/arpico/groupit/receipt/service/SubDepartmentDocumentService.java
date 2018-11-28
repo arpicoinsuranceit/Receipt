@@ -9,6 +9,6 @@ public interface SubDepartmentDocumentService {
 	
 	public List<SubDepartmentDocumentDto> getAllSubDepartmentDocs()throws Exception;
 	
-	public List<DocumentTypeDto> findBySubDepartment(Integer subDepId)throws Exception;
+	public List<DocumentTypeDto> findBySubDepartment(Integer subDepId,Boolean isHOUser)throws Exception;
 
 }

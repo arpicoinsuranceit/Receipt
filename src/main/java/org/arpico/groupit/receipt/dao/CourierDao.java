@@ -8,6 +8,10 @@ public interface CourierDao extends CrudRepository<CourierModel, Integer>{
 	
 	public List<CourierModel> findByCourierStatusAndBranchCodeIn(String courierStatus,List<String> branches)throws Exception;
 	
+	public List<CourierModel> findByCourierStatus(String courierStatus)throws Exception;
+	
+	public List<CourierModel> findByCourierStatusAndToBranchIn(String courierStatus,List<String> branches)throws Exception;
+	
 	public List<CourierModel> findByCourierStatusNotInAndBranchCodeIn(List<String> courierStatus,List<String> branches)throws Exception;
 
 }
