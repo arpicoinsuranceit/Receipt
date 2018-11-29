@@ -19,7 +19,7 @@ public class RmsRecmCustomDaoImpl implements RmsRecmCustomDao {
 
 	@Override
 	public List<RmsRecmGridModel> findTop10(String creBy) throws Exception {
-		String sql = "select CRE_DATE, DOC_CODE, DOC_NO, REMARK, AMTFCU  from rms_recm WHERE SBU_COD='450' and CRE_BY = '" + creBy
+		String sql = "select CRE_DATE, DOC_CODE, DOC_NO, REMARK, AMTFCU  from rms_recm WHERE SBU_CODE='450' and CRE_BY = '" + creBy
 				+ "' ORDER BY CRE_DATE DESC, DOC_NO DESC  LIMIT 10";
 		List<RmsRecmGridModel> gridModels = jdbcTemplate.query(sql, new RmsRecmGridRowMapper());
 		return gridModels;
@@ -27,7 +27,7 @@ public class RmsRecmCustomDaoImpl implements RmsRecmCustomDao {
 
 	@Override
 	public RmsRecmModel getRecm(String docCode, Integer docNo) throws Exception {
-		String sql = "select * from rms_recm where SBU_COD='450' and  DOC_CODE = '" + docCode + "' and DOC_NO = '" + docNo + "'";
+		String sql = "select * from rms_recm where SBU_CODE='450' and  DOC_CODE = '" + docCode + "' and DOC_NO = '" + docNo + "'";
 		RmsRecmModel model = jdbcTemplate.queryForObject(sql, new RmsRecmRowMapper());
 		return model;
 	}

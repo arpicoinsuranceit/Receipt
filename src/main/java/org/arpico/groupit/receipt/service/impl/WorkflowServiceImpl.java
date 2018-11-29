@@ -5,9 +5,13 @@ import java.util.Date;
 import java.util.List;
 
 import org.arpico.groupit.receipt.dao.InPromiseDao;
+import org.arpico.groupit.receipt.dao.InPropAddBenefictCustomDao;
+import org.arpico.groupit.receipt.dao.InProposalCustomDao;
 import org.arpico.groupit.receipt.dao.UserDao;
 import org.arpico.groupit.receipt.dto.PromisesGridDto;
 import org.arpico.groupit.receipt.model.InPromisesModel;
+import org.arpico.groupit.receipt.model.InPropAddBenefitModel;
+import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.WorkflowService;
 import org.arpico.groupit.receipt.util.AppConstant;
@@ -30,7 +34,14 @@ public class WorkflowServiceImpl implements WorkflowService {
 
 	@Autowired
 	private JwtDecoder decoder;
+	
+	@Autowired
+	private InProposalCustomDao inProposalCustomDao;
 
+	
+	@Autowired
+	private InPropAddBenefictCustomDao addBenefictCustomDao;
+	
 	@Override
 	public List<PromisesGridDto> getPromisesList(String token, Integer page, Integer offset) throws Exception {
 		String userCode = decoder.generate(token);
@@ -161,7 +172,15 @@ public class WorkflowServiceImpl implements WorkflowService {
 
 	@Override
 	public ResponseEntity<Object> getPolicyDetails(String polnum, String pprnum) throws Exception {
-		// TODO Auto-generated method stub
+		
+		Integer propNo = Integer.parseInt(pprnum);
+		
+		InProposalsModel inProposalsModel = inProposalCustomDao.getProposalFromPprnum(propNo);
+		
+		if(inProposalsModel != null ) {
+			List<InPropAddBenefitModel> addBenefitModels = addBenefictCustomDao.getBenefByPprSeqAndSumAsu(propNo, inProposalsModel.getInProposalsModelPK().getPrpseq());
+		}
+		
 		return null;
 	}
 

@@ -7,6 +7,8 @@ import org.arpico.groupit.receipt.model.InPropAddBenefitModel;
 public interface InPropAddBenefictCustomDao {
 
 	List<InPropAddBenefitModel> getBenefByPprSeq(Integer pprNo, Integer seqNo) throws Exception;
+	
+	List<InPropAddBenefitModel> getBenefByPprSeqAndSumAsu(Integer pprNo, Integer seqNo) throws Exception;
 
 	void removeBenefByPprSeq(Integer pprNo, Integer seqNo) throws Exception;
 	
