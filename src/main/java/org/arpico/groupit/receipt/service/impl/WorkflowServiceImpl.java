@@ -159,4 +159,10 @@ public class WorkflowServiceImpl implements WorkflowService {
 		}
 	}
 
+	@Override
+	public ResponseEntity<Object> getPolicyDetails(String polnum, String pprnum) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

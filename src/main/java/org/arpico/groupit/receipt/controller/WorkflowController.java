@@ -52,5 +52,12 @@ public class WorkflowController {
 		return workflowService.settlePromise(promise, token);
 		
 	}
+	
+	@PostMapping(value = "/getPolicyDetails/{polnum}/{pprnum}")
+	public ResponseEntity<Object> settlePromise(@PathVariable String polnum, @PathVariable String pprnum) throws Exception{
+		
+		return workflowService.getPolicyDetails(polnum, pprnum);
+		
+	}
 
 }

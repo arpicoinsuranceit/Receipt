@@ -15,4 +15,6 @@ public interface WorkflowService {
 
 	ResponseEntity<Object> settlePromise(PromisesGridDto promise, String token) throws Exception;
 
+	ResponseEntity<Object> getPolicyDetails(String polnum, String pprnum) throws Exception;
+
 }
