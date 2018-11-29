@@ -206,7 +206,7 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 	@Override
 	public InProposalsModel getProposalFromPprnum(Integer pprnum) throws Exception {
 		InProposalsModel models = jdbcTemplate.queryForObject("select * from inproposals "
-				+ "where sbucod = '450' and pprnum = '" + pprnum + "' order by prpseq desc limit 1",
+				+ "where sbucod = '450' and pprnum = '" + pprnum + "' and pprsta <> 'INAC' order by prpseq desc limit 1",
 				new InProposalsRowMapper());
 //		
 //		InProposalsModel models = jdbcTemplate

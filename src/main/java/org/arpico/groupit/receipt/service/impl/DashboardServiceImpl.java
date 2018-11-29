@@ -220,7 +220,7 @@ public class DashboardServiceImpl implements DashboardService {
 
 					String date = getDate(model, type);
 
-					// System.out.println(date);
+
 
 					switch (i) {
 					case 0:
@@ -401,13 +401,6 @@ public class DashboardServiceImpl implements DashboardService {
 		List<DashboardCashFlowSummeryModel> inRecmModels = dashboardDao.getCashFlowRecm(user, to, from);
 		List<DashboardCashFlowSummeryModel> inTxnmModels = dashboardDao.getCashFlowTxnm(user, to, from);
 
-		// System.out.println(inTranModels.size());
-		inTranModels.forEach(System.out::println);
-
-		// System.out.println(inRecmModels.size());
-		inRecmModels.forEach(System.out::println);
-
-		// System.out.println(inTxnmModels.size());
 		inTxnmModels.forEach(System.out::println);
 
 		inTranModels.forEach(e -> {
@@ -462,11 +455,11 @@ public class DashboardServiceImpl implements DashboardService {
 
 		inRecmModels.forEach(e -> {
 
-			// System.out.println(e);
+
 
 			if (e.getPayMode().equalsIgnoreCase("CS")) {
 
-				// System.out.println(e);
+
 
 				NameValuePairDto dto = dtos.get(0);
 
