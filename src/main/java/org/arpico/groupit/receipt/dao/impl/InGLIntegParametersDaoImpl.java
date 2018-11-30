@@ -3,7 +3,9 @@ package org.arpico.groupit.receipt.dao.impl;
 import org.arpico.groupit.receipt.dao.InGLIntegParametersDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class InGLIntegParametersDaoImpl implements InGLIntegParametersDao {
 
 	@Autowired
