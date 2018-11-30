@@ -18,21 +18,20 @@ public class AppConstant {
 	public static final String DOC_CODE_QUOT = "QUOT";
 	public static final String SYSTEM_CREATE = "system";
 	
-
-	public static final String URI_GET_QUO_DETAILS = "http://10.10.10.11:8086/getQuoDetail";
-	public static final String URI_GET_QUO_SEQNUM = "http://10.10.10.11:8086/getQuotationSeqnum";
-	public static final String URI_GET_QUO_SHEDULES = "http://10.10.10.11:8086/getShedule";
-	public static final String URI_GET_QUO_MEDILEIS = "http://10.10.10.11:8086/getMediDetails";
-	public static final String URI_QUOTATION_AVAILABLE = "http://10.10.10.11:8086/isavailable";
-	public static final String URI_QUOTATION_SURRENDER_VALS = "http://10.10.10.11:8086/getSurrenderVals";
-	public static final String URI_QUOTATION_PENSION_SHEDULE = "http://10.10.10.11:8086/getPensionShedule";
-	public static final String URI_QUOTATION_NOMINEE_DETAILS = "http://10.10.10.11:8086/getNominee";
-	public static final String URI_QUOTATION_MEDICAL_REQUIREMENTS = "http://10.10.10.11:8086/getMediDetails";
-	public static final String URI_UPDATE_STATUS = "http://10.10.10.11:8086/updateStatus";
-	public static final String URI_QUOTATION_DETAILS_FROM_SEQNO = "http://10.10.10.11:8086/getQuotationDetailFromSeqNo";
-	public static final String URI_CHECK_NIC_VALIDATION = "http://10.10.10.11:8086/checkNicValidation";
-	public static final String URI_BRANCH_FIND = "http://10.10.10.11:8088/findbranch";
-	public static final String URI_SEND_EMAIL = "http://10.10.10.11:8091/sendEmail";
+	public static final String URI_GET_QUO_DETAILS = "http://10.10.10.12:8084/getQuoDetail";
+	public static final String URI_GET_QUO_SEQNUM = "http://10.10.10.12:8084/getQuotationSeqnum";
+	public static final String URI_GET_QUO_SHEDULES = "http://10.10.10.12:8084/getShedule";
+	public static final String URI_GET_QUO_MEDILEIS = "http://10.10.10.12:8084/getMediDetails";
+	public static final String URI_QUOTATION_AVAILABLE = "http://10.10.10.12:8084/isavailable";
+	public static final String URI_QUOTATION_SURRENDER_VALS = "http://10.10.10.12:8084/getSurrenderVals";
+	public static final String URI_QUOTATION_PENSION_SHEDULE = "http://10.10.10.12:8084/getPensionShedule";
+	public static final String URI_QUOTATION_NOMINEE_DETAILS = "http://10.10.10.12:8084/getNominee";
+	public static final String URI_QUOTATION_MEDICAL_REQUIREMENTS = "http://10.10.10.12:8084/getMediDetails";
+	public static final String URI_UPDATE_STATUS = "http://10.10.10.12:8084/updateStatus";
+	public static final String URI_QUOTATION_DETAILS_FROM_SEQNO = "http://10.10.10.12:8084/getQuotationDetailFromSeqNo";
+	public static final String URI_CHECK_NIC_VALIDATION = "http://10.10.10.12:8084/checkNicValidation";
+	public static final String URI_BRANCH_FIND = "http://10.10.10.12:8088/findbranch";
+	public static final String URI_SEND_EMAIL = "http://10.10.10.12:8090/sendEmail";
 	
 	public static final String DOC_CODE_FOR_RECEIPT = "RCPP";
 	public static final String POLICY_STATUS_PLISU = "PLISU";
