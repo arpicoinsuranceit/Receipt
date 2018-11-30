@@ -76,7 +76,7 @@ public class RmsDocTxndModel implements Serializable {
 
 	private String mod_by;
 
-	private Date mod_date;
+	private String mod_date;
 
 	private String pluCode;
 
@@ -414,11 +414,11 @@ public class RmsDocTxndModel implements Serializable {
 	}
 
 	@Column(name = "MOD_DATE")
-	public Date getMod_date() {
+	public String getMod_date() {
 		return mod_date;
 	}
 
-	public void setMod_date(Date mod_date) {
+	public void setMod_date(String mod_date) {
 		this.mod_date = mod_date;
 	}
 
