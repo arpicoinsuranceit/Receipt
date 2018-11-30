@@ -12,11 +12,11 @@ public class RmsGlAccCodesDaoImpl implements RmsGlAccCodesDao {
 	private JdbcTemplate jdbcTemplate;
 
 	@Override
-	public String getAccCode(String docCode) throws Exception {
+	public String getAccCode(String docCode, String locCod) throws Exception {
 		String accCode = null;
 
 		accCode = jdbcTemplate.queryForObject(
-				"select acc_code from rms_gl_acc_codes where sbu_code = '450' and doc_code = '" + docCode + "'", String.class);
+				"select acc_code from rms_gl_acc_codes where sbu_code = '450' and doc_code = '" + docCode + "' and loccod = '"+ locCod +"'", String.class);
 
 		return accCode;
 	}

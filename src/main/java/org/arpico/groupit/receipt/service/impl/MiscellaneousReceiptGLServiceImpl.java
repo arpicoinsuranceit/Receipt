@@ -181,7 +181,7 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 	private GlTranTempModel getTransTempModelDR(MiscellaneousReceiptInvDto dto, String user, String docNo,
 			Object object, int i, String batno, Object object2, RmsRecmModel recmModel) throws Exception {
 
-		String accCode = accCodesDao.getAccCode(AppConstant.DOC_CODE_GLRC);
+		String accCode = accCodesDao.getAccCode(AppConstant.DOC_CODE_GLRC, dto.getBranch());
 
 		GlTranTempModelPK pk = new GlTranTempModelPK();
 
