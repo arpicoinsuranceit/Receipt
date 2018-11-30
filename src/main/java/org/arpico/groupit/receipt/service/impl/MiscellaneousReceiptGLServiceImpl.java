@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.arpico.groupit.receipt.dao.GlCharOfAccsDao;
 import org.arpico.groupit.receipt.dao.GlTranTempDao;
+import org.arpico.groupit.receipt.dao.InGLIntegParametersDao;
 import org.arpico.groupit.receipt.dao.RmsGlAccCodesDao;
 import org.arpico.groupit.receipt.dao.RmsRecdDao;
 import org.arpico.groupit.receipt.dao.RmsRecmCustomDao;
@@ -75,6 +76,9 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 	
 	@Autowired
 	private RmsRecmCustomDao rmsRecmCustomDao;
+	
+	@Autowired
+	private InGLIntegParametersDao inGLIntegParametersDao;
 
 	@Override
 	public List<AccountGLDto> getAccounts() throws Exception {
@@ -181,7 +185,7 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 	private GlTranTempModel getTransTempModelDR(MiscellaneousReceiptInvDto dto, String user, String docNo,
 			Object object, int i, String batno, Object object2, RmsRecmModel recmModel) throws Exception {
 
-		String accCode = accCodesDao.getAccCode(AppConstant.DOC_CODE_GLRC);
+		String accCode = inGLIntegParametersDao.getAccCode(dto.getBank());
 
 		GlTranTempModelPK pk = new GlTranTempModelPK();
 
