@@ -5,6 +5,8 @@ import java.util.List;
 import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
 import org.arpico.groupit.receipt.dto.ProposalNoSeqNoDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
+import org.arpico.groupit.receipt.model.InBillingTransactionsModel;
+import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.springframework.http.ResponseEntity;
 
 public interface ProposalServce {
@@ -16,6 +18,9 @@ public interface ProposalServce {
 	ProposalBasicDetailsDto getBasicDetails(Integer pprNum, Integer seqNum) throws Exception;
 
 	ResponseEntity<Object> saveProposal(SaveReceiptDto saveReceiptDto) throws Exception;
+
+	void checkPolicy(InProposalsModel inProposalsModel, Integer pprNo, Integer seqNo, SaveReceiptDto saveReceiptDto,
+			String agentCode, String locCode, InBillingTransactionsModel deposit) throws Exception;
 	
 	
 }

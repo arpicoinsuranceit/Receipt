@@ -293,7 +293,8 @@ public class CourierServiceImpl implements CourierService{
 		
 		List<String> status=new ArrayList<>();
 		status.add("BRANCH");
-		status.add("CLOSED");
+		status.add("HO");
+		status.add("COMPLETED");
 		
 		List<CourierModel> courierModels=courierDao.findByCourierStatusNotInAndBranchCodeIn(status, branches);
 		

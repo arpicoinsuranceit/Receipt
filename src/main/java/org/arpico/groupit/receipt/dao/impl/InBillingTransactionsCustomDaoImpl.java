@@ -94,7 +94,7 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 		
 		return jdbcTemplate
 				.query("select * from inbillingtransactions  where sbucod = '450' and pprnum = '" + pprnum
-						+ "' ", new InBillingTransactionRowMapper());
+						+ "' order by creadt desc", new InBillingTransactionRowMapper());
 	}
 
 }

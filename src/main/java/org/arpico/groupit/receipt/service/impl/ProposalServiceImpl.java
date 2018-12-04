@@ -364,7 +364,8 @@ public class ProposalServiceImpl implements ProposalServce {
 	}
 
 	@Transactional
-	private void checkPolicy(InProposalsModel inProposalsModel, Integer pprNo, Integer seqNo,
+	@Override
+	public void checkPolicy(InProposalsModel inProposalsModel, Integer pprNo, Integer seqNo,
 			SaveReceiptDto saveReceiptDto, String agentCode, String locCode, InBillingTransactionsModel deposit)
 			throws Exception {
 		if (inProposalsModel.getPprsta().equalsIgnoreCase("L3")) {
