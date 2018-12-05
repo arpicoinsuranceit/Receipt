@@ -61,17 +61,10 @@ public class SubDepartmentDocumentCourierServiceImpl implements SubDepartmentDoc
 	private DepartmentCourierModel departmentCourierModel=null;
 
 	@Override
-	public String saveSubDepDocCourier(SubDepartmentDocumentCourierDto subDepDocCouDto, Integer depId, Integer subDepId,Boolean isHOUser)
+	public String saveSubDepDocCourier(SubDepartmentDocumentCourierDto subDepDocCouDto, Integer depId, Integer subDepId,Boolean isHOUser,ArrayList<Integer> docIdList)
 			throws Exception {
 		
 		SubDepartmentModel subDepartmentModel=subDepartmentDao.findOne(subDepId);
-		DocumentTypeModel documentTypeModel=documentTypeDao.findOne(subDepDocCouDto.getSubDepartmentDocumentId());
-		
-		//get subdepartmentdocument regarding to SubDepartment and Document Type because many to many relationship
-		SubDepartmentDocumentModel subDepartmentDocumentModel=subDepartmentDocumentDao.findBySubDepartmentAndDocumentType(subDepartmentModel, documentTypeModel);
-		
-		//set sub department doc id 
-		subDepDocCouDto.setSubDepartmentDocumentId(subDepartmentDocumentModel.getSubDepDocId());
 		
 		List<String> branches=new ArrayList<>();
 		branches.add(subDepDocCouDto.getBranchCode());
@@ -108,34 +101,54 @@ public class SubDepartmentDocumentCourierServiceImpl implements SubDepartmentDoc
 				if(isExistDepartment) {
 					//add sub department document courier
 					
-					SubDepartmentDocumentCourierModel subDepDocCouModel=new SubDepartmentDocumentCourierModel();
-					if(isHOUser) {
-						subDepDocCouModel.setBranchCode("HO");
-					}else {
-						subDepDocCouModel.setBranchCode(subDepDocCouDto.getBranchCode());
-					}
-					subDepDocCouModel.setCreateBy(subDepDocCouDto.getCreateBy());
-					subDepDocCouModel.setCreateDate(new Date());
-					subDepDocCouModel.setCurrentUser(subDepDocCouDto.getCreateBy());
-					subDepDocCouModel.setDepartmentCourier(departmentCourierModel);
-					subDepDocCouModel.setReferenceNo(subDepDocCouDto.getReferenceNo());
-					subDepDocCouModel.setRemark(subDepDocCouDto.getRemark());
-					if(isHOUser) {
-						subDepDocCouModel.setStatus("HO");
-					}else {
-						subDepDocCouModel.setStatus("BRANCH");
-					}
+					ArrayList<SubDepartmentDocumentCourierModel> departmentDocumentCourierModels=new ArrayList<>();
 					
-					if (numberGenCourierDoc[0].equals("Success")) {
-						subDepDocCouModel.setSubDepDocCouToken("DOC-"+numberGenCourierDoc[1]);
-					}
-					
-					subDepDocCouModel.setSubDepartmentDocument(subDepartmentDocumentDao.findOne(subDepDocCouDto.getSubDepartmentDocumentId()));
-					subDepDocCouModel.setUnderwriterEmail(underwriterEmail);
-					subDepDocCouModel.setReferenceType(subDepDocCouDto.getReferenceType());
+					docIdList.forEach( docId ->{
+						DocumentTypeModel documentTypeModel=documentTypeDao.findOne(docId);
+						
+						//get subdepartmentdocument regarding to SubDepartment and Document Type because many to many relationship
+						
+						try {
+							SubDepartmentDocumentModel subDepartmentDocumentModel = subDepartmentDocumentDao.findBySubDepartmentAndDocumentType(subDepartmentModel, documentTypeModel);
+							//set sub department doc id 
+							subDepDocCouDto.setSubDepartmentDocumentId(subDepartmentDocumentModel.getSubDepDocId());
+							
+							SubDepartmentDocumentCourierModel subDepDocCouModel=new SubDepartmentDocumentCourierModel();
+							if(isHOUser) {
+								subDepDocCouModel.setBranchCode("HO");
+							}else {
+								subDepDocCouModel.setBranchCode(subDepDocCouDto.getBranchCode());
+							}
+							subDepDocCouModel.setCreateBy(subDepDocCouDto.getCreateBy());
+							subDepDocCouModel.setCreateDate(new Date());
+							subDepDocCouModel.setCurrentUser(subDepDocCouDto.getCreateBy());
+							subDepDocCouModel.setDepartmentCourier(departmentCourierModel);
+							subDepDocCouModel.setReferenceNo(subDepDocCouDto.getReferenceNo());
+							subDepDocCouModel.setRemark(subDepDocCouDto.getRemark());
+							if(isHOUser) {
+								subDepDocCouModel.setStatus("HO");
+							}else {
+								subDepDocCouModel.setStatus("BRANCH");
+							}
+							
+							if (numberGenCourierDoc[0].equals("Success")) {
+								subDepDocCouModel.setSubDepDocCouToken("DOC-"+numberGenCourierDoc[1]);
+							}
+							
+							subDepDocCouModel.setSubDepartmentDocument(subDepartmentDocumentDao.findOne(subDepDocCouDto.getSubDepartmentDocumentId()));
+							subDepDocCouModel.setUnderwriterEmail(underwriterEmail);
+							subDepDocCouModel.setReferenceType(subDepDocCouDto.getReferenceType());
+							
+							departmentDocumentCourierModels.add(subDepDocCouModel);
+							
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
+					});
 					
 					isExistDepartment=false;
-					return subDepartmentDocumentCourierDao.save(subDepDocCouModel) != null ? "200":"204";
+					return subDepartmentDocumentCourierDao.save(departmentDocumentCourierModels) != null ? "200":"204";
 					
 					
 				}else {
@@ -163,33 +176,53 @@ public class SubDepartmentDocumentCourierServiceImpl implements SubDepartmentDoc
 					if(departmentCourierModel2 != null) {
 						//add sub department document courier
 						
-						SubDepartmentDocumentCourierModel subDepDocCouModel=new SubDepartmentDocumentCourierModel();
-						if(isHOUser) {
-							subDepDocCouModel.setBranchCode("HO");
-						}else {
-							subDepDocCouModel.setBranchCode(subDepDocCouDto.getBranchCode());
-						}
-						subDepDocCouModel.setCreateBy(subDepDocCouDto.getCreateBy());
-						subDepDocCouModel.setCreateDate(new Date());
-						subDepDocCouModel.setCurrentUser(subDepDocCouDto.getCreateBy());
-						subDepDocCouModel.setDepartmentCourier(departmentCourierModel2);
-						subDepDocCouModel.setReferenceNo(subDepDocCouDto.getReferenceNo());
-						subDepDocCouModel.setRemark(subDepDocCouDto.getRemark());
-						if(isHOUser) {
-							subDepDocCouModel.setStatus("HO");
-						}else {
-							subDepDocCouModel.setStatus("BRANCH");
-						}
+						ArrayList<SubDepartmentDocumentCourierModel> departmentDocumentCourierModels=new ArrayList<>();
 						
-						if (numberGenCourierDoc[0].equals("Success")) {
-							subDepDocCouModel.setSubDepDocCouToken("DOC-"+numberGenCourierDoc[1]);
-						}
+						docIdList.forEach( docId ->{
+							DocumentTypeModel documentTypeModel=documentTypeDao.findOne(docId);
+	
+							try {
+								//get subdepartmentdocument regarding to SubDepartment and Document Type because many to many relationship
+								SubDepartmentDocumentModel subDepartmentDocumentModel = subDepartmentDocumentDao.findBySubDepartmentAndDocumentType(subDepartmentModel, documentTypeModel);
+							
+								//set sub department doc id 
+								subDepDocCouDto.setSubDepartmentDocumentId(subDepartmentDocumentModel.getSubDepDocId());
+								
+								SubDepartmentDocumentCourierModel subDepDocCouModel=new SubDepartmentDocumentCourierModel();
+								if(isHOUser) {
+									subDepDocCouModel.setBranchCode("HO");
+								}else {
+									subDepDocCouModel.setBranchCode(subDepDocCouDto.getBranchCode());
+								}
+								subDepDocCouModel.setCreateBy(subDepDocCouDto.getCreateBy());
+								subDepDocCouModel.setCreateDate(new Date());
+								subDepDocCouModel.setCurrentUser(subDepDocCouDto.getCreateBy());
+								subDepDocCouModel.setDepartmentCourier(departmentCourierModel2);
+								subDepDocCouModel.setReferenceNo(subDepDocCouDto.getReferenceNo());
+								subDepDocCouModel.setRemark(subDepDocCouDto.getRemark());
+								if(isHOUser) {
+									subDepDocCouModel.setStatus("HO");
+								}else {
+									subDepDocCouModel.setStatus("BRANCH");
+								}
+								
+								if (numberGenCourierDoc[0].equals("Success")) {
+									subDepDocCouModel.setSubDepDocCouToken("DOC-"+numberGenCourierDoc[1]);
+								}
+								
+								subDepDocCouModel.setSubDepartmentDocument(subDepartmentDocumentDao.findOne(subDepDocCouDto.getSubDepartmentDocumentId()));
+								subDepDocCouModel.setUnderwriterEmail(underwriterEmail);
+								subDepDocCouModel.setReferenceType(subDepDocCouDto.getReferenceType());
+								
+								departmentDocumentCourierModels.add(subDepDocCouModel);
+								
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							
+						});
 						
-						subDepDocCouModel.setSubDepartmentDocument(subDepartmentDocumentDao.findOne(subDepDocCouDto.getSubDepartmentDocumentId()));
-						subDepDocCouModel.setUnderwriterEmail(underwriterEmail);
-						subDepDocCouModel.setReferenceType(subDepDocCouDto.getReferenceType());
-						
-						return subDepartmentDocumentCourierDao.save(subDepDocCouModel) != null ? "200":"204";
+						return subDepartmentDocumentCourierDao.save(departmentDocumentCourierModels) != null ? "200":"204";
 						
 					}else {
 						return "204";
@@ -262,33 +295,53 @@ public class SubDepartmentDocumentCourierServiceImpl implements SubDepartmentDoc
 					if(departmentCourierModel2 != null) {
 						//add sub department document courier
 						
-						SubDepartmentDocumentCourierModel subDepDocCouModel=new SubDepartmentDocumentCourierModel();
-						if(isHOUser) {
-							subDepDocCouModel.setBranchCode("HO");
-						}else {
-							subDepDocCouModel.setBranchCode(subDepDocCouDto.getBranchCode());
-						}
-						subDepDocCouModel.setCreateBy(subDepDocCouDto.getCreateBy());
-						subDepDocCouModel.setCreateDate(new Date());
-						subDepDocCouModel.setCurrentUser(subDepDocCouDto.getCreateBy());
-						subDepDocCouModel.setDepartmentCourier(departmentCourierModel2);
-						subDepDocCouModel.setReferenceNo(subDepDocCouDto.getReferenceNo());
-						subDepDocCouModel.setRemark(subDepDocCouDto.getRemark());
-						if(isHOUser) {
-							subDepDocCouModel.setStatus("HO");
-						}else {
-							subDepDocCouModel.setStatus("BRANCH");
-						}
+						ArrayList<SubDepartmentDocumentCourierModel> departmentDocumentCourierModels=new ArrayList<>();
 						
-						if (numberGenCourierDoc[0].equals("Success")) {
-							subDepDocCouModel.setSubDepDocCouToken("DOC-"+numberGenCourierDoc[1]);
-						}
+						docIdList.forEach( docId ->{
+							DocumentTypeModel documentTypeModel=documentTypeDao.findOne(docId);
+							
+							try {
+								//get subdepartmentdocument regarding to SubDepartment and Document Type because many to many relationship
+								SubDepartmentDocumentModel subDepartmentDocumentModel = subDepartmentDocumentDao.findBySubDepartmentAndDocumentType(subDepartmentModel, documentTypeModel);
+							
+								//set sub department doc id 
+								subDepDocCouDto.setSubDepartmentDocumentId(subDepartmentDocumentModel.getSubDepDocId());
+								
+								SubDepartmentDocumentCourierModel subDepDocCouModel=new SubDepartmentDocumentCourierModel();
+								if(isHOUser) {
+									subDepDocCouModel.setBranchCode("HO");
+								}else {
+									subDepDocCouModel.setBranchCode(subDepDocCouDto.getBranchCode());
+								}
+								subDepDocCouModel.setCreateBy(subDepDocCouDto.getCreateBy());
+								subDepDocCouModel.setCreateDate(new Date());
+								subDepDocCouModel.setCurrentUser(subDepDocCouDto.getCreateBy());
+								subDepDocCouModel.setDepartmentCourier(departmentCourierModel2);
+								subDepDocCouModel.setReferenceNo(subDepDocCouDto.getReferenceNo());
+								subDepDocCouModel.setRemark(subDepDocCouDto.getRemark());
+								if(isHOUser) {
+									subDepDocCouModel.setStatus("HO");
+								}else {
+									subDepDocCouModel.setStatus("BRANCH");
+								}
+								
+								if (numberGenCourierDoc[0].equals("Success")) {
+									subDepDocCouModel.setSubDepDocCouToken("DOC-"+numberGenCourierDoc[1]);
+								}
+								
+								subDepDocCouModel.setSubDepartmentDocument(subDepartmentDocumentDao.findOne(subDepDocCouDto.getSubDepartmentDocumentId()));
+								subDepDocCouModel.setUnderwriterEmail(underwriterEmail);
+								subDepDocCouModel.setReferenceType(subDepDocCouDto.getReferenceType());
+								
+								departmentDocumentCourierModels.add(subDepDocCouModel);
+								
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							
+						});
 						
-						subDepDocCouModel.setSubDepartmentDocument(subDepartmentDocumentDao.findOne(subDepDocCouDto.getSubDepartmentDocumentId()));
-						subDepDocCouModel.setUnderwriterEmail(underwriterEmail);
-						subDepDocCouModel.setReferenceType(subDepDocCouDto.getReferenceType());
-						
-						return subDepartmentDocumentCourierDao.save(subDepDocCouModel) != null ? "200":"204";
+						return subDepartmentDocumentCourierDao.save(departmentDocumentCourierModels) != null ? "200":"204";
 						
 					}else {
 						return "204";
