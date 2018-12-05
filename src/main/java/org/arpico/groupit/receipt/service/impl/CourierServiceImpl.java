@@ -79,6 +79,9 @@ public class CourierServiceImpl implements CourierService{
 				courierDto.setRemark(co.getRemark());
 				courierDto.setToken(co.getToken());
 				courierDto.setToBranch(co.getToBranch());
+				courierDto.setSendBy(co.getSendBy());
+				courierDto.setSendDate(co.getSendDate());
+				courierDto.setCouType(co.getCouType());
 				
 				courierDtos.add(courierDto);
 				
@@ -90,7 +93,7 @@ public class CourierServiceImpl implements CourierService{
 	}
 
 	@Override
-	public String sendCourier(CourierDetailsHelperDto courierDetailsHelperDto) throws Exception {
+	public String sendCourier(CourierDetailsHelperDto courierDetailsHelperDto, String userCode, String couType) throws Exception {
 
 		List<SubDepartmentDocumentCourierModel> sendDepDocCou=new ArrayList<>();
 		List<SubDepartmentDocumentCourierModel> notSendDepDocCou=new ArrayList<>();
@@ -241,6 +244,10 @@ public class CourierServiceImpl implements CourierService{
 			}
 			
 			courierModel.setCourierStatus("SEND");
+			courierModel.setSendBy(userCode);
+			courierModel.setSendDate(new Date());
+			courierModel.setCouType(couType);
+			
 			return courierDao.save(courierModel) != null ? "200":"204";
 			}
 		}
@@ -317,6 +324,9 @@ public class CourierServiceImpl implements CourierService{
 			courierDto.setToBranch(co.getToBranch());
 			courierDto.setReceivedBy(co.getReceivedBy());
 			courierDto.setReceivedDate(co.getReceivedDate());
+			courierDto.setSendBy(co.getSendBy());
+			courierDto.setSendDate(co.getSendDate());
+			courierDto.setCouType(co.getCouType());
 			
 			courierDtos.add(courierDto);
 			
@@ -351,6 +361,9 @@ public class CourierServiceImpl implements CourierService{
 				courierDto.setToBranch(co.getToBranch());
 				courierDto.setReceivedBy(co.getReceivedBy());
 				courierDto.setReceivedDate(co.getReceivedDate());
+				courierDto.setSendBy(co.getSendBy());
+				courierDto.setSendDate(co.getSendDate());
+				courierDto.setCouType(co.getCouType());
 				
 				courierDtos.add(courierDto);
 				
@@ -511,6 +524,50 @@ public class CourierServiceImpl implements CourierService{
 		
 		return "204";
 		
+	}
+
+	@Override
+	public String removeCourier(Integer id) throws Exception {
+		
+		subDepartmentDocumentCourierDao.delete(id);
+		return "200";
+	}
+
+	@Override
+	public List<CourierDto> findByCourierStatusAndBranchCodeIn(String userCode, String status) throws Exception {
+		List<String> branches=branchUnderwriteDao.findLocCodes(userCode);
+		List<CourierModel> courierModels =new ArrayList<>();
+		
+		courierModels=courierDao.findByCourierStatusAndBranchCodeIn(status, branches);
+		
+		List<CourierDto> courierDtos=new ArrayList<>();
+		
+		if(!courierModels.isEmpty()) {
+			courierModels.forEach(co -> {
+				System.out.println(co.getToken() + " Token ----- Token ");
+				CourierDto courierDto=new CourierDto();
+				
+				courierDto.setBranchCode(co.getBranchCode());
+				courierDto.setCourierId(co.getCourierId());
+				courierDto.setCourierStatus(co.getCourierStatus());
+				courierDto.setCreateBy(co.getCreateBy());
+				courierDto.setCreateDate(co.getCreateDate());
+				courierDto.setModifyBy(co.getModifyBy());
+				courierDto.setModifyDate(co.getModifyDate());
+				courierDto.setRemark(co.getRemark());
+				courierDto.setToken(co.getToken());
+				courierDto.setToBranch(co.getToBranch());
+				courierDto.setSendBy(co.getSendBy());
+				courierDto.setSendDate(co.getSendDate());
+				courierDto.setCouType(co.getCouType());
+				
+				courierDtos.add(courierDto);
+				
+			});
+		}
+		
+		
+		return courierDtos;
 	}
 
 }

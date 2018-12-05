@@ -54,6 +54,9 @@ public class DepartmentCourierServiceImpl implements DepartmentCourierService{
 		helperDto.setCourierId(couId);
 		helperDto.setCourierRef(courierModel.getToken());
 		helperDto.setCourierStatus(courierModel.getCourierStatus());
+		helperDto.setCouType(courierModel.getCouType());
+		helperDto.setSendBy(courierModel.getSendBy());
+		helperDto.setSendDate(courierModel.getSendDate());
 		
 		departmentCourierModels.forEach(dc -> {
 			try {
