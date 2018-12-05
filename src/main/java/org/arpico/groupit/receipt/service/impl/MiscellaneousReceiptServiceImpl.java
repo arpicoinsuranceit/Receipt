@@ -80,6 +80,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		ResponseDto responseDto = null;
 
 		String user = decoder.generate(token);
+		String physicalBranch = decoder.generateLoc(token);
 
 		String[] numberGen = numberGenerator.generateNewId("", "", "SQOIIS", "");
 
@@ -89,7 +90,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 
 			String docNo = numberGen[1];
 
-			RmsDocTxnmModel docTxnmModel = getRmsDocTxnmModelInv(dto, user, docNo);
+			RmsDocTxnmModel docTxnmModel = getRmsDocTxnmModelInv(dto, user, docNo, physicalBranch);
 			List<RmsItemMasterModel> itemList = new ArrayList<>();
 			List<RmsDocTxndModel> docTxndModels = new ArrayList<>();
 
@@ -285,7 +286,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		return model;
 	}
 
-	private RmsDocTxnmModel getRmsDocTxnmModelInv(MiscellaneousReceiptInvDto dto, String user, String docNo)
+	private RmsDocTxnmModel getRmsDocTxnmModelInv(MiscellaneousReceiptInvDto dto, String user, String docNo, String physicalBranch)
 			throws ParseException {
 
 		//SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -299,7 +300,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		RmsDocTxnmModel model = new RmsDocTxnmModel();
 
 		model.setCustSupF("S");
-		model.setCustSupCode(dto.getBranch());
+		model.setCustSupCode(physicalBranch);
 		model.setRmsDocTxnmModelPK(pk);
 		model.setRef1(dto.getAgent());
 		model.setRef2(dto.getPaymode());

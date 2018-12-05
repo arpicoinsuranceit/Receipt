@@ -45,6 +45,7 @@ org\arpico\groupit\receipt\dao\impl\RmsItemMasterCustomDaoImpl.class
 org\arpico\groupit\receipt\service\impl\SubDepartmentServiceImp.class
 org\arpico\groupit\receipt\dao\rowmapper\DashboardCashFlowSummeryRowMapper.class
 org\arpico\groupit\receipt\model\InOcuLoadDetModel.class
+org\arpico\groupit\receipt\dao\impl\InGLIntegParametersDaoImpl.class
 org\arpico\groupit\receipt\dao\impl\RmsUserDaoImpl.class
 org\arpico\groupit\receipt\service\impl\SubDepartmentDocumentCourierServiceImpl.class
 org\arpico\groupit\receipt\dto\ExpenseDto.class
@@ -99,6 +100,7 @@ org\arpico\groupit\receipt\dao\rowmapper\ReceiptDetailsRowMapper.class
 org\arpico\groupit\receipt\dao\impl\InPropPrePolsCustomDaoImpl.class
 org\arpico\groupit\receipt\dto\CourierDetailsHelperDto.class
 org\arpico\groupit\receipt\model\AgentMastModel.class
+org\arpico\groupit\receipt\dao\InGLIntegParametersDao.class
 org\arpico\groupit\receipt\model\PayModeGridModel.class
 org\arpico\groupit\receipt\dao\impl\RmsDocTxnmCustomDaoImpl.class
 org\arpico\groupit\receipt\validation\impl\CommonValidationImpl.class

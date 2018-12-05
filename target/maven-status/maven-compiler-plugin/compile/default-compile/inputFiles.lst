@@ -70,6 +70,7 @@ E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\model\Rece
 E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\controller\AgentController.java
 E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\dto\BankDetailsDto.java
 E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\dto\SubDepartmentDocumentCourierDto.java
+E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\dao\InGLIntegParametersDao.java
 E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\dao\InProposalDao.java
 E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\model\pk\InPropLoadingModelPK.java
 E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\service\DashboardService.java
@@ -152,6 +153,7 @@ E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\controller
 E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\dao\impl\RmsRecdCustomDaoImpl.java
 E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\dao\InPropAddBenefictDao.java
 E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\dto\CodeTransferGridDto.java
+E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\dao\impl\InGLIntegParametersDaoImpl.java
 E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\dao\SubDepartmentDocumentCourierDao.java
 E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\model\pk\InPropSchedulesModelPK.java
 E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\dao\ReceiptInquiryCustomDao.java
