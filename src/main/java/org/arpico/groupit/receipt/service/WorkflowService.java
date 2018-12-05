@@ -17,4 +17,10 @@ public interface WorkflowService {
 
 	ResponseEntity<Object> getPolicyDetails(String polnum, String pprnum) throws Exception;
 
+	List<PromisesGridDto> getPolicies(String token, Integer page, Integer offset, String type) throws Exception;
+
+	ResponseEntity<Object> getPaymentHistory(String polnum, String pprnum) throws Exception;
+
+	ResponseEntity<Object> getReceiptHistory(String polnum, String pprnum) throws Exception;
+
 }

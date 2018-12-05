@@ -93,4 +93,12 @@ public class InTransactionCustomDaoImpl implements InTransactionCustomDao {
 				new InTransactionRowMapper());
 	}
 
+	@Override
+	public List<LastReceiptSummeryModel> getLastReceiptsByProposal(String pprnum) throws Exception {
+		return (List<LastReceiptSummeryModel>) jdbcTemplate.query(
+				"select doccod, docnum, creadt, pprnum, polnum, totprm, chqrel, paymod from intransactions "
+						+ "where sbucod='450' and pprnum = '" + pprnum + "' order by creadt desc",
+				new LastReceiptRowMapper());
+	}
+
 }

@@ -9,6 +9,7 @@ public class WorkflowProposalChildrenDto {
 	private boolean cibc;
 	private boolean hcbc;
 	private boolean hbc;
+	private boolean shcbc;
 
 	public String getFullName() {
 		return fullName;
@@ -66,10 +67,18 @@ public class WorkflowProposalChildrenDto {
 		this.hbc = hbc;
 	}
 
+	public boolean isShcbc() {
+		return shcbc;
+	}
+
+	public void setShcbc(boolean shcbc) {
+		this.shcbc = shcbc;
+	}
+
 	@Override
 	public String toString() {
 		return "WorkflowProposalChildrenDto [fullName=" + fullName + ", relation=" + relation + ", dob=" + dob
-				+ ", age=" + age + ", cibc=" + cibc + ", hcbc=" + hcbc + ", hbc=" + hbc + "]";
+				+ ", age=" + age + ", cibc=" + cibc + ", hcbc=" + hcbc + ", hbc=" + hbc + ", shcbc=" + shcbc + "]";
 	}
 
 }

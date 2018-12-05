@@ -601,7 +601,7 @@ public class ProposalServiceImpl implements ProposalServce {
 						+ inProposalsModel.getTotprm() + inProposalsModel.getPolfee());
 			}
 
-			billingTransactionsModel.setBrncod(inProposalsModel.getBrncod());
+			billingTransactionsModel.setBrncod(agentMastModel.getLocation());
 			billingTransactionsModel.setChqrel("N");
 			billingTransactionsModel.setComiss(AppConstant.ZERO_FOR_DECIMAL);
 			billingTransactionsModel.setComper(AppConstant.ZERO_FOR_DECIMAL);

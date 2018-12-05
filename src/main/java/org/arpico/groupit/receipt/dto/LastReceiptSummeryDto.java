@@ -8,7 +8,7 @@ public class LastReceiptSummeryDto {
 	private String pprnum;
 	private String polnum;
 	private Double amount;
-	private Double paymod;
+	private String paymod;
 	private String chqrel;
 	private String remark;
 	private Integer docNo;
@@ -61,11 +61,11 @@ public class LastReceiptSummeryDto {
 		this.amount = amount;
 	}
 
-	public Double getPaymod() {
+	public String getPaymod() {
 		return paymod;
 	}
 
-	public void setPaymod(Double paymod) {
+	public void setPaymod(String paymod) {
 		this.paymod = paymod;
 	}
 

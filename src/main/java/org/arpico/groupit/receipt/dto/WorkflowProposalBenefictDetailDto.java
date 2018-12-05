@@ -1,6 +1,6 @@
 package org.arpico.groupit.receipt.dto;
 
-public class WorkflowProposalBenefictDetailDao {
+public class WorkflowProposalBenefictDetailDto {
 
 	private String benefictCode;
 	private String benefictNAme;

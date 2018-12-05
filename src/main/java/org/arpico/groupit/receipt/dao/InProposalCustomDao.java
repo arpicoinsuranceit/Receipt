@@ -36,4 +36,8 @@ public interface InProposalCustomDao {
 
 	InProposalsModel getProposalFromPolnum(Integer polnum) throws Exception;
 
+	List<InProposalsModel> getPoliciesToWorkFlowHO(String type) throws Exception;
+
+	List<InProposalsModel> getPoliciesToWorkFlow(String brancheList, String type) throws Exception;
+
 }

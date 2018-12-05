@@ -21,9 +21,9 @@ public class WorkfolwProposalDto {
 	private WorkflowProposalSpouseDto spouseDto;
 	private List<WorkflowProposalChildrenDto> childrenDtos;
 
-	private List<WorkflowProposalBenefictDetailDao> benefictDetailsMain;
-	private List<WorkflowProposalBenefictDetailDao> benefictDetailsSpouse;
-	private List<WorkflowProposalBenefictDetailDao> benefictDetailsChildren;
+	private List<WorkflowProposalBenefictDetailDto> benefictDetailsMain;
+	private List<WorkflowProposalBenefictDetailDto> benefictDetailsSpouse;
+	private List<WorkflowProposalBenefictDetailDto> benefictDetailsChildren;
 
 	public String getPolNum() {
 		return polNum;
@@ -145,27 +145,27 @@ public class WorkfolwProposalDto {
 		this.childrenDtos = childrenDtos;
 	}
 
-	public List<WorkflowProposalBenefictDetailDao> getBenefictDetailsMain() {
+	public List<WorkflowProposalBenefictDetailDto> getBenefictDetailsMain() {
 		return benefictDetailsMain;
 	}
 
-	public void setBenefictDetailsMain(List<WorkflowProposalBenefictDetailDao> benefictDetailsMain) {
+	public void setBenefictDetailsMain(List<WorkflowProposalBenefictDetailDto> benefictDetailsMain) {
 		this.benefictDetailsMain = benefictDetailsMain;
 	}
 
-	public List<WorkflowProposalBenefictDetailDao> getBenefictDetailsSpouse() {
+	public List<WorkflowProposalBenefictDetailDto> getBenefictDetailsSpouse() {
 		return benefictDetailsSpouse;
 	}
 
-	public void setBenefictDetailsSpouse(List<WorkflowProposalBenefictDetailDao> benefictDetailsSpouse) {
+	public void setBenefictDetailsSpouse(List<WorkflowProposalBenefictDetailDto> benefictDetailsSpouse) {
 		this.benefictDetailsSpouse = benefictDetailsSpouse;
 	}
 
-	public List<WorkflowProposalBenefictDetailDao> getBenefictDetailsChildren() {
+	public List<WorkflowProposalBenefictDetailDto> getBenefictDetailsChildren() {
 		return benefictDetailsChildren;
 	}
 
-	public void setBenefictDetailsChildren(List<WorkflowProposalBenefictDetailDao> benefictDetailsChildren) {
+	public void setBenefictDetailsChildren(List<WorkflowProposalBenefictDetailDto> benefictDetailsChildren) {
 		this.benefictDetailsChildren = benefictDetailsChildren;
 	}
 

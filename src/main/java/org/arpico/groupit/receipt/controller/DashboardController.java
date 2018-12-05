@@ -40,14 +40,22 @@ public class DashboardController {
 		try {
 			to = sdf.parse(toDate);
 		} catch (Exception e) {
-			to = new Date(Long.parseLong(toDate));
+			try {
+				to = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(toDate);
+			}catch (Exception ex) {
+				to = new Date(Long.parseLong(toDate));
+			}
 		}
 
 		Date from = null;
 		try {
 			from = sdf.parse(fromDate);
 		} catch (Exception e) {
-			from = new Date(Long.parseLong(fromDate));
+			try {
+				from = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(toDate);
+			}catch (Exception ex) {
+				from = new Date(Long.parseLong(toDate));
+			}
 		}
 
 		System.out.println("from" + from);
@@ -81,14 +89,22 @@ public class DashboardController {
 		try {
 			to = sdf.parse(toDate);
 		} catch (Exception e) {
-			to = new Date(Long.parseLong(toDate));
+			try {
+				to = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(toDate);
+			}catch (Exception ex) {
+				to = new Date(Long.parseLong(toDate));
+			}
 		}
 
 		Date from = null;
 		try {
 			from = sdf.parse(fromDate);
 		} catch (Exception e) {
-			from = new Date(Long.parseLong(fromDate));
+			try {
+				from = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(toDate);
+			}catch (Exception ex) {
+				from = new Date(Long.parseLong(toDate));
+			}
 		}
 
 		System.out.println("from" + from);
@@ -122,14 +138,22 @@ public class DashboardController {
 		try {
 			to = sdf.parse(toDate);
 		} catch (Exception e) {
-			to = new Date(Long.parseLong(toDate));
+			try {
+				to = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(toDate);
+			}catch (Exception ex) {
+				to = new Date(Long.parseLong(toDate));
+			}
 		}
 
 		Date from = null;
 		try {
 			from = sdf.parse(fromDate);
 		} catch (Exception e) {
-			from = new Date(Long.parseLong(fromDate));
+			try {
+				from = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(toDate);
+			}catch (Exception ex) {
+				from = new Date(Long.parseLong(toDate));
+			}
 		}
 
 		System.out.println("from" + from);
@@ -161,14 +185,22 @@ public class DashboardController {
 		try {
 			to = sdf.parse(toDate);
 		} catch (Exception e) {
-			to = new Date(Long.parseLong(toDate));
+			try {
+				to = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(toDate);
+			}catch (Exception ex) {
+				to = new Date(Long.parseLong(toDate));
+			}
 		}
 
 		Date from = null;
 		try {
 			from = sdf.parse(fromDate);
 		} catch (Exception e) {
-			from = new Date(Long.parseLong(fromDate));
+			try {
+				from = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(toDate);
+			}catch (Exception ex) {
+				from = new Date(Long.parseLong(toDate));
+			}
 		}
 
 		System.out.println("from" + from);
@@ -199,14 +231,22 @@ public class DashboardController {
 		try {
 			to = sdf.parse(toDate);
 		} catch (Exception e) {
-			to = new Date(Long.parseLong(toDate));
+			try {
+				to = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(toDate);
+			}catch (Exception ex) {
+				to = new Date(Long.parseLong(toDate));
+			}
 		}
 
 		Date from = null;
 		try {
 			from = sdf.parse(fromDate);
 		} catch (Exception e) {
-			from = new Date(Long.parseLong(fromDate));
+			try {
+				from = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(toDate);
+			}catch (Exception ex) {
+				from = new Date(Long.parseLong(toDate));
+			}
 		}
 
 		System.out.println("from" + from);
@@ -237,15 +277,24 @@ public class DashboardController {
 		try {
 			to = sdf.parse(toDate);
 		} catch (Exception e) {
-			to = new Date(Long.parseLong(toDate));
+			try {
+				to = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(toDate);
+			}catch (Exception ex) {
+				to = new Date(Long.parseLong(toDate));
+			}
 		}
 
-
+		System.out.println(fromDate);
 		Date from = null;
 		try {
 			from = sdf.parse(fromDate);
 		} catch (Exception e) {
-			from = new Date(Long.parseLong(fromDate));
+			try {
+				from = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(toDate);
+			}catch (Exception ex) {
+				from = new Date(Long.parseLong(toDate));
+			}
+			
 		}
 
 		System.out.println("from" + from);

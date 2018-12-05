@@ -23,7 +23,7 @@ public class InPropFamDetailsCustomDaoImpl implements InPropFamDetailsCustomDao 
 		 * "select * from inpropfamdetails where sbucod = '450' and pprnum = " + pprNo +
 		 * " and prpseq = " + seqNo, new InPropFamDetailsRowMapper());
 		 */
-
+		
 		return jdbcTemplate.query("select * from inpropfamdetails where sbucod = '450' and pprnum = '" + pprNo
 				+ "' and prpseq = " + seqNo, new InPropFamDetailsRowMapper());
 	}
