@@ -3,6 +3,7 @@ package org.arpico.groupit.receipt.dao;
 import java.util.List;
 
 import org.arpico.groupit.receipt.model.InBillingTransactionsModel;
+import org.arpico.groupit.receipt.model.PaymentHistoryModel;
 import org.arpico.groupit.receipt.model.ReFundModel;
 
 public interface InBillingTransactionsCustomDao{
@@ -18,5 +19,7 @@ public interface InBillingTransactionsCustomDao{
 	InBillingTransactionsModel getLasiInvoice(String pprnum) throws Exception;
 	
 	List<InBillingTransactionsModel> getTransactionsByPprnum(String pprnum) throws Exception;
+	
+	List<PaymentHistoryModel> getPaymentHistory (String pprNum) throws Exception;
 
 }

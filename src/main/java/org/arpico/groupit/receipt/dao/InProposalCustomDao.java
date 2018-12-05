@@ -31,7 +31,13 @@ public interface InProposalCustomDao {
 	List<ProposalNoSeqNoModel> getProposalNoSeqNoModel(String pprNo) throws Exception;
 
 	InProposalsModel getProposalFromPprnum(Integer pprnum) throws Exception;
+	
+	InProposalsModel getProposalFromPprnumWorkFolw(Integer pprnum) throws Exception;
 
 	InProposalsModel getProposalFromPolnum(Integer polnum) throws Exception;
+
+	List<InProposalsModel> getPoliciesToWorkFlowHO(String type) throws Exception;
+
+	List<InProposalsModel> getPoliciesToWorkFlow(String brancheList, String type) throws Exception;
 
 }

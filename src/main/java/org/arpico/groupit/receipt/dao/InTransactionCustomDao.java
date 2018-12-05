@@ -18,5 +18,7 @@ public interface InTransactionCustomDao {
 	InTransactionsModel getTransaction (String type, Integer no) throws Exception;
 	
 	List<InTransactionsModel> getTransactionByPprNum (String pprNum) throws Exception;
+
+	List<LastReceiptSummeryModel> getLastReceiptsByProposal(String pprnum) throws Exception;
 	
 }

@@ -258,7 +258,7 @@ public class SetoffServiceImpl implements SetoffService {
 						+ inProposalsModel.getTotprm() + inProposalsModel.getPolfee());
 			}
 
-			billingTransactionsModel.setBrncod(inProposalsModel.getBrncod());
+			billingTransactionsModel.setBrncod(agentMastModel.getLocation());
 			billingTransactionsModel.setChqrel("N");
 			billingTransactionsModel.setComiss(AppConstant.ZERO_FOR_DECIMAL);
 			billingTransactionsModel.setComper(AppConstant.ZERO_FOR_DECIMAL);
@@ -520,7 +520,7 @@ public class SetoffServiceImpl implements SetoffService {
 		model.setAdvcod(invoice.getAdvcod());
 		model.setAgncls(invoice.getAgncls());
 		model.setAmount(reFundModel.getRefamount() * -1);
-		model.setBrncod(inProposalsModel.getBrncod());
+		model.setBrncod(invoice.getBrncod());
 		model.setChqrel("N");
 		model.setComiss(AppConstant.ZERO_FOR_DECIMAL);
 		model.setComper(AppConstant.ZERO_FOR_DECIMAL);
