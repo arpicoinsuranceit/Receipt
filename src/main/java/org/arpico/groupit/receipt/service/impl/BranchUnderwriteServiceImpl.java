@@ -452,10 +452,13 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 			}
 			
 			/* Financial Questionnaire */
-			if(newInProposalsModel.getSumrkm() >= 5000000 || newInProposalsModel.getSumrks() >= 5000000) {
-				inPropMedicalReqModels.add(getAdditionalReq("main", "AD69", "Additional Requirement","FINANCIAL QUESTIONNAIRE (TOTAL SUM@RISK OVER 5MILLION)", newInProposalsModelPK.getPprnum(),
-						newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
+			if(!newInProposalsModel.getPrdcod().equals("AIP")) {
+				if(newInProposalsModel.getSumrkm() >= 5000000 || newInProposalsModel.getSumrks() >= 5000000) {
+					inPropMedicalReqModels.add(getAdditionalReq("main", "AD69", "Additional Requirement","FINANCIAL QUESTIONNAIRE (TOTAL SUM@RISK OVER 5MILLION)", newInProposalsModelPK.getPprnum(),
+							newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
+				}
 			}
+			
 			
 			/* KYC Form */
 			if(newInProposalsModel.getTotprm() >= 1000000 ) {

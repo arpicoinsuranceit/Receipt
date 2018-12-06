@@ -45,5 +45,20 @@ public class AgentServiceImpl implements AgentService{
 		}
 		return false;
 	}
+	
+	@Override
+	public List<AgentDto> findAgentByLocations(String loccodes) throws Exception {
+		loccodes=loccodes.replaceAll(",$", "");
+		List<AgentModel> agentModels = agentDao.findAgentByLocations(loccodes);
+		List<AgentDto> agentDtos = new ArrayList<>();
+		for (AgentModel agentModel : agentModels) {
+			AgentDto agentDto = getAgent(agentModel);
+			agentDtos.add(agentDto);
+		}
+		return agentDtos;
+	}
+
+	
+	
 
 }

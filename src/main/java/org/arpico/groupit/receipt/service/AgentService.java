@@ -9,4 +9,6 @@ public interface AgentService {
 	List<AgentDto> getAgentList(Integer agentCode) throws Exception;
 	
 	boolean availableAgent (String agentCode) throws Exception;
+
+	List<AgentDto> findAgentByLocations(String loccodes) throws Exception;
 }
