@@ -1,7 +1,6 @@
 package org.arpico.groupit.receipt.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -37,7 +36,7 @@ import org.arpico.groupit.receipt.dto.CodeTransferDto;
 import org.arpico.groupit.receipt.dto.CodeTransferGridDto;
 import org.arpico.groupit.receipt.dto.CodeTransferHelperDto;
 import org.arpico.groupit.receipt.dto.EmailDto;
-import org.arpico.groupit.receipt.dto.EmailResponseDto;
+import org.arpico.groupit.receipt.dto.PromisesGridDto;
 import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.dto.SaveCodeTransferDto;
 import org.arpico.groupit.receipt.model.AgentMastModel;
@@ -59,6 +58,7 @@ import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.CodeTransferService;
 import org.arpico.groupit.receipt.util.AppConstant;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -152,8 +152,6 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 	@Autowired
 	private UserDao userDao;
 
-	@Autowired
-	private InfosysWSClient infosysWSClient;
 
 	@Override
 	public ResponseEntity<Object> getProposalDetails(String pprNum, String token) throws Exception {
@@ -952,6 +950,48 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 		}
 
 		return null;
+	}
+
+	@Override
+	public List<CodeTransferDto> getPendingCodeTransferPrp(String token, Integer page, Integer offset)
+			throws Exception {
+		String usercode = new JwtDecoder().generate(token);
+		List<CodeTransferDto> codeTransferDtos = new ArrayList<>();
+		if (usercode != null) {
+			List<CodeTransferModel> codeTransferModels = codeTransferDao.findByStatusAndCreateBy("PENDING", usercode, new PageRequest(page, offset));
+			System.out.println(codeTransferModels.size() + "size .. ");
+			if (!codeTransferModels.isEmpty()) {
+				codeTransferModels.forEach(code -> {
+					if (code.getPolNum() == null || code.getPolNum() == "" || code.getPolNum().isEmpty()) {
+						CodeTransferDto codeTransferDto = new CodeTransferDto();
+						codeTransferDto.setApprovedBy(code.getApprovedBy());
+						codeTransferDto.setApprovedDate(code.getApprovedDate());
+						codeTransferDto.setApproverRemark(code.getApproverRemark());
+						codeTransferDto.setCodeTransferId(code.getCodeTransferId());
+						codeTransferDto.setCreateBy(code.getCreateBy());
+						codeTransferDto.setCreateDate(code.getCreateDate());
+						codeTransferDto.setLocCode(code.getLocCode());
+						codeTransferDto.setModifyBy(code.getModifyBy());
+						codeTransferDto.setModifyDate(code.getModifyDate());
+						codeTransferDto.setNewAgentCode(code.getNewAgentCode());
+						codeTransferDto.setOldAgentCode(code.getOldAgentCode());
+						codeTransferDto.setPolNum(code.getPolNum());
+						codeTransferDto.setPprNum(code.getPprNum());
+						codeTransferDto.setReason(code.getReason());
+						codeTransferDto.setRequestBy(code.getRequestBy());
+						codeTransferDto.setRequestDate(code.getRequestDate());
+						codeTransferDto.setSbuCode(code.getSbuCode());
+						codeTransferDto.setStatus(code.getStatus());
+
+						codeTransferDtos.add(codeTransferDto);
+					}
+
+				});
+			}
+
+		}
+
+		return codeTransferDtos;
 	}
 
 }

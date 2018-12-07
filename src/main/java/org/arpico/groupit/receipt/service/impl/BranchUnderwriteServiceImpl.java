@@ -34,7 +34,6 @@ import org.arpico.groupit.receipt.dao.InPropSurrenderValsCustomDao;
 import org.arpico.groupit.receipt.dao.InPropSurrenderValsDao;
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
 import org.arpico.groupit.receipt.dao.InProposalDao;
-import org.arpico.groupit.receipt.dao.RmsUserDao;
 import org.arpico.groupit.receipt.dao.SubDepartmentDao;
 import org.arpico.groupit.receipt.dao.SubDepartmentDocumentCourierDao;
 import org.arpico.groupit.receipt.dao.SubDepartmentDocumentDao;
@@ -143,10 +142,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	
 	@Autowired
 	private InPropSurrenderValsCustomDao surrenderValCustomDao;
-	
-	@Autowired
-	private RmsUserDao rmsUserDao;
-	
+		
 	@Autowired
 	private InProposalDao inProposalDao;
 	

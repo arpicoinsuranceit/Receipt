@@ -3,10 +3,12 @@ package org.arpico.groupit.receipt.dao;
 import java.util.List;
 
 import org.arpico.groupit.receipt.dto.ProposalL3Dto;
+import org.arpico.groupit.receipt.dto.WorkFlowPolicyGridDto;
 import org.arpico.groupit.receipt.model.InPropPreviousPolModel;
 import org.arpico.groupit.receipt.model.InProposalBasicsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;
+import org.arpico.groupit.receipt.model.WorkFlowPolicyGridModel;
 
 public interface InProposalCustomDao {
 
@@ -39,5 +41,11 @@ public interface InProposalCustomDao {
 	List<InProposalsModel> getPoliciesToWorkFlowHO(String type) throws Exception;
 
 	List<InProposalsModel> getPoliciesToWorkFlow(String brancheList, String type) throws Exception;
+	
+	List<WorkFlowPolicyGridModel> getWorkFlowPolicyGrid (String status, String locCodes, Integer page, Integer offset) throws Exception;
+	
+	List<WorkFlowPolicyGridModel> getWorkFlowPolicyGridHo(String status, Integer page,
+			Integer offset) throws Exception;
+	
 
 }

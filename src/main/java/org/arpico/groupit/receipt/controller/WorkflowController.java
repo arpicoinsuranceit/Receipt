@@ -2,7 +2,12 @@ package org.arpico.groupit.receipt.controller;
 
 import java.util.List;
 
+import org.arpico.groupit.receipt.dto.CanceledReceiptDto;
+import org.arpico.groupit.receipt.dto.CodeTransferDto;
 import org.arpico.groupit.receipt.dto.PromisesGridDto;
+import org.arpico.groupit.receipt.dto.WorkFlowPolicyGridDto;
+import org.arpico.groupit.receipt.service.CodeTransferService;
+import org.arpico.groupit.receipt.service.ReceiptCancelationService;
 import org.arpico.groupit.receipt.service.WorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +27,12 @@ public class WorkflowController {
 
 	@Autowired
 	private WorkflowService workflowService;
+	
+	@Autowired
+	private ReceiptCancelationService receiptCancelationService;
+	
+	@Autowired
+	private CodeTransferService codeTransferService;
 
 	@RequestMapping(value = "/getAllPromises/{token:.+}/{page}/{offset}", method = RequestMethod.GET)
 	public List<PromisesGridDto> getAllPromises(@PathVariable String token, @PathVariable Integer page,
@@ -76,6 +87,33 @@ public class WorkflowController {
 		
 		return workflowService.getReceiptHistory(polnum, pprnum);
 		
+	}
+	
+	@RequestMapping(value = "/getPendingRequest/{token:.+}/{page}/{offset}", method = RequestMethod.GET)
+	public List<CanceledReceiptDto> getPendingRequest (@PathVariable("token") String token, @PathVariable Integer page,
+			@PathVariable Integer offset) throws Exception{
+		
+		return receiptCancelationService.findPendingRequest(token, page, offset);
+		
+	}
+	
+	@RequestMapping(value = "/getPendingRequestLength/{token:.+}", method = RequestMethod.GET)
+	public Integer getPendingRequest (@PathVariable("token") String token) throws Exception{
+		
+		return receiptCancelationService.findPendingRequestLength(token);
+		
+	}
+	
+	@RequestMapping(value="/code_transfer/getPendingCodeTransfersPrp/{token:.+}/{page}/{offset}", method = RequestMethod.GET)
+	public List<CodeTransferDto> getPendingCodeTransfersPrp(@PathVariable("token")String token, @PathVariable Integer page,
+			@PathVariable Integer offset)throws Exception{
+		return codeTransferService.getPendingCodeTransferPrp(token, page, offset);
+	}
+	
+	@RequestMapping(value="/getPendingActPolicies/{token:.+}/{page}/{offset}", method = RequestMethod.GET)
+	public List<WorkFlowPolicyGridDto> getPendingActPolicies(@PathVariable("token")String token, @PathVariable Integer page,
+			@PathVariable Integer offset)throws Exception{
+		return workflowService.getPendingActPolicies(token, page, offset);
 	}
 
 }

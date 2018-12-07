@@ -22,67 +22,107 @@ public class ReceiptCancelationCustomDaoImpl implements ReceiptCancelationCustom
 	private JdbcTemplate jdbcTemplate;
 
 	@Override
-	public List<String> findReceiptLikeReceiptId(String receiptId,String loccodes,boolean isHo) throws Exception {
+	public List<String> findReceiptLikeReceiptId(String receiptId, String loccodes, boolean isHo) throws Exception {
 		List<String> receiptIdList = null;
-		String sql="";
-		
-		if(isHo) {
-			sql="select docnum from intransactions where sbucod='450' and docnum like '"+receiptId+"%' ";
-		}else {
-			sql="select docnum from intransactions where sbucod='450' and loccod in ("+loccodes+") and docnum like '"+receiptId+"%' ";
+		String sql = "";
+
+		if (isHo) {
+			sql = "select docnum from intransactions where sbucod='450' and docnum like '" + receiptId + "%' ";
+		} else {
+			sql = "select docnum from intransactions where sbucod='450' and loccod in (" + loccodes
+					+ ") and docnum like '" + receiptId + "%' ";
 		}
-		
+
 		receiptIdList = jdbcTemplate.query(sql, new ResultSetExtractor<List<String>>() {
 
 			@Override
 			public List<String> extractData(ResultSet rs) throws SQLException, DataAccessException {
 				List<String> receiptIdListTemp = new ArrayList<>();
-				while(rs.next()) {
-					String id=rs.getString("docnum");
+				while (rs.next()) {
+					String id = rs.getString("docnum");
 					receiptIdListTemp.add(id);
 				}
 				return receiptIdListTemp;
 			}
 		});
-		
+
 		return receiptIdList;
 	}
 
 	@Override
-	public List<CanceledReceiptModel> findPendingRequest(String loccodes, String status,boolean isHo) throws Exception {
-		List<CanceledReceiptModel> canceledReceiptModels=null;
-		
-		String sql="select sbucod,loccod,polnum,pprnum,reason,docnum,rqstby,rqstdt,status,amount,doccod from inreceiptauth where sbucod='450' and loccod in ("+loccodes+") and status='"+status+"' order by rqstdt desc";
-		
-		if(isHo) {
-			sql="select sbucod,loccod,polnum,pprnum,reason,docnum,rqstby,rqstdt,status,amount,doccod from inreceiptauth where sbucod='450' and status='"+status+"' order by rqstdt desc";
+	public List<CanceledReceiptModel> findPendingRequest(String loccodes, String status, boolean isHo)
+			throws Exception {
+		List<CanceledReceiptModel> canceledReceiptModels = null;
+
+		String sql = "select sbucod,loccod,polnum,pprnum,reason,docnum,rqstby,rqstdt,status,amount,doccod from inreceiptauth where sbucod='450' and loccod in ("
+				+ loccodes + ") and status='" + status + "' order by rqstdt desc";
+
+		if (isHo) {
+			sql = "select sbucod,loccod,polnum,pprnum,reason,docnum,rqstby,rqstdt,status,amount,doccod from inreceiptauth where sbucod='450' and status='"
+					+ status + "' order by rqstdt desc";
 		}
-		
-		canceledReceiptModels=jdbcTemplate.query(sql, new CanceledReceiptRowMapper());
-		
+
+		canceledReceiptModels = jdbcTemplate.query(sql, new CanceledReceiptRowMapper());
+
 		return canceledReceiptModels;
 	}
 
 	@Override
 	public String findGMEmail(String sbucode, String loccode) throws Exception {
-		
-		String email=jdbcTemplate.queryForObject("select ig.email from ingmzone ig " + 
-				"inner join inzonemast z on ig.zoncod=z.zoncod and ig.sbucod=z.sbucod " + 
-				"inner join inregion r on z.zoncod=r.zoncod and z.sbucod=r.sbucod " + 
-				"inner join rms_locations l on r.rgncod=l.rgncod and r.sbucod=l.sbu_code " + 
-				"where l.sbu_code='"+sbucode+"' and  l.loccod='"+loccode+"' ", String.class);
-		
+
+		String email = jdbcTemplate.queryForObject("select ig.email from ingmzone ig "
+				+ "inner join inzonemast z on ig.zoncod=z.zoncod and ig.sbucod=z.sbucod "
+				+ "inner join inregion r on z.zoncod=r.zoncod and z.sbucod=r.sbucod "
+				+ "inner join rms_locations l on r.rgncod=l.rgncod and r.sbucod=l.sbu_code " + "where l.sbu_code='"
+				+ sbucode + "' and  l.loccod='" + loccode + "' ", String.class);
+
 		return email;
 	}
-	
-	
+
 	@Override
-	public InTransactionsModel findTransctionRow(String sbucode, String docnum,String doccod,String creby) throws Exception {
-		InTransactionsModel transaction=null;
-		transaction=jdbcTemplate.queryForObject("SELECT * FROM intransactions where sbucod='"+sbucode+"' and docnum='"+docnum+"' and doccod='"+doccod+"' and creaby='"+creby+"' ", new InTransactionRowMapper());
-		
+	public InTransactionsModel findTransctionRow(String sbucode, String docnum, String doccod, String creby)
+			throws Exception {
+		InTransactionsModel transaction = null;
+		transaction = jdbcTemplate
+				.queryForObject(
+						"SELECT * FROM intransactions where sbucod='" + sbucode + "' and docnum='" + docnum
+								+ "' and doccod='" + doccod + "' and creaby='" + creby + "' ",
+						new InTransactionRowMapper());
+
 		return transaction;
 	}
-	
+
+	@Override
+	public List<CanceledReceiptModel> findPendingRequest(String locations, String status, boolean isHo, Integer page,
+			Integer offset) throws Exception {
+		List<CanceledReceiptModel> canceledReceiptModels = null;
+
+		String sql = "select sbucod,loccod,polnum,pprnum,reason,docnum,rqstby,rqstdt,status,amount,doccod from inreceiptauth where sbucod='450' and loccod in ("
+				+ locations + ") and status='" + status + "' order by rqstdt desc limit " + page + ", " + offset;
+
+		if (isHo) {
+			sql = "select sbucod,loccod,polnum,pprnum,reason,docnum,rqstby,rqstdt,status,amount,doccod from inreceiptauth where sbucod='450' and status='"
+					+ status + "' order by rqstdt desc limit " + page + ", " + offset;
+		}
+
+		canceledReceiptModels = jdbcTemplate.query(sql, new CanceledReceiptRowMapper());
+
+		return canceledReceiptModels;
+	}
+
+	@Override
+	public Integer findPendingRequestLength(String locations, String status, boolean isHo) throws Exception {
+		String sql = "select count(rqstby) from inreceiptauth where sbucod='450' and loccod in (" + locations
+				+ ") and status='" + status + "' order by rqstdt desc ";
+
+		if (isHo) {
+			sql = "select count(rqstby) from inreceiptauth where sbucod='450' and status='" + status
+					+ "' order by rqstdt desc";
+		}
+
+		Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
+
+		return count;
+	}
 
 }

@@ -10,6 +10,8 @@ public interface CodeTransferService {
 	
 	public List<CodeTransferDto> getPendingCodeTransferPrp(String token)throws Exception;
 	
+	public List<CodeTransferDto> getPendingCodeTransferPrp(String token, Integer page, Integer offset)throws Exception;
+	
 	public List<CodeTransferDto> getPendingCodeTransferPol(String token)throws Exception;
 	
 	public List<CodeTransferDto> getCanceledCodeTransferPrp(String token)throws Exception;
@@ -29,6 +31,7 @@ public interface CodeTransferService {
 	ResponseEntity<Object> getPolicyDetails(String polNum, String token) throws Exception;
 
 	public List<CodeTransferDto> getCodeTransfersToApprove(String token) throws Exception;
+
 	
 
 }

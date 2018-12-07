@@ -16,6 +16,7 @@ import org.arpico.groupit.receipt.dao.UserDao;
 import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
 import org.arpico.groupit.receipt.dto.PaymentHistoryDto;
 import org.arpico.groupit.receipt.dto.PromisesGridDto;
+import org.arpico.groupit.receipt.dto.WorkFlowPolicyGridDto;
 import org.arpico.groupit.receipt.dto.WorkflowProposalBenefictDetailDto;
 import org.arpico.groupit.receipt.dto.WorkflowProposalChildrenDto;
 import org.arpico.groupit.receipt.dto.WorkflowProposalMainLifeDto;
@@ -27,6 +28,7 @@ import org.arpico.groupit.receipt.model.InPropFamDetailsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.LastReceiptSummeryModel;
 import org.arpico.groupit.receipt.model.PaymentHistoryModel;
+import org.arpico.groupit.receipt.model.WorkFlowPolicyGridModel;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.WorkflowService;
 import org.arpico.groupit.receipt.util.AppConstant;
@@ -65,7 +67,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
 	@Autowired
 	private InTransactionCustomDao transactionCustomDao;
-	
+
 	@Autowired
 	private DaoParameters daoParameters;
 
@@ -434,7 +436,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 		List<InProposalsModel> proposalsModels = null;
 
 		List<PromisesGridDto> promisesGridDtos = new ArrayList<>();
-		
+
 		String brancheList = daoParameters.getParaForIn(branches);
 
 		switch (type) {
@@ -442,21 +444,21 @@ public class WorkflowServiceImpl implements WorkflowService {
 			if (branches.contains("HO")) {
 				proposalsModels = inProposalCustomDao.getPoliciesToWorkFlowHO("PLISU");
 			} else {
-				proposalsModels = inProposalCustomDao.getPoliciesToWorkFlow(brancheList,"PLISU");
+				proposalsModels = inProposalCustomDao.getPoliciesToWorkFlow(brancheList, "PLISU");
 			}
 			break;
 		case "TEMP":
 			if (branches.contains("HO")) {
 				proposalsModels = inProposalCustomDao.getPoliciesToWorkFlowHO("PLISU");
 			} else {
-				proposalsModels = inProposalCustomDao.getPoliciesToWorkFlow(brancheList,"PLISU");
+				proposalsModels = inProposalCustomDao.getPoliciesToWorkFlow(brancheList, "PLISU");
 			}
 			break;
 		case "PERMANANT":
 			if (branches.contains("HO")) {
 				proposalsModels = inProposalCustomDao.getPoliciesToWorkFlowHO("PLISU");
 			} else {
-				proposalsModels = inProposalCustomDao.getPoliciesToWorkFlow(brancheList,"PLISU");
+				proposalsModels = inProposalCustomDao.getPoliciesToWorkFlow(brancheList, "PLISU");
 			}
 			break;
 
@@ -464,7 +466,6 @@ public class WorkflowServiceImpl implements WorkflowService {
 			break;
 		}
 
-		
 		if (proposalsModels != null && !proposalsModels.isEmpty()) {
 			proposalsModels.forEach(e -> {
 				promisesGridDtos.add(getPromisesGridDtoFromInProposal(e));
@@ -543,6 +544,70 @@ public class WorkflowServiceImpl implements WorkflowService {
 		dto.setPprnum(e.getPprnum());
 		dto.setChqrel(e.getChqrel());
 		dto.setPaymod(e.getPaymod());
+		return dto;
+	}
+
+	@Override
+	public List<WorkFlowPolicyGridDto> getPendingActPolicies(String token, Integer page, Integer offset)
+			throws Exception {
+
+		String userCode = decoder.generate(token);
+
+		List<String> branches = userDao.getUserLocations(userCode);
+
+		List<InPromisesModel> promisesModels = null;
+
+		List<WorkFlowPolicyGridModel> flowPolicyGridModels = null;
+		
+		List<WorkFlowPolicyGridDto> flowPolicyGridDtos = new ArrayList<>();
+		
+
+		if (branches.contains("HO")) {
+			promisesModels = inPromiseDao.findAllBySbuCodeAndActiveOrderByCreateDateDesc("450", 1);
+			flowPolicyGridModels = inProposalCustomDao.getWorkFlowPolicyGridHo("PLISU", page, offset);
+		} else {
+			promisesModels = inPromiseDao.findAllBySbuCodeAndLocCodeInAndActiveOrderByCreateDateDesc("450", branches,
+					1);
+			flowPolicyGridModels = inProposalCustomDao.getWorkFlowPolicyGrid("PLISU",
+					daoParameters.getParaForIn(branches), page, offset);
+		}
+
+
+		System.out.println("flowPolicyGridModels.size()" + flowPolicyGridModels.size());
+		System.out.println("promisesModels.size()" + promisesModels.size());
+		
+		for (WorkFlowPolicyGridModel polGrid : flowPolicyGridModels) {
+			
+			if(!promisesModels.isEmpty()) {
+				for (InPromisesModel promise : promisesModels) {
+					
+					System.out.println( promise.getPolicyNo() + "       " + polGrid.getPolicy());
+					
+					if (!(promise.getPolicyNo().equals(polGrid.getPolicy()))) {
+						flowPolicyGridDtos.add(getFolwPolicyGridDto(polGrid));
+					}
+				}
+			}else {
+				flowPolicyGridDtos.add(getFolwPolicyGridDto(polGrid));
+			}
+			
+			
+		}
+
+		return flowPolicyGridDtos;
+	}
+
+	private WorkFlowPolicyGridDto getFolwPolicyGridDto(WorkFlowPolicyGridModel polGrid) {
+		WorkFlowPolicyGridDto dto = new WorkFlowPolicyGridDto();
+		
+		dto.setAgent(polGrid.getAgent());
+		dto.setBrncod(polGrid.getBrncod());
+		dto.setDuedat(polGrid.getDuedat());
+		dto.setPolicy(polGrid.getPolicy());
+		dto.setPpdini(polGrid.getPpdini());
+		dto.setTotprm(polGrid.getTotprm());
+		
+		
 		return dto;
 	}
 

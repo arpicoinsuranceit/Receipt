@@ -3,6 +3,7 @@ package org.arpico.groupit.receipt.service;
 import java.util.List;
 
 import org.arpico.groupit.receipt.dto.PromisesGridDto;
+import org.arpico.groupit.receipt.dto.WorkFlowPolicyGridDto;
 import org.springframework.http.ResponseEntity;
 
 public interface WorkflowService {
@@ -22,5 +23,7 @@ public interface WorkflowService {
 	ResponseEntity<Object> getPaymentHistory(String polnum, String pprnum) throws Exception;
 
 	ResponseEntity<Object> getReceiptHistory(String polnum, String pprnum) throws Exception;
+
+	List<WorkFlowPolicyGridDto> getPendingActPolicies(String token, Integer page, Integer offset) throws Exception;
 
 }

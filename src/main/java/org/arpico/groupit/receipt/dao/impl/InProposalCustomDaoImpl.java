@@ -9,11 +9,14 @@ import org.arpico.groupit.receipt.dao.rowmapper.InProposalBasicRowMapper;
 import org.arpico.groupit.receipt.dao.rowmapper.InProposalsRowMapper;
 import org.arpico.groupit.receipt.dao.rowmapper.ProposalL3RowMapper;
 import org.arpico.groupit.receipt.dao.rowmapper.ProposalNoSeqNoRowMapper;
+import org.arpico.groupit.receipt.dao.rowmapper.WorkFlowPolicyGridRowMapper;
 import org.arpico.groupit.receipt.dto.ProposalL3Dto;
+import org.arpico.groupit.receipt.dto.WorkFlowPolicyGridDto;
 import org.arpico.groupit.receipt.model.InPropPreviousPolModel;
 import org.arpico.groupit.receipt.model.InProposalBasicsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;
+import org.arpico.groupit.receipt.model.WorkFlowPolicyGridModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -288,6 +291,33 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 				.query("select * from inproposals where sbucod = '450' and loccod in (" + brancheList
 						+ ") and pprsta = '" + type + "'", new InProposalsRowMapper());
 
+		return models;
+	}
+
+	@Override
+	public List<WorkFlowPolicyGridModel> getWorkFlowPolicyGrid(String status, String locCodes, Integer page,
+			Integer offset) throws Exception {
+		List<WorkFlowPolicyGridModel> models = jdbcTemplate.query(
+				"select concat(p.prdcod,'/',p.polnum) policy,b.duedat,p.totprm,p.ppdini,concat(p.advcod,'-',a.prnnam) agent,b.brncod "
+						+ "from inproposals p inner join inbillingtransactions b on p.sbucod=b.sbucod and p.pprnum=b.pprnum and p.pprsta='"
+						+ status + "' " + "inner join inagentmast a on a.sbucod=p.sbucod and a.agncod=p.advcod "
+						+ "where b.sbucod='450' and p.loccod in (" + locCodes
+						+ ") and b.duedat between current_date() and date_add(current_date(),interval 5 day) group by b.pprnum,b.txnyer,b.txnmth having sum(b.amount) > 0 order by b.duedat limit "
+						+ page + "," + offset,
+				new WorkFlowPolicyGridRowMapper());
+		return models;
+	}
+
+	@Override
+	public List<WorkFlowPolicyGridModel> getWorkFlowPolicyGridHo(String status, Integer page,
+			Integer offset) throws Exception {
+		List<WorkFlowPolicyGridModel> models = jdbcTemplate.query(
+				"select concat(p.prdcod,'/',p.polnum) policy,b.duedat,p.totprm,p.ppdini,concat(p.advcod,'-',a.prnnam) agent,b.brncod "
+						+ "from inproposals p inner join inbillingtransactions b on p.sbucod=b.sbucod and p.pprnum=b.pprnum and p.pprsta='"
+						+ status + "' " + "inner join inagentmast a on a.sbucod=p.sbucod and a.agncod=p.advcod "
+						+ "where b.sbucod='450' and b.duedat between current_date() and date_add(current_date(),interval 5 day) group by b.pprnum,b.txnyer,b.txnmth having sum(b.amount) > 0 order by b.duedat limit "
+						+ page + "," + offset,
+				new WorkFlowPolicyGridRowMapper());
 		return models;
 	}
 
