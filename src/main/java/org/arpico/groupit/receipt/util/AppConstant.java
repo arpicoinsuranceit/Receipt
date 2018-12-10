@@ -34,7 +34,7 @@ public class AppConstant {
 	
 	public static final String URI_BRANCH_FIND = "http://localhost:8086/findbranch";
 	
-	public static final String URI_SEND_EMAIL = "http://10.10.10.11:8090/sendEmail";
+	public static final String URI_SEND_EMAIL = "http://10.10.10.11:8091/sendEmail";
 	
 	public static final String DOC_CODE_FOR_RECEIPT = "RCPP";
 	public static final String POLICY_STATUS_PLISU = "PLISU";
