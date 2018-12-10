@@ -234,13 +234,6 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		String agentCode = decoder.generate(saveUnderwriteDto.getToken());
 
 		System.out.println(agentCode);
-<<<<<<< HEAD
-		//String locCode = decoder.generateLoc(saveUnderwriteDto.getToken());
-
-=======
-		System.out.println(saveUnderwriteDto.getSeqNo() + "////////////////////////////////////// seq no //////////////////////");
-		System.out.println(saveUnderwriteDto.getQuoSeqNo() + "////////////////////////////////////// Quo seq no //////////////////////");
->>>>>>> refs/remotes/origin/feature-branch-report
 		
 		/* load InProposalDetails from marksys */
 		InProposalsModel inProposalsModel=getInProposalDetails(saveUnderwriteDto.getProposalNo(), saveUnderwriteDto.getSeqNo());

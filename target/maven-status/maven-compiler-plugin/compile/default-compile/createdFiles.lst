@@ -60,6 +60,7 @@ org\arpico\groupit\receipt\dao\CourierDetailsDao.class
 org\arpico\groupit\receipt\dao\impl\GlCharOfAccsDaoImpl.class
 org\arpico\groupit\receipt\dao\UserDao.class
 org\arpico\groupit\receipt\model\InBenefictDetailsModel.class
+org\arpico\groupit\receipt\service\JasperReportService.class
 org\arpico\groupit\receipt\dao\InAgentMastDao.class
 org\arpico\groupit\receipt\model\pk\InPropAddBenefitModelPK.class
 org\arpico\groupit\receipt\controller\ReceiptInquiryController.class
@@ -244,6 +245,7 @@ org\arpico\groupit\receipt\controller\QuotationReceiptController.class
 org\arpico\groupit\receipt\model\SubDepartmentModel.class
 org\arpico\groupit\receipt\dao\rowmapper\MisGlItemRowMapper.class
 org\arpico\groupit\receipt\dao\InPropNomDetailsDao.class
+org\arpico\groupit\receipt\controller\JasperReportController.class
 org\arpico\groupit\receipt\dao\DepartmentCourierDao.class
 org\arpico\groupit\receipt\model\pk\GlTranTempModelPK.class
 org\arpico\groupit\receipt\controller\AgentController.class
@@ -326,6 +328,7 @@ org\arpico\groupit\receipt\dto\DepartmentCourierDto.class
 org\arpico\groupit\receipt\service\DepartmentCourierService.class
 org\arpico\groupit\receipt\service\impl\ExpenseServiceImpl.class
 org\arpico\groupit\receipt\model\DashboardPieModel.class
+org\arpico\groupit\receipt\service\impl\JasperReportServiceImpl.class
 org\arpico\groupit\receipt\dao\InPropFamDetailsDao.class
 org\arpico\groupit\receipt\dao\rowmapper\InProposalsRowMapper.class
 org\arpico\groupit\receipt\model\pk\InPropFamDetailsModelPK.class
