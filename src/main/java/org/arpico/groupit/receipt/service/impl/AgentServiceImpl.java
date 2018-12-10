@@ -1,3 +1,4 @@
+
 package org.arpico.groupit.receipt.service.impl;
 
 import java.util.ArrayList;
@@ -16,37 +17,36 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class AgentServiceImpl implements AgentService{
+public class AgentServiceImpl implements AgentService {
 
 	@Autowired
 	private AgentDao agentDao;
-	
+
 	@Autowired
 	private JwtDecoder jwtDecoder;
-	
+
 	@Autowired
 	private RmsUserDao rmsUserDao;
-	
+
 	@Autowired
 	private DaoParameters daoParameters;
-	
-	
+
 	@Override
 	public List<AgentDto> getAgentList(Integer agentCode, String token) throws Exception {
-		
+
 		String sql = "";
 		String userCode = jwtDecoder.generate(token);
 		String userLoc = jwtDecoder.generateLoc(token);
-		
-		if(!userLoc.equalsIgnoreCase("HO")) {
+
+		if (!userLoc.equalsIgnoreCase("HO")) {
 			List<String> locations = rmsUserDao.getLocation(userCode);
-			
+
 			String locCodes = daoParameters.getParaForIn(locations);
-			
-			sql = "and loccod IN ("+locCodes+")";
-			
+
+			sql = "and loccod IN (" + locCodes + ")";
+
 		}
-		
+
 		List<AgentModel> agentModels = agentDao.findAgentLikeAgentCode(agentCode, sql);
 		List<AgentDto> agentDtos = new ArrayList<>();
 		for (AgentModel agentModel : agentModels) {
@@ -67,10 +67,22 @@ public class AgentServiceImpl implements AgentService{
 	@Override
 	public boolean availableAgent(String agentCode) throws Exception {
 		List<AgentModel> agentModel = agentDao.findAgentByCode(agentCode);
-		if (agentModel!= null && agentModel.size()>0){
+		if (agentModel != null && agentModel.size() > 0) {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public List<AgentDto> findAgentByLocations(String loccodes) throws Exception {
+		loccodes = loccodes.replaceAll(",$", "");
+		List<AgentModel> agentModels = agentDao.findAgentByLocations(loccodes);
+		List<AgentDto> agentDtos = new ArrayList<>();
+		for (AgentModel agentModel : agentModels) {
+			AgentDto agentDto = getAgent(agentModel);
+			agentDtos.add(agentDto);
+		}
+		return agentDtos;
 	}
 
 }

@@ -9,8 +9,8 @@ public interface CourierService {
 	
 	public List<CourierDto> findByCourierStatusAndBranchCodeIn(String userCode,Boolean isHoUser)throws Exception;
 	
-	public String sendCourier(CourierDetailsHelperDto courierDetailsHelperDto)throws Exception;
-	
+	public List<CourierDto> findByCourierStatusAndBranchCodeIn(String userCode,String status)throws Exception;
+
 	public String receiveCourier(CourierDetailsHelperDto courierDetailsHelperDto,String userCode)throws Exception;
 	
 	public String receiveCourierDocument(CourierDetailsHelperDto courierDetailsHelperDto,String userCode)throws Exception;
@@ -23,5 +23,9 @@ public interface CourierService {
 
 	List<CourierDto> findByCourierStatusAndToBranchIn(String userCode, Boolean isHoUser, String status)
 			throws Exception;
+
+	public String sendCourier(CourierDetailsHelperDto courierDetailsHelperDto, String userCode, String couType)throws Exception;
+	
+	public String removeCourier(Integer id)throws Exception;
 
 }

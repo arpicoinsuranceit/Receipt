@@ -156,6 +156,7 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 						+ "						from inbillingtransactions a where sbucod='450' and pprnum= '" + pprNum
 						+ "						' and amount <> 0 group by txnyer desc,txnmth desc",
 				new PaymentHistoryRowMapper());
+
 	}
 
 }
