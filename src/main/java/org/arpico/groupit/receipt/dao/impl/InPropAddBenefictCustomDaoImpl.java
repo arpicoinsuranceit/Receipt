@@ -27,6 +27,7 @@ public class InPropAddBenefictCustomDaoImpl implements InPropAddBenefictCustomDa
 	
 	@Override
 	public List<InPropAddBenefitModel> getBenefByPprSeqAndSumAsu(Integer pprNo, Integer seqNo) throws Exception {
+
 		return jdbcTemplate.query("select * from inpropaddbenefit where sbucod = '450' and pprnum = " + pprNo
 				+ " and prpseq = " + seqNo + " and sumasu > 0 " , new InPropAddBenefitRowMapper());
 	}

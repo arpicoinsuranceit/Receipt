@@ -39,10 +39,12 @@ public class WorkflowController {
 	@PostMapping(value = "/addpromise/{token:.+}")
 	public ResponseEntity<Object> getPaginatorLength(@PathVariable String token, @RequestBody PromisesGridDto promise) throws Exception{
 		
-		System.out.println(token);
-		System.out.println(promise);
-		
+		try {
 		return workflowService.savePromise(promise, token);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Object>("500", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		
 	}
 	
@@ -53,10 +55,25 @@ public class WorkflowController {
 		
 	}
 	
-	@PostMapping(value = "/getPolicyDetails/{polnum}/{pprnum}")
+
+	@GetMapping(value = "/getPolicyDetails/{polnum}/{pprnum}")
 	public ResponseEntity<Object> settlePromise(@PathVariable String polnum, @PathVariable String pprnum) throws Exception{
 		
 		return workflowService.getPolicyDetails(polnum, pprnum);
+		
+	}
+	
+	@GetMapping(value = "/getPaymentHistory/{polnum}/{pprnum}")
+	public ResponseEntity<Object> getPaymentHistory(@PathVariable String polnum, @PathVariable String pprnum) throws Exception{
+		
+		return workflowService.getPaymentHistory(polnum, pprnum);
+		
+	}
+	
+	@GetMapping(value = "/getReceiptHistory/{polnum}/{pprnum}")
+	public ResponseEntity<Object> getReceiptHistory(@PathVariable String polnum, @PathVariable String pprnum) throws Exception{
+		
+		return workflowService.getReceiptHistory(polnum, pprnum);
 		
 	}
 

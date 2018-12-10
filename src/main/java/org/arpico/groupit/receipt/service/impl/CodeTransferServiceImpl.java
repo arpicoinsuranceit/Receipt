@@ -149,7 +149,7 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 
 	@Autowired
 	private BranchUnderwriteDao branchUnderwriteDao;
-	
+
 	@Autowired
 	private ProposalServce proposalService;
 
@@ -164,51 +164,50 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 		ResponseDto dto = null;
 		String userCode = new JwtDecoder().generate(token);
 		List<String> locCodes = branchUnderwriteDao.findLocCodes(userCode);
-		
-		try {
 
-			InProposalsModel inProposalsModel=inProposalCustomDao.getProposalFromPprnum(Integer.valueOf(pprNum));
-			//System.out.println(inProposalsModel.getInProposalsModelPK().getPrpseq());
-			if(inProposalsModel != null) {
-				InPropMedicalReqModel inPropMedicalReqModels=inPropMedicalReqCustomDao.getMedicalReq(Integer.valueOf(pprNum), inProposalsModel.getInProposalsModelPK().getPrpseq(),"AD-CT","N");
-				if(inPropMedicalReqModels != null) {
-					if(locCodes.contains(inProposalsModel.getInProposalsModelPK().getLoccod())) {
-						
-						if(inProposalsModel.getPprsta().equals("L3")) {
+		try {
+			InProposalsModel inProposalsModel = inProposalCustomDao.getProposalFromPprnum(Integer.valueOf(pprNum));
+			// System.out.println(inProposalsModel.getInProposalsModelPK().getPrpseq());
+			if (inProposalsModel != null) {
+				InPropMedicalReqModel inPropMedicalReqModels = inPropMedicalReqCustomDao.getMedicalReq(
+						Integer.valueOf(pprNum), inProposalsModel.getInProposalsModelPK().getPrpseq(), "AD-CT", "N");
+				if (inPropMedicalReqModels != null) {
+					if (locCodes.contains(inProposalsModel.getInProposalsModelPK().getLoccod())) {
+
+						if (inProposalsModel.getPprsta().equals("L3")) {
 							try {
-								
-								CodeTransferHelperDto codeTransferHelperDto=new CodeTransferHelperDto();
+
+								CodeTransferHelperDto codeTransferHelperDto = new CodeTransferHelperDto();
 								codeTransferHelperDto.setAgentCode(inProposalsModel.getAdvcod());
 								codeTransferHelperDto.setPprNum(pprNum);
 								codeTransferHelperDto.setBranch(inProposalsModel.getInProposalsModelPK().getLoccod());
-								AgentModel agentModel=agentDao.findPropAgent(inProposalsModel.getAdvcod());
-								if(agentModel != null) {
+								AgentModel agentModel = agentDao.findPropAgent(inProposalsModel.getAdvcod());
+								if (agentModel != null) {
 									codeTransferHelperDto.setAgentName(agentModel.getAgentName());
 									codeTransferHelperDto.setDesignation(agentModel.getDesignation());
 								}
-								
+
 								return new ResponseEntity<>(codeTransferHelperDto, HttpStatus.OK);
-									
-							}catch(Exception ex) {
+
+							} catch (Exception ex) {
 								dto = new ResponseDto();
 								dto.setCode("204");
 								dto.setStatus("Error");
 								dto.setMessage("Unable to transfer code in this Proposal.");
 								return new ResponseEntity<>(dto, HttpStatus.OK);
 							}
-						
-						
-						}else {
+
+						} else {
 
 							dto = new ResponseDto();
 							dto.setCode("204");
 							dto.setStatus("Error");
 							dto.setMessage("Unable to transfer code in this Proposal.");
 							return new ResponseEntity<>(dto, HttpStatus.OK);
-						
+
 						}
 
-					}else {
+					} else {
 
 						dto = new ResponseDto();
 						dto.setCode("204");
@@ -493,7 +492,6 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 				codeTransferModel.setSbuCode(AppConstant.SBU_CODE);
 				codeTransferModel.setStatus("PENDING");
 
-				
 //				try {
 //					InProposalsModel inProposalsModel=inProposalCustomDao.getProposalFromPprnum(Integer.valueOf(ct.getPprNum()));
 //					
@@ -524,7 +522,6 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 //				} catch (Exception e) {
 //					e.printStackTrace();
 //				}
-				
 
 				codeTransferDao.save(codeTransferModel);
 
@@ -592,7 +589,6 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 
 					codeTransferModel.setPprNum(inProposalsModel.getInProposalsModelPK().getPprnum());
 
-					
 //					InPropMedicalReqModel inPropMedicalReqModel=new InPropMedicalReqModel();
 //					
 //					InPropMedicalReqModelPK inPropMedicalReqModelPK=new InPropMedicalReqModelPK();
@@ -614,7 +610,6 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 //					inPropMedicalReqModel.setMednam("Code Transfer");
 //					
 //					inPropMedicalReqDao.save(inPropMedicalReqModel);
-					
 
 				} catch (NumberFormatException e) {
 					e.printStackTrace();
@@ -727,14 +722,15 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 
 			try {
 
-				//InPropMedicalReqModel inPropMedicalReqModels=inPropMedicalReqCustomDao.getMedicalReq(Integer.valueOf(codeTransferModel.getPprNum()), inProposalsModel.getInProposalsModelPK().getPrpseq(),"AD-CT","N");
-				//if(inPropMedicalReqModels != null) {
-					//inPropMedicalReqDao.delete(inPropMedicalReqModels.getInPropMedicalReqModelPK());
+				// InPropMedicalReqModel
+				// inPropMedicalReqModels=inPropMedicalReqCustomDao.getMedicalReq(Integer.valueOf(codeTransferModel.getPprNum()),
+				// inProposalsModel.getInProposalsModelPK().getPrpseq(),"AD-CT","N");
+				// if(inPropMedicalReqModels != null) {
+				// inPropMedicalReqDao.delete(inPropMedicalReqModels.getInPropMedicalReqModelPK());
 
-					codeTransferDao.save(codeTransferModel);
+				codeTransferDao.save(codeTransferModel);
 
-				//}
-				
+				// }
 
 				dto = new ResponseDto();
 				dto.setCode("200");
@@ -881,8 +877,8 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 			inProposalsModel.getInProposalsModelPK().setPrpseq(pprSeqNew);
 			inProposalsModel.setAdvcod(codeTransferModel.getNewAgentCode());
 
-			InProposalsModel newInProposalModel=inProposalDao.save(inProposalsModel);
-			
+			InProposalsModel newInProposalModel = inProposalDao.save(inProposalsModel);
+
 			propLoadingDao.save(inPropLoadingModels);
 			addBenefictDao.save(addBenefitModels);
 			famDetailsDao.save(famDetailsModels);
@@ -891,14 +887,13 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 			surrenderValDao.save(inPropSurrenderValsModels);
 			propNomDetailsDao.save(nomDetailsModels);
 			propPrePolsDao.save(propPrePolsModels);
-
-			
 			codeTransferDao.save(codeTransferModel);
-			
-			if(codeTransferModel.getPolNum() == null || codeTransferModel.getPolNum() == "" || codeTransferModel.getPolNum().isEmpty()) {
-				List<InTransactionsModel> inTransactionsModels=inTransactionCustomDao.getTransactionByPprNum(inProposalsModel.getInProposalsModelPK().getPprnum());
-				if(inTransactionsModels != null) {
 
+			if (codeTransferModel.getPolNum() == null || codeTransferModel.getPolNum() == ""
+					|| codeTransferModel.getPolNum().isEmpty()) {
+				List<InTransactionsModel> inTransactionsModels = inTransactionCustomDao
+						.getTransactionByPprNum(inProposalsModel.getInProposalsModelPK().getPprnum());
+				if (inTransactionsModels != null) {
 					inTransactionsModels.forEach(tran -> {
 						tran.setAdvcod(codeTransferModel.getNewAgentCode());
 					});
@@ -917,19 +912,25 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 							bill.setAdvcod(Integer.valueOf(codeTransferModel.getNewAgentCode()));
 							bill.setUnlcod(agentMastModels.get(0).getUnlcod());
 						});
-						
-						List<InBillingTransactionsModel> newBillingTransactionsModels=(List<InBillingTransactionsModel>) inBillingTransactionsDao.save(billingTransactionsModels);
-						
+
+						List<InBillingTransactionsModel> newBillingTransactionsModels = (List<InBillingTransactionsModel>) inBillingTransactionsDao
+								.save(billingTransactionsModels);
+
 						billingTransactionsModels.forEach(billing -> {
-							if(billing.getTxntyp().equals("INVOICE")) {
+							if (billing.getTxntyp().equals("INVOICE")) {
 								billingTransactionsModels.remove(billing);
 							}
 						});
-						
-						SaveReceiptDto saveReceiptDto=new SaveReceiptDto();
-						saveReceiptDto.setPropId(Integer.valueOf(newInProposalModel.getInProposalsModelPK().getPprnum()));
-						
-						proposalService.checkPolicy(newInProposalModel, Integer.valueOf(newInProposalModel.getInProposalsModelPK().getPprnum()), newInProposalModel.getInProposalsModelPK().getPrpseq(), saveReceiptDto, newInProposalModel.getAdvcod(), newInProposalModel.getInProposalsModelPK().getLoccod(), billingTransactionsModels.get(0));
+
+						SaveReceiptDto saveReceiptDto = new SaveReceiptDto();
+						saveReceiptDto
+								.setPropId(Integer.valueOf(newInProposalModel.getInProposalsModelPK().getPprnum()));
+
+						proposalService.checkPolicy(newInProposalModel,
+								Integer.valueOf(newInProposalModel.getInProposalsModelPK().getPprnum()),
+								newInProposalModel.getInProposalsModelPK().getPrpseq(), saveReceiptDto,
+								newInProposalModel.getAdvcod(), newInProposalModel.getInProposalsModelPK().getLoccod(),
+								billingTransactionsModels.get(0));
 					}
 
 				}

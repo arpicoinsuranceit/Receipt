@@ -49,5 +49,12 @@ public class AgentDaoImpl implements AgentDao {
 		return jdbcTemplate.query("SELECT agncod, prnnam, loccod ,agncls FROM inagentmast "
 				+ "where sbucod = '450' and agnsta in ('ACT','INA')", new AgentRowMapper());
 	}
+	
+	@Override
+	public List<AgentModel> findAgentByLocations(String locCodes) throws Exception {
+		return jdbcTemplate.query("SELECT agncod, shrtnm, loccod FROM inagentmast "
+				+ "where sbucod = '450' and loccod in  (" + locCodes + ") and agnsta in ('ACT','INA') order by agncod;",
+				new AgentRowMapper());
+	}
 
 }

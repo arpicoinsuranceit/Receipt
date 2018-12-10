@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.arpico.groupit.receipt.model.pk.InBillingTransactionsModelPK;
+import org.arpico.groupit.receipt.util.AppConstant;
 
 @Entity
 @Table(name = "inbillingtransactions")
@@ -33,19 +34,19 @@ public class InBillingTransactionsModel {
 	private Double polfee;
 	private Double admfee;  
 	private Double taxamt;
-	private Double otham1;
-	private Double otham2;
-	private Double otham3;
-	private Double otham4;
+	private Double otham1 = AppConstant.ZERO_FOR_DECIMAL;
+	private Double otham2 = AppConstant.ZERO_FOR_DECIMAL;
+	private Double otham3 = AppConstant.ZERO_FOR_DECIMAL;
+	private Double otham4 = AppConstant.ZERO_FOR_DECIMAL;
 	private String chqrel;
 	private String paymod;
 	private Integer toptrm;
-	private Double hrbprm;
+	private Double hrbprm  = AppConstant.ZERO_FOR_DECIMAL;
 	private Integer paytrm;
 	private Integer icpyer;
 	private Integer prcyer;
-	private Double comper;
-	private Double comiss;
+	private Double comper = AppConstant.ZERO_FOR_DECIMAL;
+	private Double comiss = AppConstant.ZERO_FOR_DECIMAL;
 	private Double grsprm;
 	private String prdcod;	
 	private Integer advcod;	
@@ -54,11 +55,11 @@ public class InBillingTransactionsModel {
 	private String battyp;	
 	private Integer batcno;	
 	private String glintg;	
-	private Integer txnbno;	
+	private Integer txnbno = AppConstant.ZERO;
 	private Date duedat;	
 	private String unlcod;	
 	private String brncod;	
-	private Double oldprm;	
+	private Double oldprm = AppConstant.ZERO_FOR_DECIMAL;
 	private String candoc;	
 	private Integer polyer;
 	

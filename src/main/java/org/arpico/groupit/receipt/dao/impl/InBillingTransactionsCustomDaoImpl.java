@@ -7,8 +7,10 @@ import java.util.List;
 
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
 import org.arpico.groupit.receipt.dao.rowmapper.InBillingTransactionRowMapper;
+import org.arpico.groupit.receipt.dao.rowmapper.PaymentHistoryRowMapper;
 import org.arpico.groupit.receipt.dao.rowmapper.ReFundAmntRowMapper;
 import org.arpico.groupit.receipt.model.InBillingTransactionsModel;
+import org.arpico.groupit.receipt.model.PaymentHistoryModel;
 import org.arpico.groupit.receipt.model.ReFundModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -24,12 +26,12 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 
 	@Override
 	public List<InBillingTransactionsModel> getUnSetOffs(String pprnum) throws Exception {
-//		List<InBillingTransactionsModel> billingTransactionsModels = jdbcTemplate.query("select a.*\r\n"
-//				+ "                 from inbillingtransactions a inner join \r\n" + "                 (select y.*\r\n"
-//				+ "                 from inbillingtransactions y  where sbucod='450' and pprnum='" + pprnum + "'\r\n"
-//				+ "                 group by sbucod,polnum,txnyer,txnmth having sum(amount) > 0) b\r\n"
-//				+ "                 on a.sbucod=b.sbucod and a.polnum=b.polnum and a.txnyer=b.txnyer and a.txnmth=b.txnmth \r\n"
-//				+ "                 \r\n" + "                 where a.sbucod='450' and a.doccod='PRMI' \r\n"
+//		List<InBillingTransactionsModel> billingTransactionsModels = jdbcTemplate.query("select a.* "
+//				+ "                 from inbillingtransactions a inner join  " + "                 (select y.* "
+//				+ "                 from inbillingtransactions y  where sbucod='450' and pprnum='" + pprnum + "' "
+//				+ "                 group by sbucod,polnum,txnyer,txnmth having sum(amount) > 0) b "
+//				+ "                 on a.sbucod=b.sbucod and a.polnum=b.polnum and a.txnyer=b.txnyer and a.txnmth=b.txnmth  "
+//				+ "                  " + "                 where a.sbucod='450' and a.doccod='PRMI'  "
 //				+ "                 order by a.polnum,a.txnyer,a.txnmth", new InBillingTransactionRowMapper());
 //		
 
@@ -98,8 +100,7 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 //						}
 //					});
 
-			amount = jdbcTemplate.query(
-					"SELECT sum(amount) `sum` FROM inbillingtransactions "
+			amount = jdbcTemplate.query("SELECT sum(amount) `sum` FROM inbillingtransactions "
 					+ " where sbucod = '450' and pprnum=? and  txnyer <= year(curdate()) and txnmth <= month(curdate())",
 					args.toArray(), new ResultSetExtractor<Double>() {
 
@@ -126,22 +127,36 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 //						"select * from inbillingtransactions  where sbucod = '450' and pprnum = '" + pprnum
 //								+ "' and refdoc = 'PRMI' order by creadt desc limit 1",
 //						new InBillingTransactionRowMapper());
-		
+
 		InBillingTransactionsModel billingTransactionsModels = jdbcTemplate
 				.queryForObject(
 						"select * from inbillingtransactions  where sbucod = '450' and pprnum = '" + pprnum
 								+ "' and refdoc = 'PRMI' order by creadt desc limit 1",
 						new InBillingTransactionRowMapper());
-		
+
 		return billingTransactionsModels;
 	}
 
 	@Override
 	public List<InBillingTransactionsModel> getTransactionsByPprnum(String pprnum) throws Exception {
-		
-		return jdbcTemplate
-				.query("select * from inbillingtransactions  where sbucod = '450' and pprnum = '" + pprnum
-						+ "' order by creadt desc", new InBillingTransactionRowMapper());
+
+		return jdbcTemplate.query(
+				"select * from inbillingtransactions  where sbucod = '450' and pprnum = '" + pprnum + "' ",
+				new InBillingTransactionRowMapper());
+	}
+
+	@Override
+	public List<PaymentHistoryModel> getPaymentHistory(String pprNum) throws Exception {
+		return jdbcTemplate.query(
+				"select txnyer,txnmth,max(txndat) txndat,sum(if(doccod <> 'PRMI',amount,0)) setamt,sum(if(doccod = 'PRMI',amount,0)) dueamt,max(duedat) duedat,  "
+						+ "						sum(if(doccod = 'PRMI',amount,0))+sum(if(doccod <> 'PRMI',amount,0)) outstd,  "
+						+ "						ifnull((select group_concat(docnum) docnum from inbillingtransactions b  "
+						+ "						where a.sbucod=b.sbucod and a.pprnum=b.pprnum and a.txnyer=b.txnyer  "
+						+ "						and a.txnmth=b.txnmth and doccod <> 'PRMI' and amount <> 0 and txntyp <> 'RECOVERY' group by txnyer,txnmth),'') remark   "
+						+ "						from inbillingtransactions a where sbucod='450' and pprnum= '" + pprNum
+						+ "						' and amount <> 0 group by txnyer desc,txnmth desc",
+				new PaymentHistoryRowMapper());
+
 	}
 
 }

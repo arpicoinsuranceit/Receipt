@@ -19,6 +19,7 @@ public class RmsGlAccCodesDaoImpl implements RmsGlAccCodesDao {
 				.queryForObject("select acc_code from rms_gl_acc_codes where sbu_code = '450' and doc_code = '"
 						+ docCode + "' and loccod = '" + locCod + "'", String.class);
 
+
 		return accCode;
 	}
 

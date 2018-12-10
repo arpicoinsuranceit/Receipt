@@ -25,12 +25,12 @@ public class InPromisesModel {
 	private Integer active;
 	private String custName;
 	private String custNic;
+	private String remark;
+	private String payType;
 	private String createBy;
 	private Date createDate;
 	private String updateBy;
 	private Date updateDate;
-	
-	
 
 	@Column(name = "sbucod")
 	public String getSbuCode() {
@@ -142,6 +142,24 @@ public class InPromisesModel {
 		this.custNic = custNic;
 	}
 
+	@Column(name = "remark")
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	@Column(name = "paytyp")
+	public String getPayType() {
+		return payType;
+	}
+
+	public void setPayType(String payType) {
+		this.payType = payType;
+	}
+
 	@Column(name = "creaby")
 	public String getCreateBy() {
 		return createBy;
@@ -183,7 +201,8 @@ public class InPromisesModel {
 		return "InPromisesModel [sbuCode=" + sbuCode + ", id=" + id + ", pprno=" + pprno + ", policyNo=" + policyNo
 				+ ", locCode=" + locCode + ", amount=" + amount + ", dueDate=" + dueDate + ", settleDate=" + settleDate
 				+ ", phoneNo=" + phoneNo + ", active=" + active + ", custName=" + custName + ", custNic=" + custNic
-				+ "]";
+				+ ", remark=" + remark + ", payType=" + payType + ", createBy=" + createBy + ", createDate="
+				+ createDate + ", updateBy=" + updateBy + ", updateDate=" + updateDate + "]";
 	}
 
 }

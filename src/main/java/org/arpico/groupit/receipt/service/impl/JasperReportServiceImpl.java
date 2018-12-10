@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
 import org.arpico.groupit.receipt.service.JasperReportService;
@@ -67,7 +66,186 @@ public class JasperReportServiceImpl implements JasperReportService{
 
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				System.out.println("Exception...");
+			}
+
+			try {
+				JasperPrint jp;
+
+				jp = JasperFillManager.fillReport(jr, params, dataSource.getConnection());
+
+				JRPdfExporter export = new JRPdfExporter();
+				export.setExporterInput(new SimpleExporterInput(jp));
+				export.setExporterOutput(new SimpleOutputStreamExporterOutput(baos));
+				export.exportReport();
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		} catch (JRException ex) {
+			ex.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return baos.toByteArray();
+	}
+
+	@Override
+	public byte[] lapsedSummeryReport(String fromDate, String toDate, String branch) throws Exception {
+		
+		branch=branch.replaceAll(",$", "");
+		
+		System.out.println(fromDate + " -fromDate " + toDate + " -toDate " + branch + " -branch " );
+		System.out.println(branch);
+
+		Map<String, Object> params = new HashMap<>();
+		params.put("sbucod", "450");
+		params.put("sdate", fromDate);
+		params.put("edate", toDate);
+		params.put("loccod", branch);
+		params.put("zoncod", "%");
+
+//		Resource resource = new ClassPathResource("mcfpr.jrxml");
+//		File file = resource.getFile();
+//		
+//		System.out.println(file.getPath());
+//		System.out.println(file.getName());
+//		System.out.println(file.getCanonicalPath());
+
+		// String OUT_PUT = "D:\\performance_detail.pdf";
+		//String REPORT = "mcfpr.jrxml";
+		
+		
+		JasperReport jr = null;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		try {
+			try {
+				InputStream input = new ClassPathResource("daly_lap_sum.jrxml").getInputStream();
+				JasperDesign jasperDesign = JRXmlLoader.load(input);
+				jr = JasperCompileManager.compileReport(jasperDesign);
+
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+
+			try {
+				JasperPrint jp;
+
+				jp = JasperFillManager.fillReport(jr, params, dataSource.getConnection());
+
+				JRPdfExporter export = new JRPdfExporter();
+				export.setExporterInput(new SimpleExporterInput(jp));
+				export.setExporterOutput(new SimpleOutputStreamExporterOutput(baos));
+				export.exportReport();
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		} catch (JRException ex) {
+			ex.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return baos.toByteArray();
+	}
+	
+	@Override
+	public byte[] premiumDueReport(String agent,String branch) throws Exception {
+		
+		branch=branch.replaceAll(",$", "");
+		agent=agent.replaceAll(",$", "");
+		
+		System.out.println(agent + " -agent " + branch + " -branch " );
+
+		Map<String, Object> params = new HashMap<>();
+		params.put("sbucod", "450");
+		params.put("loccod", branch);
+		params.put("agncod", agent);
+		params.put("rgncod", "%");
+		params.put("zoncod", "%");
+		
+
+//		Resource resource = new ClassPathResource("mcfpr.jrxml");
+//		File file = resource.getFile();
+//		
+//		System.out.println(file.getPath());
+//		System.out.println(file.getName());
+//		System.out.println(file.getCanonicalPath());
+
+		// String OUT_PUT = "D:\\performance_detail.pdf";
+		//String REPORT = "mcfpr.jrxml";
+		
+		
+		JasperReport jr = null;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		try {
+			try {
+				InputStream input = new ClassPathResource("Premium_due_year.jrxml").getInputStream();
+				JasperDesign jasperDesign = JRXmlLoader.load(input);
+				jr = JasperCompileManager.compileReport(jasperDesign);
+
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+
+			try {
+				JasperPrint jp;
+
+				jp = JasperFillManager.fillReport(jr, params, dataSource.getConnection());
+
+				JRPdfExporter export = new JRPdfExporter();
+				export.setExporterInput(new SimpleExporterInput(jp));
+				export.setExporterOutput(new SimpleOutputStreamExporterOutput(baos));
+				export.exportReport();
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		} catch (JRException ex) {
+			ex.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return baos.toByteArray();
+	}
+
+	@Override
+	public byte[] paymentHistory(String polnum) throws Exception {
+		System.out.println(polnum + " -polnum ");
+
+		Map<String, Object> params = new HashMap<>();
+		params.put("sbucod", "450");
+		params.put("polnum", polnum);
+
+//		Resource resource = new ClassPathResource("mcfpr.jrxml");
+//		File file = resource.getFile();
+//		
+//		System.out.println(file.getPath());
+//		System.out.println(file.getName());
+//		System.out.println(file.getCanonicalPath());
+
+		// String OUT_PUT = "D:\\performance_detail.pdf";
+		//String REPORT = "mcfpr.jrxml";
+		
+		
+		JasperReport jr = null;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		try {
+			try {
+				InputStream input = new ClassPathResource("pay_his.jrxml").getInputStream();
+				JasperDesign jasperDesign = JRXmlLoader.load(input);
+				jr = JasperCompileManager.compileReport(jasperDesign);
+
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
 
 			try {

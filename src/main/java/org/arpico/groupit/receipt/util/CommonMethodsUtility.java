@@ -122,13 +122,13 @@ public class CommonMethodsUtility {
 			billingTransactionsModel.setAdvcod(Integer.parseInt(saveReceiptDto.getAgentCode()));
 			billingTransactionsModel.setAgncls(agentMastModel.getAgncls());
 			billingTransactionsModel.setAmount(AppConstant.ZERO_FOR_DECIMAL);
-			billingTransactionsModel.setBrncod(saveReceiptDto.getBranchCode());
+			billingTransactionsModel.setBrncod(agentMastModel.getLocation());
 			billingTransactionsModel.setChqrel("N");
 			billingTransactionsModel.setComiss(AppConstant.ZERO_FOR_DECIMAL);
 			billingTransactionsModel.setComper(AppConstant.ZERO_FOR_DECIMAL);
 			billingTransactionsModel.setCreaby(inProposalsModel.getCreaby());
 			billingTransactionsModel.setCreadt(new Date());
-			billingTransactionsModel.setBrncod(inProposalsModel.getBrncod());
+			//billingTransactionsModel.setBrncod(inProposalsModel.getBrncod());
 			billingTransactionsModel.setPrpseq(inProposalsModel.getInProposalsModelPK().getPrpseq());
 			try {
 				billingTransactionsModel.setCscode(Integer.parseInt(inTransactionsModel.getCscode()));
