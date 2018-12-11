@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -22,7 +23,7 @@ import org.arpico.groupit.receipt.model.AgentMastModel;
 import org.arpico.groupit.receipt.model.CommisModel;
 import org.arpico.groupit.receipt.model.InBillingTransactionsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
-import org.arpico.groupit.receipt.model.ReFundModel;
+//import org.arpico.groupit.receipt.model.ReFundModel;
 import org.arpico.groupit.receipt.model.pk.InBillingTransactionsModelPK;
 import org.arpico.groupit.receipt.service.NumberGenerator;
 import org.arpico.groupit.receipt.service.SetoffService;
@@ -53,16 +54,16 @@ public class SetoffServiceImpl implements SetoffService {
 	@Transactional
 	public Integer setoff(InProposalsModel inProposalsModel, String agentCode, String locCode,
 			SaveReceiptDto saveReceiptDto, InBillingTransactionsModel deposit, Double recovery) throws Exception {
-		
+
 		System.out.println("setoff");
-		
+
 		String pprNum = inProposalsModel.getInProposalsModelPK().getPprnum();
 
-		List<InBillingTransactionsModel> unSetOffList = billingTransactionsCustomDao.getUnSetOffs(inProposalsModel.getInProposalsModelPK().getPprnum());
+		List<InBillingTransactionsModel> unSetOffList = billingTransactionsCustomDao
+				.getUnSetOffs(inProposalsModel.getInProposalsModelPK().getPprnum());
 
-		
-		System.out.println("unsetoff : " + unSetOffList.size() );
-		
+		System.out.println("unsetoff : " + unSetOffList.size());
+
 		InBillingTransactionsModel previousInvoice = null;
 		try {
 			previousInvoice = billingTransactionsCustomDao.getLasiInvoice(pprNum);
@@ -83,8 +84,9 @@ public class SetoffServiceImpl implements SetoffService {
 		System.out.println("halfway");
 
 		List<InBillingTransactionsModel> setoffList = null;
-
-		List<ReFundModel> fundModels = billingTransactionsCustomDao
+		
+		
+		List<InBillingTransactionsModel> fundModels = billingTransactionsCustomDao
 				.getRefundList(inProposalsModel.getInProposalsModelPK().getPprnum());
 
 		fundModels.forEach(System.out::println);
@@ -92,10 +94,24 @@ public class SetoffServiceImpl implements SetoffService {
 		Double amount = 0.0;
 
 		if (fundModels != null && fundModels.size() > 0) {
-			for (ReFundModel reFundModel : fundModels) {
-				amount += reFundModel.getRefamount();
+			for (InBillingTransactionsModel reFundModel : fundModels) {
+				amount += reFundModel.getDepost();
 			}
 		}
+		
+
+//		List<ReFundModel> fundModels = billingTransactionsCustomDao
+//				.getRefundList(inProposalsModel.getInProposalsModelPK().getPprnum());
+//
+//		fundModels.forEach(System.out::println);
+//
+//		Double amount = 0.0;
+//
+//		if (fundModels != null && fundModels.size() > 0) {
+//			for (ReFundModel reFundModel : fundModels) {
+//				amount += reFundModel.getRefamount();
+//			}
+//		}
 
 		Double recoveryAmount = 0.0;
 		Boolean saverecovery = false;
@@ -119,28 +135,28 @@ public class SetoffServiceImpl implements SetoffService {
 		}
 
 		System.out.println(invoice.getAmount());
-		
+
 		System.out.println(amount);
-		
+
 		if (invoice.getAmount() <= amount || (saverecovery && invoice.getAmount() <= (amount + recoveryAmount))) {
 
 			System.out.println("amount if");
 
-			ReFundModel fundModel = new ReFundModel();
-			fundModel.setDoccod(deposit.getBillingTransactionsModelPK().getDoccod());
-			fundModel.setDocnum(deposit.getBillingTransactionsModelPK().getDocnum());
-			fundModel.setPprnum(Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum()));
-			if (saverecovery) {
-				fundModel.setRefamount((deposit.getDepost() + (recoveryAmount * -1)) * -1);
-			} else {
+//			ReFundModel fundModel = new ReFundModel();
+//			fundModel.setDoccod(deposit.getBillingTransactionsModelPK().getDoccod());
+//			fundModel.setDocnum(deposit.getBillingTransactionsModelPK().getDocnum());
+//			fundModel.setPprnum(Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum()));
+//			if (saverecovery) {
+//				fundModel.setRefamount((deposit.getDepost() + (recoveryAmount * -1)) * -1);
+//			} else {
+//
+//				fundModel.setRefamount(deposit.getDepost() * -1);
+//			}
+//			fundModel.setLinnum(deposit.getBillingTransactionsModelPK().getLinnum());
+//			fundModel.setPaymode(deposit.getPaymod());
+//			fundModel.setActive(1);
 
-				fundModel.setRefamount(deposit.getDepost() * -1);
-			}
-			fundModel.setLinnum(deposit.getBillingTransactionsModelPK().getLinnum());
-			fundModel.setPaymode(deposit.getPaymod());
-			fundModel.setActive(1);
-
-			setoffList = getSetOff(invoice, fundModel, setoffList, inProposalsModel, fundModels, agentCode, locCode,
+			setoffList = getSetOff(invoice, deposit, setoffList, inProposalsModel, fundModels, agentCode, locCode,
 					unSetOffList, 1, deposit.getBillingTransactionsModelPK().getDocnum(), recoveryAmount);
 
 			setoffList.forEach(System.out::println);
@@ -248,14 +264,13 @@ public class SetoffServiceImpl implements SetoffService {
 
 			billingTransactionsModel.setBillingTransactionsModelPK(billingTransactionsModelPK);
 
-			billingTransactionsModel.setAdmfee(AppConstant.ZERO_TWO_DECIMAL);
+			billingTransactionsModel.setAdmfee(inProposalsModel.getAdmfee());
 			billingTransactionsModel.setAdvcod(Integer.parseInt(inProposalsModel.getAdvcod()));
 			billingTransactionsModel.setAgncls(agentMastModel.getAgncls());
 			if (previousInvoice != null) {
 				billingTransactionsModel.setAmount(inProposalsModel.getTotprm());
 			} else {
-				billingTransactionsModel.setAmount(inProposalsModel.getTaxamt() + inProposalsModel.getAdmfee()
-						+ inProposalsModel.getTotprm() + inProposalsModel.getPolfee());
+				billingTransactionsModel.setAmount(inProposalsModel.getTotprm() + inProposalsModel.getPolfee());
 			}
 
 			billingTransactionsModel.setBrncod(agentMastModel.getLocation());
@@ -294,31 +309,84 @@ public class SetoffServiceImpl implements SetoffService {
 			billingTransactionsModel.setTaxamt(inProposalsModel.getTaxamt());
 			billingTransactionsModel.setToptrm(inProposalsModel.getToptrm());
 			billingTransactionsModel.setTxntyp("INVOICE");
+			billingTransactionsModel.setTxnbno(AppConstant.ZERO);
+			
+			Calendar calendar1 = new GregorianCalendar();
+			calendar1.setTime(new Date());
+
+			
+			billingTransactionsModel.setPrcyer(calendar1.get(Calendar.YEAR));
+			
 //			if (agentMastModel.getAgncls().equalsIgnoreCase("IC")) {
-				billingTransactionsModel.setUnlcod(agentMastModel.getUnlcod());
+			billingTransactionsModel.setUnlcod(agentMastModel.getUnlcod());
 //			}
 //			if (agentMastModel.getAgncls().equalsIgnoreCase("UNL")) {
 //				billingTransactionsModel.setUnlcod(agentMastModel.getBrnmanager());
 //			}
+			
+			Date date2 = inProposalsModel.getIcpdat();
+
+			Calendar calendar2 = new GregorianCalendar();
+			calendar2.setTime(date2);
+
+			billingTransactionsModel.setIcpyer(calendar2.get(Calendar.YEAR));
+			billingTransactionsModel.setIcpmon(calendar2.get(Calendar.MONTH) + 1);
 
 			if (previousInvoice != null) {
-				if (previousInvoice.getTxnmth() >= 12) {
-					billingTransactionsModel.setTxnyer(previousInvoice.getTxnyer() + 1);
-					billingTransactionsModel.setTxnmth(1);
-				} else {
-					billingTransactionsModel.setTxnyer(previousInvoice.getTxnyer());
-					billingTransactionsModel.setTxnmth(previousInvoice.getTxnmth() + 1);
-				}
+				
+				String term = inProposalsModel.getPaytrm();
+				String isSingle = inProposalsModel.getSinprm();
+				
+				Calendar calendar = new GregorianCalendar();
+				calendar.setTime(previousInvoice.getDuedat());;
+				
+				if(isSingle.equals("1")) {
+					switch (term) {
+					case "12":
+						calendar.add(Calendar.MONTH, 1);
+						break;
+					case "6":
+						calendar.add(Calendar.MONTH, 6);
+						break;
+					case "3":
+						calendar.add(Calendar.MONTH, 3);
+						break;
+					case "1":
+						calendar.add(Calendar.YEAR, 1);
+						break;
 
+					default:
+						break;
+					}
+				}
+				
+				billingTransactionsModel.setDuedat(calendar.getTime());
+				
+				billingTransactionsModel.setTxnyer(calendar.get(Calendar.YEAR));
+				billingTransactionsModel.setTxnmth(calendar.get(Calendar.MONTH) + 1);
+				
 			} else {
 				try {
-					InBillingTransactionsModel model = billingTransactionsCustomDao
-							.getTxnYearDate(inProposalsModel.getInProposalsModelPK().getPprnum());
-						billingTransactionsModel.setTxnyer(model.getTxnyer());
-						billingTransactionsModel.setTxnmth(model.getTxnmth());
+					
+					billingTransactionsModel.setDuedat(inProposalsModel.getIcpdat());
+
+					Date date = inProposalsModel.getTxndat();
+
+					Calendar calendar = new GregorianCalendar();
+					calendar.setTime(date);
+
+					billingTransactionsModel.setTxnyer(calendar.get(Calendar.YEAR));
+					billingTransactionsModel.setTxnmth(calendar.get(Calendar.MONTH) + 1);
+
+					
+
+//					InBillingTransactionsModel model = billingTransactionsCustomDao
+//							.getTxnYearDate(inProposalsModel.getInProposalsModelPK().getPprnum());
+//						billingTransactionsModel.setTxnyer(model.getTxnyer());
+//						billingTransactionsModel.setTxnmth(model.getTxnmth());
 				} catch (Exception e) {
-					billingTransactionsModel.setTxnyer(Calendar.getInstance().get(Calendar.YEAR));
-					billingTransactionsModel.setTxnmth(Calendar.getInstance().get(Calendar.MONTH) + 1);
+//					billingTransactionsModel.setTxnyer(Calendar.getInstance().get(Calendar.YEAR));
+//					billingTransactionsModel.setTxnmth(Calendar.getInstance().get(Calendar.MONTH) + 1);
 				}
 			}
 
@@ -330,9 +398,9 @@ public class SetoffServiceImpl implements SetoffService {
 
 	}
 
-	private List<InBillingTransactionsModel> getSetOff(InBillingTransactionsModel invoice, ReFundModel deposit,
+	private List<InBillingTransactionsModel> getSetOff(InBillingTransactionsModel invoice, InBillingTransactionsModel deposit,
 			List<InBillingTransactionsModel> setoffList, InProposalsModel inProposalsModel,
-			List<ReFundModel> fundModels, String user, String loc, List<InBillingTransactionsModel> unsetoffList,
+			List<InBillingTransactionsModel> fundModels, String user, String loc, List<InBillingTransactionsModel> unsetoffList,
 			Integer count, Integer depDocNo, Double recoveryAmount) throws Exception {
 
 		List<InBillingTransactionsModel> setoffList1 = new ArrayList<>();
@@ -344,20 +412,20 @@ public class SetoffServiceImpl implements SetoffService {
 		Double amount = 0.0;
 
 		for (int i = 0; i < fundModels.size(); i++) {
-			ReFundModel fundModel = fundModels.get(i);
-			if (fundModel.getDocnum().equals(depDocNo)) {
-				amount = fundModel.getRefamount() + amount + recoveryAmount;
-				fundModels.get(i).setRefamount(fundModel.getRefamount() + recoveryAmount);
+			InBillingTransactionsModel fundModel = fundModels.get(i);
+			if (fundModel.getBillingTransactionsModelPK().getDocnum().equals(depDocNo)) {
+				amount = fundModel.getDepost() + amount + recoveryAmount;
+				fundModels.get(i).setDepost(fundModel.getDepost() + recoveryAmount);
 			} else {
-				amount = fundModel.getRefamount() + amount;
+				amount = fundModel.getDepost() + amount;
 			}
 		}
 
-		//Integer j = 0;
+		// Integer j = 0;
 
 		while (amount >= invoiceAmount) {
-			
-			if(amount == 0 ) {
+
+			if (amount == 0) {
 				break;
 			}
 
@@ -368,16 +436,16 @@ public class SetoffServiceImpl implements SetoffService {
 			System.out.println("invoiceAmount : " + invoiceAmount);
 			for (int i = 0; i < fundModels.size(); i++) {
 
-				ReFundModel fundModel = fundModels.get(i);
-				System.out.println("fundModel.getRefamount()" + fundModel.getRefamount());
-				System.out.println("fundModel.getRefamount()" + fundModel.getRefamount());
-				System.out.println("fundModel.getActive()" + fundModel.getActive());
-				if (fundModel.getActive() == 1) {
+				InBillingTransactionsModel fundModel = fundModels.get(i);
+//				System.out.println("fundModel.getRefamount()" + fundModel.getRefamount());
+//				System.out.println("fundModel.getRefamount()" + fundModel.getRefamount());
+//				System.out.println("fundModel.getActive()" + fundModel.getActive());
+				if (fundModel.getTxnbno() == 1) {
 
 					System.out.println("main if");
-					System.out.println("fundModel.getRefamount()" + fundModel.getRefamount());
+					System.out.println("fundModel.getRefamount()" + fundModel.getDepost());
 
-					if (fundModel.getRefamount() <= invoiceAmount) {
+					if (fundModel.getDepost() <= invoiceAmount) {
 
 						System.out.println("fundModel.getRefamount() <= invoiceAmount");
 
@@ -385,11 +453,11 @@ public class SetoffServiceImpl implements SetoffService {
 						System.out.println("invoiceAmount : " + invoiceAmount);
 
 						setoffList1.add(
-								getSetoff(fundModel, invoice, inProposalsModel, user, loc, fundModel.getPaymode()));
-						fundModels.get(i).setActive(0);
-						amount = amount - fundModel.getRefamount();
-						invoiceAmount = invoiceAmount - fundModel.getRefamount();
-						
+								getSetoff(fundModel, invoice, inProposalsModel, user, loc, fundModel.getPaymod()));
+						fundModels.get(i).setTxnbno(0);
+						amount = amount - fundModel.getDepost();
+						invoiceAmount = invoiceAmount - fundModel.getDepost();
+
 						System.out.println("amount :  " + amount);
 						System.out.println("invoiceAmount : " + invoiceAmount);
 
@@ -399,16 +467,16 @@ public class SetoffServiceImpl implements SetoffService {
 
 						System.out.println("amount :  " + amount);
 						System.out.println("invoiceAmount : " + invoiceAmount);
-						
-						Double fundAmountTemp = fundModel.getRefamount();
-						
-						fundModel.setRefamount(invoiceAmount);
+
+						Double fundAmountTemp = fundModel.getDepost();
+
+						fundModel.setDepost(invoiceAmount);
 						amount = amount - invoiceAmount;
 
 						System.out.println("amount 2: " + amount);
 
 						setoffList1.add(
-								getSetoff(fundModel, invoice, inProposalsModel, user, loc, fundModel.getPaymode()));
+								getSetoff(fundModel, invoice, inProposalsModel, user, loc, fundModel.getPaymod()));
 
 						InBillingTransactionsModel newInvoice = null;
 
@@ -433,22 +501,23 @@ public class SetoffServiceImpl implements SetoffService {
 
 						invoice = newInvoice;
 						invoiceAmount = newInvoice.getAmount();
-						
+
 						System.out.println("amount :  " + amount);
 						System.out.println("invoiceAmount : " + invoiceAmount);
-						System.out.println("fundModels.get(i).getRefamount() ; " + fundModels.get(i).getRefamount());
+						System.out.println("fundModels.get(i).getRefamount() ; " + fundModels.get(i).getDepost());
 						System.out.println("fundAmountTemp : " + fundAmountTemp);
-						System.out.println("fundAmountTemp - fundModels.get(i).getRefamount() :" + (fundAmountTemp - fundModels.get(i).getRefamount()));
-						fundModels.get(i).setRefamount(fundAmountTemp - fundModels.get(i).getRefamount());
-						fundModels.get(i).setLinnum(fundModels.get(i).getLinnum() + 1);
+						System.out.println("fundAmountTemp - fundModels.get(i).getRefamount() :"
+								+ (fundAmountTemp - fundModels.get(i).getDepost()));
+						fundModels.get(i).setDepost(fundAmountTemp - fundModels.get(i).getDepost());
+						fundModels.get(i).getBillingTransactionsModelPK().setLinnum(fundModels.get(i).getBillingTransactionsModelPK().getLinnum() + 1);
 					}
 
 				} else {
 
 					System.out.println("main else");
 
-					for (ReFundModel model : fundModels) {
-						if (model.getActive() == 1) {
+					for (InBillingTransactionsModel model : fundModels) {
+						if (model.getTxnbno() == 1) {
 							b = false;
 						}
 					}
@@ -457,16 +526,15 @@ public class SetoffServiceImpl implements SetoffService {
 
 			}
 
-			/*if (!b) {
-				break;
-			}*/
+			/*
+			 * if (!b) { break; }
+			 */
 
 		}
 
 		System.out.println("End Amount : " + amount);
-		System.out.println("End invoiceAmount : " + invoiceAmount );
-		
-		
+		System.out.println("End invoiceAmount : " + invoiceAmount);
+
 		fundModels.forEach(System.out::println);
 
 		System.out.println(setoffList1.size());
@@ -474,21 +542,23 @@ public class SetoffServiceImpl implements SetoffService {
 		return setoffList1;
 	}
 
-	private InBillingTransactionsModel getSetoff(ReFundModel reFundModel, InBillingTransactionsModel invoice,
+	private InBillingTransactionsModel getSetoff(InBillingTransactionsModel reFundModel, InBillingTransactionsModel invoice,
 			InProposalsModel inProposalsModel, String user, String loc, String paymode) throws Exception {
 
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		String dateString = null;
-		if (invoice.getTxnmth() < 10) {
-			dateString = invoice.getTxnyer() + "-0" + invoice.getTxnmth() + "-01";
-		} else {
-			dateString = invoice.getTxnyer() + "-" + invoice.getTxnmth() + "-01";
-		}
+//		String dateString = null;
+//		if (invoice.getTxnmth() < 10) {
+//			dateString = invoice.getTxnyer() + "-0" + invoice.getTxnmth() + "-01";
+//		} else {
+//			dateString = invoice.getTxnyer() + "-" + invoice.getTxnmth() + "-01";
+//		}
 
 		String polDate = simpleDateFormat.format(inProposalsModel.getIcpdat());
+		
+		String dueDate = simpleDateFormat.format(invoice.getDuedat());
 
 		LocalDate policyDate = LocalDate.parse(polDate);
-		LocalDate currentDate = LocalDate.parse(dateString);
+		LocalDate currentDate = LocalDate.parse(dueDate);
 		int diffInYears = (int) ChronoUnit.YEARS.between(policyDate, currentDate) + 1;
 
 		CommisModel commisModel = null;
@@ -506,9 +576,9 @@ public class SetoffServiceImpl implements SetoffService {
 		calendar.setTime(inProposalsModel.getIcpdat());
 
 		InBillingTransactionsModelPK modelPK = new InBillingTransactionsModelPK();
-		modelPK.setDoccod(reFundModel.getDoccod());
-		modelPK.setDocnum(reFundModel.getDocnum());
-		modelPK.setLinnum(reFundModel.getLinnum() + 1);
+		modelPK.setDoccod(reFundModel.getBillingTransactionsModelPK().getDoccod());
+		modelPK.setDocnum(reFundModel.getBillingTransactionsModelPK().getDocnum());
+		modelPK.setLinnum(reFundModel.getBillingTransactionsModelPK().getLinnum() + 1);
 		modelPK.setLoccod(loc);
 		modelPK.setTxndat(new Date());
 		modelPK.setSbucod(AppConstant.SBU_CODE);
@@ -516,11 +586,12 @@ public class SetoffServiceImpl implements SetoffService {
 		InBillingTransactionsModel model = new InBillingTransactionsModel();
 		model.setBillingTransactionsModelPK(modelPK);
 
-		model.setAdmfee(invoice.getAdmfee());
-		model.setAdvcod(invoice.getAdvcod());
-		model.setAgncls(invoice.getAgncls());
-		model.setAmount(reFundModel.getRefamount() * -1);
-		model.setBrncod(invoice.getBrncod());
+		model.setAdmfee(reFundModel.getAdmfee());
+		model.setAdvcod(reFundModel.getAdvcod());
+		model.setAgncls(reFundModel.getAgncls());
+		model.setAmount(reFundModel.getDepost() * -1);
+		model.setBrncod(reFundModel.getBrncod());
+		model.setCandoc(modelPK.getDoccod());
 		model.setChqrel("N");
 		model.setComiss(AppConstant.ZERO_FOR_DECIMAL);
 		model.setComper(AppConstant.ZERO_FOR_DECIMAL);
@@ -529,12 +600,19 @@ public class SetoffServiceImpl implements SetoffService {
 		model.setIcpmon(policyDate.getMonthValue());
 		model.setIcpyer(policyDate.getYear());
 		model.setPaymod(paymode);
+		model.setTxnbno(AppConstant.ZERO);
+		
+		Calendar calendar1 = new GregorianCalendar();
+		calendar1.setTime(new Date());
+
+		
+		model.setPrcyer(calendar1.get(Calendar.YEAR));
 
 		try {
 			model.setCscode(Integer.parseInt(inProposalsModel.getCscode()));
 		} catch (Exception e) {
 		}
-		model.setDepost(reFundModel.getRefamount());
+		model.setDepost(reFundModel.getDepost());
 		model.setGlintg("N");
 
 		model.setGrsprm(AppConstant.ZERO_FOR_DECIMAL);

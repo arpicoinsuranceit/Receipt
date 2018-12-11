@@ -40,4 +40,5 @@ public interface InProposalCustomDao {
 
 	List<InProposalsModel> getPoliciesToWorkFlow(String brancheList, String type) throws Exception;
 
+	List<InProposalsModel> searchProposal(String sql)  throws Exception;
 }

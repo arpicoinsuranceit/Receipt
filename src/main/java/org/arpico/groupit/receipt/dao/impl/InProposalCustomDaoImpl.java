@@ -205,9 +205,9 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 
 	@Override
 	public InProposalsModel getProposalFromPprnum(Integer pprnum) throws Exception {
-		InProposalsModel models = jdbcTemplate.queryForObject("select * from inproposals "
-				+ "where sbucod = '450' and pprnum = '" + pprnum + "' and pprsta <> 'INAC' order by prpseq desc limit 1",
-				new InProposalsRowMapper());
+		InProposalsModel models = jdbcTemplate
+				.queryForObject("select * from inproposals " + "where sbucod = '450' and pprnum = '" + pprnum
+						+ "' and pprsta <> 'INAC' order by prpseq desc limit 1", new InProposalsRowMapper());
 
 //		
 //		InProposalsModel models = jdbcTemplate
@@ -288,6 +288,18 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 		List<InProposalsModel> models = jdbcTemplate
 				.query("select * from inproposals where sbucod = '450' and loccod in (" + brancheList
 						+ ") and pprsta = '" + type + "'", new InProposalsRowMapper());
+
+		return models;
+	}
+
+	@Override
+	public List<InProposalsModel> searchProposal(String sql) throws Exception {
+		
+		System.out.println("select * from inproposals where sbucod = '450' and " + sql );
+		
+		List<InProposalsModel> models = jdbcTemplate.query(
+				"select * from inproposals where sbucod = '450' and " + sql,
+				new InProposalsRowMapper());
 
 		return models;
 	}
