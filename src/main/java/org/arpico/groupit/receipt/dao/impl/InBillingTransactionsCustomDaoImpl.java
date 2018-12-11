@@ -70,9 +70,14 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 //				new ReFundAmntRowMapper());
 
 		List<InBillingTransactionsModel> reFundModels = jdbcTemplate.query(
-				"select pprnum,doccod,docnum,(sum(depost)*-1) as refamount, max(linnum) as linnum , paymod from inbillingtransactions "
-						+ "where sbucod='450' and pprnum='" + pprNum
-						+ "'  group by docnum having sum(depost) <0 order by docnum",
+				"select sbucod, loccod, doccod, docnum, refdoc, refnum, srcdoc, srcnum, "
+						+ "pprnum, polnum, cscode, max(linnum) as linnum, txntyp, amount, (sum(depost)*-1) as depost, txnyer, txnmth, "
+						+ "txndat, insnum, creaby, creadt, lockin, prpseq, polfee, admfee, taxamt, "
+						+ "otham1, otham2, otham3, otham4, chqrel, paymod, toptrm, hrbprm, paytrm, "
+						+ "icpyer, prcyer, comper, comiss, grsprm, prdcod, advcod, agncls, icpmon, "
+						+ "battyp, batcno, glintg, txnbno, duedat, unlcod, brncod, oldprm, candoc, polyer"
+						+ "from inbillingtransactions where sbucod='450' and pprnum='" + pprNum + "' "
+						+ "group by docnum having sum(depost) < 0 order by docnum;",
 				new InBillingTransactionRowMapper());
 		return reFundModels;
 	}
