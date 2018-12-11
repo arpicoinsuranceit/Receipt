@@ -48,6 +48,7 @@ org\arpico\groupit\receipt\dao\rowmapper\DashboardCashFlowSummeryRowMapper.class
 org\arpico\groupit\receipt\model\InOcuLoadDetModel.class
 org\arpico\groupit\receipt\dao\impl\InGLIntegParametersDaoImpl.class
 org\arpico\groupit\receipt\dao\impl\RmsUserDaoImpl.class
+org\arpico\groupit\receipt\dto\SearchDto.class
 org\arpico\groupit\receipt\service\impl\SubDepartmentDocumentCourierServiceImpl.class
 org\arpico\groupit\receipt\dto\ExpenseDto.class
 org\arpico\groupit\receipt\dto\SubDepartmentHelperDto.class

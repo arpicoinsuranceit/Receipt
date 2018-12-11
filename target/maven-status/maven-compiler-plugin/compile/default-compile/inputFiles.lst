@@ -9,6 +9,7 @@ E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\service\im
 E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\dto\WorkflowProposalSpouseDto.java
 E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\service\MiscellaneousReceiptService.java
 E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\dao\impl\InTransactionCustomDaoImpl.java
+E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\dto\SearchDto.java
 E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\dao\rowmapper\ReceiptDetailsRowMapper.java
 E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\dto\DepartmentHelperDto.java
 E:\eclipse-workspace\Receipt\src\main\java\org\arpico\groupit\receipt\dto\ReceiptDto.java
