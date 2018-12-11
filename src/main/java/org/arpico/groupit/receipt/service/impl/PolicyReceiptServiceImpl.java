@@ -161,6 +161,9 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 			InBillingTransactionsModel deposit = commonethodUtility.getInBillingTransactionModel(inProposalsModel,
 					saveReceiptDto, inTransactionsModel);
+			
+			deposit.setTxnbno(AppConstant.ZERO);
+			
 			deposit.setCreaby(agentCode);
 			deposit.setPolnum(inTransactionsModel.getPolnum());
 			deposit.getBillingTransactionsModelPK().setDoccod("RCPL");
@@ -176,6 +179,9 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 			try {
 				saveReceipt(inTransactionsModel, deposit);
 				if (!saveReceiptDto.equals("CQ")) {
+					
+					deposit.setTxnbno(1);
+					
 					setoff(inProposalsModel, agentCode, locCode, saveReceiptDto, deposit, 0.0);
 				}
 				try {
@@ -185,12 +191,16 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 					dto = new ResponseDto();
 					dto.setCode("500");
 					dto.setStatus("Error");
-					dto.setMessage("Error at print receipt");
+					dto.setMessage("Error at print receipt. Policy No : " + inProposalsModel.getPolnum() + ", Receipt No : " 
+					+ deposit.getBillingTransactionsModelPK().getDoccod()  
+					+ " / " + deposit.getBillingTransactionsModelPK().getDocnum());
 				}
 
 				dto = new ResponseDto();
 				dto.setCode("200");
-				dto.setStatus("Success");
+				dto.setStatus("Successfully saved. Policy No : " + inProposalsModel.getPolnum() + ", Receipt No : " 
+						+ deposit.getBillingTransactionsModelPK().getDoccod()  
+						+ " / " + deposit.getBillingTransactionsModelPK().getDocnum());
 				dto.setMessage(deposit.getBillingTransactionsModelPK().getDocnum().toString());
 				dto.setData(itextReceipt.createReceipt(printDto));
 

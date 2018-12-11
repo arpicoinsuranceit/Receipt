@@ -284,6 +284,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					inBillingTransactionsModel.setTaxamt(0.0);
 					inBillingTransactionsModel.setAdmfee(0.0);
 					inBillingTransactionsModel.setPolfee(0.0);
+					inBillingTransactionsModel.setTxnbno(AppConstant.ZERO);
 
 					inPropFamDetailsDao.save(propFamDetailsModels);
 					inPropLoadingDao.save(inPropLoadingModels);
@@ -299,15 +300,14 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					} catch (Exception e) {
 
 						responseDto.setCode("200");
-						responseDto.setStatus("Error at Quotation update");
+						responseDto.setStatus("Error at Quotation update. Proposal Number : " + numberGen[1] + ", Receipt No : RCNB / " + inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum());
 						;
 						responseDto.setMessage(numberGen[1]);
 						responseDto.setData(itextReceipt.createReceipt(dto));
 
 					}
 					responseDto.setCode("200");
-					responseDto.setStatus("Success");
-					;
+					responseDto.setStatus("Successfully saved. Proposal Number : " + numberGen[1] +", Receipt No : RCNB / " + inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum());
 					responseDto.setMessage(numberGen[1]);
 					responseDto.setData(itextReceipt.createReceipt(dto));
 

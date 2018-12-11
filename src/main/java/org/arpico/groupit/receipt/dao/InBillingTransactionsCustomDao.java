@@ -12,7 +12,9 @@ public interface InBillingTransactionsCustomDao{
 	
 	InBillingTransactionsModel getTxnYearDate (String pprnum) throws Exception;
 	
-	List<ReFundModel> getRefundList (String pprNum) throws Exception;
+	//List<ReFundModel> getRefundList (String pprNum) throws Exception;
+	
+	List<InBillingTransactionsModel> getRefundList (String pprNum) throws Exception;
 	
 	Double paybleAmountThisMonth(Integer pprNo) throws Exception;
 

@@ -66,7 +66,6 @@ public class InBillingTransactionRowMapper implements RowMapper<InBillingTransac
 		model.setSrcnum(rs.getInt("srcnum"));
 		model.setTaxamt(rs.getDouble("taxamt"));
 		model.setToptrm(rs.getInt("toptrm"));
-		model.setTxnbno(rs.getInt("txnbno"));
 		model.setTxnmth(rs.getInt("txnmth"));
 		model.setTxntyp(rs.getString("txntyp"));
 		model.setTxnyer(rs.getInt("txnyer"));
