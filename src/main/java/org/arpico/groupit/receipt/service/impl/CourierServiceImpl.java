@@ -102,7 +102,7 @@ public class CourierServiceImpl implements CourierService{
 		for (DepartmentHelperDto departmentHelperDto : courierDetailsHelperDto.getDepartmentHelperDtos()) {
 			for (SubDepartmentHelperDto subDepHelperDto : departmentHelperDto.getSubDepartmentHelperDtos()) {
 				for (SubDepartmentDocumentCourierHelperDto docCouDto : subDepHelperDto.getSubDepartmentDocumentCourierDtos()) {
-					if(docCouDto.getIsChecked().equals("1")) {
+					if(docCouDto.getIsChecked().equals("0")) {
 						SubDepartmentDocumentCourierModel documentCourierModel=subDepartmentDocumentCourierDao.findOne(docCouDto.getSubDepartmentDocumentCourierId());
 						if(documentCourierModel != null) {
 							sendDepDocCou.add(documentCourierModel);
@@ -137,7 +137,15 @@ public class CourierServiceImpl implements CourierService{
 				newCourierModel.setCreateDate(new Date());
 				newCourierModel.setToBranch(courierModel.getToBranch());
 				
-				newCourierModel.setToken(courierModel.getToken().substring(0, courierModel.getToken().length()-7) + numberGenCourier[1]);
+				String token[] = courierModel.getToken().split("-");
+				
+				String newPrefix="";
+				
+				for(int i=0;i<token.length-1;i++) {
+					newPrefix+=token[i]+"-";
+				}
+				
+				newCourierModel.setToken(newPrefix+numberGenCourier[1]);
 				
 				courierModel2=courierDao.save(newCourierModel);
 			}
@@ -198,47 +206,79 @@ public class CourierServiceImpl implements CourierService{
 			});
 			
 			if(courierModel2 != null) {
-				CourierModel courierModelNew=courierDao.findOne(courierModel2.getCourierId());
-				List<DepartmentCourierModel> departmentCourierModelsNew=courierModelNew.getDepartmentCourier();
+				CourierModel courierModelOld=courierDao.findOne(courierDetailsHelperDto.getCourierId());				
+				List<DepartmentCourierModel> departmentCourierModelsOld = departmentCourierDao.findByCourier(courierModelOld);
 				
 				notSendDepDocCou.forEach(notsend -> {
 					isExistDepartment=false;
-					DepartmentCourierModel departmentCourierModel=notsend.getDepartmentCourier();
-					
-					departmentCourierModelsNew.forEach(dep -> {
-						if(dep.getDepartment().getDepartmentId().equals(departmentCourierModel.getDepartment().getDepartmentId())) {
-							notsend.setDepartmentCourier(dep);
-							subDepartmentDocumentCourierDao.save(notsend);
-							isExistDepartment=true;
-						}
-					});
-					
-					if(!isExistDepartment) {
-						DepartmentCourierModel departmentCourier=new DepartmentCourierModel();
-						departmentCourier.setCourier(courierModel2);
-						departmentCourier.setCourierStatus(courierModel2.getCourierStatus());
-						departmentCourier.setCreateBy(departmentCourierModel.getCreateBy());
-						departmentCourier.setCreateDate(new Date());
-						departmentCourier.setDepartment(departmentCourierModel.getDepartment());
+
+					try {
+						List<DepartmentCourierModel> departmentCourierModelsNew = departmentCourierDao.findByCourier(courierModel2);
 						
 						
-						try {
-							String[] numberGenCourierDep = numberGenerator.generateNewId("", "", "COURIERDEP", "");
+						System.out.println(departmentCourierModelsNew.size() + "SIIZEEEE"); 
+						
+						DepartmentCourierModel departmentCourierModel=notsend.getDepartmentCourier();
+						System.out.println(departmentCourierModel.getDepartment().getDepartmentId() +" departmentCourierModel.getDepartment().getDepartmentId()");
+						
+						
+						departmentCourierModelsOld.forEach(dep -> {
+							System.out.println(dep.getDepartment().getDepartmentId() + " dep.getDepartment().getDepartmentId()");
+							System.out.println(dep.getDepartment().getDepartmentId().equals(departmentCourierModel.getDepartment().getDepartmentId()));
+							System.out.println(isExistDepartment);
+							if(dep.getDepartment().getDepartmentId().equals(departmentCourierModel.getDepartment().getDepartmentId()) &&
+									!dep.getCourierStatus().equals("SEND")) {
+								notsend.setDepartmentCourier(dep);
+								subDepartmentDocumentCourierDao.save(notsend);
+								isExistDepartment=true;
+							}
+						});
+						
+						
+						
+						if(!isExistDepartment) {
 							
-							if (numberGenCourierDep[0].equals("Success")) {
-								departmentCourier.setToken("DEP-"+numberGenCourierDep[1]);
+							departmentCourierModelsNew.forEach(deps -> {
+								System.out.println(deps.getDepartment().getDepartmentId() + " dep.getDepartment().getDepartmentId()");
+								System.out.println(deps.getDepartment().getDepartmentId().equals(departmentCourierModel.getDepartment().getDepartmentId()));
+								System.out.println(isExistDepartment);
+								if(deps.getDepartment().getDepartmentId().equals(departmentCourierModel.getDepartment().getDepartmentId())) {
+									notsend.setDepartmentCourier(deps);
+									subDepartmentDocumentCourierDao.save(notsend);
+									isExistDepartment=true;
+								}
+							});
+						}
+						
+						if(!isExistDepartment) {	
+							
+							DepartmentCourierModel departmentCourier=new DepartmentCourierModel();
+							departmentCourier.setCourier(courierModel2);
+							departmentCourier.setCourierStatus(courierModel2.getCourierStatus());
+							departmentCourier.setCreateBy(departmentCourierModel.getCreateBy());
+							departmentCourier.setCreateDate(new Date());
+							departmentCourier.setDepartment(departmentCourierModel.getDepartment());
+							
+							
+							try {
+								String[] numberGenCourierDep = numberGenerator.generateNewId("", "", "COURIERDEP", "");
+								
+								if (numberGenCourierDep[0].equals("Success")) {
+									departmentCourier.setToken("DEP-"+numberGenCourierDep[1]);
+								}
+								
+							} catch (Exception e) {
+								e.printStackTrace();
 							}
 							
-						} catch (Exception e) {
-							e.printStackTrace();
+							DepartmentCourierModel departmentCourierModel2=departmentCourierDao.save(departmentCourier);
+							notsend.setDepartmentCourier(departmentCourierModel2);
+							subDepartmentDocumentCourierDao.save(notsend);
+							
 						}
-						
-						DepartmentCourierModel departmentCourierModel2=departmentCourierDao.save(departmentCourier);
-						notsend.setDepartmentCourier(departmentCourierModel2);
-						subDepartmentDocumentCourierDao.save(notsend);
-						
+					} catch (Exception e1) {
+						e1.printStackTrace();
 					}
-					
 					
 				});
 			}

@@ -9,7 +9,6 @@ import org.arpico.groupit.receipt.dao.BranchDao;
 import org.arpico.groupit.receipt.dao.BranchUnderwriteDao;
 import org.arpico.groupit.receipt.dao.InPropMedicalReqDao;
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
-import org.arpico.groupit.receipt.dao.InTransactionCustomDao;
 import org.arpico.groupit.receipt.dao.ReceiptCancelationCustomDao;
 import org.arpico.groupit.receipt.dao.ReceiptCancelationDao;
 import org.arpico.groupit.receipt.dao.UserDao;
