@@ -13,7 +13,10 @@ public class InOccuLoadDatRowMapper implements RowMapper<InOcuLoadDetModel>{
 		InOcuLoadDetModel inOcuLoadDetModel = new InOcuLoadDetModel();
 		
 		inOcuLoadDetModel.setLockin(rs.getDate("lockin"));
-		inOcuLoadDetModel.setLodcls(rs.getString("lodcls"));
+		inOcuLoadDetModel.setLodcls(rs.getDouble("lodcls"));
+		inOcuLoadDetModel.setRatmil(rs.getDouble("ratmil"));
+		inOcuLoadDetModel.setEmrate(rs.getDouble("emrate"));
+		inOcuLoadDetModel.setSubrat(rs.getDouble("subrat"));
 		inOcuLoadDetModel.setOcucod(rs.getString("ocucod"));
 		inOcuLoadDetModel.setRidcod(rs.getString("ridcod"));
 		inOcuLoadDetModel.setSbucod(rs.getString("sbucod"));

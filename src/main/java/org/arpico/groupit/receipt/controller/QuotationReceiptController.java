@@ -40,7 +40,9 @@ public class QuotationReceiptController {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
+		
 		System.out.println(valid);
+		
 		try {
 			if (valid.equalsIgnoreCase("ok")) {
 				ResponseDto resp = quotationReceiptService.saveQuotationReceipt(saveReceiptDto);

@@ -1,6 +1,7 @@
 package org.arpico.groupit.receipt.util;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +10,7 @@ import org.arpico.groupit.receipt.dao.InAgentMastDao;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.model.AgentMastModel;
 import org.arpico.groupit.receipt.model.InBillingTransactionsModel;
+import org.arpico.groupit.receipt.model.InPropAddBenefitModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.InTransactionsModel;
 import org.arpico.groupit.receipt.model.pk.InBillingTransactionsModelPK;
@@ -32,9 +34,9 @@ public class CommonMethodsUtility {
 
 		String[] numberGen = numberGenerator.generateNewId("", "", "RCNBSQ", "");
 
-		String agentCode = new JwtDecoder().generate(saveReceiptDto.getToken());
+		//String userCode = new JwtDecoder().generate(saveReceiptDto.getToken());
 
-		System.out.println(agentCode);
+		System.out.println(userCode);
 
 		System.out.println(numberGen[1]);
 
@@ -143,7 +145,7 @@ public class CommonMethodsUtility {
 			billingTransactionsModel.setLockin(new Date());
 			billingTransactionsModel.setOldprm(AppConstant.ZERO_FOR_DECIMAL);
 			billingTransactionsModel.setPaymod(inTransactionsModel.getPaymod());
-			billingTransactionsModel.setPaytrm(Integer.parseInt(inProposalsModel.getPaytrm()));
+			//billingTransactionsModel.setPaytrm(Integer.parseInt(inProposalsModel.getPaytrm()));
 			billingTransactionsModel.setPolfee(AppConstant.ZERO_TWO_DECIMAL);
 			billingTransactionsModel.setPprnum(Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum()));
 			billingTransactionsModel.setPrdcod(inProposalsModel.getPrdcod());
@@ -153,7 +155,7 @@ public class CommonMethodsUtility {
 			billingTransactionsModel.setSrcdoc(inTransactionsModel.getInTransactionsModelPK().getDoccod());
 			billingTransactionsModel.setSrcnum(inTransactionsModel.getInTransactionsModelPK().getDocnum());
 			billingTransactionsModel.setTaxamt(inProposalsModel.getTaxamt());
-			billingTransactionsModel.setToptrm(inProposalsModel.getToptrm());
+			//billingTransactionsModel.setToptrm(AppConstant.NULL);
 			billingTransactionsModel.setTxntyp("PROPDEP");
 //			if (agentMastModel.getAgncls().equalsIgnoreCase("IC")) {
 				billingTransactionsModel.setUnlcod(agentMastModel.getUnlcod());
@@ -171,6 +173,24 @@ public class CommonMethodsUtility {
 		}
 
 		return null;
+	}
+
+	public Double getHrbAmt(List<InPropAddBenefitModel> addBenefitModels) {
+		
+		Double amt = 0.0;
+		
+		//'HRB' , 'HRBC', 'HRBS','SUHRB','SUHRBS','SUHRBC','HCBI' , 'HCBIC', 'HCBIS','HCBF','HCBFS','HCBFC'
+		
+		List<String> hrbList = Arrays.asList(new String[] {"HRB" , "HRBC", "HRBS","SUHRB","SUHRBS","SUHRBC","HCBI" , "HCBIC", "HCBIS","HCBF","HCBFS","HCBFC"});
+		
+		if(addBenefitModels != null && !addBenefitModels.isEmpty()) {
+			for (InPropAddBenefitModel e : addBenefitModels) {
+				if(hrbList.contains(e.getRidtyp())) {
+					amt+= e.getRdrprm();
+				}
+			}
+		}
+		return amt;
 	}
 
 }

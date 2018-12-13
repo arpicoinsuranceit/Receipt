@@ -216,7 +216,7 @@ public class ProposalServiceImpl implements ProposalServce {
 	@Override
 	public ResponseEntity<Object> saveProposal(SaveReceiptDto saveReceiptDto) throws Exception {
 
-		String agentCode = decoder.generate(saveReceiptDto.getToken());
+		String userCode = decoder.generate(saveReceiptDto.getToken());
 
 		String locCode = decoder.generateLoc(saveReceiptDto.getToken());
 
@@ -232,8 +232,15 @@ public class ProposalServiceImpl implements ProposalServce {
 
 				///////////// save billing//////////////////////
 				InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
-						saveReceiptDto, agentCode, locCode);
+						saveReceiptDto, userCode, locCode);
 				inTransactionsModel.getInTransactionsModelPK().setDoccod("RCPP");
+				
+				try {
+					inTransactionsModel.setPolnum(Integer.parseInt(inProposalsModel.getPolnum()));
+				} catch (NullPointerException e) {
+					// TODO: handle exception
+				}
+				
 
 				InBillingTransactionsModel inBillingTransactionsModel = commonethodUtility
 						.getInBillingTransactionModel(inProposalsModel, saveReceiptDto, inTransactionsModel);
@@ -246,6 +253,7 @@ public class ProposalServiceImpl implements ProposalServce {
 				inBillingTransactionsModel.setTaxamt(0.0);
 				inBillingTransactionsModel.setAdmfee(0.0);
 				inBillingTransactionsModel.setPolfee(0.0);
+				inBillingTransactionsModel.setPolnum(inTransactionsModel.getPolnum());
 
 				System.out.println(inBillingTransactionsModel.toString());
 				try {
@@ -253,11 +261,11 @@ public class ProposalServiceImpl implements ProposalServce {
 
 					System.out.println("save in");
 
-					if (!saveReceiptDto.getPayMode().equals("CQ")) {
+					if (!saveReceiptDto.getPayMode().equals("CQ") && inProposalsModel.getPprsta().equalsIgnoreCase("L3")) {
 						
 						inBillingTransactionsModel.setTxnbno(1);
 						
-						checkPolicy(inProposalsModel, pprNo, seqNo, saveReceiptDto, agentCode, locCode,
+						checkPolicy(inProposalsModel, pprNo, seqNo, saveReceiptDto, userCode, locCode,
 								inBillingTransactionsModel);
 					}
 
@@ -266,7 +274,7 @@ public class ProposalServiceImpl implements ProposalServce {
 					ReceiptPrintDto dto = null;
 
 					try {
-						dto = getReceiptPrintDto(inProposalsModel, inTransactionsModel, agentCode, locCode, false);
+						dto = getReceiptPrintDto(inProposalsModel, inTransactionsModel, userCode, locCode, false);
 					} catch (Exception e) {
 						e.printStackTrace();
 						ResponseDto responseDto = new ResponseDto();
@@ -377,7 +385,7 @@ public class ProposalServiceImpl implements ProposalServce {
 	@Transactional
 	@Override
 	public void checkPolicy(InProposalsModel inProposalsModel, Integer pprNo, Integer seqNo,
-			SaveReceiptDto saveReceiptDto, String agentCode, String locCode, InBillingTransactionsModel deposit)
+			SaveReceiptDto saveReceiptDto, String userCode, String locCode, InBillingTransactionsModel deposit)
 			throws Exception {
 		if (inProposalsModel.getPprsta().equalsIgnoreCase("L3")) {
 
@@ -391,7 +399,7 @@ public class ProposalServiceImpl implements ProposalServce {
 
 					inProposalsModel.setPprsta("INAC");
 					inProposalsModel.setLockin(new Date());
-					inProposalsModel.setIcpdat(new Date());
+					//inProposalsModel.setIcpdat(new Date());
 
 					inProposalDao.save(inProposalsModel);
 
@@ -482,10 +490,11 @@ public class ProposalServiceImpl implements ProposalServce {
 					inShortPremiumModelPK.setPrdcod(inProposalsModel.getPrdcod());
 					inShortPremiumModelPK.setSbucod("450");
 
-					Double recovery = actProductDao.findByStatusAndInShortPremiumModelPK("ACT", inShortPremiumModelPK)
-							.getSpiamt();
+					//Double recovery = proposalL3Dtos.get(0).getRecovery();
+					
+					Double hrbamt = commonethodUtility.getHrbAmt(addBenefitModels);
 
-					setoffService.setoff(proposalsModelNew, agentCode, locCode, saveReceiptDto, deposit, recovery);
+					List<InBillingTransactionsModel> setoffList = setoffService.setoff(proposalsModelNew, userCode, locCode, saveReceiptDto, deposit, hrbamt, proposalL3Dtos.get(0),"NEW");
 
 				}
 			} else {

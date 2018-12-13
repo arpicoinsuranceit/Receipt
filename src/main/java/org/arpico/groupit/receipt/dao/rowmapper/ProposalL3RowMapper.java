@@ -16,6 +16,7 @@ public class ProposalL3RowMapper implements RowMapper<ProposalL3Dto>{
 		dto.setPprnum(rs.getString("pprnum"));
 		dto.setReqcnt(rs.getInt("reqcnt"));
 		dto.setTotprm(rs.getDouble("totprm"));
+		dto.setRecovery(rs.getDouble("spiamt"));
 		
 		return dto;
 	}

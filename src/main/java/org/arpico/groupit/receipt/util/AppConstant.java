@@ -17,6 +17,7 @@ public class AppConstant {
 	public static final Double ZERO_ZERO_DECIMAL = new Double("0");
 	public static final String DOC_CODE_QUOT = "QUOT";
 	public static final String SYSTEM_CREATE = "system";
+	public static final String RECOVERY = "RECOVERY";
 	
 	public static final String URI_GET_QUO_DETAILS = "http://10.10.10.11:8086/getQuoDetail";
 	public static final String URI_GET_QUO_SEQNUM = "http://10.10.10.11:8086/getQuotationSeqnum";
