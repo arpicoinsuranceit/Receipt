@@ -32,7 +32,7 @@ public class SubDepartmentDocumentServiceImpl implements SubDepartmentDocumentSe
 	}
 
 	@Override
-	public List<DocumentTypeDto> findBySubDepartment(Integer subDepId) throws Exception {
+	public List<DocumentTypeDto> findBySubDepartment(Integer subDepId,Boolean isHOUser) throws Exception {
 		
 		SubDepartmentModel subDepartmentModel=subDepartmentDao.findOne(subDepId);
 		//System.out.println(subDepartmentModel.toString());
@@ -46,17 +46,36 @@ public class SubDepartmentDocumentServiceImpl implements SubDepartmentDocumentSe
 			
 			if(documentTypeModel.isActive()) {
 				if(documentTypeModel.getParent() == 0) {
-					DocumentTypeDto documentTypeDto=new DocumentTypeDto();
+					if(isHOUser) {
+						if(documentTypeModel.getDocTypeRef().equals("HO")) {
+							DocumentTypeDto documentTypeDto=new DocumentTypeDto();
+							
+							documentTypeDto.setActive(documentTypeModel.isActive());
+							documentTypeDto.setCreateBy(documentTypeModel.getCreateBy());
+							documentTypeDto.setCreateDate(documentTypeModel.getCreateDate());
+							documentTypeDto.setDocName(documentTypeModel.getDocName());
+							documentTypeDto.setDocTypeId(documentTypeModel.getDocTypeId());
+							documentTypeDto.setModifyBy(documentTypeModel.getModifyBy());
+							//documentTypeDto.setModifyDate(documentTypeModel.getModifyDate());
+							
+							documentTypeDtos.add(documentTypeDto);
+						}
+					}else {
+						if(documentTypeModel.getDocTypeRef().equals("BRANCH")) {
+							DocumentTypeDto documentTypeDto=new DocumentTypeDto();
+							
+							documentTypeDto.setActive(documentTypeModel.isActive());
+							documentTypeDto.setCreateBy(documentTypeModel.getCreateBy());
+							documentTypeDto.setCreateDate(documentTypeModel.getCreateDate());
+							documentTypeDto.setDocName(documentTypeModel.getDocName());
+							documentTypeDto.setDocTypeId(documentTypeModel.getDocTypeId());
+							documentTypeDto.setModifyBy(documentTypeModel.getModifyBy());
+							//documentTypeDto.setModifyDate(documentTypeModel.getModifyDate());
+							
+							documentTypeDtos.add(documentTypeDto);
+						}
+					}
 					
-					documentTypeDto.setActive(documentTypeModel.isActive());
-					documentTypeDto.setCreateBy(documentTypeModel.getCreateBy());
-					documentTypeDto.setCreateDate(documentTypeModel.getCreateDate());
-					documentTypeDto.setDocName(documentTypeModel.getDocName());
-					documentTypeDto.setDocTypeId(documentTypeModel.getDocTypeId());
-					documentTypeDto.setModifyBy(documentTypeModel.getModifyBy());
-					//documentTypeDto.setModifyDate(documentTypeModel.getModifyDate());
-					
-					documentTypeDtos.add(documentTypeDto);
 				}
 				
 			}

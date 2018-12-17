@@ -81,18 +81,19 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 	@Override
 	public List<ProposalL3Dto> checkL3(Integer propId) throws Exception {
 		List<ProposalL3Dto> models = jdbcTemplate.query(
-				"SELECT x.pprnum, (x.totprm + x.polfee) totprm, x.payment, y.reqcnt FROM "
+				"SELECT x.pprnum, (x.totprm + x.polfee) totprm, x.payment, y.reqcnt,x.spiamt FROM "
 						+ "	(SELECT  a.sbucod, a.pprnum, a.prpseq, a.totprm, a.polfee, "
-						+ "		(SELECT SUM(totprm) FROM intransactions b WHERE a.sbucod = b.sbucod AND a.pprnum = b.pprnum) payment, s.spiamt "
+						+ "		(SELECT SUM(totprm) FROM intransactions b WHERE a.sbucod = b.sbucod AND a.pprnum = b.pprnum "
+						+ "         AND if(b.paymod<>'CQ',1,if(b.paymod='CQ' and b.chqrel='Y',1,0)) = 1) payment, s.spiamt "
 						+ "			FROM inproposals a "
 						+ "		INNER JOIN inshort_premium_act_product s ON a.sbucod = s.sbucod AND a.prdcod = s.prdcod WHERE "
-						+ "			a.sbucod = '450' AND a.pprsta IN ('L3') AND a.pprnum = '" + propId
-						+ "' AND s.status = 'ACT') x " + "        INNER JOIN "
+						+ "			a.sbucod = '450' AND a.pprsta IN ('L3') AND a.pprnum = '" + propId+"' "
+						+ "     AND s.status = 'ACT') x " + "        INNER JOIN "
 						+ "			(SELECT sbucod, pprnum, prpseq, medcod, "
 						+ "				(SELECT COUNT(*) FROM inpropmedicalreq a WHERE a.sbucod = b.sbucod AND a.loccod = b.loccod "
 						+ "                        AND a.prpseq = b.prpseq AND a.pprnum = b.pprnum AND a.medcod LIKE 'AD%' AND a.tessta = 'N' "
 						+ "                        AND addnot NOT LIKE 'Premium Short%') reqcnt "
-						+ "			FROM inpropmedicalreq b WHERE sbucod = '450' AND medcod LIKE 'AD%' AND addnot LIKE 'Premium Short%' "
+						+ "			FROM inpropmedicalreq b WHERE sbucod = '450' AND pprnum = '" + propId+"' AND medcod LIKE 'AD%' AND addnot LIKE 'Premium Short%' "
 						+ "	AND tessta = 'N') "
 						+ "y ON x.sbucod = y.sbucod AND x.pprnum = y.pprnum AND x.prpseq = y.prpseq "
 						+ "WHERE ((x.totprm + x.polfee) - x.spiamt) <= x.payment AND reqcnt < 1 GROUP BY x.pprnum",
@@ -211,6 +212,7 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 		InProposalsModel models = jdbcTemplate
 				.queryForObject("select * from inproposals " + "where sbucod = '450' and pprnum = '" + pprnum
 						+ "' and pprsta <> 'INAC' order by prpseq desc limit 1", new InProposalsRowMapper());
+
 //		
 //		InProposalsModel models = jdbcTemplate
 //				.queryForObject("select * from inproposals where sbucod = '450' and pprnum = '" + pprnum
@@ -318,6 +320,17 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 						+ "where b.sbucod='450' and b.duedat between current_date() and date_add(current_date(),interval 5 day) group by b.pprnum,b.txnyer,b.txnmth having sum(b.amount) > 0 order by b.duedat limit "
 						+ page + "," + offset,
 				new WorkFlowPolicyGridRowMapper());
+		return models;
+	}
+	@Override
+	public List<InProposalsModel> searchProposal(String sql) throws Exception {
+		
+		System.out.println("select * from inproposals where sbucod = '450' and " + sql );
+		
+		List<InProposalsModel> models = jdbcTemplate.query(
+				"select * from inproposals where sbucod = '450' and " + sql,
+				new InProposalsRowMapper());
+
 		return models;
 	}
 

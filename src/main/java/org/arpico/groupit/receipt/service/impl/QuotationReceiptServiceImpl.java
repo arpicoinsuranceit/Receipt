@@ -124,7 +124,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 	@Autowired
 	private ItextReceipt itextReceipt;
-	
+
 	@Autowired
 	private JwtDecoder decoder;
 
@@ -133,10 +133,10 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 		List<AgentModel> agentModels = agentDao.findAgentByCode(saveReceiptDto.getAgentCode());
 
-		String agentCode = decoder.generate(saveReceiptDto.getToken());
+		String userCode = decoder.generate(saveReceiptDto.getToken());
 
 		String locCode = decoder.generateLoc(saveReceiptDto.getToken());
-		
+
 		ResponseDto responseDto = new ResponseDto();
 
 		if (locCode != null) {
@@ -162,7 +162,8 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 					// System.out.println(sheduleDtos.size());
 					// Primary Keys
-					InProposalsModelPK inProposalsModelPK = getProposalModelPK(saveReceiptDto, agentModels.get(0).getLocation());
+					InProposalsModelPK inProposalsModelPK = getProposalModelPK(saveReceiptDto,
+							agentModels.get(0).getLocation());
 					inProposalsModelPK.setPprnum(numberGen[1]);
 
 					System.out.println(inProposalsModelPK.getPprnum());
@@ -171,8 +172,8 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 					// Set Primary Keys to model
 					inProposalsModel.setInProposalsModelPK(inProposalsModelPK);
-					inProposalsModel.setCreaby(agentCode);
-					inProposalsModel.setCurusr(agentCode);
+					inProposalsModel.setCreaby(userCode);
+					inProposalsModel.setCurusr(userCode);
 
 					List<InPropLoadingModel> inPropLoadingModels = new ArrayList<>();
 
@@ -180,7 +181,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 							.getBenefictByProduct(resp.getProductCode());
 
 					for (InPropAddBenefitModel inPropAddBenefitModel : addBenefitModels) {
-						inPropAddBenefitModel.getInPropAddBenefitPK().setLoccod(saveReceiptDto.getBranchCode());
+						inPropAddBenefitModel.getInPropAddBenefitPK().setLoccod(inProposalsModelPK.getLoccod());
 						inPropAddBenefitModel.getInPropAddBenefitPK()
 								.setPprnum(Integer.parseInt(inProposalsModelPK.getPprnum()));
 						inPropAddBenefitModel.getInPropAddBenefitPK().setPrpseq(inProposalsModelPK.getPrpseq());
@@ -193,7 +194,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 						inPropAddBenefitModel.setPrmyer(0.0);
 
 						InPropLoadingModelPK inPropLoadingModelPK = new InPropLoadingModelPK();
-						inPropLoadingModelPK.setLoccod(saveReceiptDto.getBranchCode());
+						inPropLoadingModelPK.setLoccod(inProposalsModelPK.getLoccod());
 						inPropLoadingModelPK.setPprnum(Integer.parseInt(inProposalsModelPK.getPprnum()));
 						inPropLoadingModelPK.setRidcod(inPropAddBenefitModel.getInPropAddBenefitPK().getRidcod());
 						inPropLoadingModelPK.setSbucod(AppConstant.SBU_CODE);
@@ -228,7 +229,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 					for (ChildrenDto childrenDto : resp.get_children()) {
 						propFamDetailsModels.add(getFamily(childrenDto, inProposalsModelPK.getPprnum(),
-								inProposalsModelPK.getPrpseq(), saveReceiptDto.getBranchCode()));
+								inProposalsModelPK.getPrpseq(), inProposalsModelPK.getLoccod()));
 					}
 
 					List<InPropSchedulesModel> inPropScheduleList = null;
@@ -237,7 +238,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 						inPropScheduleList = new ArrayList<>();
 						for (SheduleDto sheduleDto : sheduleDtos) {
 							inPropScheduleList.add(getPropShedule(sheduleDto, inProposalsModelPK.getPprnum(),
-									inProposalsModelPK.getPrpseq(), saveReceiptDto.getBranchCode()));
+									inProposalsModelPK.getPrpseq(), inProposalsModelPK.getLoccod()));
 						}
 
 					}
@@ -247,7 +248,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					if (medicalRequirementsDtos != null && medicalRequirementsDtos.size() > 0) {
 						medicalRequirementsDtos.forEach(mediReq -> inPropMedicalReqModels
 								.add(getMediReq(mediReq, inProposalsModelPK.getPprnum(), inProposalsModelPK.getPrpseq(),
-										saveReceiptDto.getBranchCode())));
+										inProposalsModelPK.getLoccod())));
 					}
 
 					final List<InPropSurrenderValsModel> inPropSurrenderValsModels = new ArrayList<>();
@@ -256,16 +257,17 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 						surrenderValsDtos.forEach(
 								surVal -> inPropSurrenderValsModels.add(getSurrenderVals(saveReceiptDto.getAgentCode(),
 										saveReceiptDto.getQuotationId(), surVal, inProposalsModelPK.getPprnum(),
-										inProposalsModelPK.getPrpseq(), saveReceiptDto.getBranchCode())));
+										inProposalsModelPK.getPrpseq(), inProposalsModelPK.getLoccod())));
 					}
 
 					/////////// When Ho //////////
-
-					if(locCode.equalsIgnoreCase("HO")) {
+					/*
+					if (locCode.equalsIgnoreCase("HO")) {
 						inProposalsModel.setPprsta("L1");
-					}else {
+					} else {
 						inProposalsModel.setProsta("L1");
 					}
+					*/
 					
 					inProposalDao.save(inProposalsModel);
 					inPropAddBenefictDao.save(addBenefitModels);
@@ -275,23 +277,25 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					if (inPropMedicalReqModels != null && inPropMedicalReqModels.size() > 0) {
 						inPropMedicalReqDao.save(inPropMedicalReqModels);
 					}
+					
+					inPropFamDetailsDao.save(propFamDetailsModels);
+					inPropLoadingDao.save(inPropLoadingModels);					
+					inPropSurrenderValsDao.save(inPropSurrenderValsModels);
 
 					InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
-							saveReceiptDto, agentCode, locCode);
+							saveReceiptDto, userCode, locCode);
 
 					InBillingTransactionsModel inBillingTransactionsModel = commonethodUtility
 							.getInBillingTransactionModel(inProposalsModel, saveReceiptDto, inTransactionsModel);
 					inBillingTransactionsModel.setTaxamt(0.0);
 					inBillingTransactionsModel.setAdmfee(0.0);
 					inBillingTransactionsModel.setPolfee(0.0);
+					inBillingTransactionsModel.setTxnbno(AppConstant.ZERO);
 
-					inPropFamDetailsDao.save(propFamDetailsModels);
-					inPropLoadingDao.save(inPropLoadingModels);
 					inTransactionDao.save(inTransactionsModel);
 					inBillingTransactionDao.save(inBillingTransactionsModel);
-					inPropSurrenderValsDao.save(inPropSurrenderValsModels);
 
-					ReceiptPrintDto dto = getReceiptPrintDto(inProposalsModel, inTransactionsModel, agentCode, locCode,
+					ReceiptPrintDto dto = getReceiptPrintDto(inProposalsModel, inTransactionsModel, userCode, locCode,
 							false, agentModels.get(0));
 
 					try {
@@ -299,15 +303,18 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					} catch (Exception e) {
 
 						responseDto.setCode("200");
-						responseDto.setStatus("Error at Quotation update");
+						responseDto.setStatus("Error at Quotation update. Proposal Number : " + numberGen[1]
+								+ ", Receipt No : RCNB / "
+								+ inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum());
 						;
 						responseDto.setMessage(numberGen[1]);
 						responseDto.setData(itextReceipt.createReceipt(dto));
 
 					}
 					responseDto.setCode("200");
-					responseDto.setStatus("Success");
-					;
+					responseDto.setStatus(
+							"Successfully saved. Proposal Number : " + numberGen[1] + ", Receipt No : RCNB / "
+									+ inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum());
 					responseDto.setMessage(numberGen[1]);
 					responseDto.setData(itextReceipt.createReceipt(dto));
 
@@ -465,8 +472,74 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					InOcuLoadDetModel detModel = detModels.get(0);
 					for (InPropLoadingModel propLoadingModel : inPropLoadingModels) {
 						if (propLoadingModel.getInPropLoadingPK().getRidcod().equals(benfDto.getRiderCode())) {
-							propLoadingModel.setOculod(Double.parseDouble(detModel.getLodcls()));
+							propLoadingModel.setOculod(detModel.getLodcls());
+							propLoadingModel.setEmrate(detModel.getEmrate());
+							propLoadingModel.setRatmil(detModel.getRatmil());
+							propLoadingModel.setSubrat(detModel.getSubrat());
 							propLoadingModel.setInstyp(insType);
+
+							switch (frequency) {
+							case "Monthly":
+								if (detModel.getLodcls() > 0) {
+									propLoadingModel.setOcuval(benfDto.getPremium());
+									propLoadingModel.setOcuvmt(benfDto.getPremium());
+								} else if (detModel.getRatmil() > 0) {
+									propLoadingModel.setRatmil(benfDto.getPremium());
+									propLoadingModel.setRatvmt(benfDto.getPremium());
+								} else if (detModel.getSubrat() > 0) {
+									propLoadingModel.setSubrat(benfDto.getPremium());
+									propLoadingModel.setSubvmt(benfDto.getPremium());
+								}
+								break;
+							case "Quartaly":
+								if (detModel.getLodcls() > 0) {
+									propLoadingModel.setOcuval(benfDto.getPremium());
+									propLoadingModel.setOcuvqt(benfDto.getPremium());
+								} else if (detModel.getRatmil() > 0) {
+									propLoadingModel.setRatmil(benfDto.getPremium());
+									propLoadingModel.setRatvqt(benfDto.getPremium());
+								} else if (detModel.getSubrat() > 0) {
+									propLoadingModel.setSubrat(benfDto.getPremium());
+									propLoadingModel.setSubvqt(benfDto.getPremium());
+								}
+								break;
+							case "Half Yearly":
+								if (detModel.getLodcls() > 0) {
+									propLoadingModel.setOcuval(benfDto.getPremium());
+									propLoadingModel.setOcuvhy(benfDto.getPremium());
+								} else if (detModel.getRatmil() > 0) {
+									propLoadingModel.setRatmil(benfDto.getPremium());
+									propLoadingModel.setRatvhy(benfDto.getPremium());
+								} else if (detModel.getSubrat() > 0) {
+									propLoadingModel.setSubrat(benfDto.getPremium());
+									propLoadingModel.setSubvhy(benfDto.getPremium());
+								}
+								break;
+							case "Yearly":
+								if (detModel.getLodcls() > 0) {
+									propLoadingModel.setOcuval(benfDto.getPremium());
+									propLoadingModel.setOcuvyr(benfDto.getPremium());
+								} else if (detModel.getRatmil() > 0) {
+									propLoadingModel.setRatmil(benfDto.getPremium());
+									propLoadingModel.setRatvyr(benfDto.getPremium());
+								} else if (detModel.getSubrat() > 0) {
+									propLoadingModel.setSubrat(benfDto.getPremium());
+									propLoadingModel.setSubvyr(benfDto.getPremium());
+								}
+								break;
+							case "Single Premium":
+								if (detModel.getLodcls() > 0) {
+									propLoadingModel.setOcuval(benfDto.getPremium());
+								} else if (detModel.getRatmil() > 0) {
+									propLoadingModel.setRatmil(benfDto.getPremium());
+								} else if (detModel.getSubrat() > 0) {
+									propLoadingModel.setSubrat(benfDto.getPremium());
+								}
+								// TODO
+								break;
+							default:
+								break;
+							}
 
 						}
 					}
@@ -589,8 +662,8 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 	private InProposalsModel getProposalModel(ViewQuotationDto resp, SaveReceiptDto saveReceiptDto) throws Exception {
 		InProposalsModel inProposalsModel = new InProposalsModel();
 
-		System.out.println(resp.get_mainlife().get_mDob());
-		// System.out.println(resp.);
+		//System.out.println(resp.get_mainlife().get_mDob());
+		System.out.println(resp);
 
 		inProposalsModel.setPpdini(resp.get_mainlife().get_mName());
 		inProposalsModel.setPpdnam(resp.get_mainlife().get_mName());

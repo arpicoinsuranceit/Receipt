@@ -32,6 +32,7 @@ public interface CodeTransferService {
 
 	public List<CodeTransferDto> getCodeTransfersToApprove(String token) throws Exception;
 
+	public ResponseEntity<Object> getCodePendingProposalDetails(String token) throws Exception;
 	
 
 }

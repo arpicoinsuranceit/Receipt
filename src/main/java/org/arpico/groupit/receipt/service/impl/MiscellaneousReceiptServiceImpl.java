@@ -80,6 +80,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		ResponseDto responseDto = null;
 
 		String user = decoder.generate(token);
+		String physicalBranch = decoder.generateLoc(token);
 
 		String[] numberGen = numberGenerator.generateNewId("", "", "SQOIIS", "");
 
@@ -89,7 +90,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 
 			String docNo = numberGen[1];
 
-			RmsDocTxnmModel docTxnmModel = getRmsDocTxnmModelInv(dto, user, docNo);
+			RmsDocTxnmModel docTxnmModel = getRmsDocTxnmModelInv(dto, user, docNo, physicalBranch);
 			List<RmsItemMasterModel> itemList = new ArrayList<>();
 			List<RmsDocTxndModel> docTxndModels = new ArrayList<>();
 
@@ -206,7 +207,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 
 	private RmsDocTxndModel getDocTxndModelInv(MiscellaneousReceiptInvDto dto, String user, String docNo, ExpenseDto e,
 			Integer seqNo, RmsItemMasterModel itemMasterModel) throws Exception {
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		//SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 		RmsDocTxndModelPK pk = new RmsDocTxndModelPK();
 		pk.setDocCode(AppConstant.DOC_CODE_OIIS);
@@ -227,7 +228,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		model.setDstat("VAL");
 		model.setCreateBy(user);
 		model.setCreDate(new Date());
-		model.setMod_date(simpleDateFormat.parse("0000-00-00"));
+		model.setMod_date("0000-00-00");
 		model.setGlgrup(itemMasterModel.getGlGroup());
 		model.setItemGroup(itemMasterModel.getItmGroup());
 		model.setDimm04(dto.getBranch());
@@ -285,10 +286,10 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		return model;
 	}
 
-	private RmsDocTxnmModel getRmsDocTxnmModelInv(MiscellaneousReceiptInvDto dto, String user, String docNo)
+	private RmsDocTxnmModel getRmsDocTxnmModelInv(MiscellaneousReceiptInvDto dto, String user, String docNo, String physicalBranch)
 			throws ParseException {
 
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		//SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 		RmsDocTxnmModelPK pk = new RmsDocTxnmModelPK();
 		pk.setDocCode(AppConstant.DOC_CODE_OIIS);
@@ -298,6 +299,8 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 
 		RmsDocTxnmModel model = new RmsDocTxnmModel();
 
+		model.setCustSupF("S");
+		model.setCustSupCode(physicalBranch);
 		model.setRmsDocTxnmModelPK(pk);
 		model.setRef1(dto.getAgent());
 		model.setRef2(dto.getPaymode());
@@ -305,11 +308,11 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		model.setCreBy(user);
 		model.setTxnDate(new Date());
 		model.setCreDate(new Date());
-		model.setModDate(simpleDateFormat.parse("0000-00-00"));
+		model.setModDate("0000-00-00");
 		model.setInvAmt(dto.getAmount());
 		model.setSetOffAmt(dto.getAmount());
 		model.setDownloaded("0");
-		model.setDeliDate(simpleDateFormat.parse("0000-00-00"));
+		model.setDeliDate("0000-00-00");
 		model.setVourai("F");
 		model.setGlupdt("F");
 		model.setExcrat(1.0000);
@@ -328,8 +331,6 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		model.setBatcno(AppConstant.ZERO_ZERO_DECIMAL);
 		model.setBattyp(AppConstant.EMPTY_STRING);
 		model.setCostcent(AppConstant.EMPTY_STRING);
-		model.setCustSupF(AppConstant.EMPTY_STRING);
-		model.setCustSupCode(AppConstant.EMPTY_STRING);
 		model.setJobNo(AppConstant.EMPTY_STRING);
 		model.setReqBy(AppConstant.EMPTY_STRING);
 		model.setIsuBy(AppConstant.EMPTY_STRING);

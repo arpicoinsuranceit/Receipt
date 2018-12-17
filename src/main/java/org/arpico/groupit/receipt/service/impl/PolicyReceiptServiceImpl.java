@@ -10,6 +10,7 @@ import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.InAgentMastDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsDao;
+import org.arpico.groupit.receipt.dao.InPropAddBenefictCustomDao;
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
 import org.arpico.groupit.receipt.dao.InTransactionsDao;
 import org.arpico.groupit.receipt.dao.RmsUserDao;
@@ -22,6 +23,7 @@ import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.model.AgentMastModel;
 import org.arpico.groupit.receipt.model.AgentModel;
 import org.arpico.groupit.receipt.model.InBillingTransactionsModel;
+import org.arpico.groupit.receipt.model.InPropAddBenefitModel;
 import org.arpico.groupit.receipt.model.InProposalBasicsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.InTransactionsModel;
@@ -74,10 +76,12 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 	@Autowired
 	private RmsUserDao rmsUserDao;
-	
+
 	@Autowired
 	private JwtDecoder decoder;
 
+	@Autowired
+	private InPropAddBenefictCustomDao addBenefictCustomDao;
 
 	/*
 	 * @Autowired private CommisDaoCustom commisDaoCustom;
@@ -145,14 +149,14 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		InProposalsModel inProposalsModel = inProposalCustomDao.getProposalBuPolicy(saveReceiptDto.getPolId(),
 				saveReceiptDto.getPolSeq());
 
-		String agentCode = decoder.generate(saveReceiptDto.getToken());
+		String userCode = decoder.generate(saveReceiptDto.getToken());
 
 		String locCode = decoder.generateLoc(saveReceiptDto.getToken());
 
 		if (locCode != null) {
 
 			InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
-					saveReceiptDto, agentCode, locCode);
+					saveReceiptDto, userCode, locCode);
 
 			inTransactionsModel.getInTransactionsModelPK().setDoccod("RCPL");
 			// inTransactionDao.save(inTransactionsModel);
@@ -161,7 +165,10 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 			InBillingTransactionsModel deposit = commonethodUtility.getInBillingTransactionModel(inProposalsModel,
 					saveReceiptDto, inTransactionsModel);
-			deposit.setCreaby(agentCode);
+
+			deposit.setTxnbno(AppConstant.ZERO);
+
+			deposit.setCreaby(userCode);
 			deposit.setPolnum(inTransactionsModel.getPolnum());
 			deposit.getBillingTransactionsModelPK().setDoccod("RCPL");
 			deposit.setRefdoc("RCPL");
@@ -176,27 +183,44 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 			try {
 				saveReceipt(inTransactionsModel, deposit);
 				if (!saveReceiptDto.equals("CQ")) {
-					setoff(inProposalsModel, agentCode, locCode, saveReceiptDto, deposit, 0.0);
+
+					deposit.setTxnbno(1);
+
+					List<InPropAddBenefitModel> addBenefitModels = addBenefictCustomDao.getBenefByPprSeq(
+							Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum()),
+							inProposalsModel.getInProposalsModelPK().getPrpseq());
+
+					Double hrbamt = commonethodUtility.getHrbAmt(addBenefitModels);
+
+					List<InBillingTransactionsModel> setoffs = setoffService.setoff(inProposalsModel, userCode, locCode, saveReceiptDto, deposit, hrbamt,
+							null, "OLD");
+					
+					inBillingTransactionDao.save(setoffs);
 				}
 				try {
-					printDto = getReceiptPrintDto(inProposalsModel, inTransactionsModel, agentCode, locCode, false);
+					printDto = getReceiptPrintDto(inProposalsModel, inTransactionsModel, userCode, locCode, false);
 				} catch (Exception e) {
 					e.printStackTrace();
 					dto = new ResponseDto();
 					dto.setCode("500");
 					dto.setStatus("Error");
-					dto.setMessage("Error at print receipt");
+					dto.setMessage("Error at print receipt. Policy No : " + inProposalsModel.getPolnum()
+							+ ", Receipt No : " + deposit.getBillingTransactionsModelPK().getDoccod() + " / "
+							+ deposit.getBillingTransactionsModelPK().getDocnum());
 				}
 
 				dto = new ResponseDto();
 				dto.setCode("200");
-				dto.setStatus("Success");
+				dto.setStatus("Successfully saved. Policy No : " + inProposalsModel.getPolnum() + ", Receipt No : "
+						+ deposit.getBillingTransactionsModelPK().getDoccod() + " / "
+						+ deposit.getBillingTransactionsModelPK().getDocnum());
 				dto.setMessage(deposit.getBillingTransactionsModelPK().getDocnum().toString());
 				dto.setData(itextReceipt.createReceipt(printDto));
 
 				return new ResponseEntity<>(dto, HttpStatus.OK);
-				
+
 			} catch (Exception e) {
+				e.printStackTrace();
 				dto = new ResponseDto();
 				dto.setCode("500");
 				dto.setStatus("Error");
@@ -263,12 +287,6 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 			printDto.setBankCode(Integer.parseInt(inTransactionsModel.getChqbnk()));
 		}
 		return printDto;
-	}
-
-	private void setoff(InProposalsModel inProposalsModel, String agentCode, String locCode,
-			SaveReceiptDto saveReceiptDto, InBillingTransactionsModel deposit, double d) throws Exception {
-		setoffService.setoff(inProposalsModel, agentCode, locCode, saveReceiptDto, deposit, 0.0);
-
 	}
 
 	@Override
@@ -342,7 +360,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 			billingTransactionsModel.setToptrm(inProposalsModel.getToptrm());
 			billingTransactionsModel.setTxntyp("INVOICE");
 //			if (agentMastModel.getAgncls().equalsIgnoreCase("IC")) {
-				billingTransactionsModel.setUnlcod(agentMastModel.getUnlcod());
+			billingTransactionsModel.setUnlcod(agentMastModel.getUnlcod());
 //			}
 //			if (agentMastModel.getAgncls().equalsIgnoreCase("UNL")) {
 //				billingTransactionsModel.setUnlcod(agentMastModel.getBrnmanager());

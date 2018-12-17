@@ -1,14 +1,20 @@
 package org.arpico.groupit.receipt.controller;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.arpico.groupit.receipt.dto.BranchDto;
 import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
+import org.arpico.groupit.receipt.dto.SearchDto;
 import org.arpico.groupit.receipt.service.BranchService;
 import org.arpico.groupit.receipt.service.InTransactionService;
+import org.arpico.groupit.receipt.service.ProposalServce;
 import org.arpico.groupit.receipt.util.CurrencyFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,6 +32,9 @@ public class CommonController {
 	
 	@Autowired
 	private BranchService branchService;
+	
+	@Autowired
+	private ProposalServce proposalServce;
 	
 	@RequestMapping(value = "/convertNumberToWord/{number}")
 	public String convertNumberToWord(@PathVariable Double number) {
@@ -55,6 +64,14 @@ public class CommonController {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	@GetMapping(value = "/searchProposal/{value}/{type}/{receiptType}")
+	public List<SearchDto> getSearch(@PathVariable String value, @PathVariable String type, @PathVariable
+			String receiptType) throws Exception{
+
+		return proposalServce.getSearch(value, type, receiptType);
+		
 	}
 
 }

@@ -42,6 +42,7 @@ import org.arpico.groupit.receipt.dto.ChildrenDto;
 import org.arpico.groupit.receipt.dto.MedicalRequirementsDto;
 import org.arpico.groupit.receipt.dto.QuoBenfDto;
 import org.arpico.groupit.receipt.dto.QuoChildBenefDto;
+import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.dto.SaveUnderwriteDto;
 import org.arpico.groupit.receipt.dto.SheduleDto;
 import org.arpico.groupit.receipt.dto.SurrenderValsDto;
@@ -75,6 +76,7 @@ import org.arpico.groupit.receipt.model.pk.InPropSurrenderValsPK;
 import org.arpico.groupit.receipt.model.pk.InProposalsModelPK;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.BranchUnderwriteService;
+import org.arpico.groupit.receipt.service.NumberGenerator;
 import org.arpico.groupit.receipt.util.AppConstant;
 import org.arpico.groupit.receipt.util.CalculationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +88,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 
+	@Autowired
+	private NumberGenerator numberGenerator;
+	
 	@Autowired
 	private BranchUnderwriteDao branchUnderwriteDao;
 	
@@ -225,10 +230,6 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		
 		String agentCode = decoder.generate(saveUnderwriteDto.getToken());
 
-		System.out.println(agentCode);
-		//String locCode = decoder.generateLoc(saveUnderwriteDto.getToken());
-
-		
 		/* load InProposalDetails from marksys */
 		InProposalsModel inProposalsModel=getInProposalDetails(saveUnderwriteDto.getProposalNo(), saveUnderwriteDto.getSeqNo());
 		
@@ -334,14 +335,16 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 			
 			/* Get Medical Requirements From Quotation DB */
 			List<MedicalRequirementsDto> medicalRequirementsDtos = quotationClient
-					.getMediReq(saveUnderwriteDto.getSeqNo(),saveUnderwriteDto.getQuotationNo());
+					.getMediReq(saveUnderwriteDto.getQuoSeqNo(),saveUnderwriteDto.getQuotationNo());
+			
+			System.out.println(medicalRequirementsDtos.size() + " ******************************** medical req size ******************************");
 			
 			/* Get Schedule Details From Quotation DB */
-			List<SheduleDto> sheduleDtos = quotationClient.getShedule(saveUnderwriteDto.getSeqNo(),saveUnderwriteDto.getQuotationNo());
+			List<SheduleDto> sheduleDtos = quotationClient.getShedule(saveUnderwriteDto.getQuoSeqNo(),saveUnderwriteDto.getQuotationNo());
 	
 			/* Get Surrender Values From Quotation DB */
 			List<SurrenderValsDto> surrenderValsDtos = quotationClient
-					.getSurrenderVals(saveUnderwriteDto.getSeqNo(),saveUnderwriteDto.getQuotationNo());
+					.getSurrenderVals(saveUnderwriteDto.getQuoSeqNo(),saveUnderwriteDto.getQuotationNo());
 			
 			List<InPropSchedulesModel> inPropScheduleList = null;
 	
@@ -445,10 +448,13 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 			}
 			
 			/* Financial Questionnaire */
-			if(newInProposalsModel.getSumrkm() >= 5000000 || newInProposalsModel.getSumrks() >= 5000000) {
-				inPropMedicalReqModels.add(getAdditionalReq("main", "AD69", "Additional Requirement","FINANCIAL QUESTIONNAIRE (TOTAL SUM@RISK OVER 5MILLION)", newInProposalsModelPK.getPprnum(),
-						newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
+			if(!newInProposalsModel.getPrdcod().equals("AIP")) {
+				if(newInProposalsModel.getSumrkm() >= 5000000 || newInProposalsModel.getSumrks() >= 5000000) {
+					inPropMedicalReqModels.add(getAdditionalReq("main", "AD69", "Additional Requirement","FINANCIAL QUESTIONNAIRE (TOTAL SUM@RISK OVER 5MILLION)", newInProposalsModelPK.getPprnum(),
+							newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
+				}
 			}
+			
 			
 			/* KYC Form */
 			if(newInProposalsModel.getTotprm() >= 1000000 ) {
@@ -500,8 +506,13 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 				newInProposalsModel.setProsta("L0");
 				saveProposalNotApprove(newInProposalsModel,inPropLoadingModels,addBenefitModels,propFamDetailsModels,inPropScheduleList,inPropMedicalReqModels,inPropSurrenderValsModels,nomDetailsModels,prePolsModels);
 			}
+			
+			ResponseDto  responseDto=new ResponseDto();
+			responseDto.setCode(newInProposalsModel.getInProposalsModelPK().getPprnum());
+			responseDto.setStatus("success");
+			responseDto.setMessage("Success");
 
-			return new ResponseEntity<>("Success", HttpStatus.OK);
+			return new ResponseEntity<>(responseDto, HttpStatus.OK);
 			
 			
 		}else {
@@ -829,7 +840,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 					InOcuLoadDetModel detModel = detModels.get(0);
 					for (InPropLoadingModel propLoadingModel : inPropLoadingModels) {
 						if (propLoadingModel.getInPropLoadingPK().getRidcod().equals(benfDto.getRiderCode())) {
-							propLoadingModel.setOculod(Double.parseDouble(detModel.getLodcls()));
+							propLoadingModel.setOculod(detModel.getLodcls());
 							propLoadingModel.setInstyp(insType);
 
 						}
@@ -1169,13 +1180,17 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		
 	}
 	
+	@Transactional
 	private String saveCourierDocument(Integer pprNo, Integer seqNo,String branchCode, String userCode) throws Exception {
 		
 		List<InPropMedicalReqModel> medicalReqModels=propMedicalReqCustomDao.getMedicalReqByPprNoAndSeq(pprNo, seqNo);
 		List<SubDepartmentModel> subDepartmentModels=subDepartmentDao.findBySudDepNameContaining("Underwriting");
 		//System.out.println("saveCourierDocument ////  saveCourierDocument");
-		//System.out.println(medicalReqModels.size()  + "medicalReqModels");
-		//System.out.println(subDepartmentModels.size()  + "subDepartmentModels");
+		System.out.println(medicalReqModels.size()  + "medicalReqModels");
+		System.out.println(subDepartmentModels.size()  + "subDepartmentModels");
+		
+		isExistDepartment=false;
+		
 		if(!subDepartmentModels.isEmpty()) {
 			//System.out.println(subDepartmentModels.isEmpty()  + "subDepartmentModels.isEmpty()");
 			medicalReqModels.forEach(med -> {
@@ -1197,7 +1212,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 						
 						List<String> branches=new ArrayList<>();
 						branches.add(branchCode);
-						
+						System.out.println(branchCode + " branchcode");
 						//check is already exist couriers in branch
 						List<CourierModel> courierModels=courierDao.findByCourierStatusAndBranchCodeIn("BRANCH", branches);
 						
@@ -1207,8 +1222,11 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 							CourierModel courierModel=courierModels.get(0);
 							
 							List<DepartmentCourierModel> depCouriers=courierModel.getDepartmentCourier();
+							
+							System.out.println(depCouriers.size() + " depCouriers.size() **********");
 
 							depCouriers.forEach(dc-> {
+								System.out.println(subDepartmentModels.get(0).getDepId().getDepartmentId().equals(dc.getDepartment().getDepartmentId()));
 								if(subDepartmentModels.get(0).getDepId().getDepartmentId().equals(dc.getDepartment().getDepartmentId())) {
 									departmentCourierModel=dc;
 									isExistDepartment=true;
@@ -1216,7 +1234,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 							});
 							
 							if(isExistDepartment) {
-								//System.out.println("isExistDepartment");
+								System.out.println("isExistDepartment");
 								//add sub department document courier
 								
 								SubDepartmentDocumentCourierModel subDepDocCouModel=new SubDepartmentDocumentCourierModel();
@@ -1226,9 +1244,15 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 								subDepDocCouModel.setCurrentUser(userCode);
 								subDepDocCouModel.setDepartmentCourier(departmentCourierModel);
 								subDepDocCouModel.setReferenceNo(Integer.toString(pprNo));
-								subDepDocCouModel.setRemark(med.getInPropMedicalReqModelPK().getMedcod());
+								subDepDocCouModel.setRemark(med.getInPropMedicalReqModelPK().getMedcod() +" / " + med.getInPropMedicalReqModelPK().getInstyp());
 								subDepDocCouModel.setStatus("BRANCH");
-								subDepDocCouModel.setSubDepDocCouToken(UUID.randomUUID().toString());
+								
+								String[] numberGenCourierDoc = numberGenerator.generateNewId("", "", "COURIERDOC", "");
+								
+								if (numberGenCourierDoc[0].equals("Success")) {
+									subDepDocCouModel.setSubDepDocCouToken("DOC-"+numberGenCourierDoc[1]);
+								}
+								
 								subDepDocCouModel.setSubDepartmentDocument(subDepartmentDocumentModel);
 								subDepDocCouModel.setUnderwriterEmail(underwriterEmail);
 								subDepDocCouModel.setReferenceType("Proposal No");
@@ -1237,7 +1261,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 								
 								
 							}else {
-								//System.out.println("isExistDepartment not");
+								System.out.println("isExistDepartment not");
 								//add department courier
 								DepartmentCourierModel departmentCourier=new DepartmentCourierModel();
 								departmentCourier.setCourier(courierModel);
@@ -1245,10 +1269,18 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 								departmentCourier.setCreateBy(userCode);
 								departmentCourier.setCreateDate(new Date());
 								departmentCourier.setDepartment(subDepartmentModels.get(0).getDepId());
-								departmentCourier.setToken(UUID.randomUUID().toString());
+								
+								String[] numberGenCourierDep = numberGenerator.generateNewId("", "", "COURIERDEP", "");
+								
+								if (numberGenCourierDep[0].equals("Success")) {
+									departmentCourier.setToken("DEP-"+numberGenCourierDep[1]);
+								}
+								
 								
 								DepartmentCourierModel departmentCourierModel2=departmentCourierDao.save(departmentCourier);
+								departmentCourierModel=departmentCourierModel2;
 								
+								isExistDepartment=true;
 								if(departmentCourierModel2 != null) {
 									//add sub department document courier
 									
@@ -1259,9 +1291,15 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 									subDepDocCouModel.setCurrentUser(userCode);
 									subDepDocCouModel.setDepartmentCourier(departmentCourierModel2);
 									subDepDocCouModel.setReferenceNo(Integer.toString(pprNo));
-									subDepDocCouModel.setRemark(med.getInPropMedicalReqModelPK().getMedcod());
+									subDepDocCouModel.setRemark(med.getInPropMedicalReqModelPK().getMedcod() +" / " + med.getInPropMedicalReqModelPK().getInstyp());
 									subDepDocCouModel.setStatus("BRANCH");
-									subDepDocCouModel.setSubDepDocCouToken(UUID.randomUUID().toString());
+									
+									String[] numberGenCourierDoc = numberGenerator.generateNewId("", "", "COURIERDOC", "");
+									
+									if (numberGenCourierDoc[0].equals("Success")) {
+										subDepDocCouModel.setSubDepDocCouToken("DOC-"+numberGenCourierDoc[1]);
+									}
+									
 									subDepDocCouModel.setSubDepartmentDocument(subDepartmentDocumentModel);
 									subDepDocCouModel.setUnderwriterEmail(underwriterEmail);
 									subDepDocCouModel.setReferenceType("Proposal No");
@@ -1274,14 +1312,19 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 							}
 						}else{
 							//add courier
-							//System.out.println("save Courier");
+							System.out.println("save Courier");
 							CourierModel courierModel=new CourierModel();
 							courierModel.setBranchCode(branchCode);
 							courierModel.setCourierStatus("BRANCH");
 							courierModel.setCreateBy(userCode);
 							courierModel.setCreateDate(new Date());
 							courierModel.setRemark("");
-							courierModel.setToken(UUID.randomUUID().toString());
+							courierModel.setToBranch("HO");
+							String[] numberGenCourier = numberGenerator.generateNewId("", "", "COURIER", "");
+							
+							if (numberGenCourier[0].equals("Success")) {
+								courierModel.setToken("COU-"+branchCode+"-"+numberGenCourier[1]);
+							}
 							
 							CourierModel courierModel2=courierDao.save(courierModel);
 							
@@ -1289,17 +1332,18 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	
 								//add department courier
 								
-								DepartmentCourierModel departmentCourierModel=new DepartmentCourierModel();
-								departmentCourierModel.setCourier(courierModel2);
-								departmentCourierModel.setCourierStatus("BRANCH");
-								departmentCourierModel.setCreateBy(userCode);
-								departmentCourierModel.setCreateDate(new Date());
-								departmentCourierModel.setDepartment(subDepartmentModels.get(0).getDepId());
-								departmentCourierModel.setToken(UUID.randomUUID().toString());
-								System.out.println("saveDepartment Courier");
-								DepartmentCourierModel departmentCourierModel2=departmentCourierDao.save(departmentCourierModel);
+								List<DepartmentCourierModel> depCouriers=courierModel2.getDepartmentCourier();
+								depCouriers.forEach(dc-> {
+									System.out.println(subDepartmentModels.get(0).getDepId().getDepartmentId().equals(dc.getDepartment().getDepartmentId()));
+									if(subDepartmentModels.get(0).getDepId().getDepartmentId().equals(dc.getDepartment().getDepartmentId())) {
+										System.out.println("Exist department courier ***********************");
+										departmentCourierModel=dc;
+										isExistDepartment=true;
+									}
+								});
 								
-								if(departmentCourierModel2 != null) {
+								if(isExistDepartment) {
+									System.out.println("Exist department ***********************");
 									//add sub department document courier
 									
 									SubDepartmentDocumentCourierModel subDepDocCouModel=new SubDepartmentDocumentCourierModel();
@@ -1307,18 +1351,73 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 									subDepDocCouModel.setCreateBy(userCode);
 									subDepDocCouModel.setCreateDate(new Date());
 									subDepDocCouModel.setCurrentUser(userCode);
-									subDepDocCouModel.setDepartmentCourier(departmentCourierModel2);
+									subDepDocCouModel.setDepartmentCourier(departmentCourierModel);
 									subDepDocCouModel.setReferenceNo(Integer.toString(pprNo));
-									subDepDocCouModel.setRemark(med.getInPropMedicalReqModelPK().getMedcod());
+									subDepDocCouModel.setRemark(med.getInPropMedicalReqModelPK().getMedcod() +" / " + med.getInPropMedicalReqModelPK().getInstyp());
 									subDepDocCouModel.setStatus("BRANCH");
-									subDepDocCouModel.setSubDepDocCouToken(UUID.randomUUID().toString());
+									
+									String[] numberGenCourierDoc = numberGenerator.generateNewId("", "", "COURIERDOC", "");
+									
+									if (numberGenCourierDoc[0].equals("Success")) {
+										subDepDocCouModel.setSubDepDocCouToken("DOC-"+numberGenCourierDoc[1]);
+									}
+									
 									subDepDocCouModel.setSubDepartmentDocument(subDepartmentDocumentModel);
 									subDepDocCouModel.setUnderwriterEmail(underwriterEmail);
 									subDepDocCouModel.setReferenceType("Proposal No");
 									System.out.println("save subDepartmentDocumentCourier");
 									subDepartmentDocumentCourierDao.save(subDepDocCouModel);
+								
+								}else {
+									System.out.println("not Exist department ***********************");
 									
+									DepartmentCourierModel depCourierModel=new DepartmentCourierModel();
+									depCourierModel.setCourier(courierModel2);
+									depCourierModel.setCourierStatus("BRANCH");
+									depCourierModel.setCreateBy(userCode);
+									depCourierModel.setCreateDate(new Date());
+									depCourierModel.setDepartment(subDepartmentModels.get(0).getDepId());
+									
+									String[] numberGenCourierDep = numberGenerator.generateNewId("", "", "COURIERDEP", "");
+									
+									if (numberGenCourierDep[0].equals("Success")) {
+										depCourierModel.setToken("DEP-"+numberGenCourierDep[1]);
+									}
+									
+									
+									System.out.println("saveDepartment Courier");
+									DepartmentCourierModel departmentCourierModel2=departmentCourierDao.save(depCourierModel);
+									departmentCourierModel=departmentCourierModel2;
+									
+									isExistDepartment=true;
+									if(departmentCourierModel2 != null) {
+										//add sub department document courier
+										
+										SubDepartmentDocumentCourierModel subDepDocCouModel=new SubDepartmentDocumentCourierModel();
+										subDepDocCouModel.setBranchCode(branchCode);
+										subDepDocCouModel.setCreateBy(userCode);
+										subDepDocCouModel.setCreateDate(new Date());
+										subDepDocCouModel.setCurrentUser(userCode);
+										subDepDocCouModel.setDepartmentCourier(departmentCourierModel2);
+										subDepDocCouModel.setReferenceNo(Integer.toString(pprNo));
+										subDepDocCouModel.setRemark(med.getInPropMedicalReqModelPK().getMedcod() +" / " + med.getInPropMedicalReqModelPK().getInstyp());
+										subDepDocCouModel.setStatus("BRANCH");
+										
+										String[] numberGenCourierDoc = numberGenerator.generateNewId("", "", "COURIERDOC", "");
+										
+										if (numberGenCourierDoc[0].equals("Success")) {
+											subDepDocCouModel.setSubDepDocCouToken("DOC-"+numberGenCourierDoc[1]);
+										}
+										
+										subDepDocCouModel.setSubDepartmentDocument(subDepartmentDocumentModel);
+										subDepDocCouModel.setUnderwriterEmail(underwriterEmail);
+										subDepDocCouModel.setReferenceType("Proposal No");
+										System.out.println("save subDepartmentDocumentCourier");
+										subDepartmentDocumentCourierDao.save(subDepDocCouModel);
+										
+									}
 								}
+
 							}
 						
 						}

@@ -5,6 +5,7 @@ public class ProposalL3Dto {
 	private Double totprm;
 	private Double payment;
 	private Integer reqcnt;
+	private Double recovery;
 
 	public String getPprnum() {
 		return pprnum;
@@ -30,10 +31,16 @@ public class ProposalL3Dto {
 	public void setReqcnt(Integer reqcnt) {
 		this.reqcnt = reqcnt;
 	}
+	public Double getRecovery() {
+		return recovery;
+	}
+	public void setRecovery(Double recovery) {
+		this.recovery = recovery;
+	}
 	@Override
 	public String toString() {
 		return "ProposalL3Dto [pprnum=" + pprnum + ", totprm=" + totprm + ", payment=" + payment + ", reqcnt=" + reqcnt
-				+ "]";
+				+ ", recovery=" + recovery + "]";
 	}
 	
 	

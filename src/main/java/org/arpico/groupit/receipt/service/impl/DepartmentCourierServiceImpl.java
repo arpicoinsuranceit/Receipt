@@ -54,6 +54,9 @@ public class DepartmentCourierServiceImpl implements DepartmentCourierService{
 		helperDto.setCourierId(couId);
 		helperDto.setCourierRef(courierModel.getToken());
 		helperDto.setCourierStatus(courierModel.getCourierStatus());
+		helperDto.setCouType(courierModel.getCouType());
+		helperDto.setSendBy(courierModel.getSendBy());
+		helperDto.setSendDate(courierModel.getSendDate());
 		
 		departmentCourierModels.forEach(dc -> {
 			try {
@@ -80,6 +83,9 @@ public class DepartmentCourierServiceImpl implements DepartmentCourierService{
 						dto.setSubDepartmentDocumentCourierId(sddcd.getSubDepartmentDocumentCourierId());
 						dto.setSubDepDocCouToken(sddcd.getSubDepDocCouToken());
 						dto.setUnderwriterEmail(sddcd.getUnderwriterEmail());
+						dto.setRcvdBy(sddcd.getReceivedBy());
+						dto.setRcvdDate(sddcd.getReceivedDate());
+						dto.setIsChecked("1");
 						
 						courierDtos.add(dto);
 						
@@ -99,6 +105,7 @@ public class DepartmentCourierServiceImpl implements DepartmentCourierService{
 						dto.setUnderwriterEmail(sddcd.getUnderwriterEmail());
 						dto.setRcvdBy(sddcd.getReceivedBy());
 						dto.setRcvdDate(sddcd.getReceivedDate());
+						dto.setIsChecked("1");
 						
 						courierDtos.add(dto);
 						

@@ -48,4 +48,5 @@ public interface InProposalCustomDao {
 			Integer offset) throws Exception;
 	
 
+	List<InProposalsModel> searchProposal(String sql)  throws Exception;
 }

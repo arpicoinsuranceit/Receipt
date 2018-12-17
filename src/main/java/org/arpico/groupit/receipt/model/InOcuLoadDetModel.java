@@ -6,7 +6,10 @@ public class InOcuLoadDetModel {
 	private String sbucod;
 	private String ocucod;
 	private String ridcod;
-	private String lodcls;
+	private Double lodcls;
+	private Double subrat;
+	private Double emrate;
+	private Double ratmil;
 	private Date lockin;
 		
 	public String getSbucod() {
@@ -33,14 +36,6 @@ public class InOcuLoadDetModel {
 		this.ridcod = ridcod;
 	}
 
-	public String getLodcls() {
-		return lodcls;
-	}
-
-	public void setLodcls(String lodcls) {
-		this.lodcls = lodcls;
-	}
-
 	public Date getLockin() {
 		return lockin;
 	}
@@ -49,11 +44,45 @@ public class InOcuLoadDetModel {
 		this.lockin = lockin;
 	}
 
+	public Double getLodcls() {
+		return lodcls;
+	}
+
+	public void setLodcls(Double lodcls) {
+		this.lodcls = lodcls;
+	}
+
+	public Double getSubrat() {
+		return subrat;
+	}
+
+	public void setSubrat(Double subrat) {
+		this.subrat = subrat;
+	}
+
+	public Double getEmrate() {
+		return emrate;
+	}
+
+	public void setEmrate(Double emrate) {
+		this.emrate = emrate;
+	}
+
+	public Double getRatmil() {
+		return ratmil;
+	}
+
+	public void setRatmil(Double ratmil) {
+		this.ratmil = ratmil;
+	}
+
 	@Override
 	public String toString() {
-		return "InOcuLoadDet [sbucod=" + sbucod + ", ocucod=" + ocucod + ", ridcod=" + ridcod + ", lodcls=" + lodcls
-				+ ", lockin=" + lockin + "]";
+		return "InOcuLoadDetModel [sbucod=" + sbucod + ", ocucod=" + ocucod + ", ridcod=" + ridcod + ", lodcls="
+				+ lodcls + ", subrat=" + subrat + ", emrate=" + emrate + ", ratmil=" + ratmil + ", lockin=" + lockin
+				+ "]";
 	}
-	
+
+	 
 	
 }

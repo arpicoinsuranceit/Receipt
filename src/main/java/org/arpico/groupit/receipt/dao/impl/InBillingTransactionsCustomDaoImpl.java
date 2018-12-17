@@ -63,17 +63,23 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 	}
 
 	@Override
-	public List<ReFundModel> getRefundList(String pprNum) throws Exception {
+	public List<InBillingTransactionsModel> getRefundList(String pprNum) throws Exception {
 //		List<ReFundModel> reFundModels = jdbcTemplate.query(
 //				"select pprnum,doccod,docnum,(sum(depost)*-1) as refamount, max(linnum) as linnum , paymod from inbillingtransactions where sbucod='450' and pprnum='"
 //						+ pprNum + "'  group by docnum having sum(depost) <0 order by docnum",
 //				new ReFundAmntRowMapper());
 
-		List<ReFundModel> reFundModels = jdbcTemplate.query(
-				"select pprnum,doccod,docnum,(sum(depost)*-1) as refamount, max(linnum) as linnum , paymod from inbillingtransactions "
-						+ "where sbucod='450' and pprnum='" + pprNum
-						+ "'  group by docnum having sum(depost) <0 order by docnum",
-				new ReFundAmntRowMapper());
+		List<InBillingTransactionsModel> reFundModels = jdbcTemplate.query(
+				"select sbucod, loccod, doccod, docnum, refdoc, refnum, srcdoc, srcnum, "
+						+ "pprnum, polnum, cscode, max(linnum) as linnum, txntyp, sum(depost) as amount, (sum(depost)*-1) as depost, txnyer, txnmth, "
+						+ "txndat, insnum, creaby, creadt, lockin, prpseq, polfee, admfee, taxamt, "
+						+ "otham1, otham2, otham3, otham4, chqrel, paymod, toptrm, hrbprm, paytrm, "
+						+ "icpyer, prcyer, comper, comiss, grsprm, prdcod, advcod, agncls, icpmon, "
+						+ "battyp, batcno, glintg, txnbno, duedat, unlcod, brncod, oldprm, candoc, polyer "
+						+ "from inbillingtransactions where sbucod='450' and pprnum='" + pprNum + "' "
+						+ "and if(paymod<>'CQ',1,if(paymod='CQ' and chqrel='Y',1,0)) = 1 "
+						+ "group by docnum having sum(depost) < 0 order by docnum",
+				new InBillingTransactionRowMapper());
 		return reFundModels;
 	}
 
@@ -131,7 +137,7 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 		InBillingTransactionsModel billingTransactionsModels = jdbcTemplate
 				.queryForObject(
 						"select * from inbillingtransactions  where sbucod = '450' and pprnum = '" + pprnum
-								+ "' and refdoc = 'PRMI' order by creadt desc limit 1",
+								+ "' and refdoc = 'PRMI' order by duedat desc limit 1",
 						new InBillingTransactionRowMapper());
 
 		return billingTransactionsModels;
@@ -156,6 +162,7 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 						+ "						from inbillingtransactions a where sbucod='450' and pprnum= '" + pprNum
 						+ "						' and amount <> 0 group by txnyer desc,txnmth desc",
 				new PaymentHistoryRowMapper());
+
 	}
 
 }

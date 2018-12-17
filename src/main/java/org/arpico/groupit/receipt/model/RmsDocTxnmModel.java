@@ -38,7 +38,7 @@ public class RmsDocTxnmModel implements Serializable {
 
 	private String custSupF;
 
-	private Date deliDate;
+	private String deliDate;
 
 	private Integer detlineSeq;
 
@@ -64,7 +64,7 @@ public class RmsDocTxnmModel implements Serializable {
 
 	private String modBy;
 
-	private Date modDate;
+	private String modDate;
 
 	private String mstat;
 
@@ -215,11 +215,11 @@ public class RmsDocTxnmModel implements Serializable {
 	}
 
 	@Column(name = "DELIDATE")
-	public Date getDeliDate() {
+	public String getDeliDate() {
 		return deliDate;
 	}
 
-	public void setDeliDate(Date deliDate) {
+	public void setDeliDate(String deliDate) {
 		this.deliDate = deliDate;
 	}
 
@@ -332,11 +332,11 @@ public class RmsDocTxnmModel implements Serializable {
 	}
 
 	@Column(name = "MOD_DATE")
-	public Date getModDate() {
+	public String getModDate() {
 		return modDate;
 	}
 
-	public void setModDate(Date modDate) {
+	public void setModDate(String modDate) {
 		this.modDate = modDate;
 	}
 
