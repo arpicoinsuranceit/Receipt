@@ -28,6 +28,11 @@ public class CodeTransferController {
 		return codeTransferService.getProposalDetails(pprNum,token);
 	}
 	
+	@RequestMapping(value="/code_transfer/getCodePendingProposalDetails/{token:.+}", method = RequestMethod.GET)
+	public ResponseEntity<Object> getCodePendingProposalDetails(@PathVariable("token")String token)throws Exception{
+		return codeTransferService.getCodePendingProposalDetails(token);
+	}
+	
 	@RequestMapping(value="/code_transfer/getPolicyDetails/{polNum}/{token:.+}", method = RequestMethod.GET)
 	public ResponseEntity<Object> getPolicyDetails(@PathVariable("polNum")String polNum,@PathVariable("token")String token)throws Exception{
 		return codeTransferService.getPolicyDetails(polNum,token);

@@ -10,5 +10,7 @@ public interface CodeTransferDao extends CrudRepository<CodeTransferModel, Integ
 	public List<CodeTransferModel> findByStatusAndCreateBy(String status,String createBy)throws Exception;
 	
 	public List<CodeTransferModel> findByStatusAndLocCodeIn(String status,List<String> locCode)throws Exception;
+	
+	public List<CodeTransferModel> findByStatusAndPprNum(String status,String pprNum)throws Exception;
 
 }

@@ -43,6 +43,7 @@ import org.arpico.groupit.receipt.dto.ChildrenDto;
 import org.arpico.groupit.receipt.dto.MedicalRequirementsDto;
 import org.arpico.groupit.receipt.dto.QuoBenfDto;
 import org.arpico.groupit.receipt.dto.QuoChildBenefDto;
+import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.dto.SaveUnderwriteDto;
 import org.arpico.groupit.receipt.dto.SheduleDto;
 import org.arpico.groupit.receipt.dto.SurrenderValsDto;
@@ -509,8 +510,13 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 				newInProposalsModel.setProsta("L0");
 				saveProposalNotApprove(newInProposalsModel,inPropLoadingModels,addBenefitModels,propFamDetailsModels,inPropScheduleList,inPropMedicalReqModels,inPropSurrenderValsModels,nomDetailsModels,prePolsModels);
 			}
+			
+			ResponseDto  responseDto=new ResponseDto();
+			responseDto.setCode(newInProposalsModel.getInProposalsModelPK().getPprnum());
+			responseDto.setStatus("success");
+			responseDto.setMessage("Success");
 
-			return new ResponseEntity<>("Success", HttpStatus.OK);
+			return new ResponseEntity<>(responseDto, HttpStatus.OK);
 			
 			
 		}else {
@@ -1178,13 +1184,17 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		
 	}
 	
+	@Transactional
 	private String saveCourierDocument(Integer pprNo, Integer seqNo,String branchCode, String userCode) throws Exception {
 		
 		List<InPropMedicalReqModel> medicalReqModels=propMedicalReqCustomDao.getMedicalReqByPprNoAndSeq(pprNo, seqNo);
 		List<SubDepartmentModel> subDepartmentModels=subDepartmentDao.findBySudDepNameContaining("Underwriting");
 		//System.out.println("saveCourierDocument ////  saveCourierDocument");
-		//System.out.println(medicalReqModels.size()  + "medicalReqModels");
+		System.out.println(medicalReqModels.size()  + "medicalReqModels");
 		System.out.println(subDepartmentModels.size()  + "subDepartmentModels");
+		
+		isExistDepartment=false;
+		
 		if(!subDepartmentModels.isEmpty()) {
 			//System.out.println(subDepartmentModels.isEmpty()  + "subDepartmentModels.isEmpty()");
 			medicalReqModels.forEach(med -> {
@@ -1272,6 +1282,8 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 								
 								
 								DepartmentCourierModel departmentCourierModel2=departmentCourierDao.save(departmentCourier);
+								departmentCourierModel=departmentCourierModel2;
+								
 								isExistDepartment=true;
 								if(departmentCourierModel2 != null) {
 									//add sub department document courier
@@ -1304,7 +1316,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 							}
 						}else{
 							//add courier
-							//System.out.println("save Courier");
+							System.out.println("save Courier");
 							CourierModel courierModel=new CourierModel();
 							courierModel.setBranchCode(branchCode);
 							courierModel.setCourierStatus("BRANCH");
@@ -1325,7 +1337,6 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 								//add department courier
 								
 								List<DepartmentCourierModel> depCouriers=courierModel2.getDepartmentCourier();
-
 								depCouriers.forEach(dc-> {
 									System.out.println(subDepartmentModels.get(0).getDepId().getDepartmentId().equals(dc.getDepartment().getDepartmentId()));
 									if(subDepartmentModels.get(0).getDepId().getDepartmentId().equals(dc.getDepartment().getDepartmentId())) {
@@ -1364,23 +1375,24 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 								}else {
 									System.out.println("not Exist department ***********************");
 									
-									DepartmentCourierModel departmentCourierModel=new DepartmentCourierModel();
-									departmentCourierModel.setCourier(courierModel2);
-									departmentCourierModel.setCourierStatus("BRANCH");
-									departmentCourierModel.setCreateBy(userCode);
-									departmentCourierModel.setCreateDate(new Date());
-									departmentCourierModel.setDepartment(subDepartmentModels.get(0).getDepId());
+									DepartmentCourierModel depCourierModel=new DepartmentCourierModel();
+									depCourierModel.setCourier(courierModel2);
+									depCourierModel.setCourierStatus("BRANCH");
+									depCourierModel.setCreateBy(userCode);
+									depCourierModel.setCreateDate(new Date());
+									depCourierModel.setDepartment(subDepartmentModels.get(0).getDepId());
 									
 									String[] numberGenCourierDep = numberGenerator.generateNewId("", "", "COURIERDEP", "");
 									
 									if (numberGenCourierDep[0].equals("Success")) {
-										departmentCourierModel.setToken("DEP-"+numberGenCourierDep[1]);
+										depCourierModel.setToken("DEP-"+numberGenCourierDep[1]);
 									}
 									
 									
 									System.out.println("saveDepartment Courier");
-									DepartmentCourierModel departmentCourierModel2=departmentCourierDao.save(departmentCourierModel);
+									DepartmentCourierModel departmentCourierModel2=departmentCourierDao.save(depCourierModel);
 									departmentCourierModel=departmentCourierModel2;
+									
 									isExistDepartment=true;
 									if(departmentCourierModel2 != null) {
 										//add sub department document courier

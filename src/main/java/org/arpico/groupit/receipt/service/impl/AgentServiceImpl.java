@@ -85,4 +85,18 @@ public class AgentServiceImpl implements AgentService {
 		return agentDtos;
 	}
 
+	@Override
+	public AgentDto getAgentDetails(String agentCode) throws Exception {
+		AgentModel agentModel = agentDao.findPropAgent(agentCode);
+		AgentDto agentDto=new AgentDto();
+		
+		if(agentModel != null) {
+			agentDto.setAgentCode(agentModel.getAgentCode());
+			agentDto.setAgentName(agentModel.getAgentName());
+			agentDto.setLocation(agentModel.getLocation());
+		}
+		
+		return agentDto;
+	}
+
 }

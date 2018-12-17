@@ -128,7 +128,7 @@ public class CommonMethodsUtility {
 			billingTransactionsModel.setChqrel("N");
 			billingTransactionsModel.setComiss(AppConstant.ZERO_FOR_DECIMAL);
 			billingTransactionsModel.setComper(AppConstant.ZERO_FOR_DECIMAL);
-			billingTransactionsModel.setCreaby(inProposalsModel.getCreaby());
+			billingTransactionsModel.setCreaby(inTransactionsModel.getCreaby());
 			billingTransactionsModel.setCreadt(new Date());
 			//billingTransactionsModel.setBrncod(inProposalsModel.getBrncod());
 			billingTransactionsModel.setPrpseq(inProposalsModel.getInProposalsModelPK().getPrpseq());
