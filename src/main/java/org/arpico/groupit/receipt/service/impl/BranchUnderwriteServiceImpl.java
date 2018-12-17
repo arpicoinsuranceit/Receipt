@@ -838,7 +838,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 					InOcuLoadDetModel detModel = detModels.get(0);
 					for (InPropLoadingModel propLoadingModel : inPropLoadingModels) {
 						if (propLoadingModel.getInPropLoadingPK().getRidcod().equals(benfDto.getRiderCode())) {
-							propLoadingModel.setOculod(Double.parseDouble(detModel.getLodcls()));
+							propLoadingModel.setOculod(detModel.getLodcls());
 							propLoadingModel.setInstyp(insType);
 
 						}
