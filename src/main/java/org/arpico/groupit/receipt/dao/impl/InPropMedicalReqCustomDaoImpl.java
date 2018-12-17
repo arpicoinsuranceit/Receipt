@@ -48,5 +48,13 @@ public class InPropMedicalReqCustomDaoImpl implements InPropMedicalReqCustomDao 
 		jdbcTemplate.execute(
 				"delete from inpropmedicalreq where sbucod = '450' and pprnum = " + pprNo + " and prpseq = " + seqNo);
 	}
+	
+	@Override
+	public List<InPropMedicalReqModel> getMedicalReqForCodeTransfer(String medcod, String testStatus) throws Exception {
+
+		return jdbcTemplate.query("select * from inpropmedicalreq where sbucod = '450' and medcod = '" + medcod + "' and tessta ='" + testStatus + "' ", 
+				new InPropMedicalReqRowMapper());
+		
+	}
 
 }

@@ -662,8 +662,8 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 	private InProposalsModel getProposalModel(ViewQuotationDto resp, SaveReceiptDto saveReceiptDto) throws Exception {
 		InProposalsModel inProposalsModel = new InProposalsModel();
 
-		System.out.println(resp.get_mainlife().get_mDob());
-		// System.out.println(resp.);
+		//System.out.println(resp.get_mainlife().get_mDob());
+		System.out.println(resp);
 
 		inProposalsModel.setPpdini(resp.get_mainlife().get_mName());
 		inProposalsModel.setPpdnam(resp.get_mainlife().get_mName());

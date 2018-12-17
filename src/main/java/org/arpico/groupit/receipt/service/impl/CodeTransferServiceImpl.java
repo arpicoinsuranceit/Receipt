@@ -159,6 +159,7 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 	@Autowired
 	private InfosysWSClient infosysWSClient;
 
+
 	@Override
 	public ResponseEntity<Object> getProposalDetails(String pprNum, String token) throws Exception {
 		ResponseDto dto = null;
@@ -996,6 +997,52 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 		}
 
 		return null;
+	}
+
+	@Override
+	public ResponseEntity<Object> getCodePendingProposalDetails(String token) throws Exception {
+		//ResponseDto dto = null;
+		String userCode = new JwtDecoder().generate(token);
+		List<String> locCodes = branchUnderwriteDao.findLocCodes(userCode);
+		List<CodeTransferHelperDto> codeTransferHelperDtos=new ArrayList<>();
+		
+		List<InPropMedicalReqModel> inPropMedicalReqModels = inPropMedicalReqCustomDao.getMedicalReqForCodeTransfer("AD-CT", "N");
+		if(!inPropMedicalReqModels.isEmpty()) {
+			inPropMedicalReqModels.forEach(med ->{
+				try {
+					InProposalsModel inProposalsModel = inProposalCustomDao.getProposalFromPprnum(med.getInPropMedicalReqModelPK().getPprnum());
+					if(inProposalsModel != null) {
+						if(inProposalsModel.getInProposalsModelPK().getPrpseq().equals(med.getInPropMedicalReqModelPK().getPrpseq())) {
+							if (locCodes.contains(inProposalsModel.getInProposalsModelPK().getLoccod())) {
+								if (inProposalsModel.getPprsta().equals("L3")) {
+									List<CodeTransferModel> codeTransferModels=codeTransferDao.findByStatusAndPprNum("PENDING", inProposalsModel.getInProposalsModelPK().getPprnum());
+									if(codeTransferModels.isEmpty()) {
+										CodeTransferHelperDto codeTransferHelperDto = new CodeTransferHelperDto();
+										codeTransferHelperDto.setAgentCode(inProposalsModel.getAdvcod());
+										codeTransferHelperDto.setPprNum(inProposalsModel.getInProposalsModelPK().getPprnum());
+										codeTransferHelperDto.setBranch(inProposalsModel.getInProposalsModelPK().getLoccod());
+										AgentModel agentModel = agentDao.findPropAgent(inProposalsModel.getAdvcod());
+										if (agentModel != null) {
+											codeTransferHelperDto.setAgentName(agentModel.getAgentName());
+											codeTransferHelperDto.setDesignation(agentModel.getDesignation());
+										}
+										
+										codeTransferHelperDtos.add(codeTransferHelperDto);
+		
+									}
+								}
+							}
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+			
+		}
+		
+		return new ResponseEntity<>(codeTransferHelperDtos, HttpStatus.OK);
+
 	}
 
 }
