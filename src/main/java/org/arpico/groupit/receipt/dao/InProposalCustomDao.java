@@ -40,4 +40,6 @@ public interface InProposalCustomDao {
 
 	List<InProposalsModel> getPoliciesToWorkFlow(String brancheList, String type) throws Exception;
 
+	List<ProposalNoSeqNoModel> getPolicyNoSeqNoModelListLoanRcpt(String val) throws Exception;
+
 }

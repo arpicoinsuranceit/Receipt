@@ -29,6 +29,8 @@ public class ItextReceiptImpl implements ItextReceipt {
 				return receiptPrintService.createMiscInvtReceipt(receiptPrintDto);
 			case "GLRC":
 				return receiptPrintService.createGLRCReceipt(receiptPrintDto);
+			case "RCLN":
+				return receiptPrintService.createLoanReceipt(receiptPrintDto);
 			default:
 				return null;
 			}
