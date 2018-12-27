@@ -44,6 +44,7 @@ public class InLoanTransactionsModel {
 	private String bilpik;
 	private Date bildat;
 	private String compad;
+	private String glpik;
 	
 	@EmbeddedId
 	public InLoanTransactionsModelPK getInLoanTransactionsModelPK() {
@@ -420,6 +421,15 @@ public class InLoanTransactionsModel {
 
 	public void setCompad(String compad) {
 		this.compad = compad;
+	}
+	
+
+	public String getGlpik() {
+		return glpik;
+	}
+
+	public void setGlpik(String glpik) {
+		this.glpik = glpik;
 	}
 
 	@Override
