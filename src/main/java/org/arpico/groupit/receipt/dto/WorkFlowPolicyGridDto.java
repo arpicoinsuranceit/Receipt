@@ -4,12 +4,21 @@ import java.util.Date;
 
 public class WorkFlowPolicyGridDto {
 
+	private String pprNum;
 	private String policy;
 	private Date duedat;
 	private Double totprm;
 	private String ppdini;
 	private String agent;
 	private String brncod;
+
+	public String getPprNum() {
+		return pprNum;
+	}
+
+	public void setPprNum(String pprNum) {
+		this.pprNum = pprNum;
+	}
 
 	public String getPolicy() {
 		return policy;

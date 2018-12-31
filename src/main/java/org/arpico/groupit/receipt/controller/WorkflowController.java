@@ -5,9 +5,13 @@ import java.util.List;
 
 import org.arpico.groupit.receipt.dto.CanceledReceiptDto;
 import org.arpico.groupit.receipt.dto.CodeTransferDto;
+import org.arpico.groupit.receipt.dto.CourierDto;
 import org.arpico.groupit.receipt.dto.PromisesGridDto;
+import org.arpico.groupit.receipt.dto.ShortPremiumDto;
 import org.arpico.groupit.receipt.dto.WorkFlowPolicyGridDto;
+import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.CodeTransferService;
+import org.arpico.groupit.receipt.service.CourierService;
 import org.arpico.groupit.receipt.service.ReceiptCancelationService;
 import org.arpico.groupit.receipt.service.WorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +38,9 @@ public class WorkflowController {
 
 	@Autowired
 	private CodeTransferService codeTransferService;
+	
+	@Autowired
+	private CourierService courierService;
 
 	@RequestMapping(value = "/getAllPromises/{token:.+}/{page}/{offset}", method = RequestMethod.GET)
 	public List<PromisesGridDto> getAllPromises(@PathVariable String token, @PathVariable Integer page,
@@ -116,10 +123,73 @@ public class WorkflowController {
 		return codeTransferService.getPendingCodeTransferPrp(token, page, offset);
 	}
 
-	@RequestMapping(value = "/getPendingActPolicies/{token:.+}/{page}/{offset}", method = RequestMethod.GET)
-	public List<WorkFlowPolicyGridDto> getPendingActPolicies(@PathVariable("token") String token,
-			@PathVariable Integer page, @PathVariable Integer offset) throws Exception {
-		return workflowService.getPendingActPolicies(token, page, offset);
+	@RequestMapping(value = "/getPendingActPolicies/{token:.+}", method = RequestMethod.GET)
+	public List<WorkFlowPolicyGridDto> getPendingActPolicies(@PathVariable("token") String token) throws Exception {
+		return workflowService.getPendingActPolicies(token);
+	}
+	
+	@RequestMapping(value="/branchcourier/{token:.+}/{page}/{offset}",method=RequestMethod.GET)
+	public List<CourierDto> getAllPendingCourier(@PathVariable String token,@PathVariable Integer page,@PathVariable Integer offset) throws Exception{
+		
+		String userCode=new JwtDecoder().generate(token);
+		return courierService.findByCourierStatusAndBranchCodeIn(userCode,page, offset);
+		
+	}
+	
+	@RequestMapping(value="/branchcouriercount/{token:.+}",method=RequestMethod.GET)
+	public Integer getAllPendingCourierCount(@PathVariable String token) throws Exception{
+		
+		String userCode=new JwtDecoder().generate(token);
+		return courierService.getAllPendingCourierCount(userCode);
+		
+	}
+	
+	@RequestMapping(value="/receivingcourier/{token:.+}/{page}/{offset}",method=RequestMethod.GET)
+	public List<CourierDto> getAllReceivingCourier(@PathVariable String token,@PathVariable Integer page,@PathVariable Integer offset) throws Exception{
+		
+		String userCode=new JwtDecoder().generate(token);
+		return courierService.findByCourierStatusAndToBranchIn(userCode,page,offset);
+		
+	}
+	
+	@RequestMapping(value="/receivingcouriercount/{token:.+}",method=RequestMethod.GET)
+	public Integer getAllReceivingCourierCount(@PathVariable String token) throws Exception{
+		
+		String userCode=new JwtDecoder().generate(token);
+		return courierService.getAllReceivingCourierCount(userCode);
+		
+	}
+	
+	@RequestMapping(value="/shortpremium/{token:.+}/{page}/{offset}",method=RequestMethod.GET)
+	public List<ShortPremiumDto> getAllShortPremium(@PathVariable String token,@PathVariable Integer page,@PathVariable Integer offset) throws Exception{
+		
+		String userCode=new JwtDecoder().generate(token);
+		return workflowService.findShortPremium(userCode,page,offset);
+		
+	}
+	
+	@RequestMapping(value="/shortpremiumcount/{token:.+}",method=RequestMethod.GET)
+	public Integer getAllShortPremiumCount(@PathVariable String token) throws Exception{
+		
+		String userCode=new JwtDecoder().generate(token);
+		return workflowService.findShortPremiumCount(userCode);
+		
+	}
+	
+	@RequestMapping(value="/pendingreq/{token:.+}/{page}/{offset}",method=RequestMethod.GET)
+	public List<ShortPremiumDto> getAllPendingReq(@PathVariable String token,@PathVariable Integer page,@PathVariable Integer offset) throws Exception{
+		
+		String userCode=new JwtDecoder().generate(token);
+		return workflowService.findPendingReq(userCode,page,offset);
+		
+	}
+	
+	@RequestMapping(value="/pendingreqcount/{token:.+}",method=RequestMethod.GET)
+	public Integer getAllPendingReqCount(@PathVariable String token) throws Exception{
+		
+		String userCode=new JwtDecoder().generate(token);
+		return workflowService.findPendingReqCount(userCode);
+		
 	}
 
 }

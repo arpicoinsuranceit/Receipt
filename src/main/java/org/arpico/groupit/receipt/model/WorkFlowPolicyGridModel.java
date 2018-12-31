@@ -3,6 +3,8 @@ package org.arpico.groupit.receipt.model;
 import java.util.Date;
 
 public class WorkFlowPolicyGridModel {
+	
+	private String proposal;
 	private String policy;
 	private String pprNum;
 	private Date duedat;
@@ -10,6 +12,14 @@ public class WorkFlowPolicyGridModel {
 	private String ppdini;
 	private String agent;
 	private String brncod;
+
+	public String getProposal() {
+		return proposal;
+	}
+
+	public void setProposal(String proposal) {
+		this.proposal = proposal;
+	}
 
 	public String getPolicy() {
 		return policy;

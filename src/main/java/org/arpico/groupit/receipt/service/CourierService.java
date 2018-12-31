@@ -28,4 +28,12 @@ public interface CourierService {
 	
 	public String removeCourier(Integer id)throws Exception;
 
+	public List<CourierDto> findByCourierStatusAndBranchCodeIn(String userCode, Integer page, Integer offset) throws Exception;
+
+	public List<CourierDto> findByCourierStatusAndToBranchIn(String userCode, Integer page, Integer offset) throws Exception;
+
+	public Integer getAllPendingCourierCount(String userCode) throws Exception;
+
+	public Integer getAllReceivingCourierCount(String userCode) throws Exception;
+
 }

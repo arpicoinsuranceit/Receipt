@@ -3,11 +3,11 @@ package org.arpico.groupit.receipt.dao;
 import java.util.List;
 
 import org.arpico.groupit.receipt.dto.ProposalL3Dto;
-import org.arpico.groupit.receipt.dto.WorkFlowPolicyGridDto;
 import org.arpico.groupit.receipt.model.InPropPreviousPolModel;
 import org.arpico.groupit.receipt.model.InProposalBasicsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;
+import org.arpico.groupit.receipt.model.ShortPremiumModel;
 import org.arpico.groupit.receipt.model.WorkFlowPolicyGridModel;
 
 public interface InProposalCustomDao {
@@ -42,11 +42,17 @@ public interface InProposalCustomDao {
 
 	List<InProposalsModel> getPoliciesToWorkFlow(String brancheList, String type) throws Exception;
 	
-	List<WorkFlowPolicyGridModel> getWorkFlowPolicyGrid (String status, String locCodes, Integer page, Integer offset) throws Exception;
+	List<WorkFlowPolicyGridModel> getWorkFlowPolicyGrid (String status, String locCodes) throws Exception;
 	
-	List<WorkFlowPolicyGridModel> getWorkFlowPolicyGridHo(String status, Integer page,
-			Integer offset) throws Exception;
+	List<WorkFlowPolicyGridModel> getWorkFlowPolicyGridHo(String status) throws Exception;
 	
-
 	List<InProposalsModel> searchProposal(String sql)  throws Exception;
+	
+	List<ShortPremiumModel> getShortPremium(String sql, Integer page, Integer offset) throws Exception;
+	
+	Integer getShortPremiumCount(String sql) throws Exception;
+	
+	List<ShortPremiumModel> getPendingReq(String sql, Integer page, Integer offset) throws Exception;
+	
+	Integer getPendingReqCount(String sql) throws Exception;
 }

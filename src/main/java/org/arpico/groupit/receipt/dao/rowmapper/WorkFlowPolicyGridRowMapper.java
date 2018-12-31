@@ -17,6 +17,7 @@ public class WorkFlowPolicyGridRowMapper implements RowMapper<WorkFlowPolicyGrid
 		model.setPolicy(rs.getString("policy"));
 		model.setPpdini(rs.getString("ppdini"));
 		model.setTotprm(rs.getDouble("totprm"));
+		model.setProposal(rs.getString("pprnum"));
 		
 		return model;
 	}
