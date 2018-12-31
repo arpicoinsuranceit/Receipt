@@ -107,6 +107,21 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 		return proposalNoSeqNoDtos;
 	}
+	
+	@Override
+	public List<ProposalNoSeqNoDto> getPolicyNoSeqNoDtoListLoanRcpt(String val) throws Exception {
+
+		List<ProposalNoSeqNoDto> proposalNoSeqNoDtos = new ArrayList<ProposalNoSeqNoDto>();
+
+		List<ProposalNoSeqNoModel> list = inProposalCustomDao.getPolicyNoSeqNoModelListLoanRcpt(val);
+
+		for (ProposalNoSeqNoModel proposalNoSeqNoModel : list) {
+			proposalNoSeqNoDtos.add(getPolicyNoSeqNoDto(proposalNoSeqNoModel));
+
+		}
+
+		return proposalNoSeqNoDtos;
+	}
 
 	private ProposalNoSeqNoDto getPolicyNoSeqNoDto(ProposalNoSeqNoModel proposalNoSeqNoModel) {
 		ProposalNoSeqNoDto dto = new ProposalNoSeqNoDto();

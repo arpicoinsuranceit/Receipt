@@ -36,6 +36,7 @@ public class ReceiptPrintDto {
 	private String rctStatus;
 	private String cusTitle;
 	private String remark;
+	private Integer loanNum;
 
 	public Integer getCusCode() {
 		return cusCode;
@@ -261,6 +262,14 @@ public class ReceiptPrintDto {
 		this.accounts = accounts;
 	}
 
+	public Integer getLoanNum() {
+		return loanNum;
+	}
+
+	public void setLoanNum(Integer loanNum) {
+		this.loanNum = loanNum;
+	}
+
 	@Override
 	public String toString() {
 		return "ReceiptPrintDto [inventoryDtl=" + inventoryDtl + ", accounts=" + accounts + ", cusCode=" + cusCode
@@ -270,7 +279,9 @@ public class ReceiptPrintDto {
 				+ ", quoNum=" + quoNum + ", qdId=" + qdId + ", polNum=" + polNum + ", propNum=" + propNum
 				+ ", settlement=" + settlement + ", chqNo=" + chqNo + ", bankCode=" + bankCode + ", chqDate=" + chqDate
 				+ ", agtCode=" + agtCode + ", agtName=" + agtName + ", userName=" + userName + ", rctStatus="
-				+ rctStatus + ", cusTitle=" + cusTitle + ", remark=" + remark + "]";
+				+ rctStatus + ", cusTitle=" + cusTitle + ", remark=" + remark + ", loanNum=" + loanNum + "]";
 	}
+
+	
 
 }

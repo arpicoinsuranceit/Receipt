@@ -14,4 +14,6 @@ public interface ReceiptPrintService {
 	
 	byte[] createGLRCReceipt (ReceiptPrintDto receiptPrintDto)throws Exception;
 
+	byte[] createLoanReceipt(ReceiptPrintDto receiptPrintDto) throws Exception;
+
 }

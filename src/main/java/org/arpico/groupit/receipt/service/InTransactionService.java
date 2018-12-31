@@ -12,4 +12,6 @@ public interface InTransactionService {
 
 	List<LastReceiptSummeryDto> getLastReceiptsByPolNo(String polNo) throws Exception;
 
+	List<LastReceiptSummeryDto> getLastLoanReceiptsByPolNo(String polNo) throws Exception;
+
 }

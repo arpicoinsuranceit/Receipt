@@ -55,4 +55,7 @@ public interface InProposalCustomDao {
 	List<ShortPremiumModel> getPendingReq(String sql, Integer page, Integer offset) throws Exception;
 	
 	Integer getPendingReqCount(String sql) throws Exception;
+
+	List<ProposalNoSeqNoModel> getPolicyNoSeqNoModelListLoanRcpt(String val) throws Exception;
+
 }
