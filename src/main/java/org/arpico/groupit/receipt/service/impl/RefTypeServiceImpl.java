@@ -6,7 +6,6 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.arpico.groupit.receipt.dao.RefTypeDao;
-import org.arpico.groupit.receipt.dto.RefTypeDto;
 import org.arpico.groupit.receipt.model.RefTypeModel;
 import org.arpico.groupit.receipt.service.RefTypeService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -19,4 +19,6 @@ public interface PolicyReceiptService {
 	
 	InBillingTransactionsModel createInvoice(InProposalsModel inProposalsModel,
 			InBillingTransactionsModel previousInvoice, String user, String loc) throws Exception;
+
+	List<ProposalNoSeqNoDto> getPolicyNoSeqNoDtoListLoanRcpt(String val) throws Exception;
 }

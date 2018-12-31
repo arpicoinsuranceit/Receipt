@@ -20,6 +20,7 @@ import org.arpico.groupit.receipt.model.SubDepartmentDocumentCourierModel;
 import org.arpico.groupit.receipt.service.CourierService;
 import org.arpico.groupit.receipt.service.NumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -609,5 +610,96 @@ public class CourierServiceImpl implements CourierService{
 		
 		return courierDtos;
 	}
+
+	@Override
+	public List<CourierDto> findByCourierStatusAndBranchCodeIn(String userCode, Integer page, Integer offset)
+			throws Exception {
+		List<String> branches=branchUnderwriteDao.findLocCodes(userCode);
+		List<CourierModel> courierModels =new ArrayList<>();
+		
+		courierModels=courierDao.findByCourierStatusAndBranchCodeIn("SEND", branches, new PageRequest(page, offset));
+		
+		List<CourierDto> courierDtos=new ArrayList<>();
+		
+		if(!courierModels.isEmpty()) {
+			courierModels.forEach(co -> {
+				System.out.println(co.getToken() + " Token ----- Token ");
+				CourierDto courierDto=new CourierDto();
+				
+				courierDto.setBranchCode(co.getBranchCode());
+				courierDto.setCourierId(co.getCourierId());
+				courierDto.setCourierStatus(co.getCourierStatus());
+				courierDto.setCreateBy(co.getCreateBy());
+				courierDto.setCreateDate(co.getCreateDate());
+				courierDto.setModifyBy(co.getModifyBy());
+				courierDto.setModifyDate(co.getModifyDate());
+				courierDto.setRemark(co.getRemark());
+				courierDto.setToken(co.getToken());
+				courierDto.setToBranch(co.getToBranch());
+				courierDto.setSendBy(co.getSendBy());
+				courierDto.setSendDate(co.getSendDate());
+				courierDto.setCouType(co.getCouType());
+				
+				courierDtos.add(courierDto);
+				
+			});
+		}
+		
+		
+		return courierDtos;
+	}
+
+	@Override
+	public List<CourierDto> findByCourierStatusAndToBranchIn(String userCode, Integer page, Integer offset)
+			throws Exception {
+		List<String> branches=branchUnderwriteDao.findLocCodes(userCode);
+		List<CourierModel> courierModels =new ArrayList<>();
+		
+		courierModels=courierDao.findByCourierStatusAndToBranchIn("SEND", branches, new PageRequest(page, offset));
+		
+		List<CourierDto> courierDtos=new ArrayList<>();
+		
+		if(!courierModels.isEmpty()) {
+			courierModels.forEach(co -> {
+				System.out.println(co.getToken() + " Token ----- Token ");
+				CourierDto courierDto=new CourierDto();
+				
+				courierDto.setBranchCode(co.getBranchCode());
+				courierDto.setCourierId(co.getCourierId());
+				courierDto.setCourierStatus(co.getCourierStatus());
+				courierDto.setCreateBy(co.getCreateBy());
+				courierDto.setCreateDate(co.getCreateDate());
+				courierDto.setModifyBy(co.getModifyBy());
+				courierDto.setModifyDate(co.getModifyDate());
+				courierDto.setRemark(co.getRemark());
+				courierDto.setToken(co.getToken());
+				courierDto.setToBranch(co.getToBranch());
+				courierDto.setSendBy(co.getSendBy());
+				courierDto.setSendDate(co.getSendDate());
+				courierDto.setCouType(co.getCouType());
+				
+				courierDtos.add(courierDto);
+				
+			});
+		}
+		
+		
+		return courierDtos;
+	}
+
+	@Override
+	public Integer getAllPendingCourierCount(String userCode) throws Exception {
+		List<String> branches=branchUnderwriteDao.findLocCodes(userCode);
+		Integer count = courierDao.countByCourierStatusAndBranchCodeIn("SEND", branches);
+		return count;
+	}
+
+	@Override
+	public Integer getAllReceivingCourierCount(String userCode) throws Exception {
+		List<String> branches=branchUnderwriteDao.findLocCodes(userCode);
+		Integer count = courierDao.countByCourierStatusAndToBranchIn("SEND", branches);
+		return count;
+	}
+
 
 }

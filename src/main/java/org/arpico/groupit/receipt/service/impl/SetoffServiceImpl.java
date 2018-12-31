@@ -335,7 +335,7 @@ public class SetoffServiceImpl implements SetoffService {
 
 				if (autoIssueData.getTotprm() > autoIssueData.getPayment()) {
 					recoveryModel.setTxntyp(AppConstant.RECOVERY);
-					recoveryModel.setAmount((autoIssueData.getTotprm() - autoIssueData.getPayment()));
+					recoveryModel.setAmount((autoIssueData.getTotprm() - autoIssueData.getPayment())*-1);
 					recoveryModel.setDepost(AppConstant.ZERO_FOR_DECIMAL);
 					recoveryModel.getBillingTransactionsModelPK().setLinnum(linnum);
 					recoveryModel.setCreaby(AppConstant.SYSTEM_CREATE);
