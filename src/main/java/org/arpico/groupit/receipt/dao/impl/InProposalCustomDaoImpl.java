@@ -7,13 +7,18 @@ import org.arpico.groupit.receipt.dao.rowmapper.InPropPreviousPolsCompleteRowMap
 import org.arpico.groupit.receipt.dao.rowmapper.InPropPreviousPolsRowMapper;
 import org.arpico.groupit.receipt.dao.rowmapper.InProposalBasicRowMapper;
 import org.arpico.groupit.receipt.dao.rowmapper.InProposalsRowMapper;
+import org.arpico.groupit.receipt.dao.rowmapper.PendingReqRowMapper;
 import org.arpico.groupit.receipt.dao.rowmapper.ProposalL3RowMapper;
 import org.arpico.groupit.receipt.dao.rowmapper.ProposalNoSeqNoRowMapper;
+import org.arpico.groupit.receipt.dao.rowmapper.ShortPremiumRowMapper;
+import org.arpico.groupit.receipt.dao.rowmapper.WorkFlowPolicyGridRowMapper;
 import org.arpico.groupit.receipt.dto.ProposalL3Dto;
 import org.arpico.groupit.receipt.model.InPropPreviousPolModel;
 import org.arpico.groupit.receipt.model.InProposalBasicsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;
+import org.arpico.groupit.receipt.model.ShortPremiumModel;
+import org.arpico.groupit.receipt.model.WorkFlowPolicyGridModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -84,14 +89,14 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 						+ "         AND if(b.paymod<>'CQ',1,if(b.paymod='CQ' and b.chqrel='Y',1,0)) = 1) payment, s.spiamt "
 						+ "			FROM inproposals a "
 						+ "		INNER JOIN inshort_premium_act_product s ON a.sbucod = s.sbucod AND a.prdcod = s.prdcod WHERE "
-						+ "			a.sbucod = '450' AND a.pprsta IN ('L3') AND a.pprnum = '" + propId+"' "
+						+ "			a.sbucod = '450' AND a.pprsta IN ('L3') AND a.pprnum = '" + propId + "' "
 						+ "     AND s.status = 'ACT') x " + "        INNER JOIN "
 						+ "			(SELECT sbucod, pprnum, prpseq, medcod, "
 						+ "				(SELECT COUNT(*) FROM inpropmedicalreq a WHERE a.sbucod = b.sbucod AND a.loccod = b.loccod "
 						+ "                        AND a.prpseq = b.prpseq AND a.pprnum = b.pprnum AND a.medcod LIKE 'AD%' AND a.tessta = 'N' "
 						+ "                        AND addnot NOT LIKE 'Premium Short%') reqcnt "
-						+ "			FROM inpropmedicalreq b WHERE sbucod = '450' AND pprnum = '" + propId+"' AND medcod LIKE 'AD%' AND addnot LIKE 'Premium Short%' "
-						+ "	AND tessta = 'N') "
+						+ "			FROM inpropmedicalreq b WHERE sbucod = '450' AND pprnum = '" + propId
+						+ "' AND medcod LIKE 'AD%' AND addnot LIKE 'Premium Short%' " + "	AND tessta = 'N') "
 						+ "y ON x.sbucod = y.sbucod AND x.pprnum = y.pprnum AND x.prpseq = y.prpseq "
 						+ "WHERE ((x.totprm + x.polfee) - x.spiamt) <= x.payment AND reqcnt < 1 GROUP BY x.pprnum",
 				new ProposalL3RowMapper());
@@ -294,15 +299,109 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 	}
 
 	@Override
+	public List<WorkFlowPolicyGridModel> getWorkFlowPolicyGrid(String status, String locCodes) throws Exception {
+		List<WorkFlowPolicyGridModel> models = jdbcTemplate.query(
+				"select p.pprnum, concat(p.prdcod,'/',p.polnum) policy,b.duedat,p.totprm,p.ppdini,concat(p.advcod,'-',a.prnnam) agent,b.brncod "
+						+ "from inproposals p inner join inbillingtransactions b on p.sbucod=b.sbucod and p.pprnum=b.pprnum and p.pprsta='"
+						+ status + "' " + "inner join inagentmast a on a.sbucod=p.sbucod and a.agncod=p.advcod "
+						+ "where b.sbucod='450' and p.loccod in (" + locCodes
+						+ ") and b.duedat between current_date() and date_add(current_date(),interval 5 day) group by b.pprnum,b.txnyer,b.txnmth having sum(b.amount) > 0 order by b.duedat",
+				new WorkFlowPolicyGridRowMapper());
+		return models;
+	}
+
+	@Override
+	public List<WorkFlowPolicyGridModel> getWorkFlowPolicyGridHo(String status) throws Exception {
+		List<WorkFlowPolicyGridModel> models = jdbcTemplate.query(
+				"select p.pprnum, concat(p.prdcod,'/',p.polnum) policy,b.duedat,p.totprm,p.ppdini,concat(p.advcod,'-',a.prnnam) agent,b.brncod "
+						+ "from inproposals p inner join inbillingtransactions b on p.sbucod=b.sbucod and p.pprnum=b.pprnum and p.pprsta='"
+						+ status + "' " + "inner join inagentmast a on a.sbucod=p.sbucod and a.agncod=p.advcod "
+						+ "where b.sbucod='450' and b.duedat between current_date() and date_add(current_date(),interval 5 day) group by b.pprnum,b.txnyer,b.txnmth having sum(b.amount) > 0 order by b.duedat",
+				new WorkFlowPolicyGridRowMapper());
+		return models;
+	}
+
+	@Override
 	public List<InProposalsModel> searchProposal(String sql) throws Exception {
-		
-		System.out.println("select * from inproposals where sbucod = '450' and " + sql );
-		
-		List<InProposalsModel> models = jdbcTemplate.query(
-				"select * from inproposals where sbucod = '450' and " + sql,
+
+		System.out.println("select * from inproposals where sbucod = '450' and " + sql);
+
+		List<InProposalsModel> models = jdbcTemplate.query("select * from inproposals where sbucod = '450' and " + sql,
 				new InProposalsRowMapper());
 
 		return models;
 	}
+
+	@Override
+	public List<ShortPremiumModel> getShortPremium(String sql, Integer page, Integer offset) throws Exception {
+		List<ShortPremiumModel> models = jdbcTemplate.query(
+				"select p.quonum, p.pprnum, p.prpseq, concat(p.advcod,' - ',a.prnnam) agent, p.loccod, m.addnot from inproposals p  "
+						+ "	   inner join inpropmedicalreq m on p.sbucod=m.sbucod and p.pprnum=m.pprnum and p.prpseq=m.prpseq and p.pprsta='L3' "
+						+ "    inner join inagentmast a on a.sbucod=p.sbucod and a.agncod=p.advcod "
+						+ "      where m.sbucod='450' " + sql 
+						+ "      and m.medcod like 'AD%' and tessta = 'N' and addnot like 'Premium Short%' limit "+ (page) + ", " + offset,
+				new ShortPremiumRowMapper());
+
+		return models;
+	}
+
+	@Override
+	public Integer getShortPremiumCount(String sql) throws Exception {
+		Integer count = jdbcTemplate.queryForObject("select count(m.addnot) from inproposals p  "
+				+ "	inner join inpropmedicalreq m on p.sbucod=m.sbucod and p.pprnum=m.pprnum and p.prpseq=m.prpseq and p.pprsta='L3' "
+				+ "where m.sbucod='450' " + sql
+				+ " and m.medcod like 'AD%' and tessta = 'N' and addnot like 'Premium Short%'",
+				Integer.class);
+
+		return count;
+	}
+	
+	@Override
+	public List<ShortPremiumModel> getPendingReq(String sql, Integer page, Integer offset) throws Exception {
+		List<ShortPremiumModel> models = jdbcTemplate.query("SELECT  " + 
+				"    p.quonum, " + 
+				"    p.pprnum, " + 
+				"    p.prpseq, " + 
+				"    CONCAT(p.advcod, ' - ', a.prnnam) agent, " + 
+				"    p.loccod, " + 
+				"    COUNT(m.addnot) as reqcnt " + 
+				"FROM " + 
+				"    inproposals p " + 
+				"        INNER JOIN " + 
+				"    inpropmedicalreq m ON p.sbucod = m.sbucod " + 
+				"        AND p.pprnum = m.pprnum " + 
+				"        AND p.prpseq = m.prpseq " + 
+				"        AND p.pprsta IN ('L0' , 'L1', 'L2', 'L3') " + 
+				"        INNER JOIN " + 
+				"    inagentmast a ON a.sbucod = p.sbucod " + 
+				"        AND a.agncod = p.advcod " + 
+				"WHERE " + 
+				"    m.sbucod = '450' "+ sql +" AND tessta = 'N' group by p.pprnum limit " + page + "," + offset ,
+				new PendingReqRowMapper());
+
+		return models;
+	}
+
+	@Override
+	public Integer getPendingReqCount(String sql) throws Exception {
+		Integer count = jdbcTemplate.queryForObject("SELECT    " + 
+				"    SUM(x.rowcon)   " + 
+				"FROM   " + 
+				"    (SELECT    " + 
+				"        1 rowcon   " + 
+				"    FROM   " + 
+				"        inproposals p   " + 
+				"    INNER JOIN inpropmedicalreq m ON p.sbucod = m.sbucod   " + 
+				"        AND p.pprnum = m.pprnum   " + 
+				"        AND p.prpseq = m.prpseq   " + 
+				"        AND p.pprsta IN ('L0' , 'L1', 'L2', 'L3')   " + 
+				"    WHERE   " + 
+				"        m.sbucod = '450' "+ sql +" AND tessta = 'N'   " + 
+				"    GROUP BY p.pprnum) x",
+				Integer.class);
+
+		return count;
+	}
+
 
 }

@@ -10,6 +10,8 @@ public interface CodeTransferService {
 	
 	public List<CodeTransferDto> getPendingCodeTransferPrp(String token)throws Exception;
 	
+	public List<CodeTransferDto> getPendingCodeTransferPrp(String token, Integer page, Integer offset)throws Exception;
+	
 	public List<CodeTransferDto> getPendingCodeTransferPol(String token)throws Exception;
 	
 	public List<CodeTransferDto> getCanceledCodeTransferPrp(String token)throws Exception;
