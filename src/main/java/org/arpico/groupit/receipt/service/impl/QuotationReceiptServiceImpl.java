@@ -481,59 +481,74 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 							switch (frequency) {
 							case "Monthly":
 								if (detModel.getLodcls() > 0) {
+									propLoadingModel.setOculod(detModel.getLodcls());
 									propLoadingModel.setOcuval(benfDto.getPremium());
 									propLoadingModel.setOcuvmt(benfDto.getPremium());
 								} else if (detModel.getRatmil() > 0) {
-									propLoadingModel.setRatmil(benfDto.getPremium());
+									propLoadingModel.setRatmil(detModel.getRatmil());
+									propLoadingModel.setRatval(benfDto.getPremium());
 									propLoadingModel.setRatvmt(benfDto.getPremium());
 								} else if (detModel.getSubrat() > 0) {
-									propLoadingModel.setSubrat(benfDto.getPremium());
+									propLoadingModel.setSubrat(detModel.getSubrat());
+									propLoadingModel.setSubval(benfDto.getPremium());
 									propLoadingModel.setSubvmt(benfDto.getPremium());
 								}
 								break;
 							case "Quartaly":
 								if (detModel.getLodcls() > 0) {
+									propLoadingModel.setOculod(detModel.getLodcls());
 									propLoadingModel.setOcuval(benfDto.getPremium());
 									propLoadingModel.setOcuvqt(benfDto.getPremium());
 								} else if (detModel.getRatmil() > 0) {
-									propLoadingModel.setRatmil(benfDto.getPremium());
+									propLoadingModel.setRatmil(detModel.getRatmil());
+									propLoadingModel.setRatval(benfDto.getPremium());
 									propLoadingModel.setRatvqt(benfDto.getPremium());
 								} else if (detModel.getSubrat() > 0) {
-									propLoadingModel.setSubrat(benfDto.getPremium());
+									propLoadingModel.setSubrat(detModel.getSubrat());
+									propLoadingModel.setSubval(benfDto.getPremium());
 									propLoadingModel.setSubvqt(benfDto.getPremium());
 								}
 								break;
 							case "Half Yearly":
 								if (detModel.getLodcls() > 0) {
+									propLoadingModel.setOculod(detModel.getLodcls());
 									propLoadingModel.setOcuval(benfDto.getPremium());
 									propLoadingModel.setOcuvhy(benfDto.getPremium());
 								} else if (detModel.getRatmil() > 0) {
-									propLoadingModel.setRatmil(benfDto.getPremium());
+									propLoadingModel.setRatmil(detModel.getRatmil());
+									propLoadingModel.setRatval(benfDto.getPremium());
 									propLoadingModel.setRatvhy(benfDto.getPremium());
 								} else if (detModel.getSubrat() > 0) {
-									propLoadingModel.setSubrat(benfDto.getPremium());
+									propLoadingModel.setSubrat(detModel.getSubrat());
+									propLoadingModel.setSubval(benfDto.getPremium());
 									propLoadingModel.setSubvhy(benfDto.getPremium());
 								}
 								break;
 							case "Yearly":
 								if (detModel.getLodcls() > 0) {
+									propLoadingModel.setOculod(detModel.getLodcls());
 									propLoadingModel.setOcuval(benfDto.getPremium());
 									propLoadingModel.setOcuvyr(benfDto.getPremium());
 								} else if (detModel.getRatmil() > 0) {
-									propLoadingModel.setRatmil(benfDto.getPremium());
+									propLoadingModel.setRatmil(detModel.getRatmil());
+									propLoadingModel.setRatval(benfDto.getPremium());
 									propLoadingModel.setRatvyr(benfDto.getPremium());
 								} else if (detModel.getSubrat() > 0) {
-									propLoadingModel.setSubrat(benfDto.getPremium());
+									propLoadingModel.setSubrat(detModel.getSubrat());
+									propLoadingModel.setSubval(benfDto.getPremium());
 									propLoadingModel.setSubvyr(benfDto.getPremium());
 								}
 								break;
 							case "Single Premium":
 								if (detModel.getLodcls() > 0) {
+									propLoadingModel.setOculod(detModel.getLodcls());
 									propLoadingModel.setOcuval(benfDto.getPremium());
 								} else if (detModel.getRatmil() > 0) {
-									propLoadingModel.setRatmil(benfDto.getPremium());
+									propLoadingModel.setRatmil(detModel.getRatmil());
+									propLoadingModel.setRatval(benfDto.getPremium());
 								} else if (detModel.getSubrat() > 0) {
-									propLoadingModel.setSubrat(benfDto.getPremium());
+									propLoadingModel.setSubrat(detModel.getSubrat());
+									propLoadingModel.setSubval(benfDto.getPremium());
 								}
 								// TODO
 								break;
