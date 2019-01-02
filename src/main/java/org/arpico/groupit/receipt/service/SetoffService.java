@@ -11,6 +11,6 @@ public interface SetoffService {
 	
 	//public Integer setoff(InProposalsModel inProposalsModel, String userCode, String locCode, SaveReceiptDto saveReceiptDto, InBillingTransactionsModel deposit, Double recovery) throws Exception;
 	
-	public List<InBillingTransactionsModel> setoff(InProposalsModel inProposalsModel, String userCode, String locCode, SaveReceiptDto saveReceiptDto, InBillingTransactionsModel deposit, Double hrbamt,ProposalL3Dto autoIssueData,String setoffType) throws Exception;
+	public List<InBillingTransactionsModel> setoff(InProposalsModel inProposalsModel, String userCode, String locCode, SaveReceiptDto saveReceiptDto, InBillingTransactionsModel deposit, Double hrbamt,ProposalL3Dto autoIssueData,String setoffType, Integer batchNo) throws Exception;
 
 }

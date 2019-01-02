@@ -143,8 +143,10 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 			if (agentModels != null && agentModels.size() > 0) {
 
 				String[] numberGen = numberGenerator.generateNewId("", "", "PROSQ", "");
+				
+				String[] batNoArr = numberGenerator.generateNewId("", "", "#TXNSQ#", "");
 
-				if (numberGen[0].equals("Success")) {
+				if (numberGen[0].equals("Success") && batNoArr[0].equals("Success")) {
 
 					ViewQuotationDto resp = quotationClient.getQuotation(saveReceiptDto.getSeqNo(),
 							saveReceiptDto.getQuotationId());
@@ -290,8 +292,8 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					inBillingTransactionsModel.setTaxamt(0.0);
 					inBillingTransactionsModel.setAdmfee(0.0);
 					inBillingTransactionsModel.setPolfee(0.0);
-					inBillingTransactionsModel.setTxnbno(AppConstant.ZERO);
-
+					inBillingTransactionsModel.setTxnbno(Integer.parseInt(batNoArr[1]));
+					
 					inTransactionDao.save(inTransactionsModel);
 					inBillingTransactionDao.save(inBillingTransactionsModel);
 

@@ -107,7 +107,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 		return proposalNoSeqNoDtos;
 	}
-	
+
 	@Override
 	public List<ProposalNoSeqNoDto> getPolicyNoSeqNoDtoListLoanRcpt(String val) throws Exception {
 
@@ -168,80 +168,102 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 		String locCode = decoder.generateLoc(saveReceiptDto.getToken());
 
+		String[] batNoArr = numberGenerator.generateNewId("", "", "#TXNSQ#", "");
+
 		if (locCode != null) {
 
-			InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
-					saveReceiptDto, userCode, locCode);
+			if (batNoArr[0].equals("Success")) {
 
-			inTransactionsModel.getInTransactionsModelPK().setDoccod("RCPL");
-			// inTransactionDao.save(inTransactionsModel);
+				InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
+						saveReceiptDto, userCode, locCode);
 
-			System.out.println("transaction model save");
+				inTransactionsModel.getInTransactionsModelPK().setDoccod("RCPL");
+				// inTransactionDao.save(inTransactionsModel);
 
-			InBillingTransactionsModel deposit = commonethodUtility.getInBillingTransactionModel(inProposalsModel,
-					saveReceiptDto, inTransactionsModel);
+				System.out.println("transaction model save");
 
-			deposit.setTxnbno(AppConstant.ZERO);
+				InBillingTransactionsModel deposit = commonethodUtility.getInBillingTransactionModel(inProposalsModel,
+						saveReceiptDto, inTransactionsModel);
 
-			deposit.setCreaby(userCode);
-			deposit.setPolnum(inTransactionsModel.getPolnum());
-			deposit.getBillingTransactionsModelPK().setDoccod("RCPL");
-			deposit.setRefdoc("RCPL");
-			deposit.setSrcdoc("RCPL");
-			deposit.setTaxamt(0.0);
-			deposit.setAdmfee(0.0);
-			deposit.setPolfee(0.0);
-			deposit.setTxntyp("POLDEP");
+				deposit.setTxnbno(Integer.parseInt(batNoArr[1]));
 
-			// inBillingTransactionDao.save(deposit);
-			ReceiptPrintDto printDto = null;
-			try {
-				saveReceipt(inTransactionsModel, deposit);
-				if (!saveReceiptDto.equals("CQ")) {
+				deposit.setCreaby(userCode);
+				deposit.setPolnum(inTransactionsModel.getPolnum());
+				deposit.getBillingTransactionsModelPK().setDoccod("RCPL");
+				deposit.setRefdoc("RCPL");
+				deposit.setSrcdoc("RCPL");
+				deposit.setTaxamt(0.0);
+				deposit.setAdmfee(0.0);
+				deposit.setPolfee(0.0);
+				deposit.setTxntyp("POLDEP");
 
-					deposit.setTxnbno(1);
-
-					List<InPropAddBenefitModel> addBenefitModels = addBenefictCustomDao.getBenefByPprSeq(
-							Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum()),
-							inProposalsModel.getInProposalsModelPK().getPrpseq());
-
-					Double hrbamt = commonethodUtility.getHrbAmt(addBenefitModels);
-
-					List<InBillingTransactionsModel> setoffs = setoffService.setoff(inProposalsModel, userCode, locCode, saveReceiptDto, deposit, hrbamt,
-							null, "OLD");
-					
-					inBillingTransactionDao.save(setoffs);
-				}
+				// inBillingTransactionDao.save(deposit);
+				ReceiptPrintDto printDto = null;
 				try {
-					printDto = getReceiptPrintDto(inProposalsModel, inTransactionsModel, userCode, locCode, false);
+					saveReceipt(inTransactionsModel, deposit);
+					if (!saveReceiptDto.equals("CQ")) {
+
+						String[] batNoArr2 = numberGenerator.generateNewId("", "", "#TXNSQ#", "");
+
+						if (batNoArr2[0].equals("Success")) {
+
+							List<InPropAddBenefitModel> addBenefitModels = addBenefictCustomDao.getBenefByPprSeq(
+									Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum()),
+									inProposalsModel.getInProposalsModelPK().getPrpseq());
+
+							Double hrbamt = commonethodUtility.getHrbAmt(addBenefitModels);
+
+							List<InBillingTransactionsModel> setoffs = setoffService.setoff(inProposalsModel, userCode,
+									locCode, saveReceiptDto, deposit, hrbamt, null, "OLD", Integer.parseInt(batNoArr2[1]));
+
+							inBillingTransactionDao.save(setoffs);
+
+						} else {
+							ResponseDto responseDto = new ResponseDto();
+							responseDto.setCode("204");
+							responseDto.setStatus("Error");
+							responseDto.setMessage("Batch No not Created");
+							return new ResponseEntity<>(responseDto, HttpStatus.OK);
+						}
+					}
+					try {
+						printDto = getReceiptPrintDto(inProposalsModel, inTransactionsModel, userCode, locCode, false);
+					} catch (Exception e) {
+						e.printStackTrace();
+						dto = new ResponseDto();
+						dto.setCode("500");
+						dto.setStatus("Error");
+						dto.setMessage("Error at print receipt. Policy No : " + inProposalsModel.getPolnum()
+								+ ", Receipt No : " + deposit.getBillingTransactionsModelPK().getDoccod() + " / "
+								+ deposit.getBillingTransactionsModelPK().getDocnum());
+					}
+
+					dto = new ResponseDto();
+					dto.setCode("200");
+					dto.setStatus("Successfully saved. Policy No : " + inProposalsModel.getPolnum() + ", Receipt No : "
+							+ deposit.getBillingTransactionsModelPK().getDoccod() + " / "
+							+ deposit.getBillingTransactionsModelPK().getDocnum());
+					dto.setMessage(deposit.getBillingTransactionsModelPK().getDocnum().toString());
+					dto.setData(itextReceipt.createReceipt(printDto));
+
+					return new ResponseEntity<>(dto, HttpStatus.OK);
+
 				} catch (Exception e) {
 					e.printStackTrace();
 					dto = new ResponseDto();
 					dto.setCode("500");
 					dto.setStatus("Error");
-					dto.setMessage("Error at print receipt. Policy No : " + inProposalsModel.getPolnum()
-							+ ", Receipt No : " + deposit.getBillingTransactionsModelPK().getDoccod() + " / "
-							+ deposit.getBillingTransactionsModelPK().getDocnum());
+					dto.setMessage("Error at receipt Saving");
+					dto.setData(itextReceipt.createReceipt(printDto));
+					return new ResponseEntity<>(dto, HttpStatus.INTERNAL_SERVER_ERROR);
 				}
 
-				dto = new ResponseDto();
-				dto.setCode("200");
-				dto.setStatus("Successfully saved. Policy No : " + inProposalsModel.getPolnum() + ", Receipt No : "
-						+ deposit.getBillingTransactionsModelPK().getDoccod() + " / "
-						+ deposit.getBillingTransactionsModelPK().getDocnum());
-				dto.setMessage(deposit.getBillingTransactionsModelPK().getDocnum().toString());
-				dto.setData(itextReceipt.createReceipt(printDto));
-
-				return new ResponseEntity<>(dto, HttpStatus.OK);
-
-			} catch (Exception e) {
-				e.printStackTrace();
-				dto = new ResponseDto();
-				dto.setCode("500");
-				dto.setStatus("Error");
-				dto.setMessage("Error at receipt Saving");
-				dto.setData(itextReceipt.createReceipt(printDto));
-				return new ResponseEntity<>(dto, HttpStatus.INTERNAL_SERVER_ERROR);
+			} else {
+				ResponseDto responseDto = new ResponseDto();
+				responseDto.setCode("204");
+				responseDto.setStatus("Error");
+				responseDto.setMessage("Batch No not Created");
+				return new ResponseEntity<>(responseDto, HttpStatus.OK);
 			}
 
 		}
