@@ -57,4 +57,15 @@ public class InPropMedicalReqCustomDaoImpl implements InPropMedicalReqCustomDao 
 		
 	}
 
+	@Override
+	public List<InPropMedicalReqModel> getMedicalReqByPprNo(Integer pprno, String testStatus) throws Exception {
+		
+		System.out.println(pprno);
+		
+		return jdbcTemplate.query("select * from inpropmedicalreq m " + 
+				"inner join inproposals p on m.sbucod = p.sbucod and m.pprnum = p.pprnum and m.prpseq = p.prpseq " + 
+				"where p.sbucod = '450' and p.pprnum = '"+pprno+"' and p.pprsta <> 'INAC' and tessta = 'N'", new InPropMedicalReqRowMapper());
+	}
+
+	
 }

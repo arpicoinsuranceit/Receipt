@@ -65,6 +65,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -345,7 +346,7 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	private void saveReceipt(InTransactionsModel inTransactionsModel,
 			InBillingTransactionsModel inBillingTransactionsModel) {
 		inTransactionDao.save(inTransactionsModel);
@@ -399,11 +400,13 @@ public class ProposalServiceImpl implements ProposalServce {
 		return printDto;
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Override
 	public void checkPolicy(InProposalsModel inProposalsModel, Integer pprNo, Integer seqNo,
 			SaveReceiptDto saveReceiptDto, String userCode, String locCode, InBillingTransactionsModel deposit)
 			throws Exception {
+		
+		try {
 		if (inProposalsModel.getPprsta().equalsIgnoreCase("L3")) {
 
 			List<ProposalL3Dto> proposalL3Dtos = inProposalCustomDao.checkL3(saveReceiptDto.getPropId());
@@ -529,6 +532,9 @@ public class ProposalServiceImpl implements ProposalServce {
 			System.out.println("FAIL CHECK POLICY");
 		}
 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private List<InPropSurrenderValsModel> incrementSurrenderVals(

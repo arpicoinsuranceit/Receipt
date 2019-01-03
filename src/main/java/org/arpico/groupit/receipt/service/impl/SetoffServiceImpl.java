@@ -2,6 +2,7 @@ package org.arpico.groupit.receipt.service.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -11,14 +12,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Scanner;
 
-import javax.transaction.Transactional;
 
 import org.arpico.groupit.receipt.dao.CommisDaoCustom;
 import org.arpico.groupit.receipt.dao.InAgentMastDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
-import org.arpico.groupit.receipt.dao.InBillingTransactionsDao;
 import org.arpico.groupit.receipt.dto.ProposalL3Dto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.model.AgentMastModel;
@@ -733,6 +731,7 @@ public class SetoffServiceImpl implements SetoffService {
 
 		}
 
+		
 		return setoffList;
 	}
 

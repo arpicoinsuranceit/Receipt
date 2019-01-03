@@ -11,6 +11,7 @@ public class WorkFlowPolicyGridDto {
 	private String ppdini;
 	private String agent;
 	private String brncod;
+	private String health;
 
 	public String getPprNum() {
 		return pprNum;
@@ -68,10 +69,19 @@ public class WorkFlowPolicyGridDto {
 		this.brncod = brncod;
 	}
 
+	public String getHealth() {
+		return health;
+	}
+
+	public void setHealth(String health) {
+		this.health = health;
+	}
+
 	@Override
 	public String toString() {
-		return "WorkFlowPolicyGridDto [policy=" + policy + ", duedat=" + duedat + ", totprm=" + totprm + ", ppdini="
-				+ ppdini + ", agent=" + agent + ", brncod=" + brncod + "]";
+		return "WorkFlowPolicyGridDto [pprNum=" + pprNum + ", policy=" + policy + ", duedat=" + duedat + ", totprm="
+				+ totprm + ", ppdini=" + ppdini + ", agent=" + agent + ", brncod=" + brncod + ", health=" + health
+				+ "]";
 	}
 
 }

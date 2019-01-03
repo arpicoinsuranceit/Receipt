@@ -14,4 +14,7 @@ public interface InPropMedicalReqCustomDao {
 	void removeMedicalReqByPprNoAndSeq(Integer pprNo, Integer seqNo) throws Exception;
 
 	List<InPropMedicalReqModel> getMedicalReqForCodeTransfer(String medcod, String testStatus) throws Exception;
+
+	List<InPropMedicalReqModel> getMedicalReqByPprNo(Integer pprno, String testStatus) throws Exception;
+
 }

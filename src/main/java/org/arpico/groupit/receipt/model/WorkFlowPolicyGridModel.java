@@ -3,7 +3,7 @@ package org.arpico.groupit.receipt.model;
 import java.util.Date;
 
 public class WorkFlowPolicyGridModel {
-	
+
 	private String proposal;
 	private String policy;
 	private String pprNum;
@@ -12,6 +12,7 @@ public class WorkFlowPolicyGridModel {
 	private String ppdini;
 	private String agent;
 	private String brncod;
+	private String health;
 
 	public String getProposal() {
 		return proposal;
@@ -77,9 +78,18 @@ public class WorkFlowPolicyGridModel {
 		this.brncod = brncod;
 	}
 
+	public String getHealth() {
+		return health;
+	}
+
+	public void setHealth(String health) {
+		this.health = health;
+	}
+
 	@Override
 	public String toString() {
-		return "WorkFlowPolicyGridDto [policy=" + policy + ", duedat=" + duedat + ", totprm=" + totprm + ", ppdini="
-				+ ppdini + ", agent=" + agent + ", brncod=" + brncod + "]";
+		return "WorkFlowPolicyGridModel [proposal=" + proposal + ", policy=" + policy + ", pprNum=" + pprNum
+				+ ", duedat=" + duedat + ", totprm=" + totprm + ", ppdini=" + ppdini + ", agent=" + agent + ", brncod="
+				+ brncod + ", health=" + health + "]";
 	}
 }

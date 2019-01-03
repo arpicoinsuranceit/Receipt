@@ -42,6 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -216,7 +217,9 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 							List<InBillingTransactionsModel> setoffs = setoffService.setoff(inProposalsModel, userCode,
 									locCode, saveReceiptDto, deposit, hrbamt, null, "OLD", Integer.parseInt(batNoArr2[1]));
 
-							inBillingTransactionDao.save(setoffs);
+							saveTransactions(setoffs);
+							
+							
 
 						} else {
 							ResponseDto responseDto = new ResponseDto();
@@ -276,7 +279,12 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		return new ResponseEntity<>(dto, HttpStatus.NOT_FOUND);
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	private void saveTransactions(List<InBillingTransactionsModel> setoffs) {
+		inBillingTransactionDao.save(setoffs);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	private void saveReceipt(InTransactionsModel inTransactionsModel, InBillingTransactionsModel deposit) {
 		inTransactionDao.save(inTransactionsModel);
 		inBillingTransactionDao.save(deposit);

@@ -58,4 +58,8 @@ public interface InProposalCustomDao {
 
 	List<ProposalNoSeqNoModel> getPolicyNoSeqNoModelListLoanRcpt(String val) throws Exception;
 
+	List<WorkFlowPolicyGridModel> getWorkFlowPolicylaps(String type, Integer date1, Integer date2, String type2);
+
+	List<WorkFlowPolicyGridModel> getWorkFlowPolicylaps(String type, String paraForIn, Integer date1, Integer date2, String type2);
+
 }
