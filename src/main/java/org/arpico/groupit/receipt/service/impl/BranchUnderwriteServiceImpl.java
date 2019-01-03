@@ -390,6 +390,9 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 							newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
 				}
 				
+			}else {
+				inPropMedicalReqModels.add(getAdditionalReq("spouse", "AD-99","Additional Requirement", "Age Proof Spouse", newInProposalsModelPK.getPprnum(),
+						newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
 			}
 			
 			//children age proof
