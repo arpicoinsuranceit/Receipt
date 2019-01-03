@@ -53,8 +53,8 @@ public class DashboardServiceImpl implements DashboardService {
 		dtos.add(new NameValuePairDto("New Business", "0", "0"));
 		dtos.add(new NameValuePairDto("Proposal", "0", "0"));
 		dtos.add(new NameValuePairDto("Policy", "0", "0"));
-		dtos.add(new NameValuePairDto("Misc. INV", "0", "0"));
-		dtos.add(new NameValuePairDto("Misc. GL", "0", "0"));
+		dtos.add(new NameValuePairDto("Misc. INV / GL", "0", "0"));
+		dtos.add(new NameValuePairDto("Loan", "0", "0"));
 
 		dashboardPieDto.setNameValues(dtos);
 
@@ -90,6 +90,13 @@ public class DashboardServiceImpl implements DashboardService {
 
 				dtos.set(2, dto3);
 				break;
+			case "RCLN":
+				NameValuePairDto dto4 = dtos.get(4);
+				dto4.setCount(e.getCount().toString());
+				dto4.setValue(e.getAmount().toString());
+
+				dtos.set(4, dto4);
+				break;
 
 			default:
 				break;
@@ -103,11 +110,15 @@ public class DashboardServiceImpl implements DashboardService {
 		if (recmList != null) {
 			DashboardPieModel dashboardPieModel = recmList.get(0);
 
-			NameValuePairDto dto2 = dtos.get(4);
-			dto2.setCount(dashboardPieModel.getCount().toString());
-			dto2.setValue(dashboardPieModel.getAmount().toString());
+			NameValuePairDto dto2 = dtos.get(3);
+			
+			Integer count = Integer.parseInt(dto2.getCount()) + dashboardPieModel.getCount();
+			Double amount = Double.parseDouble(dto2.getValue()) + dashboardPieModel.getAmount();
+			
+			dto2.setCount(count.toString());
+			dto2.setValue(amount.toString());
 
-			dtos.set(4, dto2);
+			dtos.set(3, dto2);
 
 			total += dashboardPieModel.getAmount();
 
@@ -119,8 +130,12 @@ public class DashboardServiceImpl implements DashboardService {
 			DashboardPieModel dashboardPieModel = txnmList.get(0);
 
 			NameValuePairDto dto2 = dtos.get(3);
-			dto2.setCount(dashboardPieModel.getCount().toString());
-			dto2.setValue(dashboardPieModel.getAmount().toString());
+			
+			Integer count = Integer.parseInt(dto2.getCount()) + dashboardPieModel.getCount();
+			Double amount = Double.parseDouble(dto2.getValue()) + dashboardPieModel.getAmount();
+			
+			dto2.setCount(count.toString());
+			dto2.setValue(amount.toString());
 
 			dtos.set(3, dto2);
 
@@ -137,7 +152,7 @@ public class DashboardServiceImpl implements DashboardService {
 		List<NameSeriesDto> nameSeriesDtos = new ArrayList<>();
 		List<String> datesInRange = new ArrayList<>();
 
-		String[] receiptModels = { "New Business", "Proposal", "Policy", "Misc. INV", "Misc. GL" };
+		String[] receiptModels = { "Receipt (RCNB)", "Receipt (RCPP)", "Receipt (RCPL)", "Misc. INV / GL", "Receipt (RCLN)" };
 
 		// Date toInTran = to;
 		Calendar c = Calendar.getInstance();
@@ -172,7 +187,7 @@ public class DashboardServiceImpl implements DashboardService {
 				datesInRange.add(sdf.format(result));
 				calendar.add(Calendar.DATE, 1);
 			}
-			sql = ", year(creadt), month(creadt), day(creadt)";
+			sql = ", year(x.creadt), month(x.creadt), day(x.creadt)";
 			sql2 = ", year(CRE_DATE), month(CRE_DATE), day(CRE_DATE)";
 
 		} else if (type.equalsIgnoreCase("m")) {
@@ -183,7 +198,7 @@ public class DashboardServiceImpl implements DashboardService {
 				datesInRange.add(sdf.format(result));
 				calendar.add(Calendar.MONTH, 1);
 			}
-			sql = ", year(creadt), month(creadt)";
+			sql = ", year(x.creadt), month(x.creadt)";
 			sql2 = ", year(CRE_DATE), month(CRE_DATE)";
 
 		} else if (type.equalsIgnoreCase("y")) {
@@ -194,7 +209,7 @@ public class DashboardServiceImpl implements DashboardService {
 				datesInRange.add(sdf.format(result));
 				calendar.add(Calendar.YEAR, 1);
 			}
-			sql = ", year(creadt)";
+			sql = ", year(x.creadt)";
 			sql2 = ", year(CRE_DATE)";
 		}
 
@@ -242,7 +257,11 @@ public class DashboardServiceImpl implements DashboardService {
 						if (date.equals(e) && model.getDocCode().equals("RCPL")) {
 							nameValueDto.setValue(model.getAmount().toString());
 						}
-
+						break;
+					case 4:
+						if (date.equals(e) && model.getDocCode().equals("RCLN")) {
+							nameValueDto.setValue(model.getAmount().toString());
+						}
 						break;
 					default:
 						break;
@@ -254,18 +273,17 @@ public class DashboardServiceImpl implements DashboardService {
 					modelsTxnm.forEach(element -> {
 						if (getDate(element, type).equalsIgnoreCase(e)
 								&& element.getDocCode().equalsIgnoreCase("OIIS")) {
-							nameValueDto.setValue(element.getAmount().toString());
+							nameValueDto.setValue( Double.toString((Double.parseDouble(nameValueDto.getValue()) + element.getAmount())));
 						}
 					});
-					break;
-
-				case 4:
+					
 					modelsRecm.forEach(element -> {
 						if (getDate(element, type).equalsIgnoreCase(e)
 								&& element.getDocCode().equalsIgnoreCase("GLRC")) {
-							nameValueDto.setValue(element.getAmount().toString());
+							nameValueDto.setValue( Double.toString((Double.parseDouble(nameValueDto.getValue()) + element.getAmount())));
 						}
 					});
+					
 					break;
 
 				default:
@@ -648,6 +666,7 @@ public class DashboardServiceImpl implements DashboardService {
 		SimpleDateFormat sdf = null;
 		String sql = "";
 		String sql2 = "";
+		String sql3 = "";
 
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(from);
@@ -663,8 +682,9 @@ public class DashboardServiceImpl implements DashboardService {
 				datesInRange.add(sdf.format(result));
 				calendar.add(Calendar.DATE, 1);
 			}
-			sql = ", year(creadt), month(creadt), day(creadt)";
+			sql = ",year(x.creadt), month(x.creadt), day(x.creadt)";
 			sql2 = ", year(CRE_DATE), month(CRE_DATE), day(CRE_DATE)";
+			sql3 = ", y.year, y.month,y.day";
 
 		} else if (type.equalsIgnoreCase("m")) {
 			sdf = new SimpleDateFormat("yyyy-MM");
@@ -674,8 +694,9 @@ public class DashboardServiceImpl implements DashboardService {
 				datesInRange.add(sdf.format(result));
 				calendar.add(Calendar.MONTH, 1);
 			}
-			sql = ", year(creadt), month(creadt)";
+			sql = ",year(x.creadt), month(x.creadt)";
 			sql2 = ", year(CRE_DATE), month(CRE_DATE)";
+			sql3 = ", y.year, y.month";
 
 		} else if (type.equalsIgnoreCase("y")) {
 			sdf = new SimpleDateFormat("yyyy");
@@ -685,11 +706,12 @@ public class DashboardServiceImpl implements DashboardService {
 				datesInRange.add(sdf.format(result));
 				calendar.add(Calendar.YEAR, 1);
 			}
-			sql = ", year(creadt)";
+			sql = ",year(x.creadt)";
 			sql2 = ", year(CRE_DATE)";
+			sql3 = ", y.year";
 		}
 
-		List<PayModeGridModel> models = dashboardDao.getPayModeFromInTransactionsGrid(toDate, fromDate, user, sql);
+		List<PayModeGridModel> models = dashboardDao.getPayModeFromInTransactionsGrid(toDate, fromDate, user, sql, sql3);
 		List<PayModeGridModel> modelsRecm = dashboardDao.getPayModeFromFromRecmGrid(toDate, fromDate, user, sql2);
 		List<PayModeGridModel> modelsTxnm = dashboardDao.getPayModeFromTxnmGrid(toDate, fromDate, user, sql2);
 		//////////////////////////// initialize Dates to

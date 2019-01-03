@@ -47,7 +47,7 @@ public interface DashboardDao {
 	public List<DashboardDetailsModel> getCashFlowGridRecm(String toDate, String fromDate, String user, String type) throws Exception;
 
 	public List<PayModeGridModel> getPayModeFromInTransactionsGrid(String toDateInTran, String fromDate, String user,
-			String sql) throws Exception;
+			String sql, String sq2) throws Exception;
 
 	public List<PayModeGridModel> getPayModeFromFromRecmGrid(String toDate, String fromDate, String user, String sql2) throws Exception;
 
