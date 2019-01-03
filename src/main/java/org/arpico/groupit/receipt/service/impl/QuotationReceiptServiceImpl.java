@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.arpico.groupit.receipt.client.InfosysWSClient;
 import org.arpico.groupit.receipt.client.QuotationClient;
 import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.BenefictDetailsDao;
@@ -31,6 +32,7 @@ import org.arpico.groupit.receipt.dto.QuoBenfDto;
 import org.arpico.groupit.receipt.dto.QuoChildBenefDto;
 import org.arpico.groupit.receipt.dto.ReceiptPrintDto;
 import org.arpico.groupit.receipt.dto.ResponseDto;
+import org.arpico.groupit.receipt.dto.SMSDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.dto.SheduleDto;
 import org.arpico.groupit.receipt.dto.SurrenderValsDto;
@@ -127,6 +129,9 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 	
 	@Autowired
 	private JwtDecoder decoder;
+	
+	@Autowired
+	private InfosysWSClient infosysWSClient;
 
 	@Override
 	public ResponseDto saveQuotationReceipt(SaveReceiptDto saveReceiptDto) throws Exception {
@@ -310,6 +315,14 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					;
 					responseDto.setMessage(numberGen[1]);
 					responseDto.setData(itextReceipt.createReceipt(dto));
+					
+					SMSDto smsDto=new SMSDto();
+					smsDto.setDocCode("RCNB");
+					smsDto.setSmsType("quotation");
+					smsDto.setRcptNo(Integer.toString(dto.getDocNum()));
+					smsDto.setUserCode(agentCode);;
+					
+					infosysWSClient.sendSMS(smsDto);
 
 				} else {
 

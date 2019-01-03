@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.arpico.groupit.receipt.client.InfosysWSClient;
 import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.InAgentMastDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
@@ -39,6 +40,7 @@ import org.arpico.groupit.receipt.dto.ProposalL3Dto;
 import org.arpico.groupit.receipt.dto.ProposalNoSeqNoDto;
 import org.arpico.groupit.receipt.dto.ReceiptPrintDto;
 import org.arpico.groupit.receipt.dto.ResponseDto;
+import org.arpico.groupit.receipt.dto.SMSDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.model.AgentMastModel;
 import org.arpico.groupit.receipt.model.AgentModel;
@@ -166,6 +168,9 @@ public class ProposalServiceImpl implements ProposalServce {
 	
 	@Autowired
 	private JwtDecoder decoder;
+	
+	@Autowired
+	private InfosysWSClient infosysWSClient;
 
 	@Override
 	public List<ProposalNoSeqNoDto> getProposalNoSeqNoDtoList(String val) throws Exception {
@@ -276,6 +281,15 @@ public class ProposalServiceImpl implements ProposalServce {
 					responseDto.setStatus("Success");
 					responseDto.setMessage(inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum().toString());
 					responseDto.setData(itextReceipt.createReceipt(dto));
+					
+					
+					SMSDto smsDto=new SMSDto();
+					smsDto.setDocCode("RCPP");
+					smsDto.setSmsType("proposal");
+					smsDto.setRcptNo(Integer.toString(dto.getDocNum()));
+					smsDto.setUserCode(agentCode);;
+					
+					infosysWSClient.sendSMS(smsDto);
 					
 					return new ResponseEntity<>(responseDto, HttpStatus.OK);
 					

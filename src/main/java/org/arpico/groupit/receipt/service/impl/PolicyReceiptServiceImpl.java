@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.arpico.groupit.receipt.client.InfosysWSClient;
 import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.InAgentMastDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
@@ -18,6 +19,7 @@ import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
 import org.arpico.groupit.receipt.dto.ProposalNoSeqNoDto;
 import org.arpico.groupit.receipt.dto.ReceiptPrintDto;
 import org.arpico.groupit.receipt.dto.ResponseDto;
+import org.arpico.groupit.receipt.dto.SMSDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.model.AgentMastModel;
 import org.arpico.groupit.receipt.model.AgentModel;
@@ -88,6 +90,9 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 	@Autowired
 	private ItextReceipt itextReceipt;
+	
+	@Autowired
+	private InfosysWSClient infosysWSClient;
 
 	@Override
 	public List<ProposalNoSeqNoDto> getPolicyNoSeqNoDtoList(String val) throws Exception {
@@ -208,6 +213,14 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 				dto.setStatus("Success");
 				dto.setMessage(deposit.getBillingTransactionsModelPK().getDocnum().toString());
 				dto.setData(itextReceipt.createReceipt(printDto));
+				
+				SMSDto smsDto=new SMSDto();
+				smsDto.setDocCode("RCPL");
+				smsDto.setSmsType("policy");
+				smsDto.setRcptNo(Integer.toString(printDto.getDocNum()));
+				smsDto.setUserCode(agentCode);;
+				
+				infosysWSClient.sendSMS(smsDto);
 
 				return new ResponseEntity<>(dto, HttpStatus.OK);
 				
