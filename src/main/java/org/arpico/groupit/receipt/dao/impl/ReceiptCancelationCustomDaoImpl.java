@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import org.arpico.groupit.receipt.dao.ReceiptCancelationCustomDao;
 import org.arpico.groupit.receipt.dao.rowmapper.CanceledReceiptRowMapper;
+import org.arpico.groupit.receipt.dao.rowmapper.InLoanTransactionRowMapper;
 import org.arpico.groupit.receipt.dao.rowmapper.InTransactionRowMapper;
 import org.arpico.groupit.receipt.model.CanceledReceiptModel;
+import org.arpico.groupit.receipt.model.InLoanTransactionsModel;
 import org.arpico.groupit.receipt.model.InTransactionsModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -27,9 +29,9 @@ public class ReceiptCancelationCustomDaoImpl implements ReceiptCancelationCustom
 		String sql="";
 		
 		if(isHo) {
-			sql="select docnum from intransactions where sbucod='450' and docnum like '"+receiptId+"%' ";
+			sql="select docnum from intransactions where sbucod='450' and docnum like '"+receiptId+"%' union all select docnum from inloantransactions where sbucod='450' and docnum like '"+receiptId+"%'";
 		}else {
-			sql="select docnum from intransactions where sbucod='450' and loccod in ("+loccodes+") and docnum like '"+receiptId+"%' ";
+			sql="select docnum from intransactions where sbucod='450' and loccod in ("+loccodes+") and docnum like '"+receiptId+"%' union all select docnum from inloantransactions where sbucod='450' and loccod in ("+loccodes+") and docnum like '"+receiptId+"%'";
 		}
 		
 		receiptIdList = jdbcTemplate.query(sql, new ResultSetExtractor<List<String>>() {
@@ -77,9 +79,27 @@ public class ReceiptCancelationCustomDaoImpl implements ReceiptCancelationCustom
 	
 	
 	@Override
-	public InTransactionsModel findTransctionRow(String sbucode, String docnum,String doccod,String creby) throws Exception {
+	public InTransactionsModel findTransctionRow(String sbucode, String docnum,String doccod,String creby,boolean isHo) throws Exception {
 		InTransactionsModel transaction=null;
-		transaction=jdbcTemplate.queryForObject("SELECT * FROM intransactions where sbucod='"+sbucode+"' and docnum=(SELECT docnum FROM intransactions where sbucod='"+sbucode+"' and docnum='"+docnum+"' and doccod='"+doccod+"' and creaby='"+creby+"') and doccod='"+doccod+"'  having sum(totprm) > 0 ", new InTransactionRowMapper());
+		if(isHo) {
+			transaction=jdbcTemplate.queryForObject("SELECT * FROM intransactions where sbucod='"+sbucode+"' and docnum='"+docnum+"' and doccod='"+doccod+"'  having sum(totprm) > 0 ", new InTransactionRowMapper());
+		}else {
+			transaction=jdbcTemplate.queryForObject("SELECT * FROM intransactions where sbucod='"+sbucode+"' and docnum=(SELECT docnum FROM intransactions where sbucod='"+sbucode+"' and docnum='"+docnum+"' and doccod='"+doccod+"' and creaby='"+creby+"') and doccod='"+doccod+"'  having sum(totprm) > 0 ", new InTransactionRowMapper());
+		}
+		
+		
+		return transaction;
+	}
+	
+	@Override
+	public InLoanTransactionsModel findLoanTransctionRow(String sbucode, String docnum,String doccod,String creby,boolean isHo) throws Exception {
+		InLoanTransactionsModel transaction=null;
+		if(isHo) {
+			transaction=jdbcTemplate.queryForObject("SELECT * FROM inloantransactions where sbucod='"+sbucode+"' and docnum='"+docnum+"' and doccod='"+doccod+"'  having sum(totprm) > 0 ", new InLoanTransactionRowMapper());
+		}else {
+			transaction=jdbcTemplate.queryForObject("SELECT * FROM inloantransactions where sbucod='"+sbucode+"' and docnum=(SELECT docnum FROM inloantransactions where sbucod='"+sbucode+"' and docnum='"+docnum+"' and doccod='"+doccod+"' and creaby='"+creby+"') and doccod='"+doccod+"'  having sum(totprm) > 0 ", new InLoanTransactionRowMapper());
+		}
+		
 		
 		return transaction;
 	}
