@@ -7,12 +7,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-<<<<<<< HEAD
-=======
-import javax.transaction.Transactional;
-
 import org.arpico.groupit.receipt.client.InfosysWSClient;
->>>>>>> origin/feature-changes-v3
 import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsDao;
@@ -72,6 +67,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -317,6 +313,14 @@ public class ProposalServiceImpl implements ProposalServce {
 								inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum().toString());
 						responseDto.setData(itextReceipt.createReceipt(dto));
 
+						SMSDto smsDto=new SMSDto();
+						smsDto.setDocCode("RCPP");
+						smsDto.setSmsType("proposal");
+						smsDto.setRcptNo(Integer.toString(dto.getDocNum()));
+						smsDto.setUserCode(userCode);;
+						
+						infosysWSClient.sendSMS(smsDto);
+						
 						return new ResponseEntity<>(responseDto, HttpStatus.OK);
 
 					} catch (Exception e) {
@@ -332,30 +336,7 @@ public class ProposalServiceImpl implements ProposalServce {
 
 				} else {
 					ResponseDto responseDto = new ResponseDto();
-<<<<<<< HEAD
 					responseDto.setCode("204");
-=======
-					responseDto.setCode("200");
-					responseDto.setStatus("Success");
-					responseDto.setMessage(inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum().toString());
-					responseDto.setData(itextReceipt.createReceipt(dto));
-					
-					
-					SMSDto smsDto=new SMSDto();
-					smsDto.setDocCode("RCPP");
-					smsDto.setSmsType("proposal");
-					smsDto.setRcptNo(Integer.toString(dto.getDocNum()));
-					smsDto.setUserCode(agentCode);;
-					
-					infosysWSClient.sendSMS(smsDto);
-					
-					return new ResponseEntity<>(responseDto, HttpStatus.OK);
-					
-				}catch (Exception e) {
-					e.printStackTrace();
-					ResponseDto responseDto = new ResponseDto();
-					responseDto.setCode("500");
->>>>>>> origin/feature-changes-v3
 					responseDto.setStatus("Error");
 					responseDto.setMessage("Proposal Not Found");
 					return new ResponseEntity<>(responseDto, HttpStatus.OK);
@@ -378,7 +359,7 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	private void saveReceipt(InTransactionsModel inTransactionsModel,
 			InBillingTransactionsModel inBillingTransactionsModel) {
 		inTransactionDao.save(inTransactionsModel);
@@ -432,11 +413,13 @@ public class ProposalServiceImpl implements ProposalServce {
 		return printDto;
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Override
 	public void checkPolicy(InProposalsModel inProposalsModel, Integer pprNo, Integer seqNo,
 			SaveReceiptDto saveReceiptDto, String userCode, String locCode, InBillingTransactionsModel deposit)
 			throws Exception {
+		
+		try {
 		if (inProposalsModel.getPprsta().equalsIgnoreCase("L3")) {
 
 			List<ProposalL3Dto> proposalL3Dtos = inProposalCustomDao.checkL3(saveReceiptDto.getPropId());
@@ -562,6 +545,9 @@ public class ProposalServiceImpl implements ProposalServce {
 			System.out.println("FAIL CHECK POLICY");
 		}
 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private List<InPropSurrenderValsModel> incrementSurrenderVals(
@@ -902,5 +888,4 @@ public class ProposalServiceImpl implements ProposalServce {
 		dto.setSeqNum(e.getInProposalsModelPK().getPrpseq());
 		return dto;
 	}
-
 }

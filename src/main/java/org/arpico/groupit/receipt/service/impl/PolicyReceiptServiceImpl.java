@@ -44,6 +44,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -221,7 +222,9 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 							List<InBillingTransactionsModel> setoffs = setoffService.setoff(inProposalsModel, userCode,
 									locCode, saveReceiptDto, deposit, hrbamt, null, "OLD", Integer.parseInt(batNoArr2[1]));
 
-							inBillingTransactionDao.save(setoffs);
+							saveTransactions(setoffs);
+							
+							
 
 						} else {
 							ResponseDto responseDto = new ResponseDto();
@@ -251,6 +254,15 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 					dto.setMessage(deposit.getBillingTransactionsModelPK().getDocnum().toString());
 					dto.setData(itextReceipt.createReceipt(printDto));
 
+					
+					SMSDto smsDto=new SMSDto();
+					smsDto.setDocCode("RCPL");
+					smsDto.setSmsType("policy");
+					smsDto.setRcptNo(Integer.toString(printDto.getDocNum()));
+					smsDto.setUserCode(userCode);;
+					
+					infosysWSClient.sendSMS(smsDto);
+					
 					return new ResponseEntity<>(dto, HttpStatus.OK);
 
 				} catch (Exception e) {
@@ -263,38 +275,12 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 					return new ResponseEntity<>(dto, HttpStatus.INTERNAL_SERVER_ERROR);
 				}
 
-<<<<<<< HEAD
 			} else {
 				ResponseDto responseDto = new ResponseDto();
 				responseDto.setCode("204");
 				responseDto.setStatus("Error");
 				responseDto.setMessage("Batch No not Created");
 				return new ResponseEntity<>(responseDto, HttpStatus.OK);
-=======
-				dto = new ResponseDto();
-				dto.setCode("200");
-				dto.setStatus("Success");
-				dto.setMessage(deposit.getBillingTransactionsModelPK().getDocnum().toString());
-				dto.setData(itextReceipt.createReceipt(printDto));
-				
-				SMSDto smsDto=new SMSDto();
-				smsDto.setDocCode("RCPL");
-				smsDto.setSmsType("policy");
-				smsDto.setRcptNo(Integer.toString(printDto.getDocNum()));
-				smsDto.setUserCode(agentCode);;
-				
-				infosysWSClient.sendSMS(smsDto);
-
-				return new ResponseEntity<>(dto, HttpStatus.OK);
-				
-			} catch (Exception e) {
-				dto = new ResponseDto();
-				dto.setCode("500");
-				dto.setStatus("Error");
-				dto.setMessage("Error at receipt Saving");
-				dto.setData(itextReceipt.createReceipt(printDto));
-				return new ResponseEntity<>(dto, HttpStatus.INTERNAL_SERVER_ERROR);
->>>>>>> origin/feature-changes-v3
 			}
 
 		}
@@ -307,7 +293,12 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		return new ResponseEntity<>(dto, HttpStatus.NOT_FOUND);
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	private void saveTransactions(List<InBillingTransactionsModel> setoffs) {
+		inBillingTransactionDao.save(setoffs);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	private void saveReceipt(InTransactionsModel inTransactionsModel, InBillingTransactionsModel deposit) {
 		inTransactionDao.save(inTransactionsModel);
 		inBillingTransactionDao.save(deposit);

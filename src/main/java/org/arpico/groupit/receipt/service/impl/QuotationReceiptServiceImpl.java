@@ -323,15 +323,16 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 							"Successfully saved. Proposal Number : " + numberGen[1] + ", Receipt No : RCNB / "
 									+ inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum());
 					responseDto.setMessage(numberGen[1]);
-					responseDto.setData(itextReceipt.createReceipt(dto));
 					
 					SMSDto smsDto=new SMSDto();
 					smsDto.setDocCode("RCNB");
 					smsDto.setSmsType("quotation");
 					smsDto.setRcptNo(Integer.toString(dto.getDocNum()));
-					smsDto.setUserCode(agentCode);;
+					smsDto.setUserCode(userCode);;
 					
 					infosysWSClient.sendSMS(smsDto);
+					
+					responseDto.setData(itextReceipt.createReceipt(dto));
 
 				} else {
 

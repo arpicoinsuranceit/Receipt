@@ -26,22 +26,14 @@ public class ReceiptCancelationCustomDaoImpl implements ReceiptCancelationCustom
 	@Override
 	public List<String> findReceiptLikeReceiptId(String receiptId, String loccodes, boolean isHo) throws Exception {
 		List<String> receiptIdList = null;
-<<<<<<< HEAD
-		String sql = "";
 
-		if (isHo) {
-			sql = "select docnum from intransactions where sbucod='450' and docnum like '" + receiptId + "%' ";
-		} else {
-			sql = "select docnum from intransactions where sbucod='450' and loccod in (" + loccodes
-					+ ") and docnum like '" + receiptId + "%' ";
-=======
 		String sql="";
 		
 		if(isHo) {
 			sql="select docnum from intransactions where sbucod='450' and docnum like '"+receiptId+"%' union all select docnum from inloantransactions where sbucod='450' and docnum like '"+receiptId+"%'";
 		}else {
 			sql="select docnum from intransactions where sbucod='450' and loccod in ("+loccodes+") and docnum like '"+receiptId+"%' union all select docnum from inloantransactions where sbucod='450' and loccod in ("+loccodes+") and docnum like '"+receiptId+"%'";
->>>>>>> origin/feature-changes-v3
+
 		}
 
 		receiptIdList = jdbcTemplate.query(sql, new ResultSetExtractor<List<String>>() {
@@ -148,5 +140,7 @@ public class ReceiptCancelationCustomDaoImpl implements ReceiptCancelationCustom
 
 		return count;
 	}
+
+	
 
 }
