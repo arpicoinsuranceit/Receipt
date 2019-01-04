@@ -83,6 +83,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -526,7 +527,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	}
 
 	
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	private void saveProposalNotApprove(InProposalsModel newInProposalsModel,
 			List<InPropLoadingModel> inPropLoadingModels, List<InPropAddBenefitModel> addBenefitModels,
 			List<InPropFamDetailsModel> propFamDetailsModels, List<InPropSchedulesModel> inPropScheduleList,
@@ -1117,7 +1118,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		return inPropNomDetailsModels;
 	}
 	
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	private void saveProposal(InProposalsModel inProposalsModel, InProposalsModel newInProposalsModel,
 			List<InPropLoadingModel> inPropLoadingModels, List<InPropAddBenefitModel> addBenefitModels,
 			List<InPropFamDetailsModel> propFamDetailsModels, List<InPropSchedulesModel> inPropScheduleList,
@@ -1201,7 +1202,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		
 	}
 	
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	private String saveCourierDocument(Integer pprNo, Integer seqNo,String branchCode, String userCode) throws Exception {
 		
 		List<InPropMedicalReqModel> medicalReqModels=propMedicalReqCustomDao.getMedicalReqByPprNoAndSeq(pprNo, seqNo);

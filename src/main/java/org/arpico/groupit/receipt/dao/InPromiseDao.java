@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.arpico.groupit.receipt.model.InPromisesModel;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface InPromiseDao extends CrudRepository<InPromisesModel, Integer> {
+public interface InPromiseDao extends JpaRepository<InPromisesModel, Integer> {
 
 	List<InPromisesModel> findAllBySbuCodeAndActiveOrderByCreateDateDesc(String sbuCode, Integer active,
 			Pageable pageable) throws Exception;

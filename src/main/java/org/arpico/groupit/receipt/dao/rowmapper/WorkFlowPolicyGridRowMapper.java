@@ -9,6 +9,7 @@ public class WorkFlowPolicyGridRowMapper implements RowMapper<WorkFlowPolicyGrid
 
 	@Override
 	public WorkFlowPolicyGridModel mapRow(ResultSet rs, int rowNum) throws SQLException {
+		
 		WorkFlowPolicyGridModel model = new WorkFlowPolicyGridModel();
 		
 		model.setAgent(rs.getString("agent"));
@@ -18,6 +19,13 @@ public class WorkFlowPolicyGridRowMapper implements RowMapper<WorkFlowPolicyGrid
 		model.setPpdini(rs.getString("ppdini"));
 		model.setTotprm(rs.getDouble("totprm"));
 		model.setProposal(rs.getString("pprnum"));
+		model.setPprNum(rs.getString("pprnum"));
+		
+		try {
+			model.setHealth(rs.getString("health"));
+		}catch (Exception e) {
+			System.out.println("No Health");
+		}
 		
 		return model;
 	}

@@ -2,8 +2,8 @@ package org.arpico.groupit.receipt.dao;
 
 import org.arpico.groupit.receipt.model.InPropMedicalReqModel;
 import org.arpico.groupit.receipt.model.pk.InPropMedicalReqModelPK;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface InPropMedicalReqDao extends CrudRepository<InPropMedicalReqModel, InPropMedicalReqModelPK>{
+public interface InPropMedicalReqDao extends JpaRepository<InPropMedicalReqModel, InPropMedicalReqModelPK>{
 
 }
