@@ -30,6 +30,9 @@ public class DashboardDaoImpl implements DashboardDao {
 				+ "    where sbucod = '450' and doccod in ('RCNB','RCPP','RCPL') and creaby = '" + user + "' "
 				+ "and date_format(creadt,'%Y-%m-%d') between '" + from + "' and  '" + to + "' group by doccod";*/
 		
+		
+		System.out.println("getFromInTransaction DashboardPieModel");
+		
 		String query = "select x.doccod, count(x.docnum) as count, sum(x.totprm) as amount   FROM intransactions x inner join  " + 
 				"    (select sbucod,docnum,doccod from intransactions where sbucod='450' and doccod in ('RCNB','RCPP','RCPL') and creaby = '"+user+"' and date_format(creadt,'%Y-%m-%d') between '"+from+"' and  '"+to+"' group by docnum) y " + 
 				"    on x.sbucod=y.sbucod and x.docnum=y.docnum and x.doccod=y.doccod where date_format(x.creadt,'%Y-%m-%d') between '"+from+"' and  '"+to+"' group by x.doccod " + 
@@ -160,11 +163,24 @@ public class DashboardDaoImpl implements DashboardDao {
 	public List<DashboardDetailsModel> getDashDetailsInTrans(String toDate, String fromDate, String user, String type)
 			throws Exception {
 
-		String query = "SELECT doccod as DOCCODE, docnum as DOCNUM, pprnum as REMARK, totprm as AMOUNT, creadt as CREATEDT  FROM intransactions "
+		/*String query = "SELECT doccod as DOCCODE, docnum as DOCNUM, pprnum as REMARK, totprm as AMOUNT, creadt as CREATEDT  FROM intransactions "
 				+ "    where sbucod = '450' and doccod = '" + type + "' and creaby = '" + user
 				+ "' and date_format(creadt,'%Y-%m-%d') between '" + fromDate + "' and  '" + toDate
-				+ "' order by creadt";
-
+				+ "' order by creadt";*/
+		String query = "";
+		
+		System.out.println(type);
+		
+		if(type.equals("RCLN")) {
+			query = "select x.doccod as DOCCODE, x.docnum as DOCNUM, x.pprnum as REMARK, x.totprm as AMOUNT, x.creadt as CREATEDT   FROM inloantransactions x inner join  " + 
+					"    (select sbucod,docnum,doccod from inloantransactions where sbucod='450' and doccod = '"+type+"' and creaby = '"+user+"' and date_format(creadt,'%Y-%m-%d') between '"+fromDate+"' and  '"+toDate+"' group by docnum) y " + 
+					"    on x.sbucod=y.sbucod and x.docnum=y.docnum and x.doccod=y.doccod where date_format(x.creadt,'%Y-%m-%d') between '"+fromDate+"' and  '"+toDate+"' order by x.creadt";
+		} else {
+			query = "select x.doccod as DOCCODE, x.docnum as DOCNUM, x.pprnum as REMARK, x.totprm as AMOUNT, x.creadt as CREATEDT   FROM intransactions x inner join  " + 
+					"    (select sbucod,docnum,doccod from intransactions where sbucod='450' and doccod = '"+type+"' and creaby = '"+user+"' and date_format(creadt,'%Y-%m-%d') between '"+fromDate+"' and  '"+toDate+"' group by docnum) y " + 
+					"    on x.sbucod=y.sbucod and x.docnum=y.docnum and x.doccod=y.doccod where date_format(x.creadt,'%Y-%m-%d') between '"+fromDate+"' and  '"+toDate+"' order by x.creadt";
+		}
+		
 		/*
 		 * String query =
 		 * "SELECT doccod as DOCCODE, docnum as DOCNUM, pprnum as REMARK, totprm as AMOUNT, creadt as CREATEDT  FROM intransactions"
@@ -228,6 +244,8 @@ public class DashboardDaoImpl implements DashboardDao {
 		 * + user + "' and date_format(creadt,'%Y-%m-%d') between '" + from + "' and  '"
 		 * + to + "' " + "    group by doccod, paymod";
 		 */
+		
+		System.out.println("getCashFlowDetails");
 
 		String query2 = "select x.doccod as doccode, count(x.docnum) as count, sum(x.totprm) as amount,  x.paymod as PAYMODE   FROM intransactions x inner join  "
 				+ "    (select sbucod,docnum,doccod from intransactions where sbucod='450' and doccod in ('RCNB','RCPP','RCPL') and creaby = '"
@@ -290,9 +308,17 @@ public class DashboardDaoImpl implements DashboardDao {
 	public List<DashboardDetailsModel> getCashFlowGridInTrans(String to, String from, String user, String type)
 			throws Exception {
 
-		String query = "SELECT doccod as DOCCODE, docnum as DOCNUM, pprnum as REMARK, totprm as AMOUNT, creadt as CREATEDT  FROM intransactions "
+		/*String query = "SELECT doccod as DOCCODE, docnum as DOCNUM, pprnum as REMARK, totprm as AMOUNT, creadt as CREATEDT  FROM intransactions "
 				+ "    where sbucod = '450' and creaby = '" + user + "' and date_format(creadt,'%Y-%m-%d') between '"
-				+ from + "' and  '" + to + "' and paymod = '" + type + "' order by creadt";
+				+ from + "' and  '" + to + "' and paymod = '" + type + "' order by creadt";*/
+		
+		String query = "select x.doccod as DOCCODE, x.docnum as DOCNUM, x.pprnum as REMARK, x.totprm as AMOUNT, x.creadt as CREATEDT   FROM intransactions x inner join  " + 
+				"    (select sbucod,docnum,doccod from intransactions where sbucod='450' and doccod in ('RCNB','RCPP','RCPL') and creaby = '" +user+ "' and date_format(creadt,'%Y-%m-%d') between '"+from+"' and  '"+to+"' and paymod = '"+type+"' group by docnum) y " + 
+				"    on x.sbucod=y.sbucod and x.docnum=y.docnum and x.doccod=y.doccod where date_format(x.creadt,'%Y-%m-%d') between '"+from+"' and  '"+to+"' " + 
+				"    union all " + 
+				"      select x.doccod as DOCCODE, x.docnum as DOCNUM, x.pprnum as REMARK, x.totprm as AMOUNT, x.creadt as CREATEDT  FROM inloantransactions x inner join  " + 
+				"    (select sbucod,docnum,doccod from inloantransactions where sbucod='450' and doccod ='RCLN' and creaby = '"+user+"' and date_format(creadt,'%Y-%m-%d') between '"+from+"' and  '"+to+"' and paymod = '"+type+"' group by docnum) y " + 
+				"    on x.sbucod=y.sbucod and x.docnum=y.docnum and x.doccod=y.doccod where date_format(x.creadt,'%Y-%m-%d') between '"+from+"' and  '"+to+"'";
 
 		/*
 		 * String sql =

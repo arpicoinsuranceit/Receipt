@@ -66,6 +66,8 @@ public class DashboardServiceImpl implements DashboardService {
 
 		List<DashboardPieModel> translist = dashboardDao.getFromInTransaction(toDateInTran, fromDate, user);
 
+		System.out.println("loop start");
+		
 		for (DashboardPieModel e : translist) {
 			switch (e.getDocCode()) {
 			case "RCNB":
@@ -91,6 +93,9 @@ public class DashboardServiceImpl implements DashboardService {
 				dtos.set(2, dto3);
 				break;
 			case "RCLN":
+				
+				System.out.println("RCLN");
+				
 				NameValuePairDto dto4 = dtos.get(4);
 				dto4.setCount(e.getCount().toString());
 				dto4.setValue(e.getAmount().toString());
@@ -340,6 +345,7 @@ public class DashboardServiceImpl implements DashboardService {
 		List<LastReceiptSummeryDto> dtos = new ArrayList<>();
 
 		List<DashboardDetailsModel> dashboardDetailsModels = null;
+		List<DashboardDetailsModel> dashboardDetailsModels2 = null;
 
 		switch (type) {
 		case "RCNB":
@@ -357,14 +363,17 @@ public class DashboardServiceImpl implements DashboardService {
 			dashboardDetailsModels = dashboardDao.getDashDetailsInTrans(to, from, user, type);
 
 			break;
+			
+		case "RCLN":
+
+			dashboardDetailsModels = dashboardDao.getDashDetailsInTrans(to, from, user, type);
+
+			break;
+			
 		case "GLRC":
 
 			dashboardDetailsModels = dashboardDao.getDashDetailsRecm(to, from, user, type);
-
-			break;
-		case "OIIS":
-
-			dashboardDetailsModels = dashboardDao.getDashDetailsTxnm(to, from, user, type);
+			dashboardDetailsModels2 = dashboardDao.getDashDetailsTxnm(to, from, user, type);
 
 			break;
 
@@ -374,6 +383,12 @@ public class DashboardServiceImpl implements DashboardService {
 
 		if (dashboardDetailsModels != null) {
 			dashboardDetailsModels.forEach(e -> {
+				dtos.add(getLastReceipt(e));
+			});
+		}
+		
+		if (dashboardDetailsModels2 != null) {
+			dashboardDetailsModels2.forEach(e -> {
 				dtos.add(getLastReceipt(e));
 			});
 		}
