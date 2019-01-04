@@ -7,6 +7,12 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+<<<<<<< HEAD
+=======
+import javax.transaction.Transactional;
+
+import org.arpico.groupit.receipt.client.InfosysWSClient;
+>>>>>>> origin/feature-changes-v3
 import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsDao;
@@ -36,6 +42,7 @@ import org.arpico.groupit.receipt.dto.ProposalL3Dto;
 import org.arpico.groupit.receipt.dto.ProposalNoSeqNoDto;
 import org.arpico.groupit.receipt.dto.ReceiptPrintDto;
 import org.arpico.groupit.receipt.dto.ResponseDto;
+import org.arpico.groupit.receipt.dto.SMSDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.dto.SearchDto;
 import org.arpico.groupit.receipt.model.AgentModel;
@@ -156,6 +163,9 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	@Autowired
 	private JwtDecoder decoder;
+	
+	@Autowired
+	private InfosysWSClient infosysWSClient;
 
 	@Override
 	public List<ProposalNoSeqNoDto> getProposalNoSeqNoDtoList(String val) throws Exception {
@@ -322,7 +332,30 @@ public class ProposalServiceImpl implements ProposalServce {
 
 				} else {
 					ResponseDto responseDto = new ResponseDto();
+<<<<<<< HEAD
 					responseDto.setCode("204");
+=======
+					responseDto.setCode("200");
+					responseDto.setStatus("Success");
+					responseDto.setMessage(inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum().toString());
+					responseDto.setData(itextReceipt.createReceipt(dto));
+					
+					
+					SMSDto smsDto=new SMSDto();
+					smsDto.setDocCode("RCPP");
+					smsDto.setSmsType("proposal");
+					smsDto.setRcptNo(Integer.toString(dto.getDocNum()));
+					smsDto.setUserCode(agentCode);;
+					
+					infosysWSClient.sendSMS(smsDto);
+					
+					return new ResponseEntity<>(responseDto, HttpStatus.OK);
+					
+				}catch (Exception e) {
+					e.printStackTrace();
+					ResponseDto responseDto = new ResponseDto();
+					responseDto.setCode("500");
+>>>>>>> origin/feature-changes-v3
 					responseDto.setStatus("Error");
 					responseDto.setMessage("Proposal Not Found");
 					return new ResponseEntity<>(responseDto, HttpStatus.OK);

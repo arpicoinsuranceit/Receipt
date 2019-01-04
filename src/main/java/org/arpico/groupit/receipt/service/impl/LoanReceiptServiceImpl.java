@@ -132,7 +132,7 @@ public class LoanReceiptServiceImpl implements LoanReceiptService{
 				inLoanTransactionsModel.setBildat(new Date());
 				inLoanTransactionsModel.setBilpik("Y");
 				inLoanTransactionsModel.setChqrel("N");
-				inLoanTransactionsModel.setCompad("N");
+				inLoanTransactionsModel.setCompad("Y");
 				inLoanTransactionsModel.setCreaby(agentCode);
 				inLoanTransactionsModel.setCreadt(new Date());
 				inLoanTransactionsModel.setCscode(inProposalsModel.getCscode());

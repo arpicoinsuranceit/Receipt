@@ -2,6 +2,7 @@ package org.arpico.groupit.receipt.dao;
 
 import java.util.List;
 import org.arpico.groupit.receipt.model.CanceledReceiptModel;
+import org.arpico.groupit.receipt.model.InLoanTransactionsModel;
 import org.arpico.groupit.receipt.model.InTransactionsModel;
 
 public interface ReceiptCancelationCustomDao {
@@ -12,12 +13,18 @@ public interface ReceiptCancelationCustomDao {
 	
 	String findGMEmail(String sbucode,String loccode) throws Exception;
 
+<<<<<<< HEAD
 	InTransactionsModel findTransctionRow(String sbucode, String docnum, String doccod, String creby) throws Exception;
 
 	List<CanceledReceiptModel> findPendingRequest(String locations, String string, boolean contains, Integer page,
 			Integer offset) throws Exception;
 
 	Integer findPendingRequestLength(String locations, String string, boolean contains)  throws Exception;
+=======
+	InTransactionsModel findTransctionRow(String sbucode, String docnum, String doccod, String creby, boolean b) throws Exception;
+	
+	InLoanTransactionsModel findLoanTransctionRow(String sbucode, String docnum, String doccod, String creby, boolean b) throws Exception;
+>>>>>>> origin/feature-changes-v3
 	
 	
 }

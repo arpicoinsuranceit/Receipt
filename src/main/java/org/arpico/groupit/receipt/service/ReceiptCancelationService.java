@@ -14,10 +14,14 @@ public interface ReceiptCancelationService {
 
 	List<CanceledReceiptDto> findCanceledRequest(String token) throws Exception;
 
+<<<<<<< HEAD
 	List<CanceledReceiptDto> findPendingRequest(String token, Integer page, Integer offset) throws Exception;
 
 	Integer findPendingRequestLength(String token)  throws Exception;
 
+=======
+	List<CanceledReceiptDto> findApprovedRequest(String token) throws Exception;
+>>>>>>> origin/feature-changes-v3
 	
 
 }

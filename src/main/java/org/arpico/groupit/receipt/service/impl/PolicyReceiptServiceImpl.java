@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.arpico.groupit.receipt.client.InfosysWSClient;
 import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.InAgentMastDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
@@ -19,6 +20,7 @@ import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
 import org.arpico.groupit.receipt.dto.ProposalNoSeqNoDto;
 import org.arpico.groupit.receipt.dto.ReceiptPrintDto;
 import org.arpico.groupit.receipt.dto.ResponseDto;
+import org.arpico.groupit.receipt.dto.SMSDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.model.AgentMastModel;
 import org.arpico.groupit.receipt.model.AgentModel;
@@ -92,6 +94,9 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 	@Autowired
 	private ItextReceipt itextReceipt;
+	
+	@Autowired
+	private InfosysWSClient infosysWSClient;
 
 	@Override
 	public List<ProposalNoSeqNoDto> getPolicyNoSeqNoDtoList(String val) throws Exception {
@@ -258,12 +263,38 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 					return new ResponseEntity<>(dto, HttpStatus.INTERNAL_SERVER_ERROR);
 				}
 
+<<<<<<< HEAD
 			} else {
 				ResponseDto responseDto = new ResponseDto();
 				responseDto.setCode("204");
 				responseDto.setStatus("Error");
 				responseDto.setMessage("Batch No not Created");
 				return new ResponseEntity<>(responseDto, HttpStatus.OK);
+=======
+				dto = new ResponseDto();
+				dto.setCode("200");
+				dto.setStatus("Success");
+				dto.setMessage(deposit.getBillingTransactionsModelPK().getDocnum().toString());
+				dto.setData(itextReceipt.createReceipt(printDto));
+				
+				SMSDto smsDto=new SMSDto();
+				smsDto.setDocCode("RCPL");
+				smsDto.setSmsType("policy");
+				smsDto.setRcptNo(Integer.toString(printDto.getDocNum()));
+				smsDto.setUserCode(agentCode);;
+				
+				infosysWSClient.sendSMS(smsDto);
+
+				return new ResponseEntity<>(dto, HttpStatus.OK);
+				
+			} catch (Exception e) {
+				dto = new ResponseDto();
+				dto.setCode("500");
+				dto.setStatus("Error");
+				dto.setMessage("Error at receipt Saving");
+				dto.setData(itextReceipt.createReceipt(printDto));
+				return new ResponseEntity<>(dto, HttpStatus.INTERNAL_SERVER_ERROR);
+>>>>>>> origin/feature-changes-v3
 			}
 
 		}
