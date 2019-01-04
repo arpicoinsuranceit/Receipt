@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.arpico.groupit.receipt.client.InfosysWSClient;
 import org.arpico.groupit.receipt.client.QuotationClient;
 import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.BenefictDetailsDao;
@@ -31,6 +32,7 @@ import org.arpico.groupit.receipt.dto.QuoBenfDto;
 import org.arpico.groupit.receipt.dto.QuoChildBenefDto;
 import org.arpico.groupit.receipt.dto.ReceiptPrintDto;
 import org.arpico.groupit.receipt.dto.ResponseDto;
+import org.arpico.groupit.receipt.dto.SMSDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.dto.SheduleDto;
 import org.arpico.groupit.receipt.dto.SurrenderValsDto;
@@ -127,6 +129,9 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 	@Autowired
 	private JwtDecoder decoder;
+	
+	@Autowired
+	private InfosysWSClient infosysWSClient;
 
 	@Override
 	public ResponseDto saveQuotationReceipt(SaveReceiptDto saveReceiptDto) throws Exception {
@@ -143,8 +148,10 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 			if (agentModels != null && agentModels.size() > 0) {
 
 				String[] numberGen = numberGenerator.generateNewId("", "", "PROSQ", "");
+				
+				String[] batNoArr = numberGenerator.generateNewId("", "", "#TXNSQ#", "");
 
-				if (numberGen[0].equals("Success")) {
+				if (numberGen[0].equals("Success") && batNoArr[0].equals("Success")) {
 
 					ViewQuotationDto resp = quotationClient.getQuotation(saveReceiptDto.getSeqNo(),
 							saveReceiptDto.getQuotationId());
@@ -290,8 +297,8 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					inBillingTransactionsModel.setTaxamt(0.0);
 					inBillingTransactionsModel.setAdmfee(0.0);
 					inBillingTransactionsModel.setPolfee(0.0);
-					inBillingTransactionsModel.setTxnbno(AppConstant.ZERO);
-
+					inBillingTransactionsModel.setTxnbno(Integer.parseInt(batNoArr[1]));
+					
 					inTransactionDao.save(inTransactionsModel);
 					inBillingTransactionDao.save(inBillingTransactionsModel);
 
@@ -316,6 +323,15 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 							"Successfully saved. Proposal Number : " + numberGen[1] + ", Receipt No : RCNB / "
 									+ inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum());
 					responseDto.setMessage(numberGen[1]);
+					
+					SMSDto smsDto=new SMSDto();
+					smsDto.setDocCode("RCNB");
+					smsDto.setSmsType("quotation");
+					smsDto.setRcptNo(Integer.toString(dto.getDocNum()));
+					smsDto.setUserCode(userCode);;
+					
+					infosysWSClient.sendSMS(smsDto);
+					
 					responseDto.setData(itextReceipt.createReceipt(dto));
 
 				} else {
@@ -481,59 +497,74 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 							switch (frequency) {
 							case "Monthly":
 								if (detModel.getLodcls() > 0) {
+									propLoadingModel.setOculod(detModel.getLodcls());
 									propLoadingModel.setOcuval(benfDto.getPremium());
 									propLoadingModel.setOcuvmt(benfDto.getPremium());
 								} else if (detModel.getRatmil() > 0) {
-									propLoadingModel.setRatmil(benfDto.getPremium());
+									propLoadingModel.setRatmil(detModel.getRatmil());
+									propLoadingModel.setRatval(benfDto.getPremium());
 									propLoadingModel.setRatvmt(benfDto.getPremium());
 								} else if (detModel.getSubrat() > 0) {
-									propLoadingModel.setSubrat(benfDto.getPremium());
+									propLoadingModel.setSubrat(detModel.getSubrat());
+									propLoadingModel.setSubval(benfDto.getPremium());
 									propLoadingModel.setSubvmt(benfDto.getPremium());
 								}
 								break;
 							case "Quartaly":
 								if (detModel.getLodcls() > 0) {
+									propLoadingModel.setOculod(detModel.getLodcls());
 									propLoadingModel.setOcuval(benfDto.getPremium());
 									propLoadingModel.setOcuvqt(benfDto.getPremium());
 								} else if (detModel.getRatmil() > 0) {
-									propLoadingModel.setRatmil(benfDto.getPremium());
+									propLoadingModel.setRatmil(detModel.getRatmil());
+									propLoadingModel.setRatval(benfDto.getPremium());
 									propLoadingModel.setRatvqt(benfDto.getPremium());
 								} else if (detModel.getSubrat() > 0) {
-									propLoadingModel.setSubrat(benfDto.getPremium());
+									propLoadingModel.setSubrat(detModel.getSubrat());
+									propLoadingModel.setSubval(benfDto.getPremium());
 									propLoadingModel.setSubvqt(benfDto.getPremium());
 								}
 								break;
 							case "Half Yearly":
 								if (detModel.getLodcls() > 0) {
+									propLoadingModel.setOculod(detModel.getLodcls());
 									propLoadingModel.setOcuval(benfDto.getPremium());
 									propLoadingModel.setOcuvhy(benfDto.getPremium());
 								} else if (detModel.getRatmil() > 0) {
-									propLoadingModel.setRatmil(benfDto.getPremium());
+									propLoadingModel.setRatmil(detModel.getRatmil());
+									propLoadingModel.setRatval(benfDto.getPremium());
 									propLoadingModel.setRatvhy(benfDto.getPremium());
 								} else if (detModel.getSubrat() > 0) {
-									propLoadingModel.setSubrat(benfDto.getPremium());
+									propLoadingModel.setSubrat(detModel.getSubrat());
+									propLoadingModel.setSubval(benfDto.getPremium());
 									propLoadingModel.setSubvhy(benfDto.getPremium());
 								}
 								break;
 							case "Yearly":
 								if (detModel.getLodcls() > 0) {
+									propLoadingModel.setOculod(detModel.getLodcls());
 									propLoadingModel.setOcuval(benfDto.getPremium());
 									propLoadingModel.setOcuvyr(benfDto.getPremium());
 								} else if (detModel.getRatmil() > 0) {
-									propLoadingModel.setRatmil(benfDto.getPremium());
+									propLoadingModel.setRatmil(detModel.getRatmil());
+									propLoadingModel.setRatval(benfDto.getPremium());
 									propLoadingModel.setRatvyr(benfDto.getPremium());
 								} else if (detModel.getSubrat() > 0) {
-									propLoadingModel.setSubrat(benfDto.getPremium());
+									propLoadingModel.setSubrat(detModel.getSubrat());
+									propLoadingModel.setSubval(benfDto.getPremium());
 									propLoadingModel.setSubvyr(benfDto.getPremium());
 								}
 								break;
 							case "Single Premium":
 								if (detModel.getLodcls() > 0) {
+									propLoadingModel.setOculod(detModel.getLodcls());
 									propLoadingModel.setOcuval(benfDto.getPremium());
 								} else if (detModel.getRatmil() > 0) {
-									propLoadingModel.setRatmil(benfDto.getPremium());
+									propLoadingModel.setRatmil(detModel.getRatmil());
+									propLoadingModel.setRatval(benfDto.getPremium());
 								} else if (detModel.getSubrat() > 0) {
-									propLoadingModel.setSubrat(benfDto.getPremium());
+									propLoadingModel.setSubrat(detModel.getSubrat());
+									propLoadingModel.setSubval(benfDto.getPremium());
 								}
 								// TODO
 								break;

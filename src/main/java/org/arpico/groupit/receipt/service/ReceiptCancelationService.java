@@ -18,6 +18,8 @@ public interface ReceiptCancelationService {
 
 	Integer findPendingRequestLength(String token)  throws Exception;
 
+	List<CanceledReceiptDto> findApprovedRequest(String token) throws Exception;
+
 	
 
 }

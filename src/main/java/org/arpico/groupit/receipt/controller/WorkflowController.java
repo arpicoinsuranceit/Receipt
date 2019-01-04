@@ -6,6 +6,7 @@ import java.util.List;
 import org.arpico.groupit.receipt.dto.CanceledReceiptDto;
 import org.arpico.groupit.receipt.dto.CodeTransferDto;
 import org.arpico.groupit.receipt.dto.CourierDto;
+import org.arpico.groupit.receipt.dto.MedicalRequirementsDto;
 import org.arpico.groupit.receipt.dto.PromisesGridDto;
 import org.arpico.groupit.receipt.dto.ShortPremiumDto;
 import org.arpico.groupit.receipt.dto.WorkFlowPolicyGridDto;
@@ -190,6 +191,20 @@ public class WorkflowController {
 		String userCode=new JwtDecoder().generate(token);
 		return workflowService.findPendingReqCount(userCode);
 		
+	}
+	
+	@RequestMapping(value="/getPendingReqDetails/{token:.+}/{pprno}",method=RequestMethod.GET)
+	public List<MedicalRequirementsDto> getPendingReqDetails(@PathVariable String token, @PathVariable Integer pprno) throws Exception{
+		
+		String userCode=new JwtDecoder().generate(token);
+		return workflowService.getPendingReqDetails(userCode, pprno);
+		
+	}
+	
+	@RequestMapping(value = "/getPendingLapsPolicies/{token:.+}/{type}/{date1}/{date2}", method = RequestMethod.GET)
+	public List<WorkFlowPolicyGridDto> getPendingLapsPolicies(@PathVariable("token") String token, @PathVariable("type") String type,
+			@PathVariable("date1") Integer date1, @PathVariable("date2") Integer date2) throws Exception {
+		return workflowService.getPendingLapsPolicies(token, type, date1, date2);
 	}
 
 }

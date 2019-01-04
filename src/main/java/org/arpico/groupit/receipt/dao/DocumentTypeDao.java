@@ -3,9 +3,9 @@ package org.arpico.groupit.receipt.dao;
 import java.util.List;
 
 import org.arpico.groupit.receipt.model.DocumentTypeModel;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DocumentTypeDao extends CrudRepository<DocumentTypeModel, Integer>{
+public interface DocumentTypeDao extends JpaRepository<DocumentTypeModel, Integer>{
 	
 	public List<DocumentTypeModel> findByDocName(String docName)throws Exception; 
 	

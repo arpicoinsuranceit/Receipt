@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.arpico.groupit.receipt.model.CodeTransferModel;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CodeTransferDao extends CrudRepository<CodeTransferModel, Integer>{
+public interface CodeTransferDao extends JpaRepository<CodeTransferModel, Integer>{
 	
 	public List<CodeTransferModel> findByStatusAndCreateBy(String status,String createBy)throws Exception;
 	
@@ -23,9 +23,9 @@ public interface CodeTransferDao extends CrudRepository<CodeTransferModel, Integ
 //import java.util.List;
 //
 //import org.arpico.groupit.receipt.model.CodeTransferModel;
-//import org.springframework.data.repository.CrudRepository;
+//import org.springframework.data.jpa.repository.JpaRepository;
 //
-//public interface CodeTransferDao extends CrudRepository<CodeTransferModel, Integer>{
+//public interface CodeTransferDao extends JpaRepository<CodeTransferModel, Integer>{
 //	
 //	public List<CodeTransferModel> findByStatusAndCreateBy(String status,String createBy)throws Exception;
 //	

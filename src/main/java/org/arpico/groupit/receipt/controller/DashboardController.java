@@ -92,7 +92,11 @@ public class DashboardController {
 			try {
 				to = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(toDate);
 			}catch (Exception ex) {
-				to = new Date(Long.parseLong(toDate));
+				try {
+					to = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss").parse(toDate);
+				}catch (Exception exp) {
+					to = new Date(Long.parseLong(toDate));
+				}
 			}
 		}
 
@@ -101,9 +105,14 @@ public class DashboardController {
 			from = sdf.parse(fromDate);
 		} catch (Exception e) {
 			try {
-				from = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(toDate);
+				from = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(fromDate);
 			}catch (Exception ex) {
-				from = new Date(Long.parseLong(toDate));
+				try {
+					from = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss").parse(fromDate);
+				}catch (Exception exp) {
+					from = new Date(Long.parseLong(fromDate));
+				}
+				
 			}
 		}
 
@@ -165,7 +174,7 @@ public class DashboardController {
 		System.out.println("from" + from);
 		System.out.println("to" + to);
 		
-
+System.out.println(type);
 		return dashboardService.getDetails(token, to, from, type);
 
 	}

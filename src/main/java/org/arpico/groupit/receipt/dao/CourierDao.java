@@ -3,9 +3,9 @@ package org.arpico.groupit.receipt.dao;
 import java.util.List;
 import org.arpico.groupit.receipt.model.CourierModel;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CourierDao extends CrudRepository<CourierModel, Integer>{
+public interface CourierDao extends JpaRepository<CourierModel, Integer>{
 	
 	public List<CourierModel> findByCourierStatusAndBranchCodeIn(String courierStatus,List<String> branches)throws Exception;
 	
