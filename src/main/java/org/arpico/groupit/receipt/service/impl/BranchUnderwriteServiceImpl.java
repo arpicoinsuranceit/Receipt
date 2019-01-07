@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.arpico.groupit.receipt.client.QuotationClient;
 import org.arpico.groupit.receipt.dao.BenefictDetailsDao;
@@ -83,7 +82,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -185,6 +183,11 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	private boolean isExistDepartment=false;
 	
 	private DepartmentCourierModel departmentCourierModel=null;
+	
+	private int adNumAge=99;
+	
+	private int adNumHB=168;
+	private int adNumCIC=19;
 
 	@Override
 	public UnderwriteDto getProposalToUnderwrite(String usercode, Integer pageIndex, Integer pageSize) throws Exception {
@@ -385,8 +388,11 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 				}
 				
 			}else {
-				inPropMedicalReqModels.add(getAdditionalReq("spouse", "AD-99","Additional Requirement", "Age Proof Spouse", newInProposalsModelPK.getPprnum(),
-						newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
+				if(newInProposalsModel.getSpodob() != null) {
+					inPropMedicalReqModels.add(getAdditionalReq("spouse", "AD-99","Additional Requirement", "Age Proof Spouse", newInProposalsModelPK.getPprnum(),
+							newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
+				}
+				
 			}
 			
 			//children age proof
@@ -428,25 +434,34 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 				});
 			}
 			
+			adNumAge=99;
+			
 			if(propFamDetailsModels != null) {
+				
 				propFamDetailsModels.forEach(fam -> {
-					inPropMedicalReqModels.add(getAdditionalReq("children", "AD-99","Additional Requirement", "Age Proof Child", newInProposalsModelPK.getPprnum(),
+					inPropMedicalReqModels.add(getAdditionalReq("children", "AD-"+adNumAge,"Additional Requirement", "Age Proof Child", newInProposalsModelPK.getPprnum(),
 							newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
+					adNumAge++;
 				});
 			}
 			
 			
 			/* HB and CIC Questionnaire */
+			adNumHB=168;
+			adNumCIC=19;
+			
 			if(!propFamDetailsModels.isEmpty()) {
 				propFamDetailsModels.forEach(fam -> {
 					if(fam.getHbcapp() == "Y") {
-						inPropMedicalReqModels.add(getAdditionalReq("children", "AD168", "Additional Requirement","HB Questionnire for Child", newInProposalsModelPK.getPprnum(),
+						inPropMedicalReqModels.add(getAdditionalReq("children", "AD"+adNumHB, "Additional Requirement","HB Questionnire for Child", newInProposalsModelPK.getPprnum(),
 								newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
+						adNumHB++;
 					}
 					
 					if(fam.getCicapp() == "Y") {
-						inPropMedicalReqModels.add(getAdditionalReq("children", "AD19", "Additional Requirement","CIC Questionnire for Child", newInProposalsModelPK.getPprnum(),
+						inPropMedicalReqModels.add(getAdditionalReq("children", "AD"+adNumCIC, "Additional Requirement","CIC Questionnire for Child", newInProposalsModelPK.getPprnum(),
 								newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
+						adNumCIC++;
 					}
 				});
 			}
