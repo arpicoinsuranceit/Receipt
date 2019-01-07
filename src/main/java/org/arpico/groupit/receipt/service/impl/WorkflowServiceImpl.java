@@ -598,21 +598,30 @@ public class WorkflowServiceImpl implements WorkflowService {
 		for (WorkFlowPolicyGridModel polGrid : flowPolicyGridModels) {
 
 			if (!promisesModels.isEmpty()) {
+
+				boolean isAvailable = true;
+
 				for (InPromisesModel promise : promisesModels) {
 
 					System.out.println(promise.getPolicyNo() + "       " + polGrid.getPolicy());
 
-					if (!(promise.getPprno().equals(polGrid.getProposal()))) {
+					if (promise.getPprno().equals(polGrid.getProposal())) {
 
-						WorkFlowPolicyGridDto dto = getFolwPolicyGridDto(polGrid);
+						isAvailable = false;
 
-						if (dto != null) {
-
-							flowPolicyGridDtos.add(dto);
-
-						}
 					}
 				}
+
+				if (isAvailable) {
+					WorkFlowPolicyGridDto dto = getFolwPolicyGridDto(polGrid);
+
+					if (dto != null) {
+
+						flowPolicyGridDtos.add(dto);
+
+					}
+				}
+
 			} else {
 				WorkFlowPolicyGridDto dto = getFolwPolicyGridDto(polGrid);
 
@@ -629,7 +638,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 	}
 
 	private WorkFlowPolicyGridDto getFolwPolicyGridDto(WorkFlowPolicyGridModel polGrid) {
-		
+
 		System.out.println(polGrid.getPprNum());
 		System.out.println(polGrid.getAgent());
 
@@ -764,16 +773,14 @@ public class WorkflowServiceImpl implements WorkflowService {
 
 		List<WorkFlowPolicyGridDto> flowPolicyGridDtos = new ArrayList<>();
 
-
 		String type2 = "PLISU";
-		
-		if(type.equals("PLAPP")) {
+
+		if (type.equals("PLAPP")) {
 			type2 = "PLAPS";
 		}
-		
+
 		if (branches.contains("HO")) {
-			
-			
+
 			promisesModels = inPromiseDao.findAllBySbuCodeAndActiveOrderByCreateDateDesc("450", 1);
 			flowPolicyGridModels = inProposalCustomDao.getWorkFlowPolicylaps(type, date1, date2, type2);
 		} else {
@@ -791,24 +798,32 @@ public class WorkflowServiceImpl implements WorkflowService {
 		for (WorkFlowPolicyGridModel polGrid : flowPolicyGridModels) {
 
 			if (!promisesModels.isEmpty()) {
+				boolean isAvailable = true;
+
 				for (InPromisesModel promise : promisesModels) {
 
 					System.out.println(promise.getPolicyNo() + "       " + polGrid.getPolicy());
 
-					if (!(promise.getPprno().equals(polGrid.getProposal()))) {
-						WorkFlowPolicyGridDto dto = getFolwPolicyGridDto(polGrid);
+					if (promise.getPprno().equals(polGrid.getProposal())) {
 
-						if (dto != null) {
+						isAvailable = false;
 
-							flowPolicyGridDtos.add(dto);
+					}
+				}
 
-						}
+				if (isAvailable) {
+					WorkFlowPolicyGridDto dto = getFolwPolicyGridDto(polGrid);
+
+					if (dto != null) {
+
+						flowPolicyGridDtos.add(dto);
+
 					}
 				}
 			} else {
-				
+
 				System.out.println("Else");
-				
+
 				WorkFlowPolicyGridDto dto = getFolwPolicyGridDto(polGrid);
 
 				if (dto != null) {
@@ -816,7 +831,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 					flowPolicyGridDtos.add(dto);
 
 				}
-				
+
 				System.out.println(flowPolicyGridDtos.size());
 			}
 

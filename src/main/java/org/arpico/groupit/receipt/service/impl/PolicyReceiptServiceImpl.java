@@ -293,12 +293,12 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		return new ResponseEntity<>(dto, HttpStatus.NOT_FOUND);
 	}
 
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Transactional
 	private void saveTransactions(List<InBillingTransactionsModel> setoffs) {
 		inBillingTransactionDao.save(setoffs);
 	}
 
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Transactional
 	private void saveReceipt(InTransactionsModel inTransactionsModel, InBillingTransactionsModel deposit) {
 		inTransactionDao.save(inTransactionsModel);
 		inBillingTransactionDao.save(deposit);

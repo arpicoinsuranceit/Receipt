@@ -359,7 +359,7 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	}
 
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Transactional
 	private void saveReceipt(InTransactionsModel inTransactionsModel,
 			InBillingTransactionsModel inBillingTransactionsModel) {
 		inTransactionDao.save(inTransactionsModel);
@@ -413,7 +413,7 @@ public class ProposalServiceImpl implements ProposalServce {
 		return printDto;
 	}
 
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Transactional
 	@Override
 	public void checkPolicy(InProposalsModel inProposalsModel, Integer pprNo, Integer seqNo,
 			SaveReceiptDto saveReceiptDto, String userCode, String locCode, InBillingTransactionsModel deposit)

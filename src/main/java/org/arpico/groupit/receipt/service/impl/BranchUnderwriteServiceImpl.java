@@ -527,7 +527,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	}
 
 	
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Transactional
 	private void saveProposalNotApprove(InProposalsModel newInProposalsModel,
 			List<InPropLoadingModel> inPropLoadingModels, List<InPropAddBenefitModel> addBenefitModels,
 			List<InPropFamDetailsModel> propFamDetailsModels, List<InPropSchedulesModel> inPropScheduleList,
@@ -1118,7 +1118,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		return inPropNomDetailsModels;
 	}
 	
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Transactional
 	private void saveProposal(InProposalsModel inProposalsModel, InProposalsModel newInProposalsModel,
 			List<InPropLoadingModel> inPropLoadingModels, List<InPropAddBenefitModel> addBenefitModels,
 			List<InPropFamDetailsModel> propFamDetailsModels, List<InPropSchedulesModel> inPropScheduleList,
@@ -1202,7 +1202,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		
 	}
 	
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Transactional
 	private String saveCourierDocument(Integer pprNo, Integer seqNo,String branchCode, String userCode) throws Exception {
 		
 		List<InPropMedicalReqModel> medicalReqModels=propMedicalReqCustomDao.getMedicalReqByPprNoAndSeq(pprNo, seqNo);

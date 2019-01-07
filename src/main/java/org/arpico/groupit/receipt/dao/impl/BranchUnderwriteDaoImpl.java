@@ -44,12 +44,12 @@ public class BranchUnderwriteDaoImpl implements BranchUnderwriteDao {
 			boolean isHO) {
 		
 		if(isHO) {
-			return jdbcTemplate.query("select p.pprnum,p.prpseq,p.polnum,p.cscode,p.ppdnam,concat(p.advcod, ' / ' , a.prnnam) as advcod, p.loccod as brncod,p.loccod,p.ppdnic,p.prdcod "
+			return jdbcTemplate.query("select p.pprnum,p.prpseq,p.polnum,p.cscode,p.ppdnam,p.advcod, p.loccod as brncod,p.loccod,p.ppdnic,p.prdcod "
 					+ " FROM inproposals p inner join inagentmast a on p.sbucod = a.sbucod and p.advcod = a.agncod"
 					+ " where  p.sbucod = '450'  and p.pprsta = 'L0' order by p.creadt desc LIMIT "+limit+" OFFSET "+offset+";",
 					new InProposalUnderwriteRowMapper());
 		}else {
-			return jdbcTemplate.query("select p.pprnum,p.prpseq,p.polnum,p.cscode,p.ppdnam,concat(p.advcod, ' / ' , a.prnnam) as advcod, p.loccod as brncod,p.loccod,p.ppdnic,p.prdcod "
+			return jdbcTemplate.query("select p.pprnum,p.prpseq,p.polnum,p.cscode,p.ppdnam,p.advcod, p.loccod as brncod,p.loccod,p.ppdnic,p.prdcod "
 					+ "FROM inproposals p inner join inagentmast a on p.sbucod = a.sbucod and p.advcod = a.agncod"
 					+ " where p.sbucod = '450' and p.loccod in ("+locodes+") and  p.pprsta = 'L0' order by p.creadt desc LIMIT "+limit+" OFFSET "+offset+";",
 					new InProposalUnderwriteRowMapper());
