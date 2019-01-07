@@ -88,15 +88,29 @@ public class AgentServiceImpl implements AgentService {
 	@Override
 	public AgentDto getAgentDetails(String agentCode) throws Exception {
 		AgentModel agentModel = agentDao.findPropAgent(agentCode);
-		AgentDto agentDto=new AgentDto();
-		
-		if(agentModel != null) {
+		AgentDto agentDto = new AgentDto();
+
+		if (agentModel != null) {
 			agentDto.setAgentCode(agentModel.getAgentCode());
 			agentDto.setAgentName(agentModel.getAgentName());
 			agentDto.setLocation(agentModel.getLocation());
 		}
-		
+
 		return agentDto;
+	}
+
+	@Override
+	public List<AgentDto> getAgentList(Integer agentCode, String token, String branchCode) throws Exception {
+		String sql = "";
+		sql = "and loccod IN ('" + branchCode + "')";
+
+		List<AgentModel> agentModels = agentDao.findAgentLikeAgentCode(agentCode, sql);
+		List<AgentDto> agentDtos = new ArrayList<>();
+		for (AgentModel agentModel : agentModels) {
+			AgentDto agentDto = getAgent(agentModel);
+			agentDtos.add(agentDto);
+		}
+		return agentDtos;
 	}
 
 }

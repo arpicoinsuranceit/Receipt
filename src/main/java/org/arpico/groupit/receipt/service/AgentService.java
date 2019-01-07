@@ -14,4 +14,6 @@ public interface AgentService {
 	List<AgentDto> findAgentByLocations(String loccodes) throws Exception;
 
 	AgentDto getAgentDetails(String agentCode) throws Exception;
+
+	List<AgentDto> getAgentList(Integer agentCode, String token, String branchCode)  throws Exception;
 }

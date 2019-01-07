@@ -11,6 +11,8 @@ import org.arpico.groupit.receipt.dto.InventoryDetailsDto;
 import org.arpico.groupit.receipt.dto.ReceiptPrintDto;
 import org.arpico.groupit.receipt.print.ReceiptPrintService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import com.itextpdf.kernel.geom.PageSize;
@@ -24,8 +26,12 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.TextAlignment;
 
+@PropertySource("classpath:application.properties")
 @Component
 public class ReceiptPrintServiceImpl implements ReceiptPrintService {
+	
+	@Value("${prtinttest}")
+	private String test;
 
 	@Override
 	public byte[] createNewBusinessReceipt(ReceiptPrintDto receiptPrintDto) throws Exception {
@@ -53,7 +59,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 
 		document.add(new Paragraph("ARPICO INSURANCE PLC.").setBold().setTextAlignment(TextAlignment.CENTER)
 				.setCharacterSpacing(1).setFontSize(12));
-		document.add(new Paragraph("Receipt New Business").setBold().setTextAlignment(TextAlignment.CENTER)
+		document.add(new Paragraph("Receipt New Business " + test).setBold().setTextAlignment(TextAlignment.CENTER)
 				.setCharacterSpacing(1).setFixedLeading(1).setFontSize(10));
 
 		document.add(new Paragraph(""));
@@ -458,7 +464,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 
 			document.add(new Paragraph("ARPICO INSURANCE PLC.").setBold().setTextAlignment(TextAlignment.CENTER)
 					.setCharacterSpacing(1).setFontSize(12));
-			document.add(new Paragraph("Proposal Receipt").setBold().setTextAlignment(TextAlignment.CENTER)
+			document.add(new Paragraph("Proposal Receipt " + test).setBold().setTextAlignment(TextAlignment.CENTER)
 					.setCharacterSpacing(1).setFixedLeading(1).setFontSize(10));
 
 			document.add(new Paragraph(""));
@@ -801,7 +807,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 
 			document.add(new Paragraph("ARPICO INSURANCE PLC.").setBold().setTextAlignment(TextAlignment.CENTER)
 					.setCharacterSpacing(1).setFontSize(12));
-			document.add(new Paragraph("Loan Receipt").setBold().setTextAlignment(TextAlignment.CENTER)
+			document.add(new Paragraph("Loan Receipt " + test).setBold().setTextAlignment(TextAlignment.CENTER)
 					.setCharacterSpacing(1).setFixedLeading(1).setFontSize(10));
 
 			document.add(new Paragraph(""));
@@ -1107,6 +1113,9 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 
 	@Override
 	public byte[] createPremiumReceipt(ReceiptPrintDto receiptPrintDto) throws Exception {
+		
+		System.out.println(test + " : test testtesttesttesttesttesttesttesttest");
+		
 		if (receiptPrintDto != null) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -1144,7 +1153,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 
 			document.add(new Paragraph("ARPICO INSURANCE PLC.").setBold().setTextAlignment(TextAlignment.CENTER)
 					.setCharacterSpacing(1).setFontSize(12));
-			document.add(new Paragraph("Premium Receipt").setBold().setTextAlignment(TextAlignment.CENTER)
+			document.add(new Paragraph("Premium Receipt " + test).setBold().setTextAlignment(TextAlignment.CENTER)
 					.setCharacterSpacing(1).setFixedLeading(1).setFontSize(10));
 
 			document.add(new Paragraph(""));
@@ -1472,7 +1481,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 
 			document.add(new Paragraph("ARPICO INSURANCE PLC.").setBold().setTextAlignment(TextAlignment.CENTER)
 					.setCharacterSpacing(1).setFontSize(12));
-			document.add(new Paragraph("MISCELLANEOUS RECEIPT").setBold().setTextAlignment(TextAlignment.CENTER)
+			document.add(new Paragraph("MISCELLANEOUS RECEIPT " + test).setBold().setTextAlignment(TextAlignment.CENTER)
 					.setCharacterSpacing(1).setFixedLeading(1).setFontSize(10));
 
 			document.add(new Paragraph(""));
@@ -1840,7 +1849,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 
 			document.add(new Paragraph("ARPICO INSURANCE PLC.").setBold().setTextAlignment(TextAlignment.CENTER)
 					.setCharacterSpacing(1).setFontSize(12));
-			document.add(new Paragraph("MISCELLANEOUS RECEIPT").setBold().setTextAlignment(TextAlignment.CENTER)
+			document.add(new Paragraph("MISCELLANEOUS RECEIPT " + test).setBold().setTextAlignment(TextAlignment.CENTER)
 					.setCharacterSpacing(1).setFixedLeading(1).setFontSize(10));
 
 			document.add(new Paragraph(""));

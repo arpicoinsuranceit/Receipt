@@ -14,6 +14,7 @@ public class BankRowMapper implements RowMapper<BankModel>{
 		
 		bankModel.setBankCode(rs.getString("BANCOD"));
 		bankModel.setBankName(rs.getString("BANDES"));
+		bankModel.setLocation(rs.getString("loccod"));
 		
 		return bankModel;
 	}

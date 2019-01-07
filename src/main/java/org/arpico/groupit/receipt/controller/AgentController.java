@@ -30,6 +30,17 @@ public class AgentController {
 		return null;
 	}
 	
+	@RequestMapping(value = "/getAgentByBranch", method = RequestMethod.POST)
+	public List<AgentDto> getAgentDtos (@RequestParam Integer agentCode, @RequestParam String token, @RequestParam String branchCode){
+		
+		try {
+			return agentService.getAgentList(agentCode, token, branchCode);
+		} catch (Exception e) {
+			e.printStackTrace();
+		};
+		return null;
+	}
+	
 	@RequestMapping(value = "/getAgentsDetails", method = RequestMethod.POST)
 	public AgentDto getAgentDetails (@RequestBody String agentCode){
 		
