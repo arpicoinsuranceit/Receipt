@@ -307,7 +307,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		RmsDocTxnmModel model = new RmsDocTxnmModel();
 
 		model.setCustSupF("S");
-		model.setCustSupCode(bankModel.getLocation());
+		model.setCustSupCode(bankModel.getAcccode());
 		model.setRmsDocTxnmModelPK(pk);
 		model.setRef1(dto.getAgent());
 		model.setRef2(dto.getPaymode());
