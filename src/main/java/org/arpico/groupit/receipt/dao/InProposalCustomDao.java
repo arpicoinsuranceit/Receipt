@@ -7,6 +7,8 @@ import org.arpico.groupit.receipt.model.InPropPreviousPolModel;
 import org.arpico.groupit.receipt.model.InProposalBasicsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;
+import org.arpico.groupit.receipt.model.ShortPremiumModel;
+import org.arpico.groupit.receipt.model.WorkFlowPolicyGridModel;
 
 public interface InProposalCustomDao {
 
@@ -39,6 +41,25 @@ public interface InProposalCustomDao {
 	List<InProposalsModel> getPoliciesToWorkFlowHO(String type) throws Exception;
 
 	List<InProposalsModel> getPoliciesToWorkFlow(String brancheList, String type) throws Exception;
-
+	
+	List<WorkFlowPolicyGridModel> getWorkFlowPolicyGrid (String status, String locCodes) throws Exception;
+	
+	List<WorkFlowPolicyGridModel> getWorkFlowPolicyGridHo(String status) throws Exception;
+	
 	List<InProposalsModel> searchProposal(String sql)  throws Exception;
+	
+	List<ShortPremiumModel> getShortPremium(String sql, Integer page, Integer offset) throws Exception;
+	
+	Integer getShortPremiumCount(String sql) throws Exception;
+	
+	List<ShortPremiumModel> getPendingReq(String sql, Integer page, Integer offset) throws Exception;
+	
+	Integer getPendingReqCount(String sql) throws Exception;
+
+	List<ProposalNoSeqNoModel> getPolicyNoSeqNoModelListLoanRcpt(String val) throws Exception;
+
+	List<WorkFlowPolicyGridModel> getWorkFlowPolicylaps(String type, Integer date1, Integer date2, String type2);
+
+	List<WorkFlowPolicyGridModel> getWorkFlowPolicylaps(String type, String paraForIn, Integer date1, Integer date2, String type2);
+
 }

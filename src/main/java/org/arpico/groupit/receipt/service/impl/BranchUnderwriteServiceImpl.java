@@ -34,7 +34,6 @@ import org.arpico.groupit.receipt.dao.InPropSurrenderValsCustomDao;
 import org.arpico.groupit.receipt.dao.InPropSurrenderValsDao;
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
 import org.arpico.groupit.receipt.dao.InProposalDao;
-import org.arpico.groupit.receipt.dao.RmsUserDao;
 import org.arpico.groupit.receipt.dao.SubDepartmentDao;
 import org.arpico.groupit.receipt.dao.SubDepartmentDocumentCourierDao;
 import org.arpico.groupit.receipt.dao.SubDepartmentDocumentDao;
@@ -84,6 +83,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -148,10 +148,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	
 	@Autowired
 	private InPropSurrenderValsCustomDao surrenderValCustomDao;
-	
-	@Autowired
-	private RmsUserDao rmsUserDao;
-	
+		
 	@Autowired
 	private InProposalDao inProposalDao;
 	
@@ -387,6 +384,9 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 							newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
 				}
 				
+			}else {
+				inPropMedicalReqModels.add(getAdditionalReq("spouse", "AD-99","Additional Requirement", "Age Proof Spouse", newInProposalsModelPK.getPprnum(),
+						newInProposalsModelPK.getPrpseq(), newInProposalsModelPK.getLoccod()));
 			}
 			
 			//children age proof
@@ -527,7 +527,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	}
 
 	
-
+	@Transactional
 	private void saveProposalNotApprove(InProposalsModel newInProposalsModel,
 			List<InPropLoadingModel> inPropLoadingModels, List<InPropAddBenefitModel> addBenefitModels,
 			List<InPropFamDetailsModel> propFamDetailsModels, List<InPropSchedulesModel> inPropScheduleList,
@@ -638,7 +638,9 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		
 		/* Remove Nominee Details */
 		try {
+			
 			propNomDetailsCustomDao.removeNomByPprNoAndPprSeq(Integer.valueOf(newInProposalsModel.getInProposalsModelPK().getPprnum()), newInProposalsModel.getInProposalsModelPK().getPrpseq());
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -646,9 +648,15 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		/* Save Nominee Details */
 		if(nomDetailsModels != null && !nomDetailsModels.isEmpty()) {
 			
-			//System.out.println("nomDetailsModels save" );
+			System.out.println("nomDetailsModels save" );
 			
-			propNomDetailsDao.save(nomDetailsModels);
+			System.out.println(nomDetailsModels.size() + " nomDetailsModels.size()" );
+			nomDetailsModels.forEach(nom -> {
+				System.out.println(nom.toString());
+				System.out.println("////// 1 //////");
+				System.out.println(propNomDetailsDao.save(nom));
+			});
+			
 		}
 		
 		/* Remove Previous Policies */
@@ -667,6 +675,10 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		}
 		
 	}
+
+//	private void removeNominee(Integer valueOf, Integer prpseq) throws Exception {
+//		propNomDetailsCustomDao.removeNomByPprNoAndPprSeq(valueOf, prpseq);
+//	}
 
 	private List<InPropPrePolsModel> getPreviousPol(List<InPropPreviousPolModel> inPropPrePolsModels,
 			InProposalsModel newInProposalsModel) {
@@ -1049,18 +1061,20 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	private List<InPropNomDetailsModel> getNomineeDetails(SaveUnderwriteDto saveUnderwriteDto,
 			String pprnum, Integer prpseq, String branchCode){
 		SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
-		InPropNomDetailsModelPK inPropNomineeValsPK = new InPropNomDetailsModelPK();
-
-		inPropNomineeValsPK.setPprnum(Integer.parseInt(pprnum));
-		inPropNomineeValsPK.setPrpseq(prpseq);
-		inPropNomineeValsPK.setSbucod(AppConstant.SBU_CODE);
-		inPropNomineeValsPK.setLoccod(branchCode);
+		
 		
 		List<InPropNomDetailsModel> inPropNomDetailsModels=new ArrayList<>();
-		
+		System.out.println(saveUnderwriteDto.getNominee().size() + " saveUnderwriteDto.getNominee().size()");
 		if(saveUnderwriteDto.getNominee().size() > 0) {
 			saveUnderwriteDto.getNominee().forEach(e ->{
+				System.out.println(e.toString());
 				InPropNomDetailsModel detailsModel=new InPropNomDetailsModel();
+				InPropNomDetailsModelPK inPropNomineeValsPK = new InPropNomDetailsModelPK();
+
+				inPropNomineeValsPK.setPprnum(Integer.parseInt(pprnum));
+				inPropNomineeValsPK.setPrpseq(prpseq);
+				inPropNomineeValsPK.setSbucod(AppConstant.SBU_CODE);
+				inPropNomineeValsPK.setLoccod(branchCode);
 				inPropNomineeValsPK.setNomnam(e.getName());
 
 				detailsModel.setInPropNomDetailsModelPK(inPropNomineeValsPK);
@@ -1096,6 +1110,10 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 				inPropNomDetailsModels.add(detailsModel);
 			});
 		}
+		
+		System.out.println(inPropNomDetailsModels.size() + " inPropNomDetailsModels.size()");
+		
+		System.out.println(inPropNomDetailsModels.toString());
 		
 		return inPropNomDetailsModels;
 	}

@@ -22,6 +22,7 @@ public class SaveReceiptDto {
 	private String chequebank;
 	private String transferno;
 	private String token;
+	private Integer loanNo;
 
 	public Integer getQuotationId() {
 		return quotationId;
@@ -183,6 +184,14 @@ public class SaveReceiptDto {
 		this.token = token;
 	}
 
+	public Integer getLoanNo() {
+		return loanNo;
+	}
+
+	public void setLoanNo(Integer loanNo) {
+		this.loanNo = loanNo;
+	}
+
 	@Override
 	public String toString() {
 		return "SaveReceiptDto [quotationId=" + quotationId + ", seqNo=" + seqNo + ", quotationDetailId="
@@ -190,9 +199,9 @@ public class SaveReceiptDto {
 				+ polSeq + ", bankCode=" + bankCode + ", remark=" + remark + ", payMode=" + payMode + ", amount="
 				+ amount + ", payAmountWord=" + payAmountWord + ", productCode=" + productCode + ", branchCode="
 				+ branchCode + ", agentCode=" + agentCode + ", chequeno=" + chequeno + ", chequedate=" + chequedate
-				+ ", chequebank=" + chequebank + ", transferno=" + transferno + ", token=" + token + "]";
+				+ ", chequebank=" + chequebank + ", transferno=" + transferno + ", token=" + token + ", loanNo="
+				+ loanNo + "]";
 	}
 
 	
-
 }

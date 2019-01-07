@@ -1,33 +1,25 @@
 package org.arpico.groupit.receipt.service.impl;
 
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.arpico.groupit.receipt.dao.InPromiseDao;
-import org.arpico.groupit.receipt.dao.InPropAddBenefictCustomDao;
-import org.arpico.groupit.receipt.dao.InProposalCustomDao;
-import org.arpico.groupit.receipt.dao.UserDao;
-import org.arpico.groupit.receipt.dto.PromisesGridDto;
-import org.arpico.groupit.receipt.model.InPromisesModel;
-import org.arpico.groupit.receipt.model.InPropAddBenefitModel;
-import org.arpico.groupit.receipt.model.InProposalsModel;
-import org.arpico.groupit.receipt.security.JwtDecoder;
-import org.arpico.groupit.receipt.service.WorkflowService;
-import org.arpico.groupit.receipt.util.AppConstant;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
 import org.arpico.groupit.receipt.dao.InPromiseDao;
 import org.arpico.groupit.receipt.dao.InPropAddBenefictCustomDao;
 import org.arpico.groupit.receipt.dao.InPropFamDetailsCustomDao;
+import org.arpico.groupit.receipt.dao.InPropMedicalReqCustomDao;
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
 import org.arpico.groupit.receipt.dao.InTransactionCustomDao;
 import org.arpico.groupit.receipt.dao.UserDao;
 import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
+import org.arpico.groupit.receipt.dto.MedicalRequirementsDto;
 import org.arpico.groupit.receipt.dto.PaymentHistoryDto;
 import org.arpico.groupit.receipt.dto.PromisesGridDto;
+import org.arpico.groupit.receipt.dto.ShortPremiumDto;
+import org.arpico.groupit.receipt.dto.WorkFlowPolicyGridDto;
 import org.arpico.groupit.receipt.dto.WorkflowProposalBenefictDetailDto;
 import org.arpico.groupit.receipt.dto.WorkflowProposalChildrenDto;
 import org.arpico.groupit.receipt.dto.WorkflowProposalMainLifeDto;
@@ -36,9 +28,12 @@ import org.arpico.groupit.receipt.dto.WorkfolwProposalDto;
 import org.arpico.groupit.receipt.model.InPromisesModel;
 import org.arpico.groupit.receipt.model.InPropAddBenefitModel;
 import org.arpico.groupit.receipt.model.InPropFamDetailsModel;
+import org.arpico.groupit.receipt.model.InPropMedicalReqModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.LastReceiptSummeryModel;
 import org.arpico.groupit.receipt.model.PaymentHistoryModel;
+import org.arpico.groupit.receipt.model.ShortPremiumModel;
+import org.arpico.groupit.receipt.model.WorkFlowPolicyGridModel;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.WorkflowService;
 import org.arpico.groupit.receipt.util.AppConstant;
@@ -62,14 +57,13 @@ public class WorkflowServiceImpl implements WorkflowService {
 
 	@Autowired
 	private JwtDecoder decoder;
-	
+
 	@Autowired
 	private InProposalCustomDao inProposalCustomDao;
 
-	
 	@Autowired
 	private InPropAddBenefictCustomDao addBenefictCustomDao;
-	
+
 	@Autowired
 	private InPropFamDetailsCustomDao inPropFamDetailsCustomDao;
 
@@ -78,7 +72,10 @@ public class WorkflowServiceImpl implements WorkflowService {
 
 	@Autowired
 	private InTransactionCustomDao transactionCustomDao;
-	
+
+	@Autowired
+	private InPropMedicalReqCustomDao inPropMedicalReqCustomDao;
+
 	@Autowired
 	private DaoParameters daoParameters;
 
@@ -95,8 +92,8 @@ public class WorkflowServiceImpl implements WorkflowService {
 		List<PromisesGridDto> promisesGridDtos = new ArrayList<>();
 
 		if (branches.contains("HO")) {
-			promisesModels = inPromiseDao.findAllBySbuCodeAndActiveOrderByCreateDateDesc("450", 1, new PageRequest(page, offset));
-
+			promisesModels = inPromiseDao.findAllBySbuCodeAndActiveOrderByCreateDateDesc("450", 1,
+					new PageRequest(page, offset));
 		} else {
 			promisesModels = inPromiseDao.findAllBySbuCodeAndLocCodeInAndActiveOrderByCreateDateDesc("450", branches, 1,
 					new PageRequest(page, offset));
@@ -171,11 +168,11 @@ public class WorkflowServiceImpl implements WorkflowService {
 			return new ResponseEntity<Object>("200", HttpStatus.OK);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<Object>("500", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}
-
 
 	private InPromisesModel getInPromiseModel(String userCode, String branch, PromisesGridDto promise)
 			throws ParseException {
@@ -184,7 +181,15 @@ public class WorkflowServiceImpl implements WorkflowService {
 		model.setAmount(promise.getAmount());
 		model.setCustName(promise.getCustName());
 		model.setCustNic(promise.getCustNic());
-		model.setDueDate(new SimpleDateFormat("EEE MMM dd yyyy").parse(promise.getDueDate()));
+		try {
+			model.setDueDate(new SimpleDateFormat("EEE MMM dd yyyy").parse(promise.getDueDate()));
+		} catch (Exception e) {
+			try {
+				model.setDueDate(new SimpleDateFormat("yyyy-MM-dd").parse(promise.getDueDate()));
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
 		model.setLocCode(branch);
 		model.setPhoneNo(promise.getPhoneNum());
 		model.setPolicyNo(promise.getPolNum());
@@ -193,6 +198,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 		model.setSettleDate(promise.getPromiseDate());
 		model.setRemark(promise.getRemark());
 		model.setPayType(promise.getPayType());
+
 		model.setCreateBy(userCode);
 		model.setCreateDate(new Date());
 
@@ -203,26 +209,23 @@ public class WorkflowServiceImpl implements WorkflowService {
 	public ResponseEntity<Object> settlePromise(PromisesGridDto promise, String token) throws Exception {
 		InPromisesModel inPromisesModel = inPromiseDao.findOne(promise.getId());
 
-		
-		if(inPromisesModel!= null) {
-		
+		if (inPromisesModel != null) {
+
 			inPromisesModel.setActive(0);
 			inPromisesModel.setUpdateBy(decoder.generate(token));
 			inPromisesModel.setUpdateDate(new Date());
-			
-			inPromiseDao.save(inPromisesModel);
-			
-			return new ResponseEntity<Object>("200", HttpStatus.OK);
-			
-		}else {
 
+			inPromiseDao.save(inPromisesModel);
+
+			return new ResponseEntity<Object>("200", HttpStatus.OK);
+
+		} else {
 			return new ResponseEntity<Object>("404", HttpStatus.NOT_FOUND);
 		}
 	}
 
 	@Override
 	public ResponseEntity<Object> getPolicyDetails(String polnum, String pprnum) throws Exception {
-
 
 		Integer propNo = Integer.parseInt(pprnum);
 
@@ -231,6 +234,10 @@ public class WorkflowServiceImpl implements WorkflowService {
 		String freq = "";
 
 		if (inProposalsModel != null) {
+
+			System.out.println(inProposalsModel.getPaytrm());
+
+			System.out.println(inProposalsModel.getSinprm());
 
 			if (inProposalsModel.getPaytrm().equals("12")) {
 				freq = "M";
@@ -243,9 +250,10 @@ public class WorkflowServiceImpl implements WorkflowService {
 			}
 			if (inProposalsModel.getPaytrm().equals("1")) {
 				freq = "Y";
-			}
-			if (inProposalsModel.getPaytrm().equals("1") && inProposalsModel.getSinprm().equals("1")) {
-				freq = "S";
+
+				if (inProposalsModel.getSinprm() != null && inProposalsModel.getSinprm().equals("1")) {
+					freq = "S";
+				}
 			}
 
 			List<InPropAddBenefitModel> addBenefitModels = addBenefictCustomDao.getBenefByPprSeqAndSumAsu(propNo,
@@ -353,15 +361,15 @@ public class WorkflowServiceImpl implements WorkflowService {
 
 		String address = "";
 
-		if (inProposalsModel.getPpdad1() != null || !inProposalsModel.getPpdad1().isEmpty()) {
+		if (inProposalsModel.getPpdad1() != null && !inProposalsModel.getPpdad1().isEmpty()) {
 			address += inProposalsModel.getPpdad1();
 		}
 
-		if (inProposalsModel.getPpdad2() != null || !inProposalsModel.getPpdad2().isEmpty()) {
+		if (inProposalsModel.getPpdad2() != null && !inProposalsModel.getPpdad2().isEmpty()) {
 			address += inProposalsModel.getPpdad2();
 		}
 
-		if (inProposalsModel.getPpdad3() != null || !inProposalsModel.getPpdad3().isEmpty()) {
+		if (inProposalsModel.getPpdad3() != null && !inProposalsModel.getPpdad3().isEmpty()) {
 			address += inProposalsModel.getPpdad3();
 		}
 
@@ -450,7 +458,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 		List<InProposalsModel> proposalsModels = null;
 
 		List<PromisesGridDto> promisesGridDtos = new ArrayList<>();
-		
+
 		String brancheList = daoParameters.getParaForIn(branches);
 
 		switch (type) {
@@ -458,21 +466,21 @@ public class WorkflowServiceImpl implements WorkflowService {
 			if (branches.contains("HO")) {
 				proposalsModels = inProposalCustomDao.getPoliciesToWorkFlowHO("PLISU");
 			} else {
-				proposalsModels = inProposalCustomDao.getPoliciesToWorkFlow(brancheList,"PLISU");
+				proposalsModels = inProposalCustomDao.getPoliciesToWorkFlow(brancheList, "PLISU");
 			}
 			break;
 		case "TEMP":
 			if (branches.contains("HO")) {
 				proposalsModels = inProposalCustomDao.getPoliciesToWorkFlowHO("PLISU");
 			} else {
-				proposalsModels = inProposalCustomDao.getPoliciesToWorkFlow(brancheList,"PLISU");
+				proposalsModels = inProposalCustomDao.getPoliciesToWorkFlow(brancheList, "PLISU");
 			}
 			break;
 		case "PERMANANT":
 			if (branches.contains("HO")) {
 				proposalsModels = inProposalCustomDao.getPoliciesToWorkFlowHO("PLISU");
 			} else {
-				proposalsModels = inProposalCustomDao.getPoliciesToWorkFlow(brancheList,"PLISU");
+				proposalsModels = inProposalCustomDao.getPoliciesToWorkFlow(brancheList, "PLISU");
 			}
 			break;
 
@@ -480,7 +488,6 @@ public class WorkflowServiceImpl implements WorkflowService {
 			break;
 		}
 
-		
 		if (proposalsModels != null && !proposalsModels.isEmpty()) {
 			proposalsModels.forEach(e -> {
 				promisesGridDtos.add(getPromisesGridDtoFromInProposal(e));
@@ -560,6 +567,277 @@ public class WorkflowServiceImpl implements WorkflowService {
 		dto.setChqrel(e.getChqrel());
 		dto.setPaymod(e.getPaymod());
 		return dto;
+	}
+
+	@Override
+	public List<WorkFlowPolicyGridDto> getPendingActPolicies(String token) throws Exception {
+
+		String userCode = decoder.generate(token);
+
+		List<String> branches = userDao.getUserLocations(userCode);
+
+		List<InPromisesModel> promisesModels = null;
+
+		List<WorkFlowPolicyGridModel> flowPolicyGridModels = null;
+
+		List<WorkFlowPolicyGridDto> flowPolicyGridDtos = new ArrayList<>();
+
+		if (branches.contains("HO")) {
+			promisesModels = inPromiseDao.findAllBySbuCodeAndActiveOrderByCreateDateDesc("450", 1);
+			flowPolicyGridModels = inProposalCustomDao.getWorkFlowPolicyGridHo("PLISU");
+		} else {
+			promisesModels = inPromiseDao.findAllBySbuCodeAndLocCodeInAndActiveOrderByCreateDateDesc("450", branches,
+					1);
+			flowPolicyGridModels = inProposalCustomDao.getWorkFlowPolicyGrid("PLISU",
+					daoParameters.getParaForIn(branches));
+		}
+
+		System.out.println("flowPolicyGridModels.size()" + flowPolicyGridModels.size());
+		System.out.println("promisesModels.size()" + promisesModels.size());
+
+		for (WorkFlowPolicyGridModel polGrid : flowPolicyGridModels) {
+
+			if (!promisesModels.isEmpty()) {
+
+				boolean isAvailable = true;
+
+				for (InPromisesModel promise : promisesModels) {
+
+					System.out.println(promise.getPolicyNo() + "       " + polGrid.getPolicy());
+
+					if (promise.getPprno().equals(polGrid.getProposal())) {
+
+						isAvailable = false;
+
+					}
+				}
+
+				if (isAvailable) {
+					WorkFlowPolicyGridDto dto = getFolwPolicyGridDto(polGrid);
+
+					if (dto != null) {
+
+						flowPolicyGridDtos.add(dto);
+
+					}
+				}
+
+			} else {
+				WorkFlowPolicyGridDto dto = getFolwPolicyGridDto(polGrid);
+
+				if (dto != null) {
+
+					flowPolicyGridDtos.add(dto);
+
+				}
+			}
+
+		}
+
+		return flowPolicyGridDtos;
+	}
+
+	private WorkFlowPolicyGridDto getFolwPolicyGridDto(WorkFlowPolicyGridModel polGrid) {
+
+		System.out.println(polGrid.getPprNum());
+		System.out.println(polGrid.getAgent());
+
+		if (polGrid.getPprNum() != null && polGrid.getPprNum().length() > 0) {
+
+			WorkFlowPolicyGridDto dto = new WorkFlowPolicyGridDto();
+
+			dto.setPprNum(polGrid.getProposal());
+			dto.setAgent(polGrid.getAgent());
+			dto.setBrncod(polGrid.getBrncod());
+			dto.setDuedat(polGrid.getDuedat());
+			dto.setPolicy(polGrid.getPolicy());
+			dto.setPpdini(polGrid.getPpdini());
+			dto.setTotprm(polGrid.getTotprm());
+			dto.setHealth(polGrid.getHealth());
+
+			return dto;
+		}
+		return null;
+	}
+
+	@Override
+	public List<ShortPremiumDto> findShortPremium(String userCode, Integer page, Integer offset) throws Exception {
+		List<ShortPremiumDto> premiumDtos = new ArrayList<>();
+
+		List<String> branches = userDao.getUserLocations(userCode);
+
+		String sql = "";
+
+		if (!branches.contains("HO")) {
+			sql = " and m.loccod in (" + daoParameters.getParaForIn(branches) + ") ";
+		}
+
+		List<ShortPremiumModel> models = inProposalCustomDao.getShortPremium(sql, page, offset);
+
+		models.forEach(e -> {
+			premiumDtos.add(getShortPremiumDto(e));
+		});
+
+		return premiumDtos;
+	}
+
+	private ShortPremiumDto getShortPremiumDto(ShortPremiumModel e) {
+		ShortPremiumDto dto = new ShortPremiumDto();
+
+		dto.setAddnot(e.getAddnot());
+		dto.setAgent(e.getAgent());
+		dto.setLoccod(e.getLoccod());
+		dto.setPprnum(e.getPprnum());
+		dto.setPrpseq(e.getPrpseq());
+		dto.setQuonum(e.getQuonum());
+		dto.setCount(e.getReqcnt());
+
+		return dto;
+	}
+
+	@Override
+	public Integer findShortPremiumCount(String userCode) throws Exception {
+		List<String> branches = userDao.getUserLocations(userCode);
+
+		String sql = "";
+
+		if (!branches.contains("HO")) {
+			sql = " and m.loccod in (" + daoParameters.getParaForIn(branches) + ") ";
+		}
+		return inProposalCustomDao.getShortPremiumCount(sql);
+	}
+
+	@Override
+	public List<ShortPremiumDto> findPendingReq(String userCode, Integer page, Integer offset) throws Exception {
+		List<ShortPremiumDto> premiumDtos = new ArrayList<>();
+
+		List<String> branches = userDao.getUserLocations(userCode);
+
+		String sql = "";
+
+		if (!branches.contains("HO")) {
+			sql = " and m.loccod in (" + daoParameters.getParaForIn(branches) + ") ";
+		}
+
+		List<ShortPremiumModel> models = inProposalCustomDao.getPendingReq(sql, page, offset);
+
+		models.forEach(e -> {
+			premiumDtos.add(getShortPremiumDto(e));
+		});
+
+		return premiumDtos;
+	}
+
+	@Override
+	public Integer findPendingReqCount(String userCode) throws Exception {
+		List<String> branches = userDao.getUserLocations(userCode);
+
+		String sql = "";
+
+		if (!branches.contains("HO")) {
+			sql = " and m.loccod in (" + daoParameters.getParaForIn(branches) + ") ";
+		}
+		return inProposalCustomDao.getPendingReqCount(sql);
+	}
+
+	@Override
+	public List<MedicalRequirementsDto> getPendingReqDetails(String userCode, Integer pprno) throws Exception {
+		List<InPropMedicalReqModel> inPropMedicalReqModels = inPropMedicalReqCustomDao.getMedicalReqByPprNo(pprno, "Y");
+
+		List<MedicalRequirementsDto> medicalRequirementsDtos = new ArrayList<>();
+
+		inPropMedicalReqModels.forEach(e -> {
+			MedicalRequirementsDto dto = new MedicalRequirementsDto();
+
+			dto.setAddNote(e.getAddnot());
+			dto.setInsType(e.getInPropMedicalReqModelPK().getInstyp());
+			dto.setMediCode(e.getInPropMedicalReqModelPK().getMedcod());
+			dto.setMediName(e.getMednam());
+
+			medicalRequirementsDtos.add(dto);
+		});
+
+		return medicalRequirementsDtos;
+	}
+
+	@Override
+	public List<WorkFlowPolicyGridDto> getPendingLapsPolicies(String token, String type, Integer date1, Integer date2)
+			throws Exception {
+		String userCode = decoder.generate(token);
+
+		List<String> branches = userDao.getUserLocations(userCode);
+
+		List<InPromisesModel> promisesModels = null;
+
+		List<WorkFlowPolicyGridModel> flowPolicyGridModels = null;
+
+		List<WorkFlowPolicyGridDto> flowPolicyGridDtos = new ArrayList<>();
+
+		String type2 = "PLISU";
+
+		if (type.equals("PLAPP")) {
+			type2 = "PLAPS";
+		}
+
+		if (branches.contains("HO")) {
+
+			promisesModels = inPromiseDao.findAllBySbuCodeAndActiveOrderByCreateDateDesc("450", 1);
+			flowPolicyGridModels = inProposalCustomDao.getWorkFlowPolicylaps(type, date1, date2, type2);
+		} else {
+			promisesModels = inPromiseDao.findAllBySbuCodeAndLocCodeInAndActiveOrderByCreateDateDesc("450", branches,
+					1);
+			flowPolicyGridModels = inProposalCustomDao.getWorkFlowPolicylaps(type, daoParameters.getParaForIn(branches),
+					date1, date2, type2);
+		}
+
+		System.out.println(flowPolicyGridModels.size());
+
+		System.out.println("flowPolicyGridModels.size() temp" + flowPolicyGridModels.size());
+		System.out.println("promisesModels.size()" + promisesModels.size());
+
+		for (WorkFlowPolicyGridModel polGrid : flowPolicyGridModels) {
+
+			if (!promisesModels.isEmpty()) {
+				boolean isAvailable = true;
+
+				for (InPromisesModel promise : promisesModels) {
+
+					System.out.println(promise.getPolicyNo() + "       " + polGrid.getPolicy());
+
+					if (promise.getPprno().equals(polGrid.getProposal())) {
+
+						isAvailable = false;
+
+					}
+				}
+
+				if (isAvailable) {
+					WorkFlowPolicyGridDto dto = getFolwPolicyGridDto(polGrid);
+
+					if (dto != null) {
+
+						flowPolicyGridDtos.add(dto);
+
+					}
+				}
+			} else {
+
+				System.out.println("Else");
+
+				WorkFlowPolicyGridDto dto = getFolwPolicyGridDto(polGrid);
+
+				if (dto != null) {
+
+					flowPolicyGridDtos.add(dto);
+
+				}
+
+				System.out.println(flowPolicyGridDtos.size());
+			}
+
+		}
+
+		return flowPolicyGridDtos;
 	}
 
 }

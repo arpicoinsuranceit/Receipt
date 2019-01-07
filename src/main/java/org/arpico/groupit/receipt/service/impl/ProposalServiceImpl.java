@@ -1,6 +1,5 @@
 package org.arpico.groupit.receipt.service.impl;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -8,10 +7,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-
-
+import org.arpico.groupit.receipt.client.InfosysWSClient;
 import org.arpico.groupit.receipt.dao.AgentDao;
-import org.arpico.groupit.receipt.dao.InAgentMastDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsDao;
 import org.arpico.groupit.receipt.dao.InPropAddBenefictCustomDao;
@@ -32,7 +29,6 @@ import org.arpico.groupit.receipt.dao.InPropSurrenderValsCustomDao;
 import org.arpico.groupit.receipt.dao.InPropSurrenderValsDao;
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
 import org.arpico.groupit.receipt.dao.InProposalDao;
-import org.arpico.groupit.receipt.dao.InShortPremiumActProductDao;
 import org.arpico.groupit.receipt.dao.InTransactionsDao;
 import org.arpico.groupit.receipt.dao.RmsUserDao;
 import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
@@ -41,9 +37,9 @@ import org.arpico.groupit.receipt.dto.ProposalL3Dto;
 import org.arpico.groupit.receipt.dto.ProposalNoSeqNoDto;
 import org.arpico.groupit.receipt.dto.ReceiptPrintDto;
 import org.arpico.groupit.receipt.dto.ResponseDto;
+import org.arpico.groupit.receipt.dto.SMSDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.dto.SearchDto;
-import org.arpico.groupit.receipt.model.AgentMastModel;
 import org.arpico.groupit.receipt.model.AgentModel;
 import org.arpico.groupit.receipt.model.InBillingTransactionsModel;
 import org.arpico.groupit.receipt.model.InPropAddBenefitModel;
@@ -57,9 +53,7 @@ import org.arpico.groupit.receipt.model.InPropSurrenderValsModel;
 import org.arpico.groupit.receipt.model.InProposalBasicsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.InTransactionsModel;
-import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;/*
-																import org.arpico.groupit.receipt.model.ReFundModel;*/
-import org.arpico.groupit.receipt.model.pk.InBillingTransactionsModelPK;
+import org.arpico.groupit.receipt.model.ProposalNoSeqNoModel;
 import org.arpico.groupit.receipt.model.pk.InShortPremiumModelPK;
 import org.arpico.groupit.receipt.print.ItextReceipt;
 import org.arpico.groupit.receipt.security.JwtDecoder;
@@ -73,6 +67,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -154,22 +149,19 @@ public class ProposalServiceImpl implements ProposalServce {
 	private InBillingTransactionsCustomDao billingTransactionsCustomDao;
 
 	@Autowired
-	private InAgentMastDao inAgentMastDao;
-
-	@Autowired
 	private RmsUserDao rmsUserDao;
 
 	@Autowired
 	private SetoffService setoffService;
 
 	@Autowired
-	private InShortPremiumActProductDao actProductDao;
-
-	@Autowired
 	private ItextReceipt itextReceipt;
 
 	@Autowired
 	private JwtDecoder decoder;
+	
+	@Autowired
+	private InfosysWSClient infosysWSClient;
 
 	@Override
 	public List<ProposalNoSeqNoDto> getProposalNoSeqNoDtoList(String val) throws Exception {
@@ -218,131 +210,150 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	@Override
 	public ResponseEntity<Object> saveProposal(SaveReceiptDto saveReceiptDto) throws Exception {
-		
+
 		System.out.println("save Proposal");
 
 		String userCode = decoder.generate(saveReceiptDto.getToken());
 
 		String locCode = decoder.generateLoc(saveReceiptDto.getToken());
 
-		if (locCode != null) {
-			
-			System.out.println("if");
+		String[] batNoArr = numberGenerator.generateNewId("", "", "#TXNSQ#", "");
 
-			InProposalsModel inProposalsModel = inProposalCustomDao.getProposal(saveReceiptDto.getPropId(),
-					saveReceiptDto.getPropSeq());
+		if (batNoArr[0].equals("Success")) {
 
-			System.out.println(inProposalsModel);
-			
-			if (inProposalsModel != null) {
-				
-				System.out.println("System.out.println(inProposalsModel); ok ");
+			if (locCode != null) {
 
-				Integer pprNo = Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum());
-				Integer seqNo = inProposalsModel.getInProposalsModelPK().getPrpseq();
+				System.out.println("if");
 
-				///////////// save billing//////////////////////
-				InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
-						saveReceiptDto, userCode, locCode);
-				inTransactionsModel.getInTransactionsModelPK().setDoccod("RCPP");
-				
-				System.out.println(inTransactionsModel);
-				
-				try {
-					inTransactionsModel.setPolnum(Integer.parseInt(inProposalsModel.getPolnum()));
-				} catch (Exception e) {
-					// TODO: handle exception
-				}
-				
-				System.out.println("WORK");
-				
+				InProposalsModel inProposalsModel = inProposalCustomDao.getProposal(saveReceiptDto.getPropId(),
+						saveReceiptDto.getPropSeq());
 
-				System.out.println(inTransactionsModel.toString());
-				
-				InBillingTransactionsModel inBillingTransactionsModel = commonethodUtility
-						.getInBillingTransactionModel(inProposalsModel, saveReceiptDto, inTransactionsModel);
+				System.out.println(inProposalsModel);
 
-				System.out.println(inBillingTransactionsModel.toString());
-				
-				
-				inBillingTransactionsModel.setTxnbno(AppConstant.ZERO);
-				
-				inBillingTransactionsModel.getBillingTransactionsModelPK().setDoccod("RCPP");
-				inBillingTransactionsModel.setRefdoc("RCPP");
-				inBillingTransactionsModel.setSrcdoc("RCPP");
-				inBillingTransactionsModel.setTaxamt(0.0);
-				inBillingTransactionsModel.setAdmfee(0.0);
-				inBillingTransactionsModel.setPolfee(0.0);
-				inBillingTransactionsModel.setPolnum(inTransactionsModel.getPolnum());
+				if (inProposalsModel != null) {
 
-				System.out.println(inBillingTransactionsModel.toString());
-				try {
-					saveReceipt(inTransactionsModel, inBillingTransactionsModel);
+					System.out.println("System.out.println(inProposalsModel); ok ");
 
-					System.out.println("save in");
+					Integer pprNo = Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum());
+					Integer seqNo = inProposalsModel.getInProposalsModelPK().getPrpseq();
 
-					if (!saveReceiptDto.getPayMode().equals("CQ") && inProposalsModel.getPprsta().equalsIgnoreCase("L3")) {
-						
-						inBillingTransactionsModel.setTxnbno(1);
-						
-						checkPolicy(inProposalsModel, pprNo, seqNo, saveReceiptDto, userCode, locCode,
-								inBillingTransactionsModel);
-					}
+					///////////// save billing//////////////////////
+					InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
+							saveReceiptDto, userCode, locCode);
+					inTransactionsModel.getInTransactionsModelPK().setDoccod("RCPP");
 
-					System.out.println("dto");
-
-					ReceiptPrintDto dto = null;
+					System.out.println(inTransactionsModel);
 
 					try {
-						dto = getReceiptPrintDto(inProposalsModel, inTransactionsModel, userCode, locCode, false);
+						inTransactionsModel.setPolnum(Integer.parseInt(inProposalsModel.getPolnum()));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					System.out.println("WORK");
+
+					System.out.println(inTransactionsModel.toString());
+
+					InBillingTransactionsModel inBillingTransactionsModel = commonethodUtility
+							.getInBillingTransactionModel(inProposalsModel, saveReceiptDto, inTransactionsModel);
+
+					System.out.println(inBillingTransactionsModel.toString());
+
+					inBillingTransactionsModel.setTxnbno(AppConstant.ZERO);
+
+					inBillingTransactionsModel.getBillingTransactionsModelPK().setDoccod("RCPP");
+					inBillingTransactionsModel.setRefdoc("RCPP");
+					inBillingTransactionsModel.setSrcdoc("RCPP");
+					inBillingTransactionsModel.setTaxamt(0.0);
+					inBillingTransactionsModel.setAdmfee(0.0);
+					inBillingTransactionsModel.setPolfee(0.0);
+					inBillingTransactionsModel.setPolnum(inTransactionsModel.getPolnum());
+					inBillingTransactionsModel.setTxnbno(Integer.parseInt(batNoArr[1]));
+
+					System.out.println(inBillingTransactionsModel.toString());
+					try {
+						saveReceipt(inTransactionsModel, inBillingTransactionsModel);
+
+						System.out.println("save in");
+
+						if (!saveReceiptDto.getPayMode().equals("CQ")
+								&& inProposalsModel.getPprsta().equalsIgnoreCase("L3")) {
+
+							inBillingTransactionsModel.setTxnbno(1);
+
+							checkPolicy(inProposalsModel, pprNo, seqNo, saveReceiptDto, userCode, locCode,
+									inBillingTransactionsModel);
+						}
+
+						System.out.println("dto");
+
+						ReceiptPrintDto dto = null;
+
+						try {
+							dto = getReceiptPrintDto(inProposalsModel, inTransactionsModel, userCode, locCode, false);
+						} catch (Exception e) {
+							e.printStackTrace();
+							ResponseDto responseDto = new ResponseDto();
+							responseDto.setCode("500");
+							responseDto.setStatus("Error at print receipt. Proposal No : "
+									+ inProposalsModel.getInProposalsModelPK().getPprnum() + ", Receipt No : "
+									+ inBillingTransactionsModel.getBillingTransactionsModelPK().getDoccod() + " / "
+									+ inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum());
+							responseDto.setMessage("Error at print receipt");
+							return new ResponseEntity<>(responseDto, HttpStatus.INTERNAL_SERVER_ERROR);
+						}
+
+						ResponseDto responseDto = new ResponseDto();
+						responseDto.setCode("200");
+						responseDto.setStatus("Successfully saved. Proposal No : "
+								+ inProposalsModel.getInProposalsModelPK().getPprnum() + ", Receipt No : "
+								+ inBillingTransactionsModel.getBillingTransactionsModelPK().getDoccod() + " / "
+								+ inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum());
+						responseDto.setMessage(
+								inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum().toString());
+						responseDto.setData(itextReceipt.createReceipt(dto));
+
+						SMSDto smsDto=new SMSDto();
+						smsDto.setDocCode("RCPP");
+						smsDto.setSmsType("proposal");
+						smsDto.setRcptNo(Integer.toString(dto.getDocNum()));
+						smsDto.setUserCode(userCode);;
+						
+						infosysWSClient.sendSMS(smsDto);
+						
+						return new ResponseEntity<>(responseDto, HttpStatus.OK);
+
 					} catch (Exception e) {
 						e.printStackTrace();
 						ResponseDto responseDto = new ResponseDto();
 						responseDto.setCode("500");
-						responseDto.setStatus("Error at print receipt. Proposal No : "
-								+ inProposalsModel.getInProposalsModelPK().getPprnum() + ", Receipt No : "
-								+ inBillingTransactionsModel.getBillingTransactionsModelPK().getDoccod() + " / "
-								+ inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum());
-						responseDto.setMessage("Error at print receipt");
+						responseDto.setStatus("Error");
+						responseDto.setMessage("Error at save receipt");
 						return new ResponseEntity<>(responseDto, HttpStatus.INTERNAL_SERVER_ERROR);
 					}
 
-					ResponseDto responseDto = new ResponseDto();
-					responseDto.setCode("200");
-					responseDto.setStatus("Successfully saved. Proposal No : "
-							+ inProposalsModel.getInProposalsModelPK().getPprnum() + ", Receipt No : "
-							+ inBillingTransactionsModel.getBillingTransactionsModelPK().getDoccod() + " / "
-							+ inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum());
-					responseDto.setMessage(
-							inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum().toString());
-					responseDto.setData(itextReceipt.createReceipt(dto));
+					///////////////// end save billing ///////////////
 
-					return new ResponseEntity<>(responseDto, HttpStatus.OK);
-
-				} catch (Exception e) {
-					e.printStackTrace();
+				} else {
 					ResponseDto responseDto = new ResponseDto();
-					responseDto.setCode("500");
+					responseDto.setCode("204");
 					responseDto.setStatus("Error");
-					responseDto.setMessage("Error at save receipt");
-					return new ResponseEntity<>(responseDto, HttpStatus.INTERNAL_SERVER_ERROR);
+					responseDto.setMessage("Proposal Not Found");
+					return new ResponseEntity<>(responseDto, HttpStatus.OK);
 				}
-
-				///////////////// end save billing ///////////////
 
 			} else {
 				ResponseDto responseDto = new ResponseDto();
 				responseDto.setCode("204");
 				responseDto.setStatus("Error");
-				responseDto.setMessage("Proposal Not Found");
+				responseDto.setMessage("User or Location Not Found");
 				return new ResponseEntity<>(responseDto, HttpStatus.OK);
 			}
-
 		} else {
 			ResponseDto responseDto = new ResponseDto();
 			responseDto.setCode("204");
 			responseDto.setStatus("Error");
-			responseDto.setMessage("User or Location Not Found");
+			responseDto.setMessage("Batch No not Created");
 			return new ResponseEntity<>(responseDto, HttpStatus.OK);
 		}
 
@@ -407,6 +418,8 @@ public class ProposalServiceImpl implements ProposalServce {
 	public void checkPolicy(InProposalsModel inProposalsModel, Integer pprNo, Integer seqNo,
 			SaveReceiptDto saveReceiptDto, String userCode, String locCode, InBillingTransactionsModel deposit)
 			throws Exception {
+		
+		try {
 		if (inProposalsModel.getPprsta().equalsIgnoreCase("L3")) {
 
 			List<ProposalL3Dto> proposalL3Dtos = inProposalCustomDao.checkL3(saveReceiptDto.getPropId());
@@ -414,12 +427,14 @@ public class ProposalServiceImpl implements ProposalServce {
 
 				System.out.println("PASS CHECK POLICY");
 
+				String[] batNoArr2 = numberGenerator.generateNewId("", "", "#TXNSQ#", "");
+
 				String[] numberGen = numberGenerator.generateNewId("", "", "POLCSQ", "");
-				if (numberGen[0].equals("Success")) {
+				if (numberGen[0].equals("Success") && batNoArr2[0].equals("Success")) {
 
 					inProposalsModel.setPprsta("INAC");
 					inProposalsModel.setLockin(new Date());
-					//inProposalsModel.setIcpdat(new Date());
+					// inProposalsModel.setIcpdat(new Date());
 
 					inProposalDao.save(inProposalsModel);
 
@@ -491,7 +506,7 @@ public class ProposalServiceImpl implements ProposalServce {
 							.getScheduleBuPprNoAndSeqNo(pprNo, seqNo);
 					if (propSchedulesModels != null && !propSchedulesModels.isEmpty()) {
 						propSchedulesModels = incremenntScheduleSeq(propSchedulesModels, updatedSeqNo);
-					propScheduleDao.save(propSchedulesModels);
+						propScheduleDao.save(propSchedulesModels);
 					}
 
 					System.out.println("proposal Schedule save done");
@@ -510,16 +525,18 @@ public class ProposalServiceImpl implements ProposalServce {
 					inShortPremiumModelPK.setPrdcod(inProposalsModel.getPrdcod());
 					inShortPremiumModelPK.setSbucod("450");
 
-					//Double recovery = proposalL3Dtos.get(0).getRecovery();
-					
+					// Double recovery = proposalL3Dtos.get(0).getRecovery();
+
 					Double hrbamt = commonethodUtility.getHrbAmt(addBenefitModels);
 
-					List<InBillingTransactionsModel> setoffList = setoffService.setoff(proposalsModelNew, userCode, locCode, saveReceiptDto, deposit, hrbamt, proposalL3Dtos.get(0),"NEW");
+					List<InBillingTransactionsModel> setoffList = setoffService.setoff(proposalsModelNew, userCode,
+							locCode, saveReceiptDto, deposit, hrbamt, proposalL3Dtos.get(0), "NEW",
+							Integer.parseInt(batNoArr2[1]));
 
 					inBillingTransactionDao.save(setoffList);
-					
+
 					System.out.println("settoff list save");
-					
+
 				}
 			} else {
 				System.out.println("FAIL CHECK POLICY");
@@ -528,6 +545,9 @@ public class ProposalServiceImpl implements ProposalServce {
 			System.out.println("FAIL CHECK POLICY");
 		}
 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private List<InPropSurrenderValsModel> incrementSurrenderVals(
@@ -596,32 +616,31 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	private InProposalsModel getProposalPolicyStage(InProposalsModel inProposalsModel, String polNo,
 			SaveReceiptDto saveReceiptDto) throws Exception {
-		
+
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		
+
 		String icpDate = "";
 		String expDate = "";
-		
-		
+
 		Calendar calendar1 = new GregorianCalendar();
 		calendar1.setTime(new Date());
 
-		icpDate += calendar1.get(Calendar.YEAR)+"-"+(calendar1.get(Calendar.MONTH)+1) + "-";
-		
-		expDate += (calendar1.get(Calendar.YEAR) + inProposalsModel.getToptrm()) +"-"+(calendar1.get(Calendar.MONTH)+1) + "-";
-		
-		if(calendar1.get(Calendar.DATE) > 28) {
+		icpDate += calendar1.get(Calendar.YEAR) + "-" + (calendar1.get(Calendar.MONTH) + 1) + "-";
+
+		expDate += (calendar1.get(Calendar.YEAR) + inProposalsModel.getToptrm()) + "-"
+				+ (calendar1.get(Calendar.MONTH) + 1) + "-";
+
+		if (calendar1.get(Calendar.DATE) > 28) {
 			expDate += "28";
 			icpDate += "28";
-		}else {
+		} else {
 			expDate += Integer.toString(calendar1.get(Calendar.DATE));
 			icpDate += Integer.toString(calendar1.get(Calendar.DATE));
 		}
-		
-		
+
 		System.out.println("ICP DATE : " + icpDate);
 		System.out.println("EXP DATE : " + expDate);
-		
+
 		InProposalsModel proposalsModel = inProposalsModel;
 
 		proposalsModel.getInProposalsModelPK().setPrpseq(proposalsModel.getInProposalsModelPK().getPrpseq() + 1);
@@ -634,7 +653,6 @@ public class ProposalServiceImpl implements ProposalServce {
 		proposalsModel.setIcpdat(dateFormat.parse(icpDate));
 		proposalsModel.setComdat(dateFormat.parse(icpDate));
 		proposalsModel.setExpdat(dateFormat.parse(expDate));
-		
 
 		return proposalsModel;
 	}
@@ -784,7 +802,8 @@ public class ProposalServiceImpl implements ProposalServce {
 				break;
 			case "cnm":
 
-				sql = " pprsta <> 'INAC' and (ppdini like '%" + value + "%' OR ppdnam like '" + value + "%') and polnum is not null  ";
+				sql = " pprsta <> 'INAC' and (ppdini like '%" + value + "%' OR ppdnam like '" + value
+						+ "%') and polnum is not null  ";
 
 				break;
 			case "nic":
@@ -803,7 +822,7 @@ public class ProposalServiceImpl implements ProposalServce {
 				break;
 			}
 		}
-		
+
 		if (receiptType.equals("ppr")) {
 			switch (type) {
 			case "ppr":
@@ -818,7 +837,8 @@ public class ProposalServiceImpl implements ProposalServce {
 				break;
 			case "cnm":
 
-				sql = " pprsta <> 'INAC' and pprsta not in ('PLISU', 'PLAPS') and (ppdini like '%" + value + "%' OR ppdnam like '" + value + "%')";
+				sql = " pprsta <> 'INAC' and pprsta not in ('PLISU', 'PLAPS') and (ppdini like '%" + value
+						+ "%' OR ppdnam like '" + value + "%')";
 
 				break;
 			case "nic":
@@ -868,5 +888,4 @@ public class ProposalServiceImpl implements ProposalServce {
 		dto.setSeqNum(e.getInProposalsModelPK().getPrpseq());
 		return dto;
 	}
-
 }

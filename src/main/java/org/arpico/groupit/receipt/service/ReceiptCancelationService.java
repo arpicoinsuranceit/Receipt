@@ -13,6 +13,13 @@ public interface ReceiptCancelationService {
 	List<CanceledReceiptDto> findPendingRequest(String token) throws Exception;
 
 	List<CanceledReceiptDto> findCanceledRequest(String token) throws Exception;
+
+	List<CanceledReceiptDto> findPendingRequest(String token, Integer page, Integer offset) throws Exception;
+
+	Integer findPendingRequestLength(String token)  throws Exception;
+
+	List<CanceledReceiptDto> findApprovedRequest(String token) throws Exception;
+
 	
 
 }

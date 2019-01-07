@@ -20,6 +20,7 @@ public class InProposalUnderwriteRowMapper implements RowMapper<InProposalUnderw
 		basicsModel.setPolBranch(rs.getString("loccod"));
 		basicsModel.setAgentBranch(rs.getString("brncod"));
 		basicsModel.setNic(rs.getString("ppdnic"));
+		basicsModel.setProduct(rs.getString("prdcod"));
 		
 		return basicsModel;
 	}

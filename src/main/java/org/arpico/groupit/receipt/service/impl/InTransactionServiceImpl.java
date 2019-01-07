@@ -68,5 +68,16 @@ public class InTransactionServiceImpl implements InTransactionService {
 
 		return lastReceiptSummeryDtos;
 	}
+	
+	@Override
+	public List<LastReceiptSummeryDto> getLastLoanReceiptsByPolNo(String polNo) throws Exception {
+		List<LastReceiptSummeryDto> lastReceiptSummeryDtos = new ArrayList<>();
+
+		List<LastReceiptSummeryModel> lastReceiptSummeryModels = inTransactionCustomDao.getLastLoanReceiptsByPolNo(polNo);
+
+		lastReceiptSummeryModels.forEach(e -> lastReceiptSummeryDtos.add(getLastReceiptDto(e)));
+
+		return lastReceiptSummeryDtos;
+	}
 
 }

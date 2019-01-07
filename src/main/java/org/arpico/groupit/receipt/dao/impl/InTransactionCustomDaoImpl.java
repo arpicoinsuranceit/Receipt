@@ -61,6 +61,15 @@ public class InTransactionCustomDaoImpl implements InTransactionCustomDao {
 						+ "where sbucod='450' and polnum  = '" + polNo + "'  order by creadt desc limit 2",
 				new LastReceiptRowMapper());
 	}
+	
+	@Override
+	public List<LastReceiptSummeryModel> getLastLoanReceiptsByPolNo(String polNo) throws Exception {
+
+		return (List<LastReceiptSummeryModel>) jdbcTemplate.query(
+				"select doccod, docnum, creadt, pprnum, polnum, totprm, chqrel, paymod from inloantransactions "
+						+ "where sbucod='450' and polnum  = '" + polNo + "'  order by creadt desc limit 2",
+				new LastReceiptRowMapper());
+	}
 
 	@Override
 	public List<LastReceiptSummeryModel> getReceiptsByDocNum(String docnum) throws Exception {

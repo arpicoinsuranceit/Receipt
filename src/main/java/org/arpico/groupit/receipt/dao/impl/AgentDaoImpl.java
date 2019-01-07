@@ -21,6 +21,8 @@ public class AgentDaoImpl implements AgentDao {
 
 		String query = "SELECT agncod, shrtnm, loccod FROM inagentmast where sbucod = '450' " + sql
 				+ " and agncod like '" + agentCode + "%' and agnsta IN ('ACT','INA') order by agncod";
+		
+		System.out.println(query);
 
 		return jdbcTemplate.query(query, new AgentRowMapper());
 	}
