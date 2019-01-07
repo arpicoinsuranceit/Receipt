@@ -5,6 +5,15 @@ public class BankModel {
 	private String bankCode;
 	private String bankName;
 	private String location;
+	private String acccode;
+
+	public String getAcccode() {
+		return acccode;
+	}
+
+	public void setAcccode(String acccode) {
+		this.acccode = acccode;
+	}
 
 	public String getBankCode() {
 		return bankCode;
