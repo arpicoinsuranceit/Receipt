@@ -1,27 +1,38 @@
 package org.arpico.groupit.receipt.model;
 
 public class BankModel {
-	
+
 	private String bankCode;
 	private String bankName;
-	
+	private String location;
+
 	public String getBankCode() {
 		return bankCode;
 	}
+
 	public void setBankCode(String bankCode) {
 		this.bankCode = bankCode;
 	}
+
 	public String getBankName() {
 		return bankName;
 	}
+
 	public void setBankName(String bankName) {
 		this.bankName = bankName;
 	}
-	
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
 	@Override
 	public String toString() {
-		return "BankDto [bankCode=" + bankCode + ", bankName=" + bankName + "]";
+		return "BankModel [bankCode=" + bankCode + ", bankName=" + bankName + ", location=" + location + "]";
 	}
-	
 
 }

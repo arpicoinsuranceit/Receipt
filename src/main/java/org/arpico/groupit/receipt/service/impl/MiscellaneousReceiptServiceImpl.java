@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.arpico.groupit.receipt.dao.AgentDao;
+import org.arpico.groupit.receipt.dao.BankDao;
 import org.arpico.groupit.receipt.dao.RmsDocTxndDao;
 import org.arpico.groupit.receipt.dao.RmsDocTxnmCustomDao;
 import org.arpico.groupit.receipt.dao.RmsDocTxnmDao;
@@ -22,6 +23,7 @@ import org.arpico.groupit.receipt.dto.ReceiptPrintDto;
 import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.dto.RmsDocTxnmGridDto;
 import org.arpico.groupit.receipt.model.AgentModel;
+import org.arpico.groupit.receipt.model.BankModel;
 import org.arpico.groupit.receipt.model.RmsDocTxndModel;
 import org.arpico.groupit.receipt.model.RmsDocTxnmGridModel;
 import org.arpico.groupit.receipt.model.RmsDocTxnmModel;
@@ -73,6 +75,9 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 	
 	@Autowired
 	private ItextReceipt itextReceipt;
+	
+	@Autowired
+	private BankDao bankDao;
 
 	@Override
 	public ResponseEntity<Object> save(MiscellaneousReceiptInvDto dto, String token) throws Exception {
@@ -81,7 +86,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 
 		String user = decoder.generate(token);
 		String physicalBranch = decoder.generateLoc(token);
-
+		
 		String[] numberGen = numberGenerator.generateNewId("", "", "SQOIIS", "");
 
 		System.out.println(Arrays.toString(numberGen));
@@ -287,7 +292,9 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 	}
 
 	private RmsDocTxnmModel getRmsDocTxnmModelInv(MiscellaneousReceiptInvDto dto, String user, String docNo, String physicalBranch)
-			throws ParseException {
+			throws Exception {
+		
+		BankModel bankModel = bankDao.getBankById(dto.getBank());
 
 		//SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -300,7 +307,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		RmsDocTxnmModel model = new RmsDocTxnmModel();
 
 		model.setCustSupF("S");
-		model.setCustSupCode(physicalBranch);
+		model.setCustSupCode(bankModel.getLocation());
 		model.setRmsDocTxnmModelPK(pk);
 		model.setRef1(dto.getAgent());
 		model.setRef2(dto.getPaymode());
