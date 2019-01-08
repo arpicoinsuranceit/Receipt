@@ -33,7 +33,7 @@ public class RmsDocTxnmRowMapper implements RowMapper<RmsDocTxnmModel> {
 		model.setCurrCode(rs.getString("CURR_CODE"));
 		model.setCustSupCode(rs.getString("CUST_SUP_CODE"));
 		model.setCustSupF(rs.getString("CUST_SUP_F"));
-		model.setDeliDate(rs.getString("DELIDATE"));
+		//model.setDeliDate(new SimpleDateFormat("yyyy-MM-dd").format(rs.getDate("DELIDATE")));
 		model.setDetlineSeq(rs.getInt("DET_LINE_SEQ"));
 		model.setDownloaded(rs.getString("DOWNLOADED"));
 		model.setExcrat(rs.getDouble("EXCRAT"));
@@ -46,7 +46,7 @@ public class RmsDocTxnmRowMapper implements RowMapper<RmsDocTxnmModel> {
 		model.setJobNo(rs.getString("JOB_NO"));
 		model.setLocser(rs.getString("locser"));
 		model.setModBy(rs.getString("MOD_BY"));
-		model.setModDate(rs.getString("MOD_DATE"));
+		//model.setModDate(new SimpleDateFormat("yyyy-MM-dd").format(rs.getDate("MOD_DATE")));
 		model.setMstat(rs.getString("MSTAT"));
 		model.setPassBy(rs.getString("PASS_BY"));
 		model.setRecBy(rs.getString("REC_BY"));

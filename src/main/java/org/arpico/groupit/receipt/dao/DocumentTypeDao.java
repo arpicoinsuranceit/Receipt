@@ -11,6 +11,8 @@ public interface DocumentTypeDao extends JpaRepository<DocumentTypeModel, Intege
 	
 	public List<DocumentTypeModel> findByDocTypeCodeAndParent(String docTypeCode,Integer parent)throws Exception; 
 	
+	public List<DocumentTypeModel> findByDocNameAndParent(String docName,Integer parent)throws Exception; 
+	
 	public List<DocumentTypeModel> findByParent(Integer parent)throws Exception; 
 
 }

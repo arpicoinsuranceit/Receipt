@@ -10,6 +10,8 @@ import java.util.List;
 
 import org.arpico.groupit.receipt.client.UserManagementClient;
 import org.arpico.groupit.receipt.dao.AgentDao;
+import org.arpico.groupit.receipt.dao.InLoanTransactionCustomDao;
+import org.arpico.groupit.receipt.dao.InLoanTransactionsDao;
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
 import org.arpico.groupit.receipt.dao.InTransactionCustomDao;
 import org.arpico.groupit.receipt.dao.RmsDocTxndCustomDao;
@@ -23,6 +25,7 @@ import org.arpico.groupit.receipt.dto.InventoryDetailsDto;
 import org.arpico.groupit.receipt.dto.ReceiptPrintDto;
 import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.model.AgentModel;
+import org.arpico.groupit.receipt.model.InLoanTransactionsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.InTransactionsModel;
 import org.arpico.groupit.receipt.model.MisGlItemModel;
@@ -86,6 +89,12 @@ public class ReprintServiceImpl implements ReprintService {
 	@Value("${gl_acc_param}")
 	private String accounts;
 
+	@Autowired
+	private InLoanTransactionsDao inLoanTransactionDao;
+
+	@Autowired
+	private InLoanTransactionCustomDao inLoanTransactionCustomDao;
+
 	@Override
 	public ResponseEntity<Object> getReprint(String docCode, Integer receiptNo, String token) throws Exception {
 
@@ -122,6 +131,12 @@ public class ReprintServiceImpl implements ReprintService {
 			case "GLRC":
 
 				pdf = getFromRecm(docCode, receiptNo, agentBranchs);
+				break;
+
+			case "RCLN":
+
+				pdf = getFromInLoanTrans(docCode, receiptNo, agentBranchs);
+
 				break;
 
 			default:
@@ -179,6 +194,33 @@ public class ReprintServiceImpl implements ReprintService {
 
 	}
 
+	private byte[] getFromInLoanTrans(String docCode, Integer receiptNo, List<String> agentBranchs) throws Exception {
+
+		InLoanTransactionsModel inLoanTransactionsModel = null;
+		try {
+			inLoanTransactionsModel = inLoanTransactionCustomDao.getLoanTransaction(docCode, receiptNo);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("NotFoundReceipt");
+		}
+
+		if (!agentBranchs.contains("HO")) {
+			if (!agentBranchs.contains(inLoanTransactionsModel.getInLoanTransactionsModelPK().getLoccod())) {
+				throw new RuntimeException("BranchIlligal");
+			}
+		}
+
+		InProposalsModel inProposalsModel = inProposalCustomDao
+				.getProposalFromPolnum(inLoanTransactionsModel.getPolnum());
+
+		ReceiptPrintDto receiptPrintDto = getReceiptPrintDtoRCLN(inProposalsModel, inLoanTransactionsModel,
+				inLoanTransactionsModel.getAdvcod(),
+				inLoanTransactionsModel.getInLoanTransactionsModelPK().getLoccod());
+
+		return itextReceipt.createReceipt(receiptPrintDto);
+
+	}
+
 	private byte[] getFromDocTxnm(String docCode, Integer receiptNo, List<String> agentBranchs) throws Exception {
 		RmsDocTxnmModel docTxnmModel = null;
 		List<RmsDocTxndModel> docTxndModels = null;
@@ -190,10 +232,14 @@ public class ReprintServiceImpl implements ReprintService {
 			throw new RuntimeException("NotFoundReceipt");
 		}
 
-		if (!agentBranchs.contains("HO")) {
-			if (!agentBranchs.contains(docTxnmModel.getRmsDocTxnmModelPK().getLocCode())) {
-				throw new RuntimeException("BranchIlligal");
+		if (docTxndModels != null && docTxndModels.size() > 0) {
+			if (!agentBranchs.contains("HO")) {
+				if (!agentBranchs.contains(docTxndModels.get(0).getDimm04())) {
+					throw new RuntimeException("BranchIlligal");
+				}
 			}
+		} else {
+			throw new RuntimeException("BranchIlligal");
 		}
 
 		ReceiptPrintDto receiptPrintDto = getReceiptPrintDtoINV(docTxnmModel, docTxndModels);
@@ -224,30 +270,25 @@ public class ReprintServiceImpl implements ReprintService {
 			}
 		}
 
-		
 		List<MisGlItemModel> glItemModelsNew = new ArrayList<>();
-		
-		System.out.println("glItemModels.size() :  "+ glItemModels.size());
-		
+
+		System.out.println("glItemModels.size() :  " + glItemModels.size());
+
 		glItemModels.forEach(e -> {
-			
-			accountList.forEach( item -> {
-				
+
+			accountList.forEach(item -> {
+
 				if (item.equals(e.getInterId().toString())) {
 					glItemModelsNew.add(e);
 				}
 			});
-			
-			
+
 		});
-		
-		
+
 		ReceiptPrintDto receiptPrintDto = getReceiptPrintDtoGL(recmModel, glItemModelsNew, payMode);
 
 		return itextReceipt.createReceipt(receiptPrintDto);
 	}
-
-	
 
 	private ReceiptPrintDto getReceiptPrintDtoInTran(InProposalsModel inProposalsModel,
 			InTransactionsModel inTransactionsModel) throws Exception {
@@ -357,24 +398,23 @@ public class ReprintServiceImpl implements ReprintService {
 
 		return printDto;
 	}
-	
-	private ReceiptPrintDto getReceiptPrintDtoGL(RmsRecmModel recmModel, List<MisGlItemModel> glItemModels, String payMode) throws Exception {
+
+	private ReceiptPrintDto getReceiptPrintDtoGL(RmsRecmModel recmModel, List<MisGlItemModel> glItemModels,
+			String payMode) throws Exception {
 		ReceiptPrintDto printDto = new ReceiptPrintDto();
-		
+
 		List<AccountGLDto> accounts = new ArrayList<>();
-		
+
 		glItemModels.forEach(e -> {
 			AccountGLDto dto = new AccountGLDto();
-			dto.setAmount(e.getAmount() < 0 ? e.getAmount() *-1 : e.getAmount() );
+			dto.setAmount(e.getAmount() < 0 ? e.getAmount() * -1 : e.getAmount());
 			dto.setDescription(e.getDescription());
 			dto.setId(e.getInterId());
 			dto.setRemark(e.getRemark());
-			
+
 			accounts.add(dto);
 		});
-		
-		
-		
+
 		printDto.setRctStatus("DUP");
 		printDto.setAmt(recmModel.getAmtfcu());
 		printDto.setPayMode(payMode);
@@ -383,14 +423,58 @@ public class ReprintServiceImpl implements ReprintService {
 		printDto.setDocNum(recmModel.getRmsRecmModelPK().getDocNo());
 		printDto.setRctDate(new Date());
 		printDto.setLocation(recmModel.getRmsRecmModelPK().getLocCode());
-		//printDto.setRemark(recmModel.getRemark());
+		// printDto.setRemark(recmModel.getRemark());
 		printDto.setUserName(recmModel.getCreBy());
 		printDto.setCusName(recmModel.getRemark());
 		printDto.setLocation(recmModel.getRmsRecmModelPK().getLocCode());
 		printDto.setAccounts(accounts);
 
-		
+		return printDto;
+	}
 
+	private ReceiptPrintDto getReceiptPrintDtoRCLN(InProposalsModel inProposalsModel,
+			InLoanTransactionsModel inTransactionsModel, String agentCode, String locCode) throws Exception {
+		ReceiptPrintDto printDto = new ReceiptPrintDto();
+
+		List<AgentModel> agentModels = agentDao.findAgentByCodeAll(inProposalsModel.getAdvcod());
+
+		String userName = rmsUserDao.getName(agentCode);
+
+		printDto.setAgtCode(Integer.parseInt(inProposalsModel.getAdvcod()));
+		printDto.setAgtName(agentModels.get(0).getAgentName());
+		printDto.setAmt(inTransactionsModel.getTotprm());
+		printDto.setAmtInWord(inTransactionsModel.getAmtwrd());
+		printDto.setCusAddress1(inProposalsModel.getPpdad1());
+		printDto.setCusAddress2(inProposalsModel.getPpdad2());
+		printDto.setCusAddress3(inProposalsModel.getPpdad3());
+		printDto.setCusCode(Integer.parseInt(inProposalsModel.getCscode()));
+		printDto.setCusName(inProposalsModel.getPpdini());
+		printDto.setCusTitle(inProposalsModel.getNtitle());
+		printDto.setPolNum(inTransactionsModel.getPolnum());
+		printDto.setDocCode(inTransactionsModel.getInLoanTransactionsModelPK().getDoccod());
+		printDto.setDocNum(inTransactionsModel.getInLoanTransactionsModelPK().getDocnum());
+		printDto.setLocation(locCode);
+		printDto.setPayMode(inTransactionsModel.getPaymod());
+		printDto.setPropNum(Integer.parseInt(inTransactionsModel.getPprnum()));
+		printDto.setQuoNum(inProposalsModel.getQuonum());
+		printDto.setQdId(inProposalsModel.getInProposalsModelPK().getPrpseq());
+		printDto.setRctDate(inTransactionsModel.getCreadt());
+		printDto.setRctStatus("DUP");
+		printDto.setRemark(inTransactionsModel.getRemark());
+		printDto.setUserName(userName);
+		printDto.setLoanNum(inTransactionsModel.getFclnum());
+
+		if (inTransactionsModel.getChqnum() != null) {
+			printDto.setChqNo(Integer.parseInt(inTransactionsModel.getChqnum()));
+		}
+		if (inTransactionsModel.getChqdat() != null) {
+			printDto.setChqDate(new SimpleDateFormat("dd/MM/yyyy").format(inTransactionsModel.getChqdat()));
+		}
+		if (inTransactionsModel.getChqbnk() != null) {
+			printDto.setBankCode(Integer.parseInt(inTransactionsModel.getChqbnk()));
+		}
+
+		System.out.println(printDto);
 		return printDto;
 	}
 
