@@ -41,7 +41,7 @@ public class RmsUserDaoImpl implements RmsUserDao{
 	public String getName(String userCode) throws Exception {
 		String userLocList = null;
 		
-		userLocList = jdbcTemplate.query("SELECT USER_NAME FROM rms_users where SBU_CODE = '450' and USER_ID = '"+userCode+"' and active=1 ", new ResultSetExtractor<String>() {
+		userLocList = jdbcTemplate.query("SELECT USER_NAME FROM rms_users where SBU_CODE = '450' and USER_ID = '"+userCode+"' ", new ResultSetExtractor<String>() {
 
 			@Override
 			public String extractData(ResultSet rs) throws SQLException, DataAccessException {
