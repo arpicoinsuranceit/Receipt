@@ -5,6 +5,8 @@ import org.arpico.groupit.receipt.model.SmSequenceModel;
 import org.arpico.groupit.receipt.service.NumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -15,6 +17,7 @@ public class NumberGeneratorImpl implements NumberGenerator {
 	private SmSequenceDao smSequenceDao;
 
 	@Override
+	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public String[] generateNewId(String sbuCode, String locationCode, String serialId, String instatus)
 			throws Exception {
 

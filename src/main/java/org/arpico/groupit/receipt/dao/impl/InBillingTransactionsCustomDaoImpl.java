@@ -165,4 +165,10 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 
 	}
 
+	@Override
+	public List<InBillingTransactionsModel> getSetoffsForRcpl(Integer docnum) throws Exception {
+		return jdbcTemplate.query("select * from inbillingtransactions where  sbucod = '450' and doccod = 'RCPP' "
+				+ "and docnum = '" + docnum + "' and depost > 0 ", new InBillingTransactionRowMapper());
+	}
+
 }

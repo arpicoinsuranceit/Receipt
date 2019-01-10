@@ -1322,10 +1322,45 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 			rctTable.addCell(settlement);
 			Cell settlementVal = new Cell();
 			settlementVal.setBorder(Border.NO_BORDER);
-			settlementVal.add(new Paragraph(
-					receiptPrintDto.getSettlement() != null ? "Rs. " + formatter.format(receiptPrintDto.getSettlement())
-							: "null").setBorder(Border.NO_BORDER).setFontSize(10));
+			
+			/////// settltments ////////////////
+			
+			// TODO
+			
+			float[] settlementTblWidth = { 40,5, 60 };
+			Table settlementTable = new Table(settlementTblWidth);
+			
+			receiptPrintDto.getSetOffs().forEach(e -> {
+				Cell txnMthYer = new Cell();
+				txnMthYer.setBorder(Border.NO_BORDER);
+				txnMthYer.setPadding(1);
+				txnMthYer.add(new Paragraph(e.get("txnMonth") + " - " + e.get("txnYear")).setFontSize(5));
+				settlementTable.addCell(txnMthYer);
+				
+				Cell seperator = new Cell();
+				seperator.setBorder(Border.NO_BORDER);
+				seperator.add(new Paragraph(" : ").setFontSize(5));
+				seperator.setPadding(1);
+				settlementTable.addCell(seperator);
+				
+				Cell setOffAmount = new Cell();
+				setOffAmount.setBorder(Border.NO_BORDER);
+				setOffAmount.setPadding(1);
+				setOffAmount.add(new Paragraph(e.get("amount")).setFontSize(5));
+				settlementTable.addCell(setOffAmount);
+			});
+			
+			
+			
+			
+			/////// END settltments ////////////////
+			
+			
+			
+			settlementVal.add(settlementTable);
 			rctTable.addCell(settlementVal);
+			
+			rctTable.setPaddingTop(500);
 
 			document.add(rctTable);
 

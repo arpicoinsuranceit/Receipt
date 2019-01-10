@@ -6,10 +6,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.arpico.groupit.receipt.client.UserManagementClient;
 import org.arpico.groupit.receipt.dao.AgentDao;
+import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
 import org.arpico.groupit.receipt.dao.InTransactionCustomDao;
 import org.arpico.groupit.receipt.dao.RmsDocTxndCustomDao;
@@ -23,6 +25,7 @@ import org.arpico.groupit.receipt.dto.InventoryDetailsDto;
 import org.arpico.groupit.receipt.dto.ReceiptPrintDto;
 import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.model.AgentModel;
+import org.arpico.groupit.receipt.model.InBillingTransactionsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.InTransactionsModel;
 import org.arpico.groupit.receipt.model.MisGlItemModel;
@@ -82,6 +85,9 @@ public class ReprintServiceImpl implements ReprintService {
 
 	@Autowired
 	private RmsRecmCustomDao rmsRecmCustomDao;
+
+	@Autowired
+	private InBillingTransactionsCustomDao billingTransactionsCustomDao;
 
 	@Value("${gl_acc_param}")
 	private String accounts;
@@ -170,10 +176,27 @@ public class ReprintServiceImpl implements ReprintService {
 			}
 		}
 
+		List<InBillingTransactionsModel> inBillingTransactionsModels = billingTransactionsCustomDao
+				.getSetoffsForRcpl(receiptNo);
+
+		List<HashMap<String, String>> setoffList = new ArrayList<>();
+
+		inBillingTransactionsModels.forEach(e -> {
+			HashMap<String, String> setoff = new HashMap<>();
+
+			setoff.put("txnMonth", Integer.toString(e.getTxnmth()));
+			setoff.put("txnYear", Integer.toString(e.getTxnyer()));
+			setoff.put("amount", Double.toString(e.getDepost()));
+
+			setoffList.add(setoff);
+
+		});
+
 		InProposalsModel inProposalsModel = inProposalCustomDao
 				.getProposal(Integer.parseInt(inTransactionsModel.getPprnum()), inTransactionsModel.getSeqnum());
 
 		ReceiptPrintDto receiptPrintDto = getReceiptPrintDtoInTran(inProposalsModel, inTransactionsModel);
+		receiptPrintDto.setSetOffs(setoffList);
 
 		return itextReceipt.createReceipt(receiptPrintDto);
 
@@ -224,30 +247,25 @@ public class ReprintServiceImpl implements ReprintService {
 			}
 		}
 
-		
 		List<MisGlItemModel> glItemModelsNew = new ArrayList<>();
-		
-		System.out.println("glItemModels.size() :  "+ glItemModels.size());
-		
+
+		System.out.println("glItemModels.size() :  " + glItemModels.size());
+
 		glItemModels.forEach(e -> {
-			
-			accountList.forEach( item -> {
-				
+
+			accountList.forEach(item -> {
+
 				if (item.equals(e.getInterId().toString())) {
 					glItemModelsNew.add(e);
 				}
 			});
-			
-			
+
 		});
-		
-		
+
 		ReceiptPrintDto receiptPrintDto = getReceiptPrintDtoGL(recmModel, glItemModelsNew, payMode);
 
 		return itextReceipt.createReceipt(receiptPrintDto);
 	}
-
-	
 
 	private ReceiptPrintDto getReceiptPrintDtoInTran(InProposalsModel inProposalsModel,
 			InTransactionsModel inTransactionsModel) throws Exception {
@@ -357,24 +375,23 @@ public class ReprintServiceImpl implements ReprintService {
 
 		return printDto;
 	}
-	
-	private ReceiptPrintDto getReceiptPrintDtoGL(RmsRecmModel recmModel, List<MisGlItemModel> glItemModels, String payMode) throws Exception {
+
+	private ReceiptPrintDto getReceiptPrintDtoGL(RmsRecmModel recmModel, List<MisGlItemModel> glItemModels,
+			String payMode) throws Exception {
 		ReceiptPrintDto printDto = new ReceiptPrintDto();
-		
+
 		List<AccountGLDto> accounts = new ArrayList<>();
-		
+
 		glItemModels.forEach(e -> {
 			AccountGLDto dto = new AccountGLDto();
-			dto.setAmount(e.getAmount() < 0 ? e.getAmount() *-1 : e.getAmount() );
+			dto.setAmount(e.getAmount() < 0 ? e.getAmount() * -1 : e.getAmount());
 			dto.setDescription(e.getDescription());
 			dto.setId(e.getInterId());
 			dto.setRemark(e.getRemark());
-			
+
 			accounts.add(dto);
 		});
-		
-		
-		
+
 		printDto.setRctStatus("DUP");
 		printDto.setAmt(recmModel.getAmtfcu());
 		printDto.setPayMode(payMode);
@@ -383,13 +400,11 @@ public class ReprintServiceImpl implements ReprintService {
 		printDto.setDocNum(recmModel.getRmsRecmModelPK().getDocNo());
 		printDto.setRctDate(new Date());
 		printDto.setLocation(recmModel.getRmsRecmModelPK().getLocCode());
-		//printDto.setRemark(recmModel.getRemark());
+		// printDto.setRemark(recmModel.getRemark());
 		printDto.setUserName(recmModel.getCreBy());
 		printDto.setCusName(recmModel.getRemark());
 		printDto.setLocation(recmModel.getRmsRecmModelPK().getLocCode());
 		printDto.setAccounts(accounts);
-
-		
 
 		return printDto;
 	}

@@ -731,7 +731,7 @@ public class SetoffServiceImpl implements SetoffService {
 
 		}
 
-		
+		//throw new SQLException();
 		return setoffList;
 	}
 
