@@ -4,8 +4,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.arpico.groupit.receipt.client.InfosysWSClient;
 import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.InAgentMastDao;
@@ -44,6 +46,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,7 +98,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 	@Autowired
 	private ItextReceipt itextReceipt;
-	
+
 	@Autowired
 	private InfosysWSClient infosysWSClient;
 
@@ -207,6 +210,9 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 				ReceiptPrintDto printDto = null;
 				try {
 					saveReceipt(inTransactionsModel, deposit);
+
+					List<InBillingTransactionsModel> setoffs = null;
+
 					if (!saveReceiptDto.equals("CQ")) {
 
 						String[] batNoArr2 = numberGenerator.generateNewId("", "", "#TXNSQ#", "");
@@ -219,12 +225,14 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 							Double hrbamt = commonethodUtility.getHrbAmt(addBenefitModels);
 
-							List<InBillingTransactionsModel> setoffs = setoffService.setoff(inProposalsModel, userCode,
-									locCode, saveReceiptDto, deposit, hrbamt, null, "OLD", Integer.parseInt(batNoArr2[1]));
+							setoffs = setoffService.setoff(inProposalsModel, userCode, locCode, saveReceiptDto, deposit,
+									hrbamt, null, "OLD", Integer.parseInt(batNoArr2[1]));
 
-							saveTransactions(setoffs);
-							
-							
+							try {
+								saveTransactions(setoffs);
+							} catch (Exception e) {
+								// TODO: handle exception
+							}
 
 						} else {
 							ResponseDto responseDto = new ResponseDto();
@@ -235,7 +243,31 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 						}
 					}
 					try {
-						printDto = getReceiptPrintDto(inProposalsModel, inTransactionsModel, userCode, locCode, false);
+
+						List<HashMap<String, String>> setoffList = new ArrayList<>();
+
+						if (setoffs != null && !setoffs.isEmpty()) {
+
+							setoffs.forEach(e -> {
+								if (!(e.getBillingTransactionsModelPK().getDoccod().equals("PRMI"))
+										&& e.getBillingTransactionsModelPK().getDocnum()
+												.equals(inTransactionsModel.getInTransactionsModelPK().getDocnum())) {
+
+									HashMap<String, String> setoff = new HashMap<>();
+
+									setoff.put("txnMonth", Integer.toString(e.getTxnmth()));
+									setoff.put("txnYear", Integer.toString(e.getTxnyer()));
+									setoff.put("amount", Double.toString(e.getDepost()));
+
+									setoffList.add(setoff);
+
+								}
+							});
+
+						}
+
+						printDto = getReceiptPrintDto(inProposalsModel, inTransactionsModel, userCode, locCode, false,
+								setoffList);
 					} catch (Exception e) {
 						e.printStackTrace();
 						dto = new ResponseDto();
@@ -254,15 +286,15 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 					dto.setMessage(deposit.getBillingTransactionsModelPK().getDocnum().toString());
 					dto.setData(itextReceipt.createReceipt(printDto));
 
-					
-					SMSDto smsDto=new SMSDto();
+					SMSDto smsDto = new SMSDto();
 					smsDto.setDocCode("RCPL");
 					smsDto.setSmsType("policy");
 					smsDto.setRcptNo(Integer.toString(printDto.getDocNum()));
-					smsDto.setUserCode(userCode);;
-					
+					smsDto.setUserCode(userCode);
+					;
+
 					infosysWSClient.sendSMS(smsDto);
-					
+
 					return new ResponseEntity<>(dto, HttpStatus.OK);
 
 				} catch (Exception e) {
@@ -293,19 +325,24 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		return new ResponseEntity<>(dto, HttpStatus.NOT_FOUND);
 	}
 
-	@Transactional
-	private void saveTransactions(List<InBillingTransactionsModel> setoffs) {
-		inBillingTransactionDao.save(setoffs);
+	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	private boolean saveTransactions(List<InBillingTransactionsModel> setoffs) throws Exception {
+
+		if (setoffs != null && setoffs.size() > 0) {
+			inBillingTransactionDao.save(setoffs);
+		}
+		return true;
 	}
 
-	@Transactional
+	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	private void saveReceipt(InTransactionsModel inTransactionsModel, InBillingTransactionsModel deposit) {
 		inTransactionDao.save(inTransactionsModel);
 		inBillingTransactionDao.save(deposit);
 	}
 
 	private ReceiptPrintDto getReceiptPrintDto(InProposalsModel inProposalsModel,
-			InTransactionsModel inTransactionsModel, String agentCode, String locCode, boolean b) throws Exception {
+			InTransactionsModel inTransactionsModel, String agentCode, String locCode, boolean b,
+			List<HashMap<String, String>> setoffList) throws Exception {
 		ReceiptPrintDto printDto = new ReceiptPrintDto();
 
 		List<AgentModel> agentModels = agentDao.findAgentByCodeAll(inProposalsModel.getAdvcod());
@@ -345,6 +382,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		if (inTransactionsModel.getChqbnk() != null) {
 			printDto.setBankCode(Integer.parseInt(inTransactionsModel.getChqbnk()));
 		}
+		printDto.setSetOffs(setoffList);
 		return printDto;
 	}
 

@@ -6,12 +6,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.arpico.groupit.receipt.client.UserManagementClient;
 import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.InLoanTransactionCustomDao;
 import org.arpico.groupit.receipt.dao.InLoanTransactionsDao;
+import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
 import org.arpico.groupit.receipt.dao.InTransactionCustomDao;
 import org.arpico.groupit.receipt.dao.RmsDocTxndCustomDao;
@@ -26,6 +28,7 @@ import org.arpico.groupit.receipt.dto.ReceiptPrintDto;
 import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.model.AgentModel;
 import org.arpico.groupit.receipt.model.InLoanTransactionsModel;
+import org.arpico.groupit.receipt.model.InBillingTransactionsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.InTransactionsModel;
 import org.arpico.groupit.receipt.model.MisGlItemModel;
@@ -85,6 +88,9 @@ public class ReprintServiceImpl implements ReprintService {
 
 	@Autowired
 	private RmsRecmCustomDao rmsRecmCustomDao;
+
+	@Autowired
+	private InBillingTransactionsCustomDao billingTransactionsCustomDao;
 
 	@Value("${gl_acc_param}")
 	private String accounts;
@@ -185,10 +191,27 @@ public class ReprintServiceImpl implements ReprintService {
 			}
 		}
 
+		List<InBillingTransactionsModel> inBillingTransactionsModels = billingTransactionsCustomDao
+				.getSetoffsForRcpl(receiptNo);
+
+		List<HashMap<String, String>> setoffList = new ArrayList<>();
+
+		inBillingTransactionsModels.forEach(e -> {
+			HashMap<String, String> setoff = new HashMap<>();
+
+			setoff.put("txnMonth", Integer.toString(e.getTxnmth()));
+			setoff.put("txnYear", Integer.toString(e.getTxnyer()));
+			setoff.put("amount", Double.toString(e.getDepost()));
+
+			setoffList.add(setoff);
+
+		});
+
 		InProposalsModel inProposalsModel = inProposalCustomDao
 				.getProposal(Integer.parseInt(inTransactionsModel.getPprnum()), inTransactionsModel.getSeqnum());
 
 		ReceiptPrintDto receiptPrintDto = getReceiptPrintDtoInTran(inProposalsModel, inTransactionsModel);
+		receiptPrintDto.setSetOffs(setoffList);
 
 		return itextReceipt.createReceipt(receiptPrintDto);
 

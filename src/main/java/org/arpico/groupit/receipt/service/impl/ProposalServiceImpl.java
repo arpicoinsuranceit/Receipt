@@ -67,6 +67,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -159,7 +160,7 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	@Autowired
 	private JwtDecoder decoder;
-	
+
 	@Autowired
 	private InfosysWSClient infosysWSClient;
 
@@ -313,14 +314,15 @@ public class ProposalServiceImpl implements ProposalServce {
 								inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum().toString());
 						responseDto.setData(itextReceipt.createReceipt(dto));
 
-						SMSDto smsDto=new SMSDto();
+						SMSDto smsDto = new SMSDto();
 						smsDto.setDocCode("RCPP");
 						smsDto.setSmsType("proposal");
 						smsDto.setRcptNo(Integer.toString(dto.getDocNum()));
-						smsDto.setUserCode(userCode);;
-						
+						smsDto.setUserCode(userCode);
+						;
+
 						infosysWSClient.sendSMS(smsDto);
-						
+
 						return new ResponseEntity<>(responseDto, HttpStatus.OK);
 
 					} catch (Exception e) {
@@ -413,141 +415,222 @@ public class ProposalServiceImpl implements ProposalServce {
 		return printDto;
 	}
 
-	@Transactional
+	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void checkPolicy(InProposalsModel inProposalsModel, Integer pprNo, Integer seqNo,
 			SaveReceiptDto saveReceiptDto, String userCode, String locCode, InBillingTransactionsModel deposit)
 			throws Exception {
-		
+
 		try {
-		if (inProposalsModel.getPprsta().equalsIgnoreCase("L3")) {
+			if (inProposalsModel.getPprsta().equalsIgnoreCase("L3")) {
 
-			List<ProposalL3Dto> proposalL3Dtos = inProposalCustomDao.checkL3(saveReceiptDto.getPropId());
-			if (!proposalL3Dtos.isEmpty()) {
+				List<ProposalL3Dto> proposalL3Dtos = inProposalCustomDao.checkL3(saveReceiptDto.getPropId());
+				if (!proposalL3Dtos.isEmpty()) {
 
-				System.out.println("PASS CHECK POLICY");
+					System.out.println("PASS CHECK POLICY");
 
-				String[] batNoArr2 = numberGenerator.generateNewId("", "", "#TXNSQ#", "");
+					String[] batNoArr2 = numberGenerator.generateNewId("", "", "#TXNSQ#", "");
 
-				String[] numberGen = numberGenerator.generateNewId("", "", "POLCSQ", "");
-				if (numberGen[0].equals("Success") && batNoArr2[0].equals("Success")) {
+					String[] numberGen = numberGenerator.generateNewId("", "", "POLCSQ", "");
+					if (numberGen[0].equals("Success") && batNoArr2[0].equals("Success")) {
 
-					inProposalsModel.setPprsta("INAC");
-					inProposalsModel.setLockin(new Date());
-					// inProposalsModel.setIcpdat(new Date());
+						inProposalsModel.setPprsta("INAC");
+						inProposalsModel.setLockin(new Date());
+						// inProposalsModel.setIcpdat(new Date());
 
-					inProposalDao.save(inProposalsModel);
+						// inProposalDao.save(inProposalsModel);
 
-					InProposalsModel proposalsModelNew = getProposalPolicyStage(inProposalsModel, numberGen[1],
-							saveReceiptDto);
+						InProposalsModel proposalsModelNew = getProposalPolicyStage(inProposalsModel, numberGen[1],
+								saveReceiptDto);
 
-					inProposalDao.save(proposalsModelNew);
+						// inProposalDao.save(proposalsModelNew);
 
-					System.out.println("proposal save done");
+						System.out.println("proposal save done");
 
-					Integer updatedSeqNo = proposalsModelNew.getInProposalsModelPK().getPrpseq();
-					seqNo = updatedSeqNo;
+						Integer updatedSeqNo = proposalsModelNew.getInProposalsModelPK().getPrpseq();
+						seqNo = updatedSeqNo;
 
-					List<InPropAddBenefitModel> addBenefitModels = addBenefictCustomDao.getBenefByPprSeq(pprNo, seqNo);
-					if (addBenefitModels != null && !addBenefitModels.isEmpty()) {
-						addBenefitModels = incrementSeqAddBenef(addBenefitModels, updatedSeqNo);
-						addBenefictDao.save(addBenefitModels);
+						List<InPropAddBenefitModel> addBenefitModels = addBenefictCustomDao.getBenefByPprSeq(pprNo,
+								seqNo);
+						if (addBenefitModels != null && !addBenefitModels.isEmpty()) {
+							addBenefitModels = incrementSeqAddBenef(addBenefitModels, updatedSeqNo);
+							// addBenefictDao.save(addBenefitModels);
+						}
+
+						// System.out.println("benef save done");
+
+						List<InPropFamDetailsModel> famDetailsModels = famDetailsCustomDao
+								.getFamilyByPprNoAndSeqNo(pprNo, seqNo);
+						if (famDetailsModels != null && !famDetailsModels.isEmpty()) {
+							famDetailsModels = incrementSeqFamDetails(famDetailsModels, updatedSeqNo);
+							// famDetailsDao.save(famDetailsModels);
+						}
+
+//					System.out.println("fam save done");
+
+						List<InPropLoadingModel> inPropLoadingModels = propLoadingCustomDao
+								.getPropLoadingBuPprNumAndSeq(pprNo, seqNo);
+						if (inPropLoadingModels != null && !inPropLoadingModels.isEmpty()) {
+							inPropLoadingModels = getInPropLoadings(inPropLoadingModels, updatedSeqNo);
+							// propLoadingDao.save(inPropLoadingModels);
+						}
+
+						// System.out.println("pro loading save done");
+
+						List<InPropMedicalReqModel> inPropMedicalReqModels = propMedicalReqCustomDao
+								.getMedicalReqByPprNoAndSeq(pprNo, seqNo);
+						if (inPropMedicalReqModels != null && !inPropMedicalReqModels.isEmpty()) {
+							inPropMedicalReqModels = incrementPropMedical(inPropMedicalReqModels, updatedSeqNo);
+							// propMedicalReqDao.save(inPropMedicalReqModels);
+						}
+
+						// System.out.println("propMedi save done");
+
+						List<InPropNomDetailsModel> propNomDetailsModels = propNomDetailsCustomDao
+								.getNomByPprNoAndPprSeq(pprNo, seqNo);
+						if (propNomDetailsModels != null && !propNomDetailsModels.isEmpty()) {
+							propNomDetailsModels = incrementPropNomDetailsSeq(propNomDetailsModels, updatedSeqNo);
+							// propNomDetailsDao.save(propNomDetailsModels);
+						}
+
+						//System.out.println("nominee save done");
+
+						List<InPropPrePolsModel> inPropPrePolsModels = propPrePolsCustomDao
+								.getPrePolByPprNoAndPprSeq(pprNo, seqNo);
+						if (inPropPrePolsModels != null && !inPropPrePolsModels.isEmpty()) {
+							inPropPrePolsModels = incrementPropPolSeq(inPropPrePolsModels, updatedSeqNo);
+							// propPrePolsDao.save(inPropPrePolsModels);
+
+						}
+
+						//System.out.println("proposalPrePol save done");
+
+						List<InPropSchedulesModel> propSchedulesModels = propScheduleCustomDao
+								.getScheduleBuPprNoAndSeqNo(pprNo, seqNo);
+						if (propSchedulesModels != null && !propSchedulesModels.isEmpty()) {
+							propSchedulesModels = incremenntScheduleSeq(propSchedulesModels, updatedSeqNo);
+							// propScheduleDao.save(propSchedulesModels);
+						}
+
+						//System.out.println("proposal Schedule save done");
+
+						List<InPropSurrenderValsModel> propSurrenderValsModels = surrenderValCustomDao
+								.getSurrenderValByInpprNoAndSeq(pprNo, seqNo);
+						if (propSurrenderValsModels != null && !propSurrenderValsModels.isEmpty()) {
+							propSurrenderValsModels = incrementSurrenderVals(propSurrenderValsModels, updatedSeqNo,
+									proposalsModelNew.getPolnum());
+							// surrenderValDao.save(propSurrenderValsModels);
+						}
+
+						//System.out.println("proposal surrender Val save done");
+
+						InShortPremiumModelPK inShortPremiumModelPK = new InShortPremiumModelPK();
+						inShortPremiumModelPK.setPrdcod(inProposalsModel.getPrdcod());
+						inShortPremiumModelPK.setSbucod("450");
+
+						// Double recovery = proposalL3Dtos.get(0).getRecovery();
+
+						Double hrbamt = commonethodUtility.getHrbAmt(addBenefitModels);
+
+						List<InBillingTransactionsModel> setoffList = setoffService.setoff(proposalsModelNew, userCode,
+								locCode, saveReceiptDto, deposit, hrbamt, proposalL3Dtos.get(0), "NEW",
+								Integer.parseInt(batNoArr2[1]));
+
+						// inBillingTransactionDao.save(setoffList);
+
+						System.out.println("settoff list save");
+
+						try {
+						
+						saveData(inProposalsModel, proposalsModelNew, addBenefitModels, famDetailsModels,
+								inPropLoadingModels, inPropMedicalReqModels, propNomDetailsModels, inPropPrePolsModels,
+								propSchedulesModels, propSurrenderValsModels, setoffList);
+						
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
 					}
-
-					System.out.println("benef save done");
-
-					List<InPropFamDetailsModel> famDetailsModels = famDetailsCustomDao.getFamilyByPprNoAndSeqNo(pprNo,
-							seqNo);
-					if (famDetailsModels != null && !famDetailsModels.isEmpty()) {
-						famDetailsModels = incrementSeqFamDetails(famDetailsModels, updatedSeqNo);
-						famDetailsDao.save(famDetailsModels);
-					}
-
-					System.out.println("fam save done");
-
-					List<InPropLoadingModel> inPropLoadingModels = propLoadingCustomDao
-							.getPropLoadingBuPprNumAndSeq(pprNo, seqNo);
-					if (inPropLoadingModels != null && !inPropLoadingModels.isEmpty()) {
-						inPropLoadingModels = getInPropLoadings(inPropLoadingModels, updatedSeqNo);
-						propLoadingDao.save(inPropLoadingModels);
-					}
-
-					System.out.println("pro loading save done");
-
-					List<InPropMedicalReqModel> inPropMedicalReqModels = propMedicalReqCustomDao
-							.getMedicalReqByPprNoAndSeq(pprNo, seqNo);
-					if (inPropMedicalReqModels != null && !inPropMedicalReqModels.isEmpty()) {
-						inPropMedicalReqModels = incrementPropMedical(inPropMedicalReqModels, updatedSeqNo);
-						propMedicalReqDao.save(inPropMedicalReqModels);
-					}
-
-					System.out.println("propMedi save done");
-
-					List<InPropNomDetailsModel> propNomDetailsModels = propNomDetailsCustomDao
-							.getNomByPprNoAndPprSeq(pprNo, seqNo);
-					if (propNomDetailsModels != null && !propNomDetailsModels.isEmpty()) {
-						propNomDetailsModels = incrementPropNomDetailsSeq(propNomDetailsModels, updatedSeqNo);
-						propNomDetailsDao.save(propNomDetailsModels);
-					}
-
-					System.out.println("nominee save done");
-
-					List<InPropPrePolsModel> inPropPrePolsModels = propPrePolsCustomDao.getPrePolByPprNoAndPprSeq(pprNo,
-							seqNo);
-					if (inPropPrePolsModels != null && !inPropPrePolsModels.isEmpty()) {
-						inPropPrePolsModels = incrementPropPolSeq(inPropPrePolsModels, updatedSeqNo);
-						propPrePolsDao.save(inPropPrePolsModels);
-
-					}
-
-					System.out.println("proposalPrePol save done");
-
-					List<InPropSchedulesModel> propSchedulesModels = propScheduleCustomDao
-							.getScheduleBuPprNoAndSeqNo(pprNo, seqNo);
-					if (propSchedulesModels != null && !propSchedulesModels.isEmpty()) {
-						propSchedulesModels = incremenntScheduleSeq(propSchedulesModels, updatedSeqNo);
-						propScheduleDao.save(propSchedulesModels);
-					}
-
-					System.out.println("proposal Schedule save done");
-
-					List<InPropSurrenderValsModel> propSurrenderValsModels = surrenderValCustomDao
-							.getSurrenderValByInpprNoAndSeq(pprNo, seqNo);
-					if (propSurrenderValsModels != null && !propSurrenderValsModels.isEmpty()) {
-						propSurrenderValsModels = incrementSurrenderVals(propSurrenderValsModels, updatedSeqNo,
-								proposalsModelNew.getPolnum());
-						surrenderValDao.save(propSurrenderValsModels);
-					}
-
-					System.out.println("proposal surrender Val save done");
-
-					InShortPremiumModelPK inShortPremiumModelPK = new InShortPremiumModelPK();
-					inShortPremiumModelPK.setPrdcod(inProposalsModel.getPrdcod());
-					inShortPremiumModelPK.setSbucod("450");
-
-					// Double recovery = proposalL3Dtos.get(0).getRecovery();
-
-					Double hrbamt = commonethodUtility.getHrbAmt(addBenefitModels);
-
-					List<InBillingTransactionsModel> setoffList = setoffService.setoff(proposalsModelNew, userCode,
-							locCode, saveReceiptDto, deposit, hrbamt, proposalL3Dtos.get(0), "NEW",
-							Integer.parseInt(batNoArr2[1]));
-
-					inBillingTransactionDao.save(setoffList);
-
-					System.out.println("settoff list save");
-
+				} else {
+					System.out.println("FAIL CHECK POLICY");
 				}
 			} else {
 				System.out.println("FAIL CHECK POLICY");
 			}
-		} else {
-			System.out.println("FAIL CHECK POLICY");
-		}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	private void saveData(InProposalsModel inProposalsModel, InProposalsModel proposalsModelNew,
+			List<InPropAddBenefitModel> addBenefitModels, List<InPropFamDetailsModel> famDetailsModels,
+			List<InPropLoadingModel> inPropLoadingModels, List<InPropMedicalReqModel> inPropMedicalReqModels,
+			List<InPropNomDetailsModel> propNomDetailsModels, List<InPropPrePolsModel> inPropPrePolsModels,
+			List<InPropSchedulesModel> propSchedulesModels, List<InPropSurrenderValsModel> propSurrenderValsModels,
+			List<InBillingTransactionsModel> setoffList) throws Exception{
+
+		inProposalDao.save(inProposalsModel);
+
+		System.out.println("Proposal Status Update Done");
+
+		inProposalDao.save(proposalsModelNew);
+
+		System.out.println("Proposal Save Done");
+
+		if (addBenefitModels != null && !addBenefitModels.isEmpty()) {
+			addBenefictDao.save(addBenefitModels);
+		}
+
+		System.out.println("benef save done");
+
+		if (famDetailsModels != null && !famDetailsModels.isEmpty()) {
+			famDetailsDao.save(famDetailsModels);
+		}
+
+		System.out.println("fam save done");
+
+		if (inPropLoadingModels != null && !inPropLoadingModels.isEmpty()) {
+			propLoadingDao.save(inPropLoadingModels);
+		}
+
+		System.out.println("pro loading save done");
+
+		if (inPropMedicalReqModels != null && !inPropMedicalReqModels.isEmpty()) {
+			propMedicalReqDao.save(inPropMedicalReqModels);
+		}
+
+		System.out.println("propMedi save done");
+		
+		if (propNomDetailsModels != null && !propNomDetailsModels.isEmpty()) {
+			propNomDetailsDao.save(propNomDetailsModels);
+		}
+
+		System.out.println("nominee save done");
+		
+		if (inPropPrePolsModels != null && !inPropPrePolsModels.isEmpty()) {
+			 propPrePolsDao.save(inPropPrePolsModels);
+
+		}
+
+		System.out.println("proposalPrePol save done");
+		
+		if (propSchedulesModels != null && !propSchedulesModels.isEmpty()) {
+			propScheduleDao.save(propSchedulesModels);
+		}
+
+		System.out.println("proposal Schedule save done");
+		
+		if (propSurrenderValsModels != null && !propSurrenderValsModels.isEmpty()) {
+			 surrenderValDao.save(propSurrenderValsModels);
+		}
+
+		System.out.println("proposal surrender Val save done");
+		
+		inBillingTransactionDao.save(setoffList);
+
+
 	}
 
 	private List<InPropSurrenderValsModel> incrementSurrenderVals(
