@@ -323,16 +323,16 @@ System.out.println(type);
 
 	private Date addDate(Date dt) {
 
-		Calendar c = Calendar.getInstance();
-		c.setTime(dt);
-		c.add(Calendar.DATE, 1);
-		dt = c.getTime();
-		
-		long milis = new Date().getTime() - dt.getTime();
-		
-		if(milis < 0) {
-			dt = new Date();
-		}
+//		Calendar c = Calendar.getInstance();
+//		c.setTime(dt);
+//		c.add(Calendar.DATE, 1);
+//		dt = c.getTime();
+//		
+//		long milis = new Date().getTime() - dt.getTime();
+//		
+//		if(milis < 0) {
+//			dt = new Date();
+//		}
 
 		return dt;
 	}
