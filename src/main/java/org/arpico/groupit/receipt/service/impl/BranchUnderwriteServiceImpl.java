@@ -866,13 +866,95 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 					break;
 				}
 
-				List<InOcuLoadDetModel> detModels = occuLoadDatdao.inOccuLoadDatDaosByOccupation(ocuCode, benfDto.getRiderCode());
+				List<InOcuLoadDetModel> detModels = occuLoadDatdao.inOccuLoadDatDaosByOccupation(ocuCode,
+						benfDto.getRiderCode());
 				if (detModels.size() > 0) {
 					InOcuLoadDetModel detModel = detModels.get(0);
 					for (InPropLoadingModel propLoadingModel : inPropLoadingModels) {
 						if (propLoadingModel.getInPropLoadingPK().getRidcod().equals(benfDto.getRiderCode())) {
 							propLoadingModel.setOculod(detModel.getLodcls());
+							propLoadingModel.setEmrate(detModel.getEmrate());
+							propLoadingModel.setRatmil(detModel.getRatmil());
+							propLoadingModel.setSubrat(detModel.getSubrat());
 							propLoadingModel.setInstyp(insType);
+
+							switch (frequency) {
+							case "Monthly":
+								if (detModel.getLodcls() > 0) {
+									propLoadingModel.setOculod(detModel.getLodcls());
+									propLoadingModel.setOcuval(benfDto.getPremium());
+									propLoadingModel.setOcuvmt(benfDto.getPremium());
+								} else if (detModel.getRatmil() > 0) {
+									propLoadingModel.setRatmil(detModel.getRatmil());
+									propLoadingModel.setRatval(benfDto.getPremium());
+									propLoadingModel.setRatvmt(benfDto.getPremium());
+								} else if (detModel.getSubrat() > 0) {
+									propLoadingModel.setSubrat(detModel.getSubrat());
+									propLoadingModel.setSubval(benfDto.getPremium());
+									propLoadingModel.setSubvmt(benfDto.getPremium());
+								}
+								break;
+							case "Quartaly":
+								if (detModel.getLodcls() > 0) {
+									propLoadingModel.setOculod(detModel.getLodcls());
+									propLoadingModel.setOcuval(benfDto.getPremium());
+									propLoadingModel.setOcuvqt(benfDto.getPremium());
+								} else if (detModel.getRatmil() > 0) {
+									propLoadingModel.setRatmil(detModel.getRatmil());
+									propLoadingModel.setRatval(benfDto.getPremium());
+									propLoadingModel.setRatvqt(benfDto.getPremium());
+								} else if (detModel.getSubrat() > 0) {
+									propLoadingModel.setSubrat(detModel.getSubrat());
+									propLoadingModel.setSubval(benfDto.getPremium());
+									propLoadingModel.setSubvqt(benfDto.getPremium());
+								}
+								break;
+							case "Half Yearly":
+								if (detModel.getLodcls() > 0) {
+									propLoadingModel.setOculod(detModel.getLodcls());
+									propLoadingModel.setOcuval(benfDto.getPremium());
+									propLoadingModel.setOcuvhy(benfDto.getPremium());
+								} else if (detModel.getRatmil() > 0) {
+									propLoadingModel.setRatmil(detModel.getRatmil());
+									propLoadingModel.setRatval(benfDto.getPremium());
+									propLoadingModel.setRatvhy(benfDto.getPremium());
+								} else if (detModel.getSubrat() > 0) {
+									propLoadingModel.setSubrat(detModel.getSubrat());
+									propLoadingModel.setSubval(benfDto.getPremium());
+									propLoadingModel.setSubvhy(benfDto.getPremium());
+								}
+								break;
+							case "Yearly":
+								if (detModel.getLodcls() > 0) {
+									propLoadingModel.setOculod(detModel.getLodcls());
+									propLoadingModel.setOcuval(benfDto.getPremium());
+									propLoadingModel.setOcuvyr(benfDto.getPremium());
+								} else if (detModel.getRatmil() > 0) {
+									propLoadingModel.setRatmil(detModel.getRatmil());
+									propLoadingModel.setRatval(benfDto.getPremium());
+									propLoadingModel.setRatvyr(benfDto.getPremium());
+								} else if (detModel.getSubrat() > 0) {
+									propLoadingModel.setSubrat(detModel.getSubrat());
+									propLoadingModel.setSubval(benfDto.getPremium());
+									propLoadingModel.setSubvyr(benfDto.getPremium());
+								}
+								break;
+							case "Single Premium":
+								if (detModel.getLodcls() > 0) {
+									propLoadingModel.setOculod(detModel.getLodcls());
+									propLoadingModel.setOcuval(benfDto.getPremium());
+								} else if (detModel.getRatmil() > 0) {
+									propLoadingModel.setRatmil(detModel.getRatmil());
+									propLoadingModel.setRatval(benfDto.getPremium());
+								} else if (detModel.getSubrat() > 0) {
+									propLoadingModel.setSubrat(detModel.getSubrat());
+									propLoadingModel.setSubval(benfDto.getPremium());
+								}
+								// TODO
+								break;
+							default:
+								break;
+							}
 
 						}
 					}
