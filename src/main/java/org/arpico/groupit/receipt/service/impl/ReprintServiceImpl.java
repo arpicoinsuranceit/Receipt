@@ -11,16 +11,9 @@ import java.util.List;
 
 import org.arpico.groupit.receipt.client.UserManagementClient;
 import org.arpico.groupit.receipt.dao.AgentDao;
-<<<<<<< HEAD
-=======
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
->>>>>>> branch 'feature-re1.0.2' of https://github.com/arpicoinsuranceit/Receipt.git
 import org.arpico.groupit.receipt.dao.InLoanTransactionCustomDao;
 import org.arpico.groupit.receipt.dao.InLoanTransactionsDao;
-<<<<<<< HEAD
-import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
-=======
->>>>>>> branch 'feature-re1.0.2' of https://github.com/arpicoinsuranceit/Receipt.git
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
 import org.arpico.groupit.receipt.dao.InTransactionCustomDao;
 import org.arpico.groupit.receipt.dao.RmsDocTxndCustomDao;
@@ -34,15 +27,8 @@ import org.arpico.groupit.receipt.dto.InventoryDetailsDto;
 import org.arpico.groupit.receipt.dto.ReceiptPrintDto;
 import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.model.AgentModel;
-<<<<<<< HEAD
-=======
 import org.arpico.groupit.receipt.model.InBillingTransactionsModel;
->>>>>>> branch 'feature-re1.0.2' of https://github.com/arpicoinsuranceit/Receipt.git
 import org.arpico.groupit.receipt.model.InLoanTransactionsModel;
-<<<<<<< HEAD
-import org.arpico.groupit.receipt.model.InBillingTransactionsModel;
-=======
->>>>>>> branch 'feature-re1.0.2' of https://github.com/arpicoinsuranceit/Receipt.git
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.InTransactionsModel;
 import org.arpico.groupit.receipt.model.MisGlItemModel;
