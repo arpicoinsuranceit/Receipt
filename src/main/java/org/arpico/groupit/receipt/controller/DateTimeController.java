@@ -12,23 +12,21 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin()
 public class DateTimeController {
 
-	
-	@RequestMapping(value="/dateTime",method=RequestMethod.GET)
-		public String getCurrentTime() {
-		
-		SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");  
-	    Date date = new Date();  
-	    String time=formatter.format(date).toString();
-	    return time;
-		}
-	
-	@RequestMapping(value="/getdate",method=RequestMethod.GET)
-	public String getCurrentDate() {
-	SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy ");  
-    Date date = new Date();  
-    String currentdate=formatter.format(date).toString(); 
-    return currentdate;
-   
+	@RequestMapping(value = "/dateTime", method = RequestMethod.GET)
+	public String getCurrentTime() {
+		SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+		Date date = new Date();
+		String time = formatter.format(date).toString();
+		return time;
 	}
-	
+
+	@RequestMapping(value = "/getdate", method = RequestMethod.GET)
+	public String getCurrentDate() {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = new Date();
+		String currentdate = formatter.format(date).toString();
+		return currentdate;
+
+	}
+
 }
