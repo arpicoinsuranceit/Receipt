@@ -1,8 +1,5 @@
 package org.arpico.groupit.receipt.controller;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.arpico.groupit.receipt.dto.BranchDto;

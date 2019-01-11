@@ -2,6 +2,7 @@ package org.arpico.groupit.receipt.dao.rowmapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 
 import org.arpico.groupit.receipt.model.RmsDocTxndModel;
 import org.arpico.groupit.receipt.model.pk.RmsDocTxndModelPK;
@@ -53,7 +54,7 @@ public class RmsDocTxndRowMapper implements RowMapper<RmsDocTxndModel> {
 		model.setLotnum(rs.getDouble("lotnum"));
 		model.setMatcst(rs.getDouble("matcst"));
 		model.setMod_by(rs.getString("MOD_BY"));
-		model.setMod_date(rs.getString("MOD_DATE"));
+	//	model.setMod_date(new SimpleDateFormat("yyyy-MM-dd").format(rs.getDate("MOD_DATE")));
 		model.setPluCode(rs.getString("PLU_CODE"));
 		model.setPosNo(rs.getInt("POS_NO"));
 		model.setPrcflg(rs.getString("prcflg"));

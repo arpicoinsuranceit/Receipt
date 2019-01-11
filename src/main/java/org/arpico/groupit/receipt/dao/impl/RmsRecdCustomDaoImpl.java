@@ -27,7 +27,7 @@ public class RmsRecdCustomDaoImpl implements RmsRecdCustomDao {
 
 		return jdbcTemplate.query(
 				"select t.DOCNUM, t.AMOUNT, t.REMARK, c.DESCRI, t.INTERID, t.DIMM04 from gltrantemp t inner join glcharofaccs c "
-						+ "	on  t.SBUCOD=c.SBUCOD and t.loc_code=c.loc_code and t.INTERID = c.INTERID  where t.SBUCOD='450' and  t.DOCCOD = '"
+						+ "	on  t.SBUCOD=c.SBUCOD and t.LOCCOD=c.LOCCOD and t.INTERID = c.INTERID  where t.SBUCOD='450' and  t.DOCCOD = '"
 						+ docCode + "' and t.DOCNUM = '" + docNo + "'",
 				new MisGlItemRowMapper());
 	}
