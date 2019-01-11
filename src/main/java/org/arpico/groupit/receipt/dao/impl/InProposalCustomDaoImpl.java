@@ -33,7 +33,7 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 	public List<ProposalNoSeqNoModel> getProposalNoSeqNoModelList(String val) throws Exception {
 		List<ProposalNoSeqNoModel> list = jdbcTemplate.query(
 				"select pprnum, prpseq from inproposals where sbucod = '450' and pprnum like '" + val
-						+ "%' and pprsta not in ('PLISU', 'PLAPS', 'INAC', 'EXPI', 'MATU')",
+						+ "%' and pprsta not in ('PLISU', 'PLAPS', 'INAC', 'EXPI', 'MATU', 'PCAN', 'PDECL', 'PDECS', 'PLDEC', 'PRCAN', 'PREDL', 'PSRND')",
 				new ProposalNoSeqNoRowMapper());
 
 //		List<ProposalNoSeqNoModel> list = jdbcTemplate.query(
@@ -49,7 +49,7 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 //				new InProposalBasicRowMapper());
 
 		List<InProposalBasicsModel> basicsModels = jdbcTemplate.query(
-				"select advcod, ppdnam, prdcod, pprnum, ntitle, prpseq, totprm from inproposals "
+				"select advcod, ppdnam, prdcod, pprnum, ntitle, prpseq, totprm, ppdmob, pprsta, polnum from inproposals "
 						+ "where sbucod = '450' and pprnum = '" + pprNo + "' and prpseq = '" + prpseq + "'",
 				new InProposalBasicRowMapper());
 
@@ -107,7 +107,7 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 	@Override
 	public List<ProposalNoSeqNoModel> getPolicyNoSeqNoModelList(String val) throws Exception {
 		List<ProposalNoSeqNoModel> list = jdbcTemplate.query("select polnum as pprnum, prpseq from inproposals "
-				+ "where sbucod = '450' and  polnum like '" + val + "%' and  pprsta in ('plisu', 'plaps')",
+				+ "where sbucod = '450' and  polnum like '" + val + "%' and  pprsta in ('plisu', 'plaps', 'lamd', 'plapp', 'plnrv')",
 				new ProposalNoSeqNoRowMapper());
 //		
 //		List<ProposalNoSeqNoModel> list = jdbcTemplate.query(
@@ -134,7 +134,7 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 //				new InPolicyBasicRowMapper());
 
 		List<InProposalBasicsModel> basicsModels = jdbcTemplate.query(
-				"select advcod, ppdnam, prdcod, polnum, ntitle, prpseq, totprm from inproposals "
+				"select advcod, ppdnam, prdcod, pprnum, ntitle, prpseq, totprm, ppdmob, pprsta, polnum from inproposals "
 						+ "where sbucod = '450' and polnum = '" + polNo + "' and prpseq = '" + seqNo + "'",
 				new InPolicyBasicRowMapper());
 
