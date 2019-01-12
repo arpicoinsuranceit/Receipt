@@ -16,6 +16,7 @@ import org.arpico.groupit.receipt.dao.InTransactionCustomDao;
 import org.arpico.groupit.receipt.dao.UserDao;
 import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
 import org.arpico.groupit.receipt.dto.MedicalRequirementsDto;
+import org.arpico.groupit.receipt.dto.NotRelChequeDto;
 import org.arpico.groupit.receipt.dto.PaymentHistoryDto;
 import org.arpico.groupit.receipt.dto.PromisesGridDto;
 import org.arpico.groupit.receipt.dto.ShortPremiumDto;
@@ -31,6 +32,7 @@ import org.arpico.groupit.receipt.model.InPropFamDetailsModel;
 import org.arpico.groupit.receipt.model.InPropMedicalReqModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.LastReceiptSummeryModel;
+import org.arpico.groupit.receipt.model.NotRelChequeModel;
 import org.arpico.groupit.receipt.model.PaymentHistoryModel;
 import org.arpico.groupit.receipt.model.ShortPremiumModel;
 import org.arpico.groupit.receipt.model.WorkFlowPolicyGridModel;
@@ -838,6 +840,55 @@ public class WorkflowServiceImpl implements WorkflowService {
 		}
 
 		return flowPolicyGridDtos;
+	}
+
+	@Override
+	public List<NotRelChequeDto> getNotRelCheqye(String token) throws Exception {
+		String userCode = decoder.generate(token);
+
+		List<String> branches = userDao.getUserLocations(userCode);
+
+		List<NotRelChequeModel> notRelChequeModels = null;
+
+		List<NotRelChequeDto> notRelChequeDtos = new ArrayList<>();
+
+		String sql = "";
+
+		if (branches.contains("HO")) {
+			notRelChequeModels = transactionCustomDao.getNotRelCheques(sql);
+		} else {
+			String loc = daoParameters.getParaForIn(branches);
+			sql += "and b.loccod in (" + loc + ")";
+			notRelChequeModels = transactionCustomDao.getNotRelCheques(sql);
+		}
+
+		for (NotRelChequeModel chequeModel : notRelChequeModels) {
+			NotRelChequeDto dto = getNotRelChequeDto(chequeModel);
+			notRelChequeDtos.add(dto);
+		}
+
+		return notRelChequeDtos;
+
+	}
+
+	private NotRelChequeDto getNotRelChequeDto(NotRelChequeModel model) {
+		NotRelChequeDto dto = new NotRelChequeDto();
+		
+		System.out.println(model.getReceipt());
+
+		dto.setAgent(model.getAgent());
+		dto.setChqbnk(model.getChqbnk());
+		dto.setChqdat(model.getChqdat());
+		dto.setChqnum(model.getChqnum());
+		dto.setCreadt(model.getCreadt());
+		dto.setLoccod(model.getLoccod());
+		dto.setPolnum(model.getPolnum());
+		dto.setPpdnam(model.getPpdnam());
+		dto.setProposal(model.getProposal());
+		dto.setReceipt(model.getReceipt());
+		dto.setTotprm(model.getTotprm());
+
+		return dto;
 	}
 
 }

@@ -5,8 +5,10 @@ import java.util.List;
 import org.arpico.groupit.receipt.dao.InTransactionCustomDao;
 import org.arpico.groupit.receipt.dao.rowmapper.InTransactionRowMapper;
 import org.arpico.groupit.receipt.dao.rowmapper.LastReceiptRowMapper;
+import org.arpico.groupit.receipt.dao.rowmapper.NotRelChequeRowMapper;
 import org.arpico.groupit.receipt.model.InTransactionsModel;
 import org.arpico.groupit.receipt.model.LastReceiptSummeryModel;
+import org.arpico.groupit.receipt.model.NotRelChequeModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -108,6 +110,19 @@ public class InTransactionCustomDaoImpl implements InTransactionCustomDao {
 				"select doccod, docnum, creadt, pprnum, polnum, totprm, chqrel, paymod from intransactions "
 						+ "where sbucod='450' and pprnum = '" + pprnum + "' order by creadt desc",
 				new LastReceiptRowMapper());
+	}
+
+	@Override
+	public List<NotRelChequeModel> getNotRelCheques(String sql) throws Exception {
+		return (List<NotRelChequeModel>) jdbcTemplate.query(
+				"select concat(b.doccod,' - ',b.docnum) receipt, " + 
+				"	   p.pprnum as proposal, p.polnum, p.ppdnam, b.totprm, concat(p.advcod,' / ',a.prnnam) agent,a.loccod , b.chqnum, b.chqdat, b.chqbnk, " + 
+				"       b.creadt " + 
+				"						from inproposals p  " + 
+				"							inner join intransactions b on p.sbucod=b.sbucod and p.pprnum=b.pprnum  " + 
+				"							inner join inagentmast a on a.sbucod=p.sbucod and a.agncod=p.advcod  " + 
+				"where b.sbucod='450' "+sql+" and b.paymod = 'CQ'  and b.chqrel = 'N' group by b.docnum order by b.creadt desc",
+				new NotRelChequeRowMapper());
 	}
 
 }

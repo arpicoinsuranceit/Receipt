@@ -162,6 +162,18 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		basicDetailsDto.setProposalNo(basicsModel.getProposalNo());
 		basicDetailsDto.setSeqNo(basicsModel.getSeqNo());
 		basicDetailsDto.setPremium(basicsModel.getPremium());
+		
+		basicDetailsDto.setId2(basicsModel.getId2());
+		
+		System.out.println("basicsModel.getMobNo() : " + basicsModel.getMobNo());
+		
+		if (basicsModel.getMobNo() != null && basicsModel.getMobNo().length() > 0) {
+			basicDetailsDto.setMobile("true");
+		} else {
+			basicDetailsDto.setMobile("false");
+		}
+		basicDetailsDto.setStatus(basicsModel.getPrsta());
+		
 		return basicDetailsDto;
 	}
 
@@ -228,11 +240,17 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 							setoffs = setoffService.setoff(inProposalsModel, userCode, locCode, saveReceiptDto, deposit,
 									hrbamt, null, "OLD", Integer.parseInt(batNoArr2[1]));
 
-							try {
-								saveTransactions(setoffs);
-							} catch (Exception e) {
-								// TODO: handle exception
+							if(inProposalsModel.getPprsta().equalsIgnoreCase("PLISU") || inProposalsModel.getPprsta().equalsIgnoreCase("PLAPS")) {
+								try {
+									saveTransactions(setoffs);
+								} catch (Exception e) {
+									// TODO: handle exception
+								}
+							} else {
+								System.out.println("Proposal status : " + inProposalsModel.getPprsta() + " not setoff");
 							}
+							
+							
 
 						} else {
 							ResponseDto responseDto = new ResponseDto();
