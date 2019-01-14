@@ -180,6 +180,8 @@ public class ReprintServiceImpl implements ReprintService {
 		InTransactionsModel inTransactionsModel = null;
 		try {
 			inTransactionsModel = inTransactionCustomDao.getTransaction(docCode, receiptNo);
+			
+			System.out.println(inTransactionsModel.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("NotFoundReceipt");
@@ -315,6 +317,9 @@ public class ReprintServiceImpl implements ReprintService {
 
 	private ReceiptPrintDto getReceiptPrintDtoInTran(InProposalsModel inProposalsModel,
 			InTransactionsModel inTransactionsModel) throws Exception {
+		
+		System.out.println("inTransactionsModel.getCreadt() : " + inTransactionsModel.getCreadt());
+		
 		ReceiptPrintDto printDto = new ReceiptPrintDto();
 
 		List<AgentModel> agentModels = agentDao.findAgentByCodeAll(inProposalsModel.getAdvcod());
