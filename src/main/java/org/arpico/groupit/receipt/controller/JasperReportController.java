@@ -58,24 +58,18 @@ public class JasperReportController {
 		decodedByte = decoder.decode(token);
 		token = new String(decodedByte);
 		
+		System.out.println(fromDate + "," + toDate);
+		
 	    DateFormat inputFormat = new SimpleDateFormat(
-	        "E MMM dd yyyy HH:mm:ss 'GMT'z", Locale.ENGLISH);
+	        "E MMM dd yyyy HH:mm:ss");
 
 		try {
 			Date date1 = inputFormat.parse(fromDate);
 			Date date2 = inputFormat.parse(toDate);
-			DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd",
-				        Locale.ENGLISH);
-			outputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+			DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-			//String output1 = outputFormat.format(date1);
+			String output1 = outputFormat.format(date1);
 			String output2 = outputFormat.format(date2);
-			
-			//final Date date = format.parse(curDate);
-			final Calendar calendar = Calendar.getInstance();
-			calendar.setTime(date1);
-			calendar.add(Calendar.DAY_OF_YEAR, 1);
-			String output1 = outputFormat.format(calendar.getTime()); 
 			
 			fromDate=output1;
 			toDate=output2;
@@ -118,23 +112,15 @@ public class JasperReportController {
 		branch = new String(decodedByte);
 		
 	    DateFormat inputFormat = new SimpleDateFormat(
-	        "E MMM dd yyyy HH:mm:ss 'GMT'z", Locale.ENGLISH);
+	        "E MMM dd yyyy HH:mm:ss");
 
 		try {
 			Date date1 = inputFormat.parse(fromDate);
 			Date date2 = inputFormat.parse(toDate);
-			DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd",
-				        Locale.ENGLISH);
-			outputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+			DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-			//String output1 = outputFormat.format(date1);
+			String output1 = outputFormat.format(date1);
 			String output2 = outputFormat.format(date2);
-			
-			//final Date date = format.parse(curDate);
-			final Calendar calendar = Calendar.getInstance();
-			calendar.setTime(date1);
-			calendar.add(Calendar.DAY_OF_YEAR, 1);
-			String output1 = outputFormat.format(calendar.getTime()); 
 			
 			fromDate=output1;
 			toDate=output2;
