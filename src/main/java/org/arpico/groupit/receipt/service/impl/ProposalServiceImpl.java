@@ -206,6 +206,14 @@ public class ProposalServiceImpl implements ProposalServce {
 		basicDetailsDto.setProposalNo(basicsModel.getProposalNo());
 		basicDetailsDto.setSeqNo(basicsModel.getSeqNo());
 		basicDetailsDto.setPremium(basicsModel.getPremium());
+		basicDetailsDto.setId2(basicDetailsDto.getId2());
+
+		if (basicsModel.getMobNo() != null && basicsModel.getMobNo().length() > 0) {
+			basicDetailsDto.setMobile("true");
+		} else {
+			basicDetailsDto.setMobile("false");
+		}
+		basicDetailsDto.setStatus(basicsModel.getPrsta());
 		return basicDetailsDto;
 	}
 
@@ -493,7 +501,7 @@ public class ProposalServiceImpl implements ProposalServce {
 							// propNomDetailsDao.save(propNomDetailsModels);
 						}
 
-						//System.out.println("nominee save done");
+						// System.out.println("nominee save done");
 
 						List<InPropPrePolsModel> inPropPrePolsModels = propPrePolsCustomDao
 								.getPrePolByPprNoAndPprSeq(pprNo, seqNo);
@@ -503,7 +511,7 @@ public class ProposalServiceImpl implements ProposalServce {
 
 						}
 
-						//System.out.println("proposalPrePol save done");
+						// System.out.println("proposalPrePol save done");
 
 						List<InPropSchedulesModel> propSchedulesModels = propScheduleCustomDao
 								.getScheduleBuPprNoAndSeqNo(pprNo, seqNo);
@@ -512,7 +520,7 @@ public class ProposalServiceImpl implements ProposalServce {
 							// propScheduleDao.save(propSchedulesModels);
 						}
 
-						//System.out.println("proposal Schedule save done");
+						// System.out.println("proposal Schedule save done");
 
 						List<InPropSurrenderValsModel> propSurrenderValsModels = surrenderValCustomDao
 								.getSurrenderValByInpprNoAndSeq(pprNo, seqNo);
@@ -522,7 +530,7 @@ public class ProposalServiceImpl implements ProposalServce {
 							// surrenderValDao.save(propSurrenderValsModels);
 						}
 
-						//System.out.println("proposal surrender Val save done");
+						// System.out.println("proposal surrender Val save done");
 
 						InShortPremiumModelPK inShortPremiumModelPK = new InShortPremiumModelPK();
 						inShortPremiumModelPK.setPrdcod(inProposalsModel.getPrdcod());
@@ -541,11 +549,11 @@ public class ProposalServiceImpl implements ProposalServce {
 						System.out.println("settoff list save");
 
 						try {
-						
-						saveData(inProposalsModel, proposalsModelNew, addBenefitModels, famDetailsModels,
-								inPropLoadingModels, inPropMedicalReqModels, propNomDetailsModels, inPropPrePolsModels,
-								propSchedulesModels, propSurrenderValsModels, setoffList);
-						
+
+							saveData(inProposalsModel, proposalsModelNew, addBenefitModels, famDetailsModels,
+									inPropLoadingModels, inPropMedicalReqModels, propNomDetailsModels,
+									inPropPrePolsModels, propSchedulesModels, propSurrenderValsModels, setoffList);
+
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -569,7 +577,7 @@ public class ProposalServiceImpl implements ProposalServce {
 			List<InPropLoadingModel> inPropLoadingModels, List<InPropMedicalReqModel> inPropMedicalReqModels,
 			List<InPropNomDetailsModel> propNomDetailsModels, List<InPropPrePolsModel> inPropPrePolsModels,
 			List<InPropSchedulesModel> propSchedulesModels, List<InPropSurrenderValsModel> propSurrenderValsModels,
-			List<InBillingTransactionsModel> setoffList) throws Exception{
+			List<InBillingTransactionsModel> setoffList) throws Exception {
 
 		inProposalDao.save(inProposalsModel);
 
@@ -602,34 +610,33 @@ public class ProposalServiceImpl implements ProposalServce {
 		}
 
 		System.out.println("propMedi save done");
-		
+
 		if (propNomDetailsModels != null && !propNomDetailsModels.isEmpty()) {
 			propNomDetailsDao.save(propNomDetailsModels);
 		}
 
 		System.out.println("nominee save done");
-		
+
 		if (inPropPrePolsModels != null && !inPropPrePolsModels.isEmpty()) {
-			 propPrePolsDao.save(inPropPrePolsModels);
+			propPrePolsDao.save(inPropPrePolsModels);
 
 		}
 
 		System.out.println("proposalPrePol save done");
-		
+
 		if (propSchedulesModels != null && !propSchedulesModels.isEmpty()) {
 			propScheduleDao.save(propSchedulesModels);
 		}
 
 		System.out.println("proposal Schedule save done");
-		
+
 		if (propSurrenderValsModels != null && !propSurrenderValsModels.isEmpty()) {
-			 surrenderValDao.save(propSurrenderValsModels);
+			surrenderValDao.save(propSurrenderValsModels);
 		}
 
 		System.out.println("proposal surrender Val save done");
-		
-		inBillingTransactionDao.save(setoffList);
 
+		inBillingTransactionDao.save(setoffList);
 
 	}
 

@@ -19,6 +19,9 @@ public class InPolicyBasicRowMapper implements RowMapper<InProposalBasicsModel>{
 		basicsModel.setSeqNo(rs.getInt("prpseq"));
 		basicsModel.setCustTitle(rs.getString("ntitle"));
 		basicsModel.setPremium(rs.getDouble("totprm"));
+		basicsModel.setMobNo(rs.getString("ppdmob"));
+		basicsModel.setPrsta(rs.getString("pprsta"));
+		basicsModel.setId2(Integer.parseInt(rs.getString("pprnum")));
 		return basicsModel;
 	}
 }

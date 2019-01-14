@@ -3,6 +3,7 @@ package org.arpico.groupit.receipt.service;
 import java.util.List;
 
 import org.arpico.groupit.receipt.dto.MedicalRequirementsDto;
+import org.arpico.groupit.receipt.dto.NotRelChequeDto;
 import org.arpico.groupit.receipt.dto.PromisesGridDto;
 import org.arpico.groupit.receipt.dto.ShortPremiumDto;
 import org.arpico.groupit.receipt.dto.WorkFlowPolicyGridDto;
@@ -39,5 +40,7 @@ public interface WorkflowService {
 	List<MedicalRequirementsDto> getPendingReqDetails(String userCode, Integer pprno)  throws Exception;
 
 	List<WorkFlowPolicyGridDto> getPendingLapsPolicies(String token, String type, Integer date1, Integer date2) throws Exception;
+
+	List<NotRelChequeDto> getNotRelCheqye(String token) throws Exception;
 
 }

@@ -43,6 +43,7 @@ public class InTransactionServiceImpl implements InTransactionService {
 		dto.setDoctyp(Integer.toString(e.getDocnum()));
 		dto.setPolnum(Integer.toString(e.getPolnum()));
 		dto.setPprnum(e.getPprnum());
+		dto.setPaymod(e.getPaymod());
 		return dto;
 	}
 

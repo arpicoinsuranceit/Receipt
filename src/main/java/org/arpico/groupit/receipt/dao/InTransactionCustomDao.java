@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.arpico.groupit.receipt.model.InTransactionsModel;
 import org.arpico.groupit.receipt.model.LastReceiptSummeryModel;
+import org.arpico.groupit.receipt.model.NotRelChequeModel;
 
 public interface InTransactionCustomDao {
 
@@ -22,5 +23,8 @@ public interface InTransactionCustomDao {
 	List<LastReceiptSummeryModel> getLastReceiptsByProposal(String pprnum) throws Exception;
 
 	List<LastReceiptSummeryModel> getLastLoanReceiptsByPolNo(String polNo) throws Exception;
+
+	List<NotRelChequeModel> getNotRelCheques(String sql) throws Exception;
+	
 	
 }
