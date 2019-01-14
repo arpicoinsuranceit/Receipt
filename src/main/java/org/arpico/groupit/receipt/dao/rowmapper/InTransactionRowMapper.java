@@ -35,7 +35,7 @@ public class InTransactionRowMapper implements RowMapper<InTransactionsModel>{
 		model.setChqrel(rs.getString("chqrel"));
 		model.setCompad(rs.getString("compad"));
 		model.setCreaby(rs.getString("creaby"));
-		model.setCreadt(rs.getDate("creadt"));
+		model.setCreadt(rs.getTimestamp("creadt"));
 		model.setCscode(rs.getString("cscode"));
 		model.setLockin(rs.getDate("lockin"));
 		model.setNtitle(rs.getString("ntitle"));
