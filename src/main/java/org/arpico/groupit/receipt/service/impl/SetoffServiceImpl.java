@@ -461,11 +461,12 @@ public class SetoffServiceImpl implements SetoffService {
 			}
 
 		} else if (setoffType.equalsIgnoreCase("OLD")) {
-
+			System.out.println("SETOFF : Policy Setoff");
+			
 			List<InBillingTransactionsModel> fundModels = billingTransactionsCustomDao
 					.getRefundList(inProposalsModel.getInProposalsModelPK().getPprnum());
-
-			System.out.println("FUND SIZE : " + fundModels.size());
+			
+			System.out.println("SETOFF : FUND SIZE : " + fundModels.size());
 
 			fundModels.forEach(System.out::println);
 

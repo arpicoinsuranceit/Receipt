@@ -48,6 +48,7 @@ public class AppConstant {
 	public static final String EMAIL_DEP_CODE_LIFE_NB = "LIFE_NB";
 	public static final String EMAIL_DEP_CODE_LIFE_SERVICE = "LIFE_SERVICE";
 	public static final String EMAIL_DEP_CODE_SALES = "SALES";
+	public static final String EMAIL_ADMIN = "ADMIN";
 	
 	
 	

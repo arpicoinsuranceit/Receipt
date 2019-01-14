@@ -179,6 +179,8 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 	@Override
 	public ResponseEntity<Object> savePolicyReceipt(SaveReceiptDto saveReceiptDto) throws Exception {
+		
+		System.out.println(" SETOFF : save Policy Receipt");
 
 		ResponseDto dto = null;
 
@@ -192,6 +194,8 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		String[] batNoArr = numberGenerator.generateNewId("", "", "#TXNSQ#", "");
 
 		if (locCode != null) {
+			
+			System.out.println(" SETOFF : save Policy Receipt");
 
 			if (batNoArr[0].equals("Success")) {
 
@@ -200,8 +204,6 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 				inTransactionsModel.getInTransactionsModelPK().setDoccod("RCPL");
 				// inTransactionDao.save(inTransactionsModel);
-
-				System.out.println("transaction model save");
 
 				InBillingTransactionsModel deposit = commonethodUtility.getInBillingTransactionModel(inProposalsModel,
 						saveReceiptDto, inTransactionsModel);
@@ -222,11 +224,15 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 				ReceiptPrintDto printDto = null;
 				try {
 					saveReceipt(inTransactionsModel, deposit);
+					
+					System.out.println(" SETOFF : Receipt Saved");
 
 					List<InBillingTransactionsModel> setoffs = null;
 
 					if (!saveReceiptDto.equals("CQ")) {
 
+						System.out.println(" SETOFF : Not EQ Cheque Pass");
+						
 						String[] batNoArr2 = numberGenerator.generateNewId("", "", "#TXNSQ#", "");
 
 						if (batNoArr2[0].equals("Success")) {
@@ -240,11 +246,19 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 							setoffs = setoffService.setoff(inProposalsModel, userCode, locCode, saveReceiptDto, deposit,
 									hrbamt, null, "OLD", Integer.parseInt(batNoArr2[1]));
 
+							System.out.println(" SETOFF : Setoff : " + setoffs.size());
+							
+							
 							if(inProposalsModel.getPprsta().equalsIgnoreCase("PLISU") || inProposalsModel.getPprsta().equalsIgnoreCase("PLAPS")) {
 								try {
 									saveTransactions(setoffs);
+									System.out.println(" SETOFF : setoff Saved" );
+									
 								} catch (Exception e) {
-									// TODO: handle exception
+									
+									
+									
+									e.printStackTrace();
 								}
 							} else {
 								System.out.println("Proposal status : " + inProposalsModel.getPprsta() + " not setoff");
