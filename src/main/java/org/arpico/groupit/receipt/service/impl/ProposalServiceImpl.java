@@ -546,16 +546,19 @@ public class ProposalServiceImpl implements ProposalServce {
 						List<InBillingTransactionsModel> setoffList = setoffService.setoff(proposalsModelNew, userCode,
 								locCode, saveReceiptDto, deposit, hrbamt, proposalL3Dtos.get(0), "NEW",
 								Integer.parseInt(batNoArr2[1]));
+						
+						System.out.println("SETOFF : setoffList : "  + setoffList.size());
 
 						// inBillingTransactionDao.save(setoffList);
 
-						System.out.println("settoff list save");
 
 						try {
 
 							saveData(inProposalsModel, proposalsModelNew, addBenefitModels, famDetailsModels,
 									inPropLoadingModels, inPropMedicalReqModels, propNomDetailsModels,
 									inPropPrePolsModels, propSchedulesModels, propSurrenderValsModels, setoffList);
+							
+							System.out.println("SETOFF : settoff list saved");
 
 						} catch (Exception e) {
 							e.printStackTrace();
