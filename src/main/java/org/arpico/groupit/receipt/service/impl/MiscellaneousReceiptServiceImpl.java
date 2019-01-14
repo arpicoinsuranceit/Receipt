@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.arpico.groupit.receipt.client.InfosysWSClient;
 import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.BankDao;
 import org.arpico.groupit.receipt.dao.RmsDocTxndDao;
@@ -16,6 +17,8 @@ import org.arpico.groupit.receipt.dao.RmsDocTxnmCustomDao;
 import org.arpico.groupit.receipt.dao.RmsDocTxnmDao;
 import org.arpico.groupit.receipt.dao.RmsItemMasterCustomDao;
 import org.arpico.groupit.receipt.dao.RmsUserDao;
+import org.arpico.groupit.receipt.dao.UserDao;
+import org.arpico.groupit.receipt.dto.EmailDto;
 import org.arpico.groupit.receipt.dto.ExpenseDto;
 import org.arpico.groupit.receipt.dto.InventoryDetailsDto;
 import org.arpico.groupit.receipt.dto.MiscellaneousReceiptInvDto;
@@ -72,12 +75,15 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 
 	@Autowired
 	private CurrencyFormat currencyFormat;
-	
+
 	@Autowired
 	private ItextReceipt itextReceipt;
-	
+
 	@Autowired
 	private BankDao bankDao;
+
+	@Autowired
+	private UserDao userDao;
 
 	@Override
 	public ResponseEntity<Object> save(MiscellaneousReceiptInvDto dto, String token) throws Exception {
@@ -86,7 +92,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 
 		String user = decoder.generate(token);
 		String physicalBranch = decoder.generateLoc(token);
-		
+
 		String[] numberGen = numberGenerator.generateNewId("", "", "SQOIIS", "");
 
 		System.out.println(Arrays.toString(numberGen));
@@ -113,6 +119,64 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 
 			if (docTxnmModel2 != null) {
 				if (docTxndModels2 != null) {
+
+					try {
+						EmailDto emailDto = new EmailDto();
+
+						String toEmail = userDao.getUserEmail(user);
+						// String toEmail="anjana.t@arpicoinsurance.com";
+						String fromEmail = toEmail;
+
+						if (toEmail != null && toEmail != "" && fromEmail != null && fromEmail != "") {
+
+							List<String> ccMails = new ArrayList<>();
+							ccMails.add(fromEmail);
+
+							emailDto.setAttachments(new ArrayList<>());
+							emailDto.setCcMails(ccMails);
+							emailDto.setFromMail(fromEmail);
+							emailDto.setToMail(toEmail);
+							emailDto.setToken("no token");
+
+							emailDto.setUserCode(user);
+
+							emailDto.setSubject("Miscellaneous Receipt (INV)");
+
+							String body = "Miscellaneous Receipt (INV) \n\n";
+							body += "Receipt No : " + docTxnmModel.getRmsDocTxnmModelPK().getDocCode() + "\n";
+							body += "Receipted Date : " + docTxnmModel.getCreDate() + "\n";
+							body += "Branch : " + docTxndModels.get(0).getDimm04() + "\n";
+							body += "Advisor Code : " + docTxnmModel.getRef1() + "\n\n Items \n\n";
+
+							Integer count = 1;
+
+							for (RmsDocTxndModel docTxndModel : docTxndModels) {
+
+								for (RmsItemMasterModel item : itemList) {
+									if (item.getItemCode().equals(docTxndModel.getItemCode())) {
+										body += count + ".\t " + item.getItemName() + "(" + item.getItemCode() + ") : "
+												+ docTxndModel.getQty();
+									}
+								}
+
+							}
+
+							body += "\n\n";
+
+							body += "User Name : " + docTxnmModel.getCreBy();
+							body += "Remark : " + docTxnmModel.getRemarks();
+
+							emailDto.setBody(body);
+
+							emailDto.setDepartment(AppConstant.EMAIL_ADMIN);
+
+							new InfosysWSClient().sendEmail(emailDto);
+
+						}
+
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
 
 					try {
 						printDto = getReceiptPrintDto(docTxnmModel, docTxndModels, user, itemList, dto, false);
@@ -162,24 +226,24 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		printDto.setRctStatus("");
 		printDto.setRemark(docTxnmModel.getRemarks());
 		printDto.setUserName(userName);
-		
-		
+
 		System.out.println(miscellaneousReceiptInvDto.getChqNo());
 		if (miscellaneousReceiptInvDto.getChqNo() != null && !miscellaneousReceiptInvDto.getChqNo().equals("")) {
 			printDto.setChqNo(Integer.parseInt(miscellaneousReceiptInvDto.getChqNo()));
 		}
 		if (miscellaneousReceiptInvDto.getChqDate() != null && !miscellaneousReceiptInvDto.getChqDate().equals("")) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			printDto.setChqDate(new SimpleDateFormat("dd/MM/yyyy").format(sdf.parse(miscellaneousReceiptInvDto.getChqDate())));
+			printDto.setChqDate(
+					new SimpleDateFormat("dd/MM/yyyy").format(sdf.parse(miscellaneousReceiptInvDto.getChqDate())));
 		}
 		if (miscellaneousReceiptInvDto.getChqBank() != null && !miscellaneousReceiptInvDto.getChqBank().equals("")) {
 			printDto.setBankCode(Integer.parseInt(miscellaneousReceiptInvDto.getChqBank()));
 		}
-		
+
 		System.out.println("Item List");
 
 		docTxndModels.forEach(System.out::println);
-		
+
 		for (RmsDocTxndModel docTxndModel : docTxndModels) {
 			InventoryDetailsDto detailsDto = new InventoryDetailsDto();
 			detailsDto.setItemCod(docTxndModel.getItemCode());
@@ -187,9 +251,9 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 			itemList.forEach(e -> {
 				if (e.getItemCode().equals(docTxndModel.getItemCode())) {
 					detailsDto.setUntPrice(e.getUnitPrice());
-					detailsDto.setUntPriceTot(new BigDecimal(docTxndModel.getQty().intValue())
-							.multiply(new BigDecimal(e.getUnitPrice())).setScale(2, RoundingMode.HALF_UP)
-							.doubleValue());
+					detailsDto.setUntPriceTot(
+							new BigDecimal(docTxndModel.getQty().intValue()).multiply(new BigDecimal(e.getUnitPrice()))
+									.setScale(2, RoundingMode.HALF_UP).doubleValue());
 					detailsDto.setItemName(e.getItemName());
 
 				}
@@ -199,12 +263,12 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 			detailsDto.setQtyTot(docTxndModel.getAmtfcu());
 			detailsDto.setSubTot(docTxnmModel.getAmtfcu());
 			detailsDto.setSubTotInWrd(currencyFormat.numberToWords(docTxnmModel.getAmtfcu()));
-			
+
 			detailsDtos.add(detailsDto);
 		}
-		
+
 		printDto.setInventoryDtl(detailsDtos);
-		
+
 		detailsDtos.forEach(System.out::println);
 
 		return printDto;
@@ -212,7 +276,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 
 	private RmsDocTxndModel getDocTxndModelInv(MiscellaneousReceiptInvDto dto, String user, String docNo, ExpenseDto e,
 			Integer seqNo, RmsItemMasterModel itemMasterModel) throws Exception {
-		//SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		// SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 		RmsDocTxndModelPK pk = new RmsDocTxndModelPK();
 		pk.setDocCode(AppConstant.DOC_CODE_OIIS);
@@ -291,12 +355,12 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		return model;
 	}
 
-	private RmsDocTxnmModel getRmsDocTxnmModelInv(MiscellaneousReceiptInvDto dto, String user, String docNo, String physicalBranch)
-			throws Exception {
-		
+	private RmsDocTxnmModel getRmsDocTxnmModelInv(MiscellaneousReceiptInvDto dto, String user, String docNo,
+			String physicalBranch) throws Exception {
+
 		BankModel bankModel = bankDao.getBankById(dto.getBank());
 
-		//SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		// SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 		RmsDocTxnmModelPK pk = new RmsDocTxnmModelPK();
 		pk.setDocCode(AppConstant.DOC_CODE_OIIS);
