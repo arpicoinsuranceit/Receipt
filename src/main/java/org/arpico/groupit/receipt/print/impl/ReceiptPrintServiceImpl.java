@@ -52,7 +52,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 		PdfWriter writer = new PdfWriter(baos);
 		PdfDocument pdf = new PdfDocument(writer);
 		Document document = new Document(pdf, ps);
-		document.setMargins(20, 15, 20, 15);
+		document.setMargins(17, 20, 20, 25);
 		
 		System.out.println(receiptPrintDto.getRctStatus());
 
@@ -61,10 +61,10 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 						? "DUPPLICATE"
 						: "").setFixedPosition(15, 320, 100));
 
-		document.add(new Paragraph("ARPICO INSURANCE PLC.").setBold().setTextAlignment(TextAlignment.CENTER)
-				.setCharacterSpacing(1).setFontSize(12));
-		document.add(new Paragraph("Receipt New Business " + test).setBold().setTextAlignment(TextAlignment.CENTER)
-				.setCharacterSpacing(1).setFixedLeading(1).setFontSize(10));
+		document.add(new Paragraph("ARPICO INSURANCE PLC.").setTextAlignment(TextAlignment.CENTER)
+				.setCharacterSpacing(1).setFontSize(18));
+		document.add(new Paragraph("Receipt New Business " + test).setTextAlignment(TextAlignment.CENTER)
+				.setCharacterSpacing(1).setFixedLeading(1).setFontSize(14));
 
 		document.add(new Paragraph(""));
 
@@ -72,58 +72,58 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 		Table cusTable = new Table(customerDetailsTableWidth);
 
 		Cell code = new Cell();
-		code.setBorder(Border.NO_BORDER);
-		code.add(new Paragraph("Customer Code").setFontSize(10));
+		code.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+		code.add(new Paragraph("Customer Code").setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cusTable.addCell(code);
 		Cell codeVal = new Cell();
-		codeVal.setBorder(Border.NO_BORDER);
+		codeVal.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 		codeVal.add(new Paragraph(
 				receiptPrintDto.getCusCode() != null ? Integer.toString(receiptPrintDto.getCusCode()) : "")
-						.setFontSize(10));
+						.setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cusTable.addCell(codeVal);
 		
 		Cell rctNo = new Cell();
-		rctNo.setBorder(Border.NO_BORDER);
-		rctNo.add(new Paragraph("Receipt No").setBorder(Border.NO_BORDER).setFontSize(10));
+		rctNo.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+		rctNo.add(new Paragraph("Receipt No").setBorder(Border.NO_BORDER).setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cusTable.addCell(rctNo);
 		Cell rctNoVal = new Cell();
-		rctNoVal.setBorder(Border.NO_BORDER);
+		rctNoVal.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 		rctNoVal.add(
 				new Paragraph(receiptPrintDto.getDocCode() + " / " + Integer.toString(receiptPrintDto.getDocNum()))
-						.setBorder(Border.NO_BORDER).setFontSize(10));
+						.setBorder(Border.NO_BORDER).setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cusTable.addCell(rctNoVal);
 		
 		
 
 		Cell name = new Cell();
-		name.setBorder(Border.NO_BORDER);
-		name.add(new Paragraph("Name").setFontSize(10));
+		name.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+		name.add(new Paragraph("Name").setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cusTable.addCell(name);
 		Cell nameVal = new Cell();
-		nameVal.setBorder(Border.NO_BORDER);
+		nameVal.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 		nameVal.add(new Paragraph(receiptPrintDto.getCusName() != null
 				? receiptPrintDto.getCusTitle().toUpperCase() + " " + receiptPrintDto.getCusName().toUpperCase()
-				: "").setFontSize(10));
+				: "").setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cusTable.addCell(nameVal);
 
 		Cell rctDate = new Cell();
-		rctDate.setBorder(Border.NO_BORDER);
-		rctDate.add(new Paragraph("Receipt Date & Time").setBorder(Border.NO_BORDER).setFontSize(10));
+		rctDate.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+		rctDate.add(new Paragraph("Receipt Date & Time").setBorder(Border.NO_BORDER).setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cusTable.addCell(rctDate);
 		Cell rctDateVal = new Cell();
-		rctDateVal.setBorder(Border.NO_BORDER);
-		rctDateVal.add(new Paragraph(dateFormat.format(receiptPrintDto.getRctDate())).setBorder(Border.NO_BORDER)
+		rctDateVal.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+		rctDateVal.add(new Paragraph(dateFormat.format(receiptPrintDto.getRctDate())).setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f)
 				.setFontSize(10));
 		cusTable.addCell(rctDateVal);
 		
 		
 		
 		Cell address = new Cell();
-		address.setBorder(Border.NO_BORDER);
-		address.add(new Paragraph("Address").setFontSize(10));
+		address.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+		address.add(new Paragraph("Address").setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cusTable.addCell(address);
 		Cell addressVal = new Cell();
-		addressVal.setBorder(Border.NO_BORDER);
+		addressVal.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 
 		String add1 = "";
 		String add2 = "";
@@ -139,22 +139,22 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 			add3 = receiptPrintDto.getCusAddress3();
 		}
 
-		addressVal.add(new Paragraph(add1 + "\n" + add2 + "\n" + add3).setFontSize(10));
+		addressVal.add(new Paragraph(add1 + " " + add2 + " " + add3).setFontSize(10));
 		cusTable.addCell(addressVal);
 		
 		Cell brcCod = new Cell();
-		brcCod.setBorder(Border.NO_BORDER);
-		brcCod.add(new Paragraph("Branch Code").setBorder(Border.NO_BORDER).setFontSize(10));
+		brcCod.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+		brcCod.add(new Paragraph("Branch Code").setBorder(Border.NO_BORDER).setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cusTable.addCell(brcCod);
 		Cell brcCodVal = new Cell();
-		brcCodVal.setBorder(Border.NO_BORDER);
-		brcCodVal.add(new Paragraph(receiptPrintDto.getLocation()).setBorder(Border.NO_BORDER).setFontSize(10));
+		brcCodVal.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+		brcCodVal.add(new Paragraph(receiptPrintDto.getLocation()).setBorder(Border.NO_BORDER).setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cusTable.addCell(brcCodVal);
 		
 
 		Cell pyMod = new Cell();
-		pyMod.setBorder(Border.NO_BORDER);
-		pyMod.add(new Paragraph("Payment Mode").setFontSize(10));
+		pyMod.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+		pyMod.add(new Paragraph("Payment Mode").setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cusTable.addCell(pyMod);
 
 		Cell pyModVal = new Cell();
@@ -181,60 +181,60 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 				break;
 			}
 
-			pyModVal.setBorder(Border.NO_BORDER);
-			pyModVal.add(new Paragraph(payMethod).setFontSize(10));
+			pyModVal.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+			pyModVal.add(new Paragraph(payMethod).setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 			cusTable.addCell(pyModVal);
 
 		}
 
 		Cell quoNo = new Cell();
-		quoNo.setBorder(Border.NO_BORDER);
-		quoNo.add(new Paragraph("Quotation No").setBorder(Border.NO_BORDER).setFontSize(10));
+		quoNo.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+		quoNo.add(new Paragraph("Quotation No").setBorder(Border.NO_BORDER).setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cusTable.addCell(quoNo);
 		Cell quoNoVal = new Cell();
-		quoNoVal.setBorder(Border.NO_BORDER);
+		quoNoVal.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 		quoNoVal.add(new Paragraph(
 				Integer.toString(receiptPrintDto.getQuoNum()) + " / " + Integer.toString(receiptPrintDto.getQdId()))
-						.setBorder(Border.NO_BORDER).setFontSize(10));
+						.setBorder(Border.NO_BORDER).setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cusTable.addCell(quoNoVal);
 		
 		
 		Cell amount = new Cell();
-		amount.setBorder(Border.NO_BORDER);
-		amount.add(new Paragraph("Amount").setFontSize(10));
+		amount.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+		amount.add(new Paragraph("Amount").setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cusTable.addCell(amount);
 		Cell amountVal = new Cell();
-		amountVal.setBorder(Border.NO_BORDER);
+		amountVal.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 		amountVal.add(new Paragraph(
 				receiptPrintDto.getAmt() != null ? "Rs. " + " " + formatter.format(receiptPrintDto.getAmt()) : " ")
-						.setFontSize(10));
+						.setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cusTable.addCell(amountVal);
 		
 		Cell polNo = new Cell();
-		polNo.setBorder(Border.NO_BORDER);
-		polNo.add(new Paragraph("Proposal No").setBorder(Border.NO_BORDER).setFontSize(10));
+		polNo.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+		polNo.add(new Paragraph("Proposal No").setBorder(Border.NO_BORDER).setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cusTable.addCell(polNo);
 		Cell polNoVal = new Cell();
-		polNoVal.setBorder(Border.NO_BORDER);
+		polNoVal.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 		polNoVal.add(new Paragraph(Integer.toString(receiptPrintDto.getPropNum())).setBorder(Border.NO_BORDER)
-				.setFontSize(10));
+				.setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cusTable.addCell(polNoVal);
 
 		Cell amtWrd = new Cell(0, 2);
-		amtWrd.setBorder(Border.NO_BORDER);
+		amtWrd.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 		amtWrd.add(new Paragraph(receiptPrintDto.getAmtInWord() != null ? receiptPrintDto.getAmtInWord() : "")
-				.setFontSize(10));
+				.setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cusTable.addCell(amtWrd);
 		
 		Cell settlement = new Cell();
-		settlement.setBorder(Border.NO_BORDER);
-		settlement.add(new Paragraph("Settlement").setBorder(Border.NO_BORDER).setFontSize(10));
+		settlement.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+		settlement.add(new Paragraph("Settlement").setBorder(Border.NO_BORDER).setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cusTable.addCell(settlement);
 		Cell settlementVal = new Cell();
-		settlementVal.setBorder(Border.NO_BORDER);
+		settlementVal.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 		settlementVal.add(new Paragraph(
 				receiptPrintDto.getSettlement() != null ? "Rs. " + formatter.format(receiptPrintDto.getSettlement())
-						: "null").setBorder(Border.NO_BORDER).setFontSize(10));
+						: "null").setBorder(Border.NO_BORDER).setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cusTable.addCell(settlementVal);
 
 		document.add(cusTable);
@@ -355,26 +355,36 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 
 			document.add(new Paragraph(""));
 		}
-
+		
+		document.add(new Paragraph(""));
+		document.add(new Paragraph(""));
+		document.add(new Paragraph(""));
+		document.add(new Paragraph(""));
+		document.add(new Paragraph(""));
+		document.add(new Paragraph(""));
+		document.add(new Paragraph(""));
+		document.add(new Paragraph(""));
+		document.add(new Paragraph(""));
+		document.add(new Paragraph(""));
 		float[] saleDtlTblColmWidths = { 60, 60, 200 };
 		Table saleDtlTbl = new Table(saleDtlTblColmWidths);
 
 		Cell agent = new Cell();
-		agent.setBorder(Border.NO_BORDER);
-		agent.add(new Paragraph("Sales Code").setFontSize(10));
+		agent.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+		agent.add(new Paragraph("Sales Code").setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		saleDtlTbl.addCell(agent);
 
 		Cell agtCode = new Cell();
-		agtCode.setBorder(Border.NO_BORDER);
+		agtCode.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 		agtCode.add(new Paragraph(
 				receiptPrintDto.getAgtCode() != null ? Integer.toString(receiptPrintDto.getAgtCode()) : "")
-						.setFontSize(10));
+						.setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		saleDtlTbl.addCell(agtCode);
 
 		Cell agtName = new Cell();
-		agtName.setBorder(Border.NO_BORDER);
+		agtName.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 		agtName.add(new Paragraph(receiptPrintDto.getAgtName() != null ? receiptPrintDto.getAgtName() : "")
-				.setFontSize(10));
+				.setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		saleDtlTbl.addCell(agtName);
 
 		document.add(saleDtlTbl);
@@ -395,26 +405,26 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 
 		float[] cashierTblColsWidths = { 60, 270, 100, 100 };
 		Table cashierTbl = new Table(cashierTblColsWidths);
-		cashierTbl.setFixedPosition(15, 15, 460);
+		cashierTbl.setFixedPosition(25, 15, 460);
 
 		Cell usr = new Cell();
-		usr.setBorder(Border.NO_BORDER);
-		usr.add(new Paragraph("User Name").setFontSize(9));
+		usr.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+		usr.add(new Paragraph("User Name").setFontSize(9).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cashierTbl.addCell(usr);
 
 		Cell usrName = new Cell();
-		usrName.setBorder(Border.NO_BORDER);
+		usrName.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 		usrName.add(new Paragraph(receiptPrintDto.getUserName() != null ? receiptPrintDto.getUserName() : "")
-				.setFontSize(9));
+				.setFontSize(9).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cashierTbl.addCell(usrName);
 
 		Cell printDate = new Cell();
-		printDate.setBorder(Border.NO_BORDER);
-		printDate.add(new Paragraph("Printed Date & Time").setFontSize(9));
+		printDate.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+		printDate.add(new Paragraph("Printed Date & Time").setFontSize(9).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 		cashierTbl.addCell(printDate);
 
 		Cell printDateVal = new Cell();
-		printDateVal.setBorder(Border.NO_BORDER);
+		printDateVal.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 
 		Date rctPrintDate = new Date();
 
@@ -693,6 +703,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 
 				document.add(new Paragraph(""));
 			} else {
+				document.add(new Paragraph(""));
 				document.add(new Paragraph(""));
 				document.add(new Paragraph(""));
 				document.add(new Paragraph(""));
@@ -1962,7 +1973,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 			PdfWriter writer = new PdfWriter(baos);
 			PdfDocument pdf = new PdfDocument(writer);
 			Document document = new Document(pdf, ps);
-			document.setMargins(20, 15, 20, 15);
+			document.setMargins(17, 20, 20, 25);
 
 			System.out.println(receiptPrintDto.getRctStatus());
 
@@ -1971,10 +1982,10 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 							? "DUPPLICATE"
 							: "").setFixedPosition(15, 320, 100));
 
-			document.add(new Paragraph("ARPICO INSURANCE PLC.").setBold().setTextAlignment(TextAlignment.CENTER)
-					.setCharacterSpacing(1).setFontSize(12));
-			document.add(new Paragraph("MISCELLANEOUS RECEIPT " + test).setBold().setTextAlignment(TextAlignment.CENTER)
-					.setCharacterSpacing(1).setFixedLeading(1).setFontSize(10));
+			document.add(new Paragraph("ARPICO INSURANCE PLC.").setTextAlignment(TextAlignment.CENTER)
+					.setCharacterSpacing(1).setFontSize(18));
+			document.add(new Paragraph("MISCELLANEOUS RECEIPT " + test).setTextAlignment(TextAlignment.CENTER)
+					.setCharacterSpacing(1).setFixedLeading(1).setFontSize(14));
 
 			document.add(new Paragraph(""));
 
@@ -1982,40 +1993,40 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 			Table cusTable = new Table(customerDetailsTableWidth);
 
 			Cell name = new Cell();
-			name.setBorder(Border.NO_BORDER);
-			name.add(new Paragraph("Name").setFontSize(10));
+			name.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+			name.add(new Paragraph("Name").setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 			cusTable.addCell(name);
 			Cell nameVal = new Cell();
-			nameVal.setBorder(Border.NO_BORDER);
+			nameVal.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 			nameVal.add(new Paragraph(
-					receiptPrintDto.getCusName() != null ? receiptPrintDto.getCusName().toUpperCase() : "")
+					receiptPrintDto.getCusName() != null ? receiptPrintDto.getCusName().toUpperCase() : "").setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f)
 							.setFontSize(10));
 			cusTable.addCell(nameVal);
 
 			Cell rctNo = new Cell();
-			rctNo.setBorder(Border.NO_BORDER);
-			rctNo.add(new Paragraph("Receipt No").setBorder(Border.NO_BORDER).setFontSize(10));
+			rctNo.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+			rctNo.add(new Paragraph("Receipt No").setBorder(Border.NO_BORDER).setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 			cusTable.addCell(rctNo);
 			Cell rctNoVal = new Cell();
-			rctNoVal.setBorder(Border.NO_BORDER);
+			rctNoVal.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 			rctNoVal.add(
 					new Paragraph(receiptPrintDto.getDocCode() + " / " + Integer.toString(receiptPrintDto.getDocNum()))
-							.setBorder(Border.NO_BORDER).setFontSize(10));
+							.setBorder(Border.NO_BORDER).setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 			cusTable.addCell(rctNoVal);
 
 			Cell glEmt1 = new Cell(0, 2);
-			glEmt1.setBorder(Border.NO_BORDER);
-			glEmt1.add(new Paragraph("").setFontSize(10));
+			glEmt1.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+			glEmt1.add(new Paragraph("").setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 			cusTable.addCell(glEmt1);
 
 			Cell glEmt2 = new Cell(0, 2);
-			glEmt2.setBorder(Border.NO_BORDER);
-			glEmt2.add(new Paragraph("").setFontSize(10));
+			glEmt2.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+			glEmt2.add(new Paragraph("").setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 			cusTable.addCell(glEmt2);
 
 			Cell pyMod = new Cell();
-			pyMod.setBorder(Border.NO_BORDER);
-			pyMod.add(new Paragraph("Payment Mode").setFontSize(10));
+			pyMod.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+			pyMod.add(new Paragraph("Payment Mode").setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 			cusTable.addCell(pyMod);
 
 			Cell pyModVal = new Cell();
@@ -2042,41 +2053,41 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 					break;
 				}
 
-				pyModVal.setBorder(Border.NO_BORDER);
-				pyModVal.add(new Paragraph(payMethod).setFontSize(10));
+				pyModVal.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+				pyModVal.add(new Paragraph(payMethod).setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 				cusTable.addCell(pyModVal);
 
 			}
 
 			Cell rctDate = new Cell();
-			rctDate.setBorder(Border.NO_BORDER);
-			rctDate.add(new Paragraph("Receipt Date").setBorder(Border.NO_BORDER).setFontSize(10));
+			rctDate.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+			rctDate.add(new Paragraph("Receipt Date").setBorder(Border.NO_BORDER).setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 			cusTable.addCell(rctDate);
 			Cell rctDateVal = new Cell();
-			rctDateVal.setBorder(Border.NO_BORDER);
-			rctDateVal.add(new Paragraph(dateFormat.format(receiptPrintDto.getRctDate())).setBorder(Border.NO_BORDER)
+			rctDateVal.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+			rctDateVal.add(new Paragraph(dateFormat.format(receiptPrintDto.getRctDate())).setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f)
 					.setFontSize(10));
 			cusTable.addCell(rctDateVal);
 
 			Cell amount = new Cell();
-			amount.setBorder(Border.NO_BORDER);
-			amount.add(new Paragraph("Amount").setFontSize(10));
+			amount.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+			amount.add(new Paragraph("Amount").setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 			cusTable.addCell(amount);
 			Cell amountVal = new Cell();
-			amountVal.setBorder(Border.NO_BORDER);
+			amountVal.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 			amountVal.add(new Paragraph(
 					receiptPrintDto.getAmt() != null ? "Rs. " + " " + formatter.format(receiptPrintDto.getAmt()) : " ")
-							.setFontSize(10));
+					.setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f).setFontSize(10));
 			cusTable.addCell(amountVal);
 
 			Cell glEmt3 = new Cell(0, 2);
-			glEmt3.setBorder(Border.NO_BORDER);
-			glEmt3.add(new Paragraph("").setFontSize(10));
+			glEmt3.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+			glEmt3.add(new Paragraph("").setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 			cusTable.addCell(glEmt3);
 
 			Cell amtWrd = new Cell(0, 2);
-			amtWrd.setBorder(Border.NO_BORDER);
-			amtWrd.add(new Paragraph(receiptPrintDto.getAmtInWord() != null ? receiptPrintDto.getAmtInWord() : "")
+			amtWrd.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+			amtWrd.add(new Paragraph(receiptPrintDto.getAmtInWord() != null ? receiptPrintDto.getAmtInWord() : "").setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f)
 					.setFontSize(10));
 			cusTable.addCell(amtWrd);
 
@@ -2134,20 +2145,23 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 			} else {
 
 			}*/
+			document.add(new Paragraph(""));
+			document.add(new Paragraph(""));
+			
 
-			float[] itemDtlColWidths = { 150, 260, 130 };
+			float[] itemDtlColWidths = { 150, 260, 100 };
 			Table itemDtlTable = new Table(itemDtlColWidths);
 
 			String[] headers = { "Account", "Remark", "Amount" };
 
 			for (String string : headers) {
 				Cell cell = new Cell();
-				cell.setBorderLeft(Border.NO_BORDER);
-				cell.setBorderRight(Border.NO_BORDER);
+				cell.setBorderLeft(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
+				cell.setBorderRight(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 				if (string.equals("Amount")) {
-					cell.add(new Paragraph(string).setFontSize(10).setTextAlignment(TextAlignment.RIGHT));
+					cell.add(new Paragraph(string).setFontSize(10).setTextAlignment(TextAlignment.RIGHT).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 				} else {
-					cell.add(new Paragraph(string).setFontSize(10));
+					cell.add(new Paragraph(string).setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 				}
 				itemDtlTable.addCell(cell);
 			}
@@ -2175,6 +2189,9 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 
 
 			document.add(new Paragraph(""));
+			document.add(new Paragraph(""));
+			document.add(new Paragraph(""));
+			document.add(new Paragraph(""));
 
 			document.add(
 					new Paragraph("This Receipt is valid subject to realization of cheque or acceptance of proposal.")
@@ -2184,7 +2201,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 
 			float[] cashierTblColsWidths = {60, 60, 210, 100, 100 };
 			Table cashierTbl = new Table(cashierTblColsWidths);
-			cashierTbl.setFixedPosition(15, 15, 460);
+			cashierTbl.setFixedPosition(1, 15, 460);
 
 			Cell empty = new Cell();
 			empty.setBorder(Border.NO_BORDER);

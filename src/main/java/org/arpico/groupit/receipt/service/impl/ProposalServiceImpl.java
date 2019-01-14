@@ -256,7 +256,9 @@ public class ProposalServiceImpl implements ProposalServce {
 					try {
 						inTransactionsModel.setPolnum(Integer.parseInt(inProposalsModel.getPolnum()));
 					} catch (Exception e) {
-						e.printStackTrace();
+						//e.printStackTrace();
+						
+						System.out.println("Proposal not found");
 					}
 
 					System.out.println("WORK");
