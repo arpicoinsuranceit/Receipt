@@ -22,7 +22,6 @@ import org.arpico.groupit.receipt.model.InLoanTransactionsModel;
 import org.arpico.groupit.receipt.model.InPropMedicalReqModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.InTransactionsModel;
-import org.arpico.groupit.receipt.model.LastReceiptSummeryModel;
 import org.arpico.groupit.receipt.model.pk.InPropMedicalReqModelPK;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.ReceiptCancelationService;
@@ -125,13 +124,7 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService 
 						InProposalsModel inProposalsModel = inProposalCustomDao
 								.getProposalFromPprnum(Integer.valueOf(inTransactionsModel.getPprnum()));
 
-						if (inProposalsModel.getPolnum() != null && inProposalsModel.getPolnum() != "") {
-							dto = new ResponseDto();
-							dto.setCode("204");
-							dto.setStatus("Error");
-							dto.setMessage("Unable to cancel this Receipt. Please contact Finance Department");
-							return new ResponseEntity<>(dto, HttpStatus.OK);
-						} else {
+						if (inProposalsModel.getPolnum() != null && inProposalsModel.getPolnum() != ""){
 							InPropMedicalReqModelPK inPropMedicalReqModelPK = new InPropMedicalReqModelPK();
 
 							inPropMedicalReqModelPK.setInstyp("main");
@@ -249,6 +242,12 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService 
 
 							}
 
+						}else {
+							dto = new ResponseDto();
+							dto.setCode("204");
+							dto.setStatus("Error");
+							dto.setMessage("Unable to cancel this Receipt. Please contact Finance Department");
+							return new ResponseEntity<>(dto, HttpStatus.OK);
 						}
 
 					}
