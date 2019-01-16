@@ -3,6 +3,7 @@ package org.arpico.groupit.receipt.dao;
 import java.util.List;
 
 import org.arpico.groupit.receipt.model.AgentModel;
+import org.arpico.groupit.receipt.model.AgnInqAgnListModel;
 
 public interface AgentDao {
 
@@ -17,5 +18,6 @@ public interface AgentDao {
 	List<AgentModel> getAllAgents() throws Exception;
 
 	List<AgentModel> findAgentByLocations(String locCodes) throws Exception;
-	
+
+	List<AgnInqAgnListModel> getAgnInqList(String locCodes) throws Exception;
 }

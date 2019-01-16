@@ -5,7 +5,9 @@ import java.util.List;
 import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.rowmapper.AgentFullRowMapper;
 import org.arpico.groupit.receipt.dao.rowmapper.AgentRowMapper;
+import org.arpico.groupit.receipt.dao.rowmapper.AgnInqAgnListRowMapper;
 import org.arpico.groupit.receipt.model.AgentModel;
+import org.arpico.groupit.receipt.model.AgnInqAgnListModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -57,6 +59,14 @@ public class AgentDaoImpl implements AgentDao {
 		return jdbcTemplate.query("SELECT agncod, shrtnm, loccod FROM inagentmast "
 				+ "where sbucod = '450' and loccod in  (" + locCodes + ") and agnsta in ('ACT','INA') order by agncod;",
 				new AgentRowMapper());
+	}
+
+	@Override
+	public List<AgnInqAgnListModel> getAgnInqList(String locCodes) throws Exception {
+		return jdbcTemplate.query("select agncod, agnnam, agnnic, agnsta, sliirg, "
+				+ "if(agncls = 'IC', unlcod, bancod) as supvid, agndob, subdcd, agnrdt "
+				+ "from inagentmast where sbucod = '450' and loccod in ("+locCodes+") ;",
+				new AgnInqAgnListRowMapper());
 	}
 
 }
