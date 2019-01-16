@@ -16,7 +16,7 @@ public class ItextReceiptImpl implements ItextReceipt {
 	public byte[] createReceipt(ReceiptPrintDto receiptPrintDto) throws Exception {
 
 		if (receiptPrintDto != null) {
-			System.out.println(receiptPrintDto.getDocCode());
+			//System.out.println(receiptPrintDto.getDocCode());
 			
 			switch (receiptPrintDto.getDocCode()) {
 			case "RCNB":

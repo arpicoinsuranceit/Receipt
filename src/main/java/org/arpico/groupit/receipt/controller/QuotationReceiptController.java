@@ -29,9 +29,9 @@ public class QuotationReceiptController {
 
 	@RequestMapping(value = "/savereceiptquo", method = RequestMethod.POST)
 	public ResponseEntity<Object> savereceiptquo(@RequestBody SaveReceiptDto saveReceiptDto) {
-		System.out.println(saveReceiptDto.toString());
+		//System.out.println(saveReceiptDto.toString());
 
-		System.out.println("Work");
+		//System.out.println("Work");
 		
 		String valid = "Error";
 
@@ -41,12 +41,12 @@ public class QuotationReceiptController {
 			e1.printStackTrace();
 		}
 		
-		System.out.println(valid);
+		//System.out.println(valid);
 		
 		try {
 			if (valid.equalsIgnoreCase("ok")) {
 				ResponseDto resp = quotationReceiptService.saveQuotationReceipt(saveReceiptDto);
-				System.out.println(resp);
+				//System.out.println(resp);
 				if (resp.getCode().equalsIgnoreCase("200")) {
 					
 					return new ResponseEntity<>(resp, HttpStatus.OK);

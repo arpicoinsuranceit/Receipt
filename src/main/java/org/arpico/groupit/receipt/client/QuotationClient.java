@@ -23,17 +23,17 @@ public class QuotationClient {
 		map.add("seqNo", seqNo);
 		map.add("qId", qId);
 		
-		System.out.println("seqNo" +  seqNo);
-		System.out.println("qId" +  qId);
+		//System.out.println("seqNo" +  seqNo);
+		//System.out.println("qId" +  qId);
 
 		try {
 			RestTemplate restTemplate = new RestTemplate();
 			ViewQuotationDto result = restTemplate.postForObject(AppConstant.URI_GET_QUO_DETAILS, map,
 					ViewQuotationDto.class);
-			//System.out.println(result.toString());
-			System.out.println(result.get_mainlife().toString());
-			System.out.println(result.get_spouse().toString());
-			System.out.println(result.get_plan().toString());
+			////System.out.println(result.toString());
+			//System.out.println(result.get_mainlife().toString());
+			//System.out.println(result.get_spouse().toString());
+			//System.out.println(result.get_plan().toString());
 			return result;
 		} catch (Exception e) {
 			//e.printStackTrace();
@@ -46,13 +46,13 @@ public class QuotationClient {
 		MultiValueMap<String, Integer> map = new LinkedMultiValueMap<String, Integer>();
 		map.add("qdId", qdId);
 		
-		System.out.println("qdId" +  qdId);
+		//System.out.println("qdId" +  qdId);
 
 		try {
 			RestTemplate restTemplate = new RestTemplate();
 			Integer result = restTemplate.postForObject(AppConstant.URI_GET_QUO_SEQNUM, map,
 					Integer.class);
-			System.out.println(result);
+			//System.out.println(result);
 			return result;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -258,7 +258,7 @@ public class QuotationClient {
 			RestTemplate restTemplate = new RestTemplate();
 			Integer result = restTemplate.postForObject(AppConstant.URI_QUOTATION_DETAILS_FROM_SEQNO, map,
 					Integer.class);
-			System.out.println(result);
+			//System.out.println(result);
 			return result;
 		} catch (Exception e) {
 
@@ -278,7 +278,7 @@ public class QuotationClient {
 			RestTemplate restTemplate = new RestTemplate();
 			String result = restTemplate.postForObject(AppConstant.URI_CHECK_NIC_VALIDATION, map,
 					String.class);
-			System.out.println(result);
+			//System.out.println(result);
 			return result;
 		} catch (Exception e) {
 

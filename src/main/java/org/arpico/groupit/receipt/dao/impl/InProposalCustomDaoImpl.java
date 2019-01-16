@@ -70,10 +70,10 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 				.query("select * from inproposals where sbucod = '450' and pprnum = '" + propId + "' and prpseq = '"
 						+ propSeq + "'", new InProposalsRowMapper());
 
-		System.out.println(models.size());
+		//System.out.println(models.size());
 
 		if (!models.isEmpty()) {
-			System.out.println("if");
+			//System.out.println("if");
 			return models.get(0);
 		}
 
@@ -154,7 +154,7 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 				+ "where sbucod = '450' and polnum = '" + polId + "' and prpseq = '" + propSeq + "'",
 				new InProposalsRowMapper());
 
-		System.out.println(models.size());
+		//System.out.println(models.size());
 
 		if (!models.isEmpty()) {
 			return models.get(0);
@@ -248,42 +248,42 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 	@Override
 	public InProposalsModel getProposalFromPprnumWorkFolw(Integer pprnum) throws Exception {
 		
-		System.out.println("SELECT  " + "    p.sbucod, " + "    p.loccod, "
-				+ "    p.ppdnam, " + "    p.ppdini, " + "    p.ppdad1, " + "    p.ppdad2, " + "    p.ppdad3, "
-				+ "    p.ppddob, " + "    p.ppdnag, " + "    p.ppdnic, " + "    p.ppdsex, " + "    p.ppdcst, "
-				+ "    p.ppdtel, " + "    p.ppdeml, " + "    o.ocunam as ppdocu, " + "    p.ppdndu, " + "    p.pprnum, "
-				+ "    p.toptrm, " + "    p.paytrm, " + "    p.paymth, " + "    p.bassum, " + "    p.premum, "
-				+ "    p.highcm, " + "    p.wighkg, " + "    p.sponam, "
-				+ "    (select ocunam from inpropoccupation oc where oc.sbucod = '450' and oc.ocucod = p.spoocu ) AS spoocu, "
-				+ "    p.ocupat, " + "    p.mthinc, " + "    p.prpdat, " + "    p.brncod, " + "    p.agmcod, "
-				+ "    CONCAT(u.USER_NAME, ' / ', p.advcod) AS advcod, " + "    p.revlof, " + "    p.numchl, "
-				+ "    p.polnum, " + "    p.doccod, " + "    p.creaby, " + "    p.creadt, " + "    p.poltyp, "
-				+ "    CONCAT(pr.prdnam, ' / ', p.prdcod) AS prdcod, " + "    p.quonum, " + "    p.seqnum, "
-				+ "    p.ntitle, " + "    p.lockin, " + "    p.sinprm, " + "    st.stadsc AS pprsta, "
-				+ "    p.prosta, " + "    p.ppdmob, " + "    p.ppdani, " + "    p.stitle, " + "    p.spoini, "
-				+ "    p.spomob, " + "    p.spoeml, " + "    p.spoani, " + "    p.spondu, " + "    p.sponic, "
-				+ "    p.cscode, " + "    p.spodob, " + "    p.sagnxt, " + "    p.spotel, " + "    p.totprm, "
-				+ "    p.sumrks, " + "    p.sumrkm, " + "    p.prmqtt, " + "    p.prmmtt, " + "    p.prmmth, "
-				+ "    p.prmhlt, " + "    p.prmyet, " + "    p.prmqat, " + "    p.prmhlf, " + "    p.prmyer, "
-				+ "    p.trgprm, " + "    p.quosta, " + "    p.prdnam, " + "    p.polfee, " + "    p.comdat, "
-				+ "    p.expdat, " + "    p.prpseq, " + "    p.sndapp, " + "    p.curusr, " + "    p.doclvl, "
-				+ "    p.unddec, " + "    p.icpdat, " + "    p.exclut, " + "    p.edttim, " + "    p.shighc, "
-				+ "    p.swighk, " + "    p.poldat, " + "    p.insnum, " + "    p.txndat, " + "    p.linyer, "
-				+ "    p.linmon, " + "    p.admfee, " + "    p.taxamt, " + "    p.otham1, " + "    p.otham2, "
-				+ "    p.otham3, " + "    p.otham4, " + "    p.intrat, " + "    p.endnum, " + "    p.grsprm, "
-				+ "    p.smksta, " + "    p.prflng, " + "    p.grppol, " + "    p.endmod, " + "    p.oldprm, "
-				+ "    p.enfdat, " + "    p.lstchd, " + "    p.chgtyp, " + "    p.lsripd, " + "    p.prncnt, "
-				+ "    p.lpsdat, " + "    p.canadf, " + "    p.canmdc, " + "    p.canoth, " + "    p.netref, "
-				+ "    p.payamt, " + "    p.paynam, " + "    p.mnagad, " + "    p.spagad, " + "    p.pspnvl, "
-				+ "    p.pspntp, " + "    p.pspndt, " + "    p.invpos, " + "    p.lifpos, " + "    p.rlftrm, "
-				+ "    p.jlfsex, " + "    p.ban_no, " + "    p.accnum, " + "    p.newnic, " + "    p.crmnum, "
-				+ "    p.crmsts " + "FROM " + "    inproposals p " + "        INNER JOIN "
-				+ "    smtrxnstatus st ON st.sbucod = p.sbucod AND st.statid = p.pprsta " + "        INNER JOIN "
-				+ "    inproducts pr ON pr.sbucod = p.sbucod AND p.prdcod = pr.prdcod " + "        INNER JOIN "
-				+ "    rms_users u ON u.SBU_CODE = p.sbucod AND u.USER_ID = p.advcod " + "		INNER JOIN "
-				+ "	inpropoccupation o ON o.sbucod = p.sbucod AND o.ocucod = p.ppdocu " + "WHERE "
-				+ "    p.sbucod = '450' AND p.pprnum = '" + pprnum + "' " + "        AND p.pprsta <> 'INAC' "
-				+ "ORDER BY p.prpseq DESC " + "LIMIT 1");
+//		System.out.println("SELECT  " + "    p.sbucod, " + "    p.loccod, "
+//				+ "    p.ppdnam, " + "    p.ppdini, " + "    p.ppdad1, " + "    p.ppdad2, " + "    p.ppdad3, "
+//				+ "    p.ppddob, " + "    p.ppdnag, " + "    p.ppdnic, " + "    p.ppdsex, " + "    p.ppdcst, "
+//				+ "    p.ppdtel, " + "    p.ppdeml, " + "    o.ocunam as ppdocu, " + "    p.ppdndu, " + "    p.pprnum, "
+//				+ "    p.toptrm, " + "    p.paytrm, " + "    p.paymth, " + "    p.bassum, " + "    p.premum, "
+//				+ "    p.highcm, " + "    p.wighkg, " + "    p.sponam, "
+//				+ "    (select ocunam from inpropoccupation oc where oc.sbucod = '450' and oc.ocucod = p.spoocu ) AS spoocu, "
+//				+ "    p.ocupat, " + "    p.mthinc, " + "    p.prpdat, " + "    p.brncod, " + "    p.agmcod, "
+//				+ "    CONCAT(u.USER_NAME, ' / ', p.advcod) AS advcod, " + "    p.revlof, " + "    p.numchl, "
+//				+ "    p.polnum, " + "    p.doccod, " + "    p.creaby, " + "    p.creadt, " + "    p.poltyp, "
+//				+ "    CONCAT(pr.prdnam, ' / ', p.prdcod) AS prdcod, " + "    p.quonum, " + "    p.seqnum, "
+//				+ "    p.ntitle, " + "    p.lockin, " + "    p.sinprm, " + "    st.stadsc AS pprsta, "
+//				+ "    p.prosta, " + "    p.ppdmob, " + "    p.ppdani, " + "    p.stitle, " + "    p.spoini, "
+//				+ "    p.spomob, " + "    p.spoeml, " + "    p.spoani, " + "    p.spondu, " + "    p.sponic, "
+//				+ "    p.cscode, " + "    p.spodob, " + "    p.sagnxt, " + "    p.spotel, " + "    p.totprm, "
+//				+ "    p.sumrks, " + "    p.sumrkm, " + "    p.prmqtt, " + "    p.prmmtt, " + "    p.prmmth, "
+//				+ "    p.prmhlt, " + "    p.prmyet, " + "    p.prmqat, " + "    p.prmhlf, " + "    p.prmyer, "
+//				+ "    p.trgprm, " + "    p.quosta, " + "    p.prdnam, " + "    p.polfee, " + "    p.comdat, "
+//				+ "    p.expdat, " + "    p.prpseq, " + "    p.sndapp, " + "    p.curusr, " + "    p.doclvl, "
+//				+ "    p.unddec, " + "    p.icpdat, " + "    p.exclut, " + "    p.edttim, " + "    p.shighc, "
+//				+ "    p.swighk, " + "    p.poldat, " + "    p.insnum, " + "    p.txndat, " + "    p.linyer, "
+//				+ "    p.linmon, " + "    p.admfee, " + "    p.taxamt, " + "    p.otham1, " + "    p.otham2, "
+//				+ "    p.otham3, " + "    p.otham4, " + "    p.intrat, " + "    p.endnum, " + "    p.grsprm, "
+//				+ "    p.smksta, " + "    p.prflng, " + "    p.grppol, " + "    p.endmod, " + "    p.oldprm, "
+//				+ "    p.enfdat, " + "    p.lstchd, " + "    p.chgtyp, " + "    p.lsripd, " + "    p.prncnt, "
+//				+ "    p.lpsdat, " + "    p.canadf, " + "    p.canmdc, " + "    p.canoth, " + "    p.netref, "
+//				+ "    p.payamt, " + "    p.paynam, " + "    p.mnagad, " + "    p.spagad, " + "    p.pspnvl, "
+//				+ "    p.pspntp, " + "    p.pspndt, " + "    p.invpos, " + "    p.lifpos, " + "    p.rlftrm, "
+//				+ "    p.jlfsex, " + "    p.ban_no, " + "    p.accnum, " + "    p.newnic, " + "    p.crmnum, "
+//				+ "    p.crmsts " + "FROM " + "    inproposals p " + "        INNER JOIN "
+//				+ "    smtrxnstatus st ON st.sbucod = p.sbucod AND st.statid = p.pprsta " + "        INNER JOIN "
+//				+ "    inproducts pr ON pr.sbucod = p.sbucod AND p.prdcod = pr.prdcod " + "        INNER JOIN "
+//				+ "    rms_users u ON u.SBU_CODE = p.sbucod AND u.USER_ID = p.advcod " + "		INNER JOIN "
+//				+ "	inpropoccupation o ON o.sbucod = p.sbucod AND o.ocucod = p.ppdocu " + "WHERE "
+//				+ "    p.sbucod = '450' AND p.pprnum = '" + pprnum + "' " + "        AND p.pprsta <> 'INAC' "
+//				+ "ORDER BY p.prpseq DESC " + "LIMIT 1");
 
 		InProposalsModel models = jdbcTemplate.queryForObject("SELECT  " + "    p.sbucod, " + "    p.loccod, "
 				+ "    p.ppdnam, " + "    p.ppdini, " + "    p.ppdad1, " + "    p.ppdad2, " + "    p.ppdad3, "
@@ -372,7 +372,7 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 	@Override
 	public List<InProposalsModel> searchProposal(String sql) throws Exception {
 
-		System.out.println("select * from inproposals where sbucod = '450' and " + sql);
+		//System.out.println("select * from inproposals where sbucod = '450' and " + sql);
 
 		List<InProposalsModel> models = jdbcTemplate.query("select * from inproposals where sbucod = '450' and " + sql,
 				new InProposalsRowMapper());
@@ -383,12 +383,12 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 	@Override
 	public List<ShortPremiumModel> getShortPremium(String sql, Integer page, Integer offset) throws Exception {
 		
-		System.out.println("select p.quonum, p.pprnum, p.prpseq, concat(p.advcod,' - ',a.prnnam) agent, p.loccod, m.addnot from inproposals p  "
-						+ "	   inner join inpropmedicalreq m on p.sbucod=m.sbucod and p.pprnum=m.pprnum and p.prpseq=m.prpseq and p.pprsta='L3' "
-						+ "    inner join inagentmast a on a.sbucod=p.sbucod and a.agncod=p.advcod "
-						+ "      where m.sbucod='450' " + sql 
-						+ "      and m.medcod like 'AD%' and tessta = 'N' and addnot like 'Premium Short%' limit "+ (page) + ", " + offset);
-		
+//		System.out.println("select p.quonum, p.pprnum, p.prpseq, concat(p.advcod,' - ',a.prnnam) agent, p.loccod, m.addnot from inproposals p  "
+//						+ "	   inner join inpropmedicalreq m on p.sbucod=m.sbucod and p.pprnum=m.pprnum and p.prpseq=m.prpseq and p.pprsta='L3' "
+//						+ "    inner join inagentmast a on a.sbucod=p.sbucod and a.agncod=p.advcod "
+//						+ "      where m.sbucod='450' " + sql 
+//						+ "      and m.medcod like 'AD%' and tessta = 'N' and addnot like 'Premium Short%' limit "+ (page) + ", " + offset);
+//		
 		List<ShortPremiumModel> models = jdbcTemplate.query(
 				"select p.quonum, p.pprnum, p.prpseq, concat(p.advcod,' - ',a.prnnam) agent, p.loccod, m.addnot from inproposals p  "
 						+ "	   inner join inpropmedicalreq m on p.sbucod=m.sbucod and p.pprnum=m.pprnum and p.prpseq=m.prpseq and p.pprsta='L3' "
@@ -549,7 +549,7 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 				"WHERE " + 
 				"    CONVERT( n.updsta USING UTF8) != n.pprsta;";
 		
-		System.out.println(query);
+		//System.out.println(query);
 		List<WorkFlowPolicyGridModel> models = jdbcTemplate.query(query,
 				new WorkFlowPolicyGridRowMapper());
 		return models;
@@ -559,7 +559,7 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 	public List<WorkFlowPolicyGridModel> getWorkFlowPolicylaps(String type, String paraForIn, Integer date1,
 			Integer date2, String type2) {
 		
-		System.out.println("Branch");
+		//System.out.println("Branch");
 		
 		String query = "SELECT  " + 
 				"    n.policy, " + 
@@ -650,7 +650,7 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 				"WHERE " + 
 				"    CONVERT( n.updsta USING UTF8) != n.pprsta;";
 		
-		System.out.println(query);
+		//System.out.println(query);
 		
 		List<WorkFlowPolicyGridModel> models = jdbcTemplate.query(query,
 				new WorkFlowPolicyGridRowMapper());

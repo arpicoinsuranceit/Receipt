@@ -46,7 +46,7 @@ public class ReceiptInquiryServiceImpl implements ReceiptInquiryService{
 			
 			locations=locations.replaceAll(",$", "");
 			
-			//System.out.println(locations + " Branch Codes ------");
+			////System.out.println(locations + " Branch Codes ------");
 			
 			if(locations != "") {
 				

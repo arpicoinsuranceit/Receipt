@@ -36,9 +36,9 @@ public class CommonMethodsUtility {
 
 		//String userCode = new JwtDecoder().generate(saveReceiptDto.getToken());
 
-		System.out.println(userCode);
+		//System.out.println(userCode);
 
-		System.out.println(numberGen[1]);
+		//System.out.println(numberGen[1]);
 
 		if (numberGen[0].equalsIgnoreCase("Success")) {
 			InTransactionsModelPK inTransactionsModelPK = new InTransactionsModelPK();

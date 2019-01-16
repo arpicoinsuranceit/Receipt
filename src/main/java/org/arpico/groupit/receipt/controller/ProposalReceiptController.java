@@ -32,7 +32,7 @@ public class ProposalReceiptController {
 	
 	@RequestMapping(value = "/getProposal/{val}", method = RequestMethod.GET)
 	public List<ProposalNoSeqNoDto> getProposalNSeqNo(@PathVariable String val) {
-		System.out.println(val);
+		//System.out.println(val);
 		try {
 			return proposalServce.getProposalNoSeqNoDtoList(val);
 		} catch (Exception e) {
@@ -54,14 +54,22 @@ public class ProposalReceiptController {
 	
 	@RequestMapping(value = "/savereceiptProp", method = RequestMethod.POST)
 	public ResponseEntity<Object> saveProposalReceipt(@RequestBody SaveReceiptDto saveReceiptDto) {
-		System.out.println(saveReceiptDto.toString());
+		//System.out.println(saveReceiptDto.toString());
+		
+		System.out.println("Proposal Save Controller");
+		System.out.println("Proposal Save Controller Data : " + saveReceiptDto.toString());
 		 
 		try {
 			String validity = commonValidations.validateProposalReceiptInputs(saveReceiptDto);
 			
 			if(validity.equalsIgnoreCase("ok")) {
+				
+				System.out.println("Proposal Save Controller Validation PASS");
+				
 				return proposalServce.saveProposal(saveReceiptDto);
 			} else {
+				
+				System.out.println("Proposal Save Controller Validation FAIL : " + validity);
 				ResponseDto responseDto = new ResponseDto();
 				responseDto.setCode("204");
 				responseDto.setStatus("Error");
@@ -70,6 +78,9 @@ public class ProposalReceiptController {
 			}
 			
 		} catch (Exception e) {
+			
+			System.out.println("Proposal Save Controller Validation Error");
+			
 			return new ResponseEntity<>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

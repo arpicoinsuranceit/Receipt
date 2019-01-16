@@ -22,22 +22,22 @@ public class CommisDaoCustomImpl implements CommisDaoCustom {
 	public CommisModel getCommis(Integer comYear, String prodCode, Integer term, Date date) throws Exception {
 		List<Object> args = new ArrayList<>();
 
-		System.out.println("comYear : " + comYear);
-		System.out.println("prodCode : " + prodCode);
-		System.out.println("term : " + term);
-		System.out.println("date : " + date);
+		//System.out.println("comYear : " + comYear);
+		//System.out.println("prodCode : " + prodCode);
+		//System.out.println("term : " + term);
+		//System.out.println("date : " + date);
 
 		String query = "SELECT comper, comsin FROM inproductcom \r\n" + "    WHERE sbucod = '450' AND prdcod = '"
 				+ prodCode + "' AND comyer = " + comYear + " AND frmtrm <= " + term + " AND toterm >= " + term
 				+ "    AND '" + new SimpleDateFormat("yyyy-MM-dd").format(date) + "' BETWEEN todate AND frmdat;";
 
-		System.out.println(query);
+		//System.out.println(query);
 
 		List<CommisModel> commisModels = jdbcTemplate.query(query, new CommisRowMapper(), args.toArray());
 
-		System.out.println(commisModels.size());
+		//System.out.println(commisModels.size());
 
-		commisModels.forEach(System.out::println);
+	//	commisModels.forEach(//System.out::println);
 
 		CommisModel commisModel = null;
 

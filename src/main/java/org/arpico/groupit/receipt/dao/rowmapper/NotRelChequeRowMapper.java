@@ -12,7 +12,7 @@ public class NotRelChequeRowMapper implements RowMapper<NotRelChequeModel>{
 	public NotRelChequeModel mapRow(ResultSet rs, int rowNum) throws SQLException {
 		NotRelChequeModel model = new NotRelChequeModel();
 		
-		System.out.println();
+		//System.out.println();
 		
 		model.setAgent(rs.getString("agent"));
 		model.setChqbnk(rs.getString("chqbnk"));

@@ -31,8 +31,8 @@ public class MiscellaneousReceiptInvController {
 	@RequestMapping(value = "/misinvreceiptsave/{token:.+}", method = RequestMethod.POST)
 	public ResponseEntity<Object> saveReceipt (@RequestBody MiscellaneousReceiptInvDto dto, @PathVariable String token) throws Exception{
 		
-		System.out.println(dto);
-		System.out.println(token);
+		//System.out.println(dto);
+		//System.out.println(token);
 		
 		String validity = commonValidations.validateMiscellaneousReceiptInvInputs(dto, token);
 		

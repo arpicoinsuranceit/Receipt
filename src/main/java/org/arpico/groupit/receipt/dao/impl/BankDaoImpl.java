@@ -18,7 +18,7 @@ public class BankDaoImpl implements BankDao{
 	@Override
 	public List<BankModel> getBankList(String dataSql) throws Exception {
 		
-		System.out.println("select * from smbank " + dataSql + " group by BANCOD");
+		//System.out.println("select * from smbank " + dataSql + " group by BANCOD");
 		
 		return (List<BankModel>) jdbcTemplate.query("select * from smbank " + dataSql + " group by BANCOD;", new BankRowMapper());
 	}

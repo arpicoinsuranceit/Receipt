@@ -36,7 +36,7 @@ public class JasperReportServiceImpl implements JasperReportService{
 	@Override
 	public byte[] receiptRegisterReport(String fromDate, String toDate, String userCode) throws Exception {
 		
-		System.out.println(fromDate + " -fromDate " + toDate + " -toDate " + userCode + " -userCode " );
+		//System.out.println(fromDate + " -fromDate " + toDate + " -toDate " + userCode + " -userCode " );
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("psbucod", "450");
@@ -47,9 +47,9 @@ public class JasperReportServiceImpl implements JasperReportService{
 //		Resource resource = new ClassPathResource("mcfpr.jrxml");
 //		File file = resource.getFile();
 //		
-//		System.out.println(file.getPath());
-//		System.out.println(file.getName());
-//		System.out.println(file.getCanonicalPath());
+//		//System.out.println(file.getPath());
+//		//System.out.println(file.getName());
+//		//System.out.println(file.getCanonicalPath());
 
 		// String OUT_PUT = "D:\\performance_detail.pdf";
 		//String REPORT = "mcfpr.jrxml";
@@ -96,8 +96,8 @@ public class JasperReportServiceImpl implements JasperReportService{
 		
 		branch=branch.replaceAll(",$", "");
 		
-		System.out.println(fromDate + " -fromDate " + toDate + " -toDate " + branch + " -branch " );
-		System.out.println(branch);
+		//System.out.println(fromDate + " -fromDate " + toDate + " -toDate " + branch + " -branch " );
+		//System.out.println(branch);
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("sbucod", "450");
@@ -109,9 +109,9 @@ public class JasperReportServiceImpl implements JasperReportService{
 //		Resource resource = new ClassPathResource("mcfpr.jrxml");
 //		File file = resource.getFile();
 //		
-//		System.out.println(file.getPath());
-//		System.out.println(file.getName());
-//		System.out.println(file.getCanonicalPath());
+//		//System.out.println(file.getPath());
+//		//System.out.println(file.getName());
+//		//System.out.println(file.getCanonicalPath());
 
 		// String OUT_PUT = "D:\\performance_detail.pdf";
 		//String REPORT = "mcfpr.jrxml";
@@ -159,7 +159,7 @@ public class JasperReportServiceImpl implements JasperReportService{
 		branch=branch.replaceAll(",$", "");
 		agent=agent.replaceAll(",$", "");
 		
-		System.out.println(agent + " -agent " + branch + " -branch " );
+		//System.out.println(agent + " -agent " + branch + " -branch " );
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("sbucod", "450");
@@ -172,9 +172,9 @@ public class JasperReportServiceImpl implements JasperReportService{
 //		Resource resource = new ClassPathResource("mcfpr.jrxml");
 //		File file = resource.getFile();
 //		
-//		System.out.println(file.getPath());
-//		System.out.println(file.getName());
-//		System.out.println(file.getCanonicalPath());
+//		//System.out.println(file.getPath());
+//		//System.out.println(file.getName());
+//		//System.out.println(file.getCanonicalPath());
 
 		// String OUT_PUT = "D:\\performance_detail.pdf";
 		//String REPORT = "mcfpr.jrxml";
@@ -218,7 +218,7 @@ public class JasperReportServiceImpl implements JasperReportService{
 
 	@Override
 	public byte[] paymentHistory(String polnum) throws Exception {
-		System.out.println(polnum + " -polnum ");
+		//System.out.println(polnum + " -polnum ");
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("sbucod", "450");
@@ -227,9 +227,9 @@ public class JasperReportServiceImpl implements JasperReportService{
 //		Resource resource = new ClassPathResource("mcfpr.jrxml");
 //		File file = resource.getFile();
 //		
-//		System.out.println(file.getPath());
-//		System.out.println(file.getName());
-//		System.out.println(file.getCanonicalPath());
+//		//System.out.println(file.getPath());
+//		//System.out.println(file.getName());
+//		//System.out.println(file.getCanonicalPath());
 
 		// String OUT_PUT = "D:\\performance_detail.pdf";
 		//String REPORT = "mcfpr.jrxml";

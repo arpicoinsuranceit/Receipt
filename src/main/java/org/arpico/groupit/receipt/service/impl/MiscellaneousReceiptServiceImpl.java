@@ -104,7 +104,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 
 		String[] numberGen = numberGenerator.generateNewId("", "", "SQOIIS", "");
 
-		System.out.println(Arrays.toString(numberGen));
+		//System.out.println(Arrays.toString(numberGen));
 
 		if (numberGen[0].equals("Success")) {
 
@@ -236,7 +236,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		printDto.setRemark(docTxnmModel.getRemarks());
 		printDto.setUserName(userName);
 
-		System.out.println(miscellaneousReceiptInvDto.getChqNo());
+		//System.out.println(miscellaneousReceiptInvDto.getChqNo());
 		if (miscellaneousReceiptInvDto.getChqNo() != null && !miscellaneousReceiptInvDto.getChqNo().equals("")) {
 			printDto.setChqNo(Integer.parseInt(miscellaneousReceiptInvDto.getChqNo()));
 		}
@@ -249,9 +249,9 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 			printDto.setBankCode(Integer.parseInt(miscellaneousReceiptInvDto.getChqBank()));
 		}
 
-		System.out.println("Item List");
+		//System.out.println("Item List");
 
-		docTxndModels.forEach(System.out::println);
+		//docTxndModels.forEach(//System.out::println);
 
 		for (RmsDocTxndModel docTxndModel : docTxndModels) {
 			InventoryDetailsDto detailsDto = new InventoryDetailsDto();
@@ -278,7 +278,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 
 		printDto.setInventoryDtl(detailsDtos);
 
-		detailsDtos.forEach(System.out::println);
+		//detailsDtos.forEach(//System.out::println);
 
 		return printDto;
 	}

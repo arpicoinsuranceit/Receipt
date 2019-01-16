@@ -40,7 +40,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 	@Override
 	public byte[] createNewBusinessReceipt(ReceiptPrintDto receiptPrintDto) throws Exception {
 
-		System.out.println(receiptPrintDto.toString());
+		//System.out.println(receiptPrintDto.toString());
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -54,7 +54,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 		Document document = new Document(pdf, ps);
 		document.setMargins(17, 20, 20, 25);
 		
-		System.out.println(receiptPrintDto.getRctStatus());
+		//System.out.println(receiptPrintDto.getRctStatus());
 
 		document.add(new Paragraph(
 				receiptPrintDto.getRctStatus() != null && receiptPrintDto.getRctStatus().equalsIgnoreCase("DUP")
@@ -160,7 +160,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 		Cell pyModVal = new Cell();
 
 		String payMethod;
-		System.out.println(receiptPrintDto.getPayMode());
+		//System.out.println(receiptPrintDto.getPayMode());
 		if (receiptPrintDto.getPayMode() != null) {
 
 			switch (receiptPrintDto.getPayMode()) {
@@ -469,7 +469,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 			// PdfCanvas over = new PdfCanvas(pdf.getPage(0));
 			// over.setFillColor(Color.BLACK);
 
-			System.out.println(receiptPrintDto.getRctStatus());
+			//System.out.println(receiptPrintDto.getRctStatus());
 
 			document.add(new Paragraph(
 					receiptPrintDto.getRctStatus() != null && receiptPrintDto.getRctStatus().equalsIgnoreCase("DUP")
@@ -540,7 +540,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 			Cell pyModVal = new Cell().setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 
 			String payMethod;
-			System.out.println(receiptPrintDto.getPayMode());
+			//System.out.println(receiptPrintDto.getPayMode());
 			if (receiptPrintDto.getPayMode() != null) {
 
 				switch (receiptPrintDto.getPayMode()) {
@@ -843,7 +843,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 			// PdfCanvas over = new PdfCanvas(pdf.getPage(0));
 			// over.setFillColor(Color.BLACK);
 
-			System.out.println(receiptPrintDto.getRctStatus());
+			//System.out.println(receiptPrintDto.getRctStatus());
 
 			document.add(new Paragraph(
 					receiptPrintDto.getRctStatus() != null && receiptPrintDto.getRctStatus().equalsIgnoreCase("DUP")
@@ -914,7 +914,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 			Cell pyModVal = new Cell();
 
 			String payMethod;
-			System.out.println(receiptPrintDto.getPayMode());
+			//System.out.println(receiptPrintDto.getPayMode());
 			if (receiptPrintDto.getPayMode() != null) {
 
 				switch (receiptPrintDto.getPayMode()) {
@@ -1159,7 +1159,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 	@Override
 	public byte[] createPremiumReceipt(ReceiptPrintDto receiptPrintDto) throws Exception {
 		
-		System.out.println(test + " : test testtesttesttesttesttesttesttesttest");
+		//System.out.println(test + " : test testtesttesttesttesttesttesttesttest");
 		
 		if (receiptPrintDto != null) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -1189,7 +1189,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 			// PdfCanvas over = new PdfCanvas(pdf.getPage(0));
 			// over.setFillColor(Color.BLACK);
 
-			System.out.println(receiptPrintDto.getRctStatus());
+			//System.out.println(receiptPrintDto.getRctStatus());
 
 			document.add(new Paragraph(
 					receiptPrintDto.getRctStatus() != null && receiptPrintDto.getRctStatus().equalsIgnoreCase("DUP")
@@ -1261,7 +1261,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 			Cell pyModVal = new Cell();
 
 			String payMethod;
-			System.out.println(receiptPrintDto.getPayMode());
+			//System.out.println(receiptPrintDto.getPayMode());
 			if (receiptPrintDto.getPayMode() != null) {
 
 				switch (receiptPrintDto.getPayMode()) {
@@ -1300,7 +1300,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 					receiptPrintDto.getAmt() != null ? "Rs. " + " " + formatter.format(receiptPrintDto.getAmt()) : " ")
 							.setFontSize(10));
 			cusTable.addCell(amountVal);
-			System.out.println(formatter.format(receiptPrintDto.getAmt()).toString());
+			//System.out.println(formatter.format(receiptPrintDto.getAmt()).toString());
 			Cell amtWrd = new Cell(1, 2);
 			amtWrd.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 			amtWrd.add(new Paragraph(receiptPrintDto.getAmtInWord() != null ? receiptPrintDto.getAmtInWord() : "")
@@ -1607,7 +1607,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 			Document document = new Document(pdf, ps);
 			document.setMargins(20, 15, 20, 15);
 
-			System.out.println(receiptPrintDto.getRctStatus());
+			//System.out.println(receiptPrintDto.getRctStatus());
 
 			document.add(new Paragraph(
 					receiptPrintDto.getRctStatus() != null && receiptPrintDto.getRctStatus().equalsIgnoreCase("DUP")
@@ -1653,7 +1653,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 			Cell pyModVal = new Cell();
 
 			String payMethod;
-			System.out.println(receiptPrintDto.getPayMode());
+			//System.out.println(receiptPrintDto.getPayMode());
 			if (receiptPrintDto.getPayMode() != null) {
 
 				switch (receiptPrintDto.getPayMode()) {
@@ -1775,7 +1775,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 
 			List<InventoryDetailsDto> itmDetails = receiptPrintDto.getInventoryDtl();
 
-			System.out.println(itmDetails.size());
+			//System.out.println(itmDetails.size());
 			Double qtTot = 0.0;
 			Double subTot = 0.0;
 			String amtinWd = "";
@@ -1959,7 +1959,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 	@Override
 	public byte[] createGLRCReceipt(ReceiptPrintDto receiptPrintDto) throws Exception {
 
-		System.out.println(receiptPrintDto.toString());
+		//System.out.println(receiptPrintDto.toString());
 
 		{
 
@@ -1975,7 +1975,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 			Document document = new Document(pdf, ps);
 			document.setMargins(17, 20, 20, 25);
 
-			System.out.println(receiptPrintDto.getRctStatus());
+			//System.out.println(receiptPrintDto.getRctStatus());
 
 			document.add(new Paragraph(
 					receiptPrintDto.getRctStatus() != null && receiptPrintDto.getRctStatus().equalsIgnoreCase("DUP")
@@ -2032,7 +2032,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 			Cell pyModVal = new Cell();
 
 			String payMethod;
-			System.out.println(receiptPrintDto.getPayMode());
+			//System.out.println(receiptPrintDto.getPayMode());
 			if (receiptPrintDto.getPayMode() != null) {
 
 				switch (receiptPrintDto.getPayMode()) {

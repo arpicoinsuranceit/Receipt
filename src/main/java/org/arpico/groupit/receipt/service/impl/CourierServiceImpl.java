@@ -67,7 +67,7 @@ public class CourierServiceImpl implements CourierService{
 		
 		if(!courierModels.isEmpty()) {
 			courierModels.forEach(co -> {
-				System.out.println(co.getToken() + " Token ----- Token ");
+				//System.out.println(co.getToken() + " Token ----- Token ");
 				CourierDto courierDto=new CourierDto();
 				
 				courierDto.setBranchCode(co.getBranchCode());
@@ -118,8 +118,8 @@ public class CourierServiceImpl implements CourierService{
 			}
 		}
 		
-		System.out.println(sendDepDocCou.size() + " sendDepDocCou.size()");
-		System.out.println(notSendDepDocCou.size() + " notSendDepDocCou.size()");
+		//System.out.println(sendDepDocCou.size() + " sendDepDocCou.size()");
+		//System.out.println(notSendDepDocCou.size() + " notSendDepDocCou.size()");
 		
 		CourierModel newCourierModel=new CourierModel();
 		
@@ -217,16 +217,16 @@ public class CourierServiceImpl implements CourierService{
 						List<DepartmentCourierModel> departmentCourierModelsNew = departmentCourierDao.findByCourier(courierModel2);
 						
 						
-						System.out.println(departmentCourierModelsNew.size() + "SIIZEEEE"); 
+						//System.out.println(departmentCourierModelsNew.size() + "SIIZEEEE"); 
 						
 						DepartmentCourierModel departmentCourierModel=notsend.getDepartmentCourier();
-						System.out.println(departmentCourierModel.getDepartment().getDepartmentId() +" departmentCourierModel.getDepartment().getDepartmentId()");
+						//System.out.println(departmentCourierModel.getDepartment().getDepartmentId() +" departmentCourierModel.getDepartment().getDepartmentId()");
 						
 						
 						departmentCourierModelsOld.forEach(dep -> {
-							System.out.println(dep.getDepartment().getDepartmentId() + " dep.getDepartment().getDepartmentId()");
-							System.out.println(dep.getDepartment().getDepartmentId().equals(departmentCourierModel.getDepartment().getDepartmentId()));
-							System.out.println(isExistDepartment);
+							//System.out.println(dep.getDepartment().getDepartmentId() + " dep.getDepartment().getDepartmentId()");
+							//System.out.println(dep.getDepartment().getDepartmentId().equals(departmentCourierModel.getDepartment().getDepartmentId()));
+							//System.out.println(isExistDepartment);
 							if(dep.getDepartment().getDepartmentId().equals(departmentCourierModel.getDepartment().getDepartmentId()) &&
 									!dep.getCourierStatus().equals("SEND")) {
 								notsend.setDepartmentCourier(dep);
@@ -240,9 +240,9 @@ public class CourierServiceImpl implements CourierService{
 						if(!isExistDepartment) {
 							
 							departmentCourierModelsNew.forEach(deps -> {
-								System.out.println(deps.getDepartment().getDepartmentId() + " dep.getDepartment().getDepartmentId()");
-								System.out.println(deps.getDepartment().getDepartmentId().equals(departmentCourierModel.getDepartment().getDepartmentId()));
-								System.out.println(isExistDepartment);
+								//System.out.println(deps.getDepartment().getDepartmentId() + " dep.getDepartment().getDepartmentId()");
+								//System.out.println(deps.getDepartment().getDepartmentId().equals(departmentCourierModel.getDepartment().getDepartmentId()));
+								//System.out.println(isExistDepartment);
 								if(deps.getDepartment().getDepartmentId().equals(departmentCourierModel.getDepartment().getDepartmentId())) {
 									notsend.setDepartmentCourier(deps);
 									subDepartmentDocumentCourierDao.save(notsend);
@@ -350,7 +350,7 @@ public class CourierServiceImpl implements CourierService{
 		
 		
 		courierModels.forEach(co -> {
-			System.out.println(co.getToken() + " Token ----- Token ");
+			//System.out.println(co.getToken() + " Token ----- Token ");
 			CourierDto courierDto=new CourierDto();
 			
 			courierDto.setBranchCode(co.getBranchCode());
@@ -387,7 +387,7 @@ public class CourierServiceImpl implements CourierService{
 		
 		if(!courierModels.isEmpty()) {
 			courierModels.forEach(co -> {
-				System.out.println(co.getToken() + " Token ----- Token ");
+				//System.out.println(co.getToken() + " Token ----- Token ");
 				CourierDto courierDto=new CourierDto();
 				
 				courierDto.setBranchCode(co.getBranchCode());
@@ -585,7 +585,7 @@ public class CourierServiceImpl implements CourierService{
 		
 		if(!courierModels.isEmpty()) {
 			courierModels.forEach(co -> {
-				System.out.println(co.getToken() + " Token ----- Token ");
+				//System.out.println(co.getToken() + " Token ----- Token ");
 				CourierDto courierDto=new CourierDto();
 				
 				courierDto.setBranchCode(co.getBranchCode());
@@ -623,7 +623,7 @@ public class CourierServiceImpl implements CourierService{
 		
 		if(!courierModels.isEmpty()) {
 			courierModels.forEach(co -> {
-				System.out.println(co.getToken() + " Token ----- Token ");
+				//System.out.println(co.getToken() + " Token ----- Token ");
 				CourierDto courierDto=new CourierDto();
 				
 				courierDto.setBranchCode(co.getBranchCode());
@@ -661,7 +661,7 @@ public class CourierServiceImpl implements CourierService{
 		
 		if(!courierModels.isEmpty()) {
 			courierModels.forEach(co -> {
-				System.out.println(co.getToken() + " Token ----- Token ");
+				//System.out.println(co.getToken() + " Token ----- Token ");
 				CourierDto courierDto=new CourierDto();
 				
 				courierDto.setBranchCode(co.getBranchCode());

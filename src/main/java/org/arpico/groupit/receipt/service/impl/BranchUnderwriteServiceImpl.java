@@ -191,7 +191,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 
 	@Override
 	public UnderwriteDto getProposalToUnderwrite(String usercode, Integer pageIndex, Integer pageSize) throws Exception {
-		//System.out.println(usercode + "user code...");
+		////System.out.println(usercode + "user code...");
 		if(usercode!=null) {
 			List<String> loccodes=branchUnderwriteDao.findLocCodes(usercode);
 			String locations="";
@@ -341,7 +341,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 			List<MedicalRequirementsDto> medicalRequirementsDtos = quotationClient
 					.getMediReq(saveUnderwriteDto.getQuoSeqNo(),saveUnderwriteDto.getQuotationNo());
 			
-			System.out.println(medicalRequirementsDtos.size() + " ******************************** medical req size ******************************");
+			//System.out.println(medicalRequirementsDtos.size() + " ******************************** medical req size ******************************");
 			
 			/* Get Schedule Details From Quotation DB */
 			List<SheduleDto> sheduleDtos = quotationClient.getShedule(saveUnderwriteDto.getQuoSeqNo(),saveUnderwriteDto.getQuotationNo());
@@ -550,10 +550,10 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 			List<InPropSurrenderValsModel> inPropSurrenderValsModels, List<InPropNomDetailsModel> nomDetailsModels,
 			List<InPropPrePolsModel> prePolsModels) {
 		
-		System.out.println("inProposalsModel not approve save" );
+		//System.out.println("inProposalsModel not approve save" );
 
 
-		System.out.println("newInProposalsModel save" );
+		//System.out.println("newInProposalsModel save" );
 		/* Save new Line of InProposal */
 		inProposalDao.save(newInProposalsModel);
 		
@@ -583,7 +583,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		/* Save In Add Loadings */
 		if(addBenefitModels != null && !addBenefitModels.isEmpty()) {
 			
-			//System.out.println("addBenefitModels save" );
+			////System.out.println("addBenefitModels save" );
 			
 			addBenefictDao.save(addBenefitModels);
 		}
@@ -598,7 +598,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		/* Save Family Details */
 		if(propFamDetailsModels != null && !propFamDetailsModels.isEmpty()) {
 			
-			//System.out.println("propFamDetailsModels save" );
+			////System.out.println("propFamDetailsModels save" );
 			
 			famDetailsDao.save(propFamDetailsModels);
 		}
@@ -615,7 +615,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		/* Save Shedule */
 		if(inPropScheduleList != null && !inPropScheduleList.isEmpty()) {
 			
-			//System.out.println("inPropScheduleList save" );
+			////System.out.println("inPropScheduleList save" );
 			
 			propScheduleDao.save(inPropScheduleList);
 		}
@@ -631,7 +631,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		/* Save Medical Requirements */
 		if(inPropMedicalReqModels != null && !inPropMedicalReqModels.isEmpty()) {
 			
-			//System.out.println("inPropMedicalReqModels save" );
+			////System.out.println("inPropMedicalReqModels save" );
 			
 			propMedicalReqDao.save(inPropMedicalReqModels);
 		}
@@ -646,7 +646,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		/* Save Surrender Values */
 		if(inPropSurrenderValsModels != null && !inPropSurrenderValsModels.isEmpty()) {
 			
-			//System.out.println("inPropSurrenderValsModels save" );
+			////System.out.println("inPropSurrenderValsModels save" );
 			
 			surrenderValDao.save(inPropSurrenderValsModels);
 		}
@@ -663,13 +663,13 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		/* Save Nominee Details */
 		if(nomDetailsModels != null && !nomDetailsModels.isEmpty()) {
 			
-			System.out.println("nomDetailsModels save" );
+			//System.out.println("nomDetailsModels save" );
 			
-			System.out.println(nomDetailsModels.size() + " nomDetailsModels.size()" );
+			//System.out.println(nomDetailsModels.size() + " nomDetailsModels.size()" );
 			nomDetailsModels.forEach(nom -> {
-				System.out.println(nom.toString());
-				System.out.println("////// 1 //////");
-				System.out.println(propNomDetailsDao.save(nom));
+				//System.out.println(nom.toString());
+				//System.out.println("////// 1 //////");
+				//System.out.println(propNomDetailsDao.save(nom));
 			});
 			
 		}
@@ -684,7 +684,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		/* Save Previous Policies */
 		if(prePolsModels != null && !prePolsModels.isEmpty()) {
 			
-			//System.out.println("prePolsModels save" );
+			////System.out.println("prePolsModels save" );
 			
 			propPrePolsDao.save(prePolsModels);
 		}
@@ -1161,10 +1161,10 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		
 		
 		List<InPropNomDetailsModel> inPropNomDetailsModels=new ArrayList<>();
-		System.out.println(saveUnderwriteDto.getNominee().size() + " saveUnderwriteDto.getNominee().size()");
+		//System.out.println(saveUnderwriteDto.getNominee().size() + " saveUnderwriteDto.getNominee().size()");
 		if(saveUnderwriteDto.getNominee().size() > 0) {
 			saveUnderwriteDto.getNominee().forEach(e ->{
-				System.out.println(e.toString());
+				//System.out.println(e.toString());
 				InPropNomDetailsModel detailsModel=new InPropNomDetailsModel();
 				InPropNomDetailsModelPK inPropNomineeValsPK = new InPropNomDetailsModelPK();
 
@@ -1208,9 +1208,9 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 			});
 		}
 		
-		System.out.println(inPropNomDetailsModels.size() + " inPropNomDetailsModels.size()");
+		//System.out.println(inPropNomDetailsModels.size() + " inPropNomDetailsModels.size()");
 		
-		System.out.println(inPropNomDetailsModels.toString());
+		//System.out.println(inPropNomDetailsModels.toString());
 		
 		return inPropNomDetailsModels;
 	}
@@ -1224,20 +1224,20 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 			List<InPropPrePolsModel> prePolsModels) {
 		
 		
-		System.out.println("inProposalsModel save" );
+		//System.out.println("inProposalsModel save" );
 		
 		/* Inactive Before Line of InProposal */
 		inProposalDao.save(inProposalsModel);
 		
 
-		System.out.println("newInProposalsModel save" );
+		//System.out.println("newInProposalsModel save" );
 		/* Save new Line of InProposal */
 		inProposalDao.save(newInProposalsModel);
 		
 		/* Save In Prop Loadings */
 		if(inPropLoadingModels != null && !inPropLoadingModels.isEmpty()) {
 			
-			//System.out.println("inPropLoadingModels save" );
+			////System.out.println("inPropLoadingModels save" );
 			
 			propLoadingDao.save(inPropLoadingModels);
 		}
@@ -1245,7 +1245,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		/* Save In Add Loadings */
 		if(addBenefitModels != null && !addBenefitModels.isEmpty()) {
 			
-			//System.out.println("addBenefitModels save" );
+			////System.out.println("addBenefitModels save" );
 			
 			addBenefictDao.save(addBenefitModels);
 		}
@@ -1253,7 +1253,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		/* Save Family Details */
 		if(propFamDetailsModels != null && !propFamDetailsModels.isEmpty()) {
 			
-			//System.out.println("propFamDetailsModels save" );
+			////System.out.println("propFamDetailsModels save" );
 			
 			famDetailsDao.save(propFamDetailsModels);
 		}
@@ -1261,7 +1261,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		/* Save Shedule */
 		if(inPropScheduleList != null && !inPropScheduleList.isEmpty()) {
 			
-			//System.out.println("inPropScheduleList save" );
+			////System.out.println("inPropScheduleList save" );
 			
 			propScheduleDao.save(inPropScheduleList);
 		}
@@ -1269,7 +1269,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		/* Save Medical Requirements */
 		if(inPropMedicalReqModels != null && !inPropMedicalReqModels.isEmpty()) {
 			
-			//System.out.println("inPropMedicalReqModels save" );
+			////System.out.println("inPropMedicalReqModels save" );
 			
 			propMedicalReqDao.save(inPropMedicalReqModels);
 		}
@@ -1277,14 +1277,14 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		/* Save Surrender Values */
 		if(inPropSurrenderValsModels != null && !inPropSurrenderValsModels.isEmpty()) {
 			
-			//System.out.println("inPropSurrenderValsModels save" );
+			////System.out.println("inPropSurrenderValsModels save" );
 			
 			surrenderValDao.save(inPropSurrenderValsModels);
 		}
 		/* Save Nominee Details */
 		if(nomDetailsModels != null && !nomDetailsModels.isEmpty()) {
 			
-			//System.out.println("nomDetailsModels save" );
+			////System.out.println("nomDetailsModels save" );
 			
 			propNomDetailsDao.save(nomDetailsModels);
 		}
@@ -1292,7 +1292,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		/* Save Previous Policies */
 		if(prePolsModels != null && !prePolsModels.isEmpty()) {
 			
-			//System.out.println("prePolsModels save" );
+			////System.out.println("prePolsModels save" );
 			
 			propPrePolsDao.save(prePolsModels);
 		}
@@ -1305,24 +1305,24 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		List<InPropMedicalReqModel> medicalReqModels=propMedicalReqCustomDao.getMedicalReqByPprNoAndSeq(pprNo, seqNo);
 		List<SubDepartmentModel> subDepartmentModels=subDepartmentDao.findBySudDepNameContaining("Underwriting");
 		String underwriterEmail=userDao.getUserEmail(userCode);
-		//System.out.println("saveCourierDocument ////  saveCourierDocument");
-		System.out.println(medicalReqModels.size()  + "medicalReqModels");
-		System.out.println(subDepartmentModels.size()  + "subDepartmentModels");
+		////System.out.println("saveCourierDocument ////  saveCourierDocument");
+		//System.out.println(medicalReqModels.size()  + "medicalReqModels");
+		//System.out.println(subDepartmentModels.size()  + "subDepartmentModels");
 		
 		isExistDepartment=false;
 		
 		if(!subDepartmentModels.isEmpty()) {
-			//System.out.println(subDepartmentModels.isEmpty()  + "subDepartmentModels.isEmpty()");
+			////System.out.println(subDepartmentModels.isEmpty()  + "subDepartmentModels.isEmpty()");
 			
 			List<DocumentTypeModel> documentTypeModel1=documentTypeDao.findByDocName("PENDING CLEARANCE");
 				
 			List<DocumentTypeModel> documentTypeModelProp=documentTypeDao.findByDocNameAndParent("PROPOSAL FORM",documentTypeModel1.get(0).getDocTypeId());
-			System.out.println(documentTypeModelProp.size() + " documentTypeModelProp.size()");
+			//System.out.println(documentTypeModelProp.size() + " documentTypeModelProp.size()");
 			SubDepartmentDocumentModel subDepartmentDocumentModelProp=subDepartmentDocumentDao.findBySubDepartmentAndDocumentType(subDepartmentModels.get(0), documentTypeModelProp.get(0));
 				
 			List<String> branches=new ArrayList<>();
 			branches.add(branchCode);
-			System.out.println(branchCode + " branchcode");
+			//System.out.println(branchCode + " branchcode");
 			//check is already exist couriers in branch
 			List<CourierModel> courierModelsProp=courierDao.findByCourierStatusAndBranchCodeIn("BRANCH", branches);
 				
@@ -1331,10 +1331,10 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 					
 				List<DepartmentCourierModel> depCouriers=courierModel.getDepartmentCourier();
 					
-				System.out.println(depCouriers.size() + " depCouriers.size() **********");
+				//System.out.println(depCouriers.size() + " depCouriers.size() **********");
 
 				depCouriers.forEach(dc-> {
-					System.out.println(subDepartmentModels.get(0).getDepId().getDepartmentId().equals(dc.getDepartment().getDepartmentId()));
+					//System.out.println(subDepartmentModels.get(0).getDepId().getDepartmentId().equals(dc.getDepartment().getDepartmentId()));
 					if(subDepartmentModels.get(0).getDepId().getDepartmentId().equals(dc.getDepartment().getDepartmentId())) {
 						departmentCourierModel=dc;
 						isExistDepartment=true;
@@ -1342,7 +1342,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 				});
 					
 				if(isExistDepartment) {
-					System.out.println("isExistDepartment");
+					//System.out.println("isExistDepartment");
 					//add sub department document courier
 						
 					SubDepartmentDocumentCourierModel subDepDocCouModel=new SubDepartmentDocumentCourierModel();
@@ -1364,12 +1364,12 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 					subDepDocCouModel.setSubDepartmentDocument(subDepartmentDocumentModelProp);
 					subDepDocCouModel.setUnderwriterEmail(underwriterEmail);
 					subDepDocCouModel.setReferenceType("Proposal No");
-					System.out.println("save subDepartmentDocumentCourier");
+					//System.out.println("save subDepartmentDocumentCourier");
 					subDepartmentDocumentCourierDao.save(subDepDocCouModel);
 						
 						
 				}else {
-					System.out.println("isExistDepartment not");
+					//System.out.println("isExistDepartment not");
 					//add department courier
 					DepartmentCourierModel departmentCourier=new DepartmentCourierModel();
 					departmentCourier.setCourier(courierModel);
@@ -1411,7 +1411,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 						subDepDocCouModel.setSubDepartmentDocument(subDepartmentDocumentModelProp);
 						subDepDocCouModel.setUnderwriterEmail(underwriterEmail);
 						subDepDocCouModel.setReferenceType("Proposal No");
-						System.out.println("save subDepartmentDocumentCourier");
+						//System.out.println("save subDepartmentDocumentCourier");
 						subDepartmentDocumentCourierDao.save(subDepDocCouModel);
 						
 					}
@@ -1420,7 +1420,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 				}
 			}else{
 				//add courier
-				System.out.println("save Courier");
+				//System.out.println("save Courier");
 				CourierModel courierModel=new CourierModel();
 				courierModel.setBranchCode(branchCode);
 				courierModel.setCourierStatus("BRANCH");
@@ -1442,16 +1442,16 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 					
 					List<DepartmentCourierModel> depCouriers=courierModel2.getDepartmentCourier();
 					depCouriers.forEach(dc-> {
-						System.out.println(subDepartmentModels.get(0).getDepId().getDepartmentId().equals(dc.getDepartment().getDepartmentId()));
+						//System.out.println(subDepartmentModels.get(0).getDepId().getDepartmentId().equals(dc.getDepartment().getDepartmentId()));
 						if(subDepartmentModels.get(0).getDepId().getDepartmentId().equals(dc.getDepartment().getDepartmentId())) {
-							System.out.println("Exist department courier ***********************");
+							//System.out.println("Exist department courier ***********************");
 							departmentCourierModel=dc;
 							isExistDepartment=true;
 						}
 					});
 					
 					if(isExistDepartment) {
-						System.out.println("Exist department ***********************");
+						//System.out.println("Exist department ***********************");
 						//add sub department document courier
 						
 						SubDepartmentDocumentCourierModel subDepDocCouModel=new SubDepartmentDocumentCourierModel();
@@ -1473,11 +1473,11 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 						subDepDocCouModel.setSubDepartmentDocument(subDepartmentDocumentModelProp);
 						subDepDocCouModel.setUnderwriterEmail(underwriterEmail);
 						subDepDocCouModel.setReferenceType("Proposal No");
-						System.out.println("save subDepartmentDocumentCourier");
+						//System.out.println("save subDepartmentDocumentCourier");
 						subDepartmentDocumentCourierDao.save(subDepDocCouModel);
 					
 					}else {
-						System.out.println("not Exist department ***********************");
+						//System.out.println("not Exist department ***********************");
 						
 						DepartmentCourierModel depCourierModel=new DepartmentCourierModel();
 						depCourierModel.setCourier(courierModel2);
@@ -1493,7 +1493,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 						}
 						
 						
-						System.out.println("saveDepartment Courier");
+						//System.out.println("saveDepartment Courier");
 						DepartmentCourierModel departmentCourierModel2=departmentCourierDao.save(depCourierModel);
 						departmentCourierModel=departmentCourierModel2;
 						
@@ -1520,7 +1520,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 							subDepDocCouModel.setSubDepartmentDocument(subDepartmentDocumentModelProp);
 							subDepDocCouModel.setUnderwriterEmail(underwriterEmail);
 							subDepDocCouModel.setReferenceType("Proposal No");
-							System.out.println("save subDepartmentDocumentCourier");
+							//System.out.println("save subDepartmentDocumentCourier");
 							subDepartmentDocumentCourierDao.save(subDepDocCouModel);
 							
 						}
@@ -1533,25 +1533,25 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 			//}
 			
 			medicalReqModels.forEach(med -> {
-				System.out.println(med  + "med");
+				//System.out.println(med  + "med");
 				try {
-					//System.out.println(med.getInPropMedicalReqModelPK().getMedcod() + " med.getInPropMedicalReqModelPK().getMedcod()");
-					//System.out.println(subDepartmentModels.get(0).getSubDepId() + " subDepartmentModels.get(0).getSubDepId()");
+					////System.out.println(med.getInPropMedicalReqModelPK().getMedcod() + " med.getInPropMedicalReqModelPK().getMedcod()");
+					////System.out.println(subDepartmentModels.get(0).getSubDepId() + " subDepartmentModels.get(0).getSubDepId()");
 					//List<DocumentTypeModel> documentTypeModel1=documentTypeDao.findByDocName("PENDING CLEARANCE");
-					//System.out.println(documentTypeModel1.size() + " documentTypeModel1");
+					////System.out.println(documentTypeModel1.size() + " documentTypeModel1");
 					
 					if(!documentTypeModel1.isEmpty()) {
-						//System.out.println(documentTypeModel1 + " documentTypeModel1");
+						////System.out.println(documentTypeModel1 + " documentTypeModel1");
 					List<DocumentTypeModel> documentTypeModel=documentTypeDao.findByDocTypeCodeAndParent(med.getInPropMedicalReqModelPK().getMedcod(),documentTypeModel1.get(0).getDocTypeId());
-					//System.out.println(documentTypeModel.size() + " documentTypeModel");
+					////System.out.println(documentTypeModel.size() + " documentTypeModel");
 					if(!documentTypeModel.isEmpty()) {
-						//System.out.println("documentTypeModel not empty");
+						////System.out.println("documentTypeModel not empty");
 						//get sub department document regarding to SubDepartment and Document Type because many to many relationship
 						SubDepartmentDocumentModel subDepartmentDocumentModel=subDepartmentDocumentDao.findBySubDepartmentAndDocumentType(subDepartmentModels.get(0), documentTypeModel.get(0));
 						
 						//List<String> branches=new ArrayList<>();
 						//branches.add(branchCode);
-						System.out.println(branchCode + " branchcode");
+						//System.out.println(branchCode + " branchcode");
 						//check is already exist couriers in branch
 						List<CourierModel> courierModels=courierDao.findByCourierStatusAndBranchCodeIn("BRANCH", branches);
 						
@@ -1560,10 +1560,10 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 							
 							List<DepartmentCourierModel> depCouriers=courierModel.getDepartmentCourier();
 							
-							System.out.println(depCouriers.size() + " depCouriers.size() **********");
+							//System.out.println(depCouriers.size() + " depCouriers.size() **********");
 
 							depCouriers.forEach(dc-> {
-								System.out.println(subDepartmentModels.get(0).getDepId().getDepartmentId().equals(dc.getDepartment().getDepartmentId()));
+								//System.out.println(subDepartmentModels.get(0).getDepId().getDepartmentId().equals(dc.getDepartment().getDepartmentId()));
 								if(subDepartmentModels.get(0).getDepId().getDepartmentId().equals(dc.getDepartment().getDepartmentId())) {
 									departmentCourierModel=dc;
 									isExistDepartment=true;
@@ -1571,7 +1571,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 							});
 							
 							if(isExistDepartment) {
-								System.out.println("isExistDepartment");
+								//System.out.println("isExistDepartment");
 								//add sub department document courier
 								
 								SubDepartmentDocumentCourierModel subDepDocCouModel=new SubDepartmentDocumentCourierModel();
@@ -1593,12 +1593,12 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 								subDepDocCouModel.setSubDepartmentDocument(subDepartmentDocumentModel);
 								subDepDocCouModel.setUnderwriterEmail(underwriterEmail);
 								subDepDocCouModel.setReferenceType("Proposal No");
-								System.out.println("save subDepartmentDocumentCourier");
+								//System.out.println("save subDepartmentDocumentCourier");
 								subDepartmentDocumentCourierDao.save(subDepDocCouModel);
 								
 								
 							}else {
-								System.out.println("isExistDepartment not");
+								//System.out.println("isExistDepartment not");
 								//add department courier
 								DepartmentCourierModel departmentCourier=new DepartmentCourierModel();
 								departmentCourier.setCourier(courierModel);
@@ -1640,7 +1640,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 									subDepDocCouModel.setSubDepartmentDocument(subDepartmentDocumentModel);
 									subDepDocCouModel.setUnderwriterEmail(underwriterEmail);
 									subDepDocCouModel.setReferenceType("Proposal No");
-									System.out.println("save subDepartmentDocumentCourier");
+									//System.out.println("save subDepartmentDocumentCourier");
 									subDepartmentDocumentCourierDao.save(subDepDocCouModel);
 									
 								}
@@ -1649,7 +1649,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 							}
 						}else{
 							//add courier
-							System.out.println("save Courier");
+							//System.out.println("save Courier");
 							CourierModel courierModel=new CourierModel();
 							courierModel.setBranchCode(branchCode);
 							courierModel.setCourierStatus("BRANCH");
@@ -1671,16 +1671,16 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 								
 								List<DepartmentCourierModel> depCouriers=courierModel2.getDepartmentCourier();
 								depCouriers.forEach(dc-> {
-									System.out.println(subDepartmentModels.get(0).getDepId().getDepartmentId().equals(dc.getDepartment().getDepartmentId()));
+									//System.out.println(subDepartmentModels.get(0).getDepId().getDepartmentId().equals(dc.getDepartment().getDepartmentId()));
 									if(subDepartmentModels.get(0).getDepId().getDepartmentId().equals(dc.getDepartment().getDepartmentId())) {
-										System.out.println("Exist department courier ***********************");
+										//System.out.println("Exist department courier ***********************");
 										departmentCourierModel=dc;
 										isExistDepartment=true;
 									}
 								});
 								
 								if(isExistDepartment) {
-									System.out.println("Exist department ***********************");
+									//System.out.println("Exist department ***********************");
 									//add sub department document courier
 									
 									SubDepartmentDocumentCourierModel subDepDocCouModel=new SubDepartmentDocumentCourierModel();
@@ -1702,11 +1702,11 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 									subDepDocCouModel.setSubDepartmentDocument(subDepartmentDocumentModel);
 									subDepDocCouModel.setUnderwriterEmail(underwriterEmail);
 									subDepDocCouModel.setReferenceType("Proposal No");
-									System.out.println("save subDepartmentDocumentCourier");
+									//System.out.println("save subDepartmentDocumentCourier");
 									subDepartmentDocumentCourierDao.save(subDepDocCouModel);
 								
 								}else {
-									System.out.println("not Exist department ***********************");
+									//System.out.println("not Exist department ***********************");
 									
 									DepartmentCourierModel depCourierModel=new DepartmentCourierModel();
 									depCourierModel.setCourier(courierModel2);
@@ -1722,7 +1722,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 									}
 									
 									
-									System.out.println("saveDepartment Courier");
+									//System.out.println("saveDepartment Courier");
 									DepartmentCourierModel departmentCourierModel2=departmentCourierDao.save(depCourierModel);
 									departmentCourierModel=departmentCourierModel2;
 									
@@ -1756,7 +1756,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 										subDepDocCouModel.setSubDepartmentDocument(subDepartmentDocumentModel);
 										subDepDocCouModel.setUnderwriterEmail(underwriterEmail);
 										subDepDocCouModel.setReferenceType("Proposal No");
-										System.out.println("save subDepartmentDocumentCourier");
+										//System.out.println("save subDepartmentDocumentCourier");
 										subDepartmentDocumentCourierDao.save(subDepDocCouModel);
 										
 									}
@@ -1774,12 +1774,12 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 			
 			
 			
-			//System.out.println("saveCourierDocument --- 200");
+			////System.out.println("saveCourierDocument --- 200");
 			return "200";
 			
 		}
 		
-		//System.out.println("saveCourierDocument --- 204");
+		////System.out.println("saveCourierDocument --- 204");
 		return "204";
 		
 	}

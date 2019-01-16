@@ -23,7 +23,7 @@ public class ReceiptInquiryController {
 	
 	@RequestMapping(value = "/loadReceiptInquiryDetails/{token}/{pageNum}/{limit}", method = RequestMethod.GET)
 	public LoadReceiptInquiryDetailsDto getAllReceiptDetails (@PathVariable("token") String token,@PathVariable("pageNum") Integer pageNum,@PathVariable("limit") Integer limit) throws Exception{
-		System.out.println("loadReceiptInquiryDetails");
+		//System.out.println("loadReceiptInquiryDetails");
 		
 		return receiptInquiryService.getAllReceiptDetails(token, pageNum,limit);
 		
@@ -31,7 +31,7 @@ public class ReceiptInquiryController {
 	
 	@RequestMapping(value = "/loadBankDetails/{docCode}/{docNum}", method = RequestMethod.GET)
 	public BankDetailsDto getAllBankDetails (@PathVariable("docCode") String docCode,@PathVariable("docNum") Integer docNum) throws Exception{
-		System.out.println("getAllBankDetails");
+		//System.out.println("getAllBankDetails");
 		
 		return receiptInquiryService.getBankDetails(docCode, docNum);
 		
@@ -39,7 +39,7 @@ public class ReceiptInquiryController {
 	
 	@RequestMapping(value = "/loadPolicyDetails/{docCode}/{docNum}", method = RequestMethod.GET)
 	public List<PolicyDetailsDto> getAllPolicyDetails (@PathVariable("docCode") String docCode,@PathVariable("docNum") Integer docNum) throws Exception{
-		System.out.println("getAllPolicyDetails");
+		//System.out.println("getAllPolicyDetails");
 		
 		return receiptInquiryService.getAllPolicyDetails(docCode, docNum);
 		
@@ -47,7 +47,7 @@ public class ReceiptInquiryController {
 	
 	@RequestMapping(value = "/loadAccountDetails/{docCode}/{docNum}", method = RequestMethod.GET)
 	public List<AccountDetailsDto> getAllAccountDetails (@PathVariable("docCode") String docCode,@PathVariable("docNum") Integer docNum) throws Exception{
-		System.out.println("getAllAccountDetails");
+		//System.out.println("getAllAccountDetails");
 		
 		return receiptInquiryService.getAllAccountDetails(docCode, docNum);
 

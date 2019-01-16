@@ -154,12 +154,12 @@ public class ReprintServiceImpl implements ReprintService {
 			responseDto.setCode("404");
 			responseDto.setStatus("Error");
 			if (e.getMessage().equals("BranchIlligal")) {
-				System.out.println("Error 1");
+				//System.out.println("Error 1");
 				responseDto.setMessage("Receipt Branch not Equal");
 				return new ResponseEntity<>(responseDto, HttpStatus.OK);
 			}
 			if (e.getMessage().equals("NotFoundReceipt")) {
-				System.out.println("Error 2");
+				//System.out.println("Error 2");
 				responseDto.setMessage("Receipt Not Found");
 				return new ResponseEntity<>(responseDto, HttpStatus.OK);
 			}
@@ -181,7 +181,7 @@ public class ReprintServiceImpl implements ReprintService {
 		try {
 			inTransactionsModel = inTransactionCustomDao.getTransaction(docCode, receiptNo);
 			
-			System.out.println(inTransactionsModel.toString());
+			//System.out.println(inTransactionsModel.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("NotFoundReceipt");
@@ -297,7 +297,7 @@ public class ReprintServiceImpl implements ReprintService {
 
 		List<MisGlItemModel> glItemModelsNew = new ArrayList<>();
 
-		System.out.println("glItemModels.size() :  " + glItemModels.size());
+		//System.out.println("glItemModels.size() :  " + glItemModels.size());
 
 		glItemModels.forEach(e -> {
 
@@ -318,13 +318,13 @@ public class ReprintServiceImpl implements ReprintService {
 	private ReceiptPrintDto getReceiptPrintDtoInTran(InProposalsModel inProposalsModel,
 			InTransactionsModel inTransactionsModel) throws Exception {
 		
-		System.out.println("inTransactionsModel.getCreadt() : " + inTransactionsModel.getCreadt());
+		//System.out.println("inTransactionsModel.getCreadt() : " + inTransactionsModel.getCreadt());
 		
 		ReceiptPrintDto printDto = new ReceiptPrintDto();
 
 		List<AgentModel> agentModels = agentDao.findAgentByCodeAll(inProposalsModel.getAdvcod());
 
-		System.out.println(inProposalsModel.getAdvcod());
+		//System.out.println(inProposalsModel.getAdvcod());
 
 		String userName = rmsUserDao.getName(inTransactionsModel.getCreaby());
 
@@ -422,7 +422,7 @@ public class ReprintServiceImpl implements ReprintService {
 
 		printDto.setInventoryDtl(detailsDtos);
 
-		detailsDtos.forEach(System.out::println);
+		//detailsDtos.forEach(//System.out::println);
 
 		return printDto;
 	}
@@ -502,7 +502,7 @@ public class ReprintServiceImpl implements ReprintService {
 			printDto.setBankCode(Integer.parseInt(inTransactionsModel.getChqbnk()));
 		}
 
-		System.out.println(printDto);
+		//System.out.println(printDto);
 		return printDto;
 	}
 

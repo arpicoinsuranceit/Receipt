@@ -31,7 +31,7 @@ public class DashboardDaoImpl implements DashboardDao {
 				+ "and date_format(creadt,'%Y-%m-%d') between '" + from + "' and  '" + to + "' group by doccod";*/
 		
 		
-		System.out.println("getFromInTransaction DashboardPieModel");
+		//System.out.println("getFromInTransaction DashboardPieModel");
 		
 		String query = "select x.doccod, count(x.docnum) as count, sum(x.totprm) as amount   FROM intransactions x inner join  " + 
 				"    (select sbucod,docnum,doccod from intransactions where sbucod='450' and doccod in ('RCNB','RCPP','RCPL') and creaby = '"+user+"' and date_format(creadt,'%Y-%m-%d') between '"+from+"' and  '"+to+"' group by docnum) y " + 
@@ -46,7 +46,7 @@ public class DashboardDaoImpl implements DashboardDao {
 //				+ user + "' and creadt >= '" + from + "' and creadt <= '" + to
 //				+ "' and doccod in ('RCNB','RCPP','RCPL') group by doccod";
 
-		System.out.println(query);
+		//System.out.println(query);
 
 		List<DashboardPieModel> models = jdbcTemplate.query(query, new DashboardPieRowMapper());
 		return models;
@@ -64,7 +64,7 @@ public class DashboardDaoImpl implements DashboardDao {
 //				+ "DOC_CODE = 'GLRC' and CRE_BY = '" + user + "' and CRE_DATE <= '" + to + "' and CRE_DATE >= '" + from
 //				+ "'";
 
-		System.out.println(query);
+		//System.out.println(query);
 
 		List<DashboardPieModel> models = jdbcTemplate.query(query, new DashboardPieRowMapper());
 		return models;
@@ -81,7 +81,7 @@ public class DashboardDaoImpl implements DashboardDao {
 //				+ "from rms_doc_txnd where SBU_CODE = '450' and DOC_CODE = 'OIIS' and CRE_BY = '" + user + "' "
 //				+ "and CRE_DATE <= '" + to + "' and CRE_DATE >= '" + from + "'";
 
-		System.out.println(query);
+		//System.out.println(query);
 
 		List<DashboardPieModel> models = jdbcTemplate.query(query, new DashboardPieRowMapper());
 		return models;
@@ -108,7 +108,7 @@ public class DashboardDaoImpl implements DashboardDao {
 //				+ " where sbucod = '450' and creaby = '" + user + "' and creadt >= '" + fromDate + "' and creadt <= '"
 //				+ toDate + "'  and doccod in ('RCNB','RCPP','RCPL') group by doccod" + sql;
 
-		System.out.println(query);
+		//System.out.println(query);
 
 		List<DashboardGridModel> models = jdbcTemplate.query(query, new DashboardGridRowMapper());
 		return models;
@@ -131,7 +131,7 @@ public class DashboardDaoImpl implements DashboardDao {
 		 * "' and DOC_CODE in ('GLRC') " + "group by DOC_CODE" + sql;
 		 */
 
-		System.out.println(query);
+		//System.out.println(query);
 
 		List<DashboardGridModel> models = jdbcTemplate.query(query, new DashboardGridRowMapper());
 		return models;
@@ -153,7 +153,7 @@ public class DashboardDaoImpl implements DashboardDao {
 		 * "' and DOC_CODE in ('OIIS') " + "group by DOC_CODE" + sql;
 		 */
 
-		System.out.println(query);
+		//System.out.println(query);
 
 		List<DashboardGridModel> models = jdbcTemplate.query(query, new DashboardGridRowMapper());
 		return models;
@@ -169,7 +169,7 @@ public class DashboardDaoImpl implements DashboardDao {
 				+ "' order by creadt";*/
 		String query = "";
 		
-		System.out.println(type);
+		//System.out.println(type);
 		
 		if(type.equals("RCLN")) {
 			query = "select x.doccod as DOCCODE, x.docnum as DOCNUM, x.pprnum as REMARK, x.totprm as AMOUNT, x.creadt as CREATEDT   FROM inloantransactions x inner join  " + 
@@ -188,7 +188,7 @@ public class DashboardDaoImpl implements DashboardDao {
 		 * "' and creadt >= '" + fromDate + "' and creadt <= '" + toDate + "'";
 		 */
 
-		System.out.println(query);
+		//System.out.println(query);
 
 		List<DashboardDetailsModel> models = jdbcTemplate.query(query, new DashboardDetailsRowMapper());
 		return models;
@@ -209,7 +209,7 @@ public class DashboardDaoImpl implements DashboardDao {
 		 * "'";
 		 */
 
-		System.out.println(query);
+		//System.out.println(query);
 
 		List<DashboardDetailsModel> models = jdbcTemplate.query(query, new DashboardDetailsRowMapper());
 		return models;
@@ -226,7 +226,7 @@ public class DashboardDaoImpl implements DashboardDao {
 //		String query = "SELECT DOC_CODE as DOCCODE, DOC_NO as DOCNUM, REMARKS as REMARK, AMTFCU as AMOUNT, CRE_DATE as CREATEDT  FROM rms_doc_txnm where SBU_CODE = '450' and DOC_CODE = 'OIIS' and CRE_BY = '"
 //				+ user + "' and CRE_DATE > '" + fromDate + "' and CRE_DATE < '" + toDate + "'";
 
-		System.out.println(query);
+		//System.out.println(query);
 
 		List<DashboardDetailsModel> models = jdbcTemplate.query(query, new DashboardDetailsRowMapper());
 		return models;
@@ -245,7 +245,7 @@ public class DashboardDaoImpl implements DashboardDao {
 		 * + to + "' " + "    group by doccod, paymod";
 		 */
 		
-		System.out.println("getCashFlowDetails");
+		//System.out.println("getCashFlowDetails");
 
 		String query2 = "select x.doccod as doccode, count(x.docnum) as count, sum(x.totprm) as amount,  x.paymod as PAYMODE   FROM intransactions x inner join  "
 				+ "    (select sbucod,docnum,doccod from intransactions where sbucod='450' and doccod in ('RCNB','RCPP','RCPL') and creaby = '"
@@ -262,7 +262,7 @@ public class DashboardDaoImpl implements DashboardDao {
 //		String query = "SELECT doccod as DOCCODE, count(docnum) as COUNT, sum(totprm) as AMOUNT, paymod as PAYMODE FROM intransactions where sbucod = '450' and doccod in ('RCNB', 'RCPP', 'RCPL') and creaby = '"
 //				+ user + "' and creadt >= '" + from + "' and creadt <= '" + to + "' group by doccod, paymod";
 
-		System.out.println(query2);
+		//System.out.println(query2);
 		List<DashboardCashFlowSummeryModel> models = jdbcTemplate.query(query2,
 				new DashboardCashFlowSummeryRowMapper());
 		return models;
@@ -281,7 +281,7 @@ public class DashboardDaoImpl implements DashboardDao {
 //				+ "rm.CRE_BY = '" + user + "' and rm.CRE_DATE >= '" + from + "' and rm.CRE_DATE <= '" + to
 //				+ "' and rm.DOC_CODE = rd.DOC_CODE and " + "rm.DOC_NO = rd.DOC_NO group by rm.DOC_CODE, rd.PAY_MODE";
 
-		System.out.println(query);
+		//System.out.println(query);
 		List<DashboardCashFlowSummeryModel> models = jdbcTemplate.query(query, new DashboardCashFlowSummeryRowMapper());
 		return models;
 	}
@@ -297,7 +297,7 @@ public class DashboardDaoImpl implements DashboardDao {
 //				+ "FROM rms_doc_txnm where SBU_CODE = '450' and DOC_CODE in ('OIIS') and " + "CRE_BY = '" + user
 //				+ "' and CRE_DATE >= '" + from + "' and CRE_DATE <= '" + to + "' group by DOC_CODE, REF2";
 
-		System.out.println(query);
+		//System.out.println(query);
 
 		List<DashboardCashFlowSummeryModel> models = jdbcTemplate.query(query, new DashboardCashFlowSummeryRowMapper());
 
@@ -327,7 +327,7 @@ public class DashboardDaoImpl implements DashboardDao {
 		 * "' and creadt >= '" + from + "' and creadt <= '" + to + "'";
 		 */
 
-		System.out.println(query);
+		//System.out.println(query);
 
 		List<DashboardDetailsModel> models = jdbcTemplate.query(query, new DashboardDetailsRowMapper());
 		return models;
@@ -348,7 +348,7 @@ public class DashboardDaoImpl implements DashboardDao {
 		 * "' and REF2 in (" + type + ")";
 		 */
 
-		System.out.println(query);
+		//System.out.println(query);
 
 		List<DashboardDetailsModel> models = jdbcTemplate.query(query, new DashboardDetailsRowMapper());
 		return models;
@@ -369,7 +369,7 @@ public class DashboardDaoImpl implements DashboardDao {
 //				+ user + "' and rm.CRE_DATE > '" + fromDate + "' and rm.CRE_DATE < '" + toDate + "' and rd.PAY_MODE = '"
 //				+ type + "'";
 
-		System.out.println(query);
+		//System.out.println(query);
 
 		List<DashboardDetailsModel> models = jdbcTemplate.query(query, new DashboardDetailsRowMapper());
 		return models;
@@ -406,7 +406,7 @@ public class DashboardDaoImpl implements DashboardDao {
 				+ fromDate + "' and  '" + toDateInTran + "' group by x.paymod " + sql + ")  y  group by y.paymod"
 				+ sql2;
 
-		System.out.println(query);
+		//System.out.println(query);
 
 		List<PayModeGridModel> gridModels = jdbcTemplate.query(query, new PayModeGridRowMapper());
 
@@ -428,7 +428,7 @@ public class DashboardDaoImpl implements DashboardDao {
 //				+ "rd.DOC_NO = rm.DOC_NO and rd.DOC_CODE = rm.DOC_CODE and rm.DOC_CODE in ('GLRC') group by rd.PAY_MODE"
 //				+ sql2;
 
-		System.out.println(query);
+		//System.out.println(query);
 
 		List<PayModeGridModel> gridModels = jdbcTemplate.query(query, new PayModeGridRowMapper());
 
@@ -447,7 +447,7 @@ public class DashboardDaoImpl implements DashboardDao {
 //				+ "where SBU_CODE = '450' and CRE_BY = '" + user + "' and CRE_DATE >= '" + fromDate
 //				+ "' and CRE_DATE <=  '" + toDate + "' and DOC_CODE in ('OIIS') " + "group by REF2" + sql2;
 
-		System.out.println(query);
+		//System.out.println(query);
 
 		List<PayModeGridModel> gridModels = jdbcTemplate.query(query, new PayModeGridRowMapper());
 

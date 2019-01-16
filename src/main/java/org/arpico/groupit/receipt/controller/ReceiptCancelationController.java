@@ -27,9 +27,9 @@ public class ReceiptCancelationController {
 	@RequestMapping(value = "/saveRequest/{token}/{receiptNo}/{reason}/{doccod}", method = RequestMethod.GET)
 	public ResponseEntity<Object> saveRequest(@PathVariable("receiptNo") String receiptNo,@PathVariable("reason") String reason,@PathVariable("token") String token
 			,@PathVariable("doccod")String doccod){
-		System.out.println("called...");
+		//System.out.println("called...");
 		try {
-			System.out.println("called...");
+			//System.out.println("called...");
 			return receiptCancelationService.saveRequest(receiptNo, reason,token,doccod);
 		} catch (Exception e) {
 			e.printStackTrace();

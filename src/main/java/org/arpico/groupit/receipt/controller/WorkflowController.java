@@ -61,8 +61,8 @@ public class WorkflowController {
 	public ResponseEntity<Object> getPaginatorLength(@PathVariable String token, @RequestBody PromisesGridDto promise)
 			throws Exception {
 
-		System.out.println(token);
-		System.out.println(promise);
+		//System.out.println(token);
+		//System.out.println(promise);
 		try {
 			return workflowService.savePromise(promise, token);
 		} catch (Exception e) {

@@ -29,7 +29,7 @@ public class LoanReceiptController {
 	
 	@RequestMapping(value = "/loan_receipt/policysearch/{val}", method = RequestMethod.GET)
 	public List<ProposalNoSeqNoDto> getProposalNSeqNo(@PathVariable String val) {
-		System.out.println(val);
+		//System.out.println(val);
 		try {
 			return policyReceiptService.getPolicyNoSeqNoDtoListLoanRcpt(val);
 		} catch (Exception e) {
@@ -51,7 +51,7 @@ public class LoanReceiptController {
 	
 	@RequestMapping(value = "/loan_receipt/savereceiptLoan", method = RequestMethod.POST)
 	public ResponseEntity<Object> savePolicyReceipt(@RequestBody SaveReceiptDto saveReceiptDto) {
-		//System.out.println(saveReceiptDto.toString());
+		////System.out.println(saveReceiptDto.toString());
 		 
 		try {
 			return loanReceiptService.saveLoanReceipt(saveReceiptDto);

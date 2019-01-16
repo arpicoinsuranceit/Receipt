@@ -222,7 +222,7 @@ public class LoanReceiptServiceImpl implements LoanReceiptService{
 
 		List<AgentModel> agentModels = agentDao.findAgentByCodeAll(inProposalsModel.getAdvcod());
 
-		System.out.println(inProposalsModel.getAdvcod());
+		//System.out.println(inProposalsModel.getAdvcod());
 
 		String userName = rmsUserDao.getName(agentCode);
 

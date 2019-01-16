@@ -66,7 +66,7 @@ public class DashboardServiceImpl implements DashboardService {
 
 		List<DashboardPieModel> translist = dashboardDao.getFromInTransaction(toDateInTran, fromDate, user);
 
-		System.out.println("loop start");
+		//System.out.println("loop start");
 		
 		for (DashboardPieModel e : translist) {
 			switch (e.getDocCode()) {
@@ -94,7 +94,7 @@ public class DashboardServiceImpl implements DashboardService {
 				break;
 			case "RCLN":
 				
-				System.out.println("RCLN");
+				//System.out.println("RCLN");
 				
 				NameValuePairDto dto4 = dtos.get(4);
 				dto4.setCount(e.getCount().toString());
@@ -434,7 +434,7 @@ public class DashboardServiceImpl implements DashboardService {
 		List<DashboardCashFlowSummeryModel> inRecmModels = dashboardDao.getCashFlowRecm(user, to, from);
 		List<DashboardCashFlowSummeryModel> inTxnmModels = dashboardDao.getCashFlowTxnm(user, to, from);
 
-		inTxnmModels.forEach(System.out::println);
+		//inTxnmModels.forEach(//System.out::println);
 
 		inTranModels.forEach(e -> {
 			if (e.getPayMode().equalsIgnoreCase("CS")) {

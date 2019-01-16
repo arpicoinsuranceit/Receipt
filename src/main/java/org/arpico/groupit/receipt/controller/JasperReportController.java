@@ -40,10 +40,10 @@ public class JasperReportController {
 
 	@RequestMapping(value = "/report/receiptRegister/{fromDate}/{toDate}/{token}", method = RequestMethod.GET, produces = "application/pdf")
 	public byte[] receiptRegister(@PathVariable String fromDate, @PathVariable String toDate, @PathVariable String token, HttpServletResponse response) {
-		System.out.println(fromDate);
+		//System.out.println(fromDate);
 		response.setHeader("Content-Disposition", "inline; filename=receipt_register.pdf");
 		response.setContentType("application/pdf");
-		System.out.println(toDate + "," + token);
+		//System.out.println(toDate + "," + token);
 
 		Decoder decoder = Base64.getDecoder();
 
@@ -58,7 +58,7 @@ public class JasperReportController {
 		decodedByte = decoder.decode(token);
 		token = new String(decodedByte);
 		
-		System.out.println(fromDate + "," + toDate);
+		//System.out.println(fromDate + "," + toDate);
 		
 	    DateFormat inputFormat = new SimpleDateFormat(
 	        "E MMM dd yyyy HH:mm:ss");
@@ -74,8 +74,8 @@ public class JasperReportController {
 			fromDate=output1;
 			toDate=output2;
 			
-			System.out.println(fromDate + " From Date After format");
-			System.out.println(toDate + " To Date After format");
+			//System.out.println(fromDate + " From Date After format");
+			//System.out.println(toDate + " To Date After format");
 			
 			jwtDecorder = new JwtDecoder();
 			String userCode=jwtDecorder.generate(token);
@@ -93,10 +93,10 @@ public class JasperReportController {
 
 	@RequestMapping(value = "/report/lapsedSummery/{fromDate}/{toDate}/{branch}", method = RequestMethod.GET, produces = "application/pdf")
 	public byte[] lapsedSummery(@PathVariable String fromDate, @PathVariable String toDate, @PathVariable String branch, HttpServletResponse response) {
-		System.out.println(fromDate);
+		//System.out.println(fromDate);
 		response.setHeader("Content-Disposition", "inline; filename=lapsed_summery.pdf");
 		response.setContentType("application/pdf");
-		System.out.println(toDate + "," + branch);
+		//System.out.println(toDate + "," + branch);
 
 		Decoder decoder = Base64.getDecoder();
 
@@ -125,8 +125,8 @@ public class JasperReportController {
 			fromDate=output1;
 			toDate=output2;
 			
-			System.out.println(fromDate + " From Date After format");
-			System.out.println(toDate + " To Date After format");
+			//System.out.println(fromDate + " From Date After format");
+			//System.out.println(toDate + " To Date After format");
 			
 			return jasperReportService.lapsedSummeryReport(fromDate, toDate, branch);
 			
@@ -145,7 +145,7 @@ public class JasperReportController {
 
 		response.setHeader("Content-Disposition", "inline; filename=premium_due.pdf");
 		response.setContentType("application/pdf");
-		System.out.println(agent + "," + branch);
+		//System.out.println(agent + "," + branch);
 
 		Decoder decoder = Base64.getDecoder();
 
@@ -175,7 +175,7 @@ public class JasperReportController {
 
 		response.setHeader("Content-Disposition", "inline; filename=premium_due.pdf");
 		response.setContentType("application/pdf");
-		System.out.println(polnum);
+		//System.out.println(polnum);
 
 		Decoder decoder = Base64.getDecoder();
 

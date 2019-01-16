@@ -13,20 +13,20 @@ public class InfosysWSClient {
 
 	public EmailResponseDto sendEmail(EmailDto emailDto) {
 		
-		System.out.println(emailDto.toString());
+		//System.out.println(emailDto.toString());
 
 		try {
 			
-			System.out.println("try");
+			//System.out.println("try");
 			
 			RestTemplate restTemplate = new RestTemplate();
 			EmailResponseDto result = restTemplate.postForObject(AppConstant.URI_SEND_EMAIL, emailDto,
 					EmailResponseDto.class);
 			
-			System.out.println(result.toString());
+			//System.out.println(result.toString());
 			return result;
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			//System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
 		return null;
@@ -34,20 +34,20 @@ public class InfosysWSClient {
 	
 	public SMSResponseDto sendSMS(SMSDto smsDto) {
 		
-		System.out.println(smsDto.toString());
+		//System.out.println(smsDto.toString());
 
 		try {
 			
-			System.out.println("try");
+			//System.out.println("try");
 			
 			RestTemplate restTemplate = new RestTemplate();
 			SMSResponseDto result = restTemplate.postForObject(AppConstant.URI_SEND_SMS, smsDto,
 					SMSResponseDto.class);
 			
-			System.out.println(result.toString());
+			//System.out.println(result.toString());
 			return result;
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			//System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
 		return null;

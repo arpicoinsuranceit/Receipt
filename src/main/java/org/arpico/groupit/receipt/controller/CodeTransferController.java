@@ -63,14 +63,14 @@ public class CodeTransferController {
 	@RequestMapping(value="/code_transfer/saveCodeTranPol", method = RequestMethod.POST)
 	public ResponseEntity<Object> saveCodeTranPol(@RequestBody SaveCodeTransferDto saveCodeTransferDto)throws Exception{
 		
-		System.out.println(saveCodeTransferDto.toString());
+		//System.out.println(saveCodeTransferDto.toString());
 		return codeTransferService.saveCodeTransferPol(saveCodeTransferDto);
 	}
 	
 	@RequestMapping(value="/code_transfer/saveCodeTranPrp", method = RequestMethod.POST)
 	public ResponseEntity<Object> saveCodeTranPrp(@RequestBody SaveCodeTransferDto saveCodeTransferDto)throws Exception{
 		
-		System.out.println(saveCodeTransferDto.toString());
+		//System.out.println(saveCodeTransferDto.toString());
 		return codeTransferService.saveCodeTransferPrp(saveCodeTransferDto);
 	}
 	

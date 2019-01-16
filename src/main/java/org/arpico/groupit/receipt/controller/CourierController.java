@@ -142,18 +142,18 @@ public class CourierController {
 	public String saveCourier(@RequestParam("depId") Integer depId,@RequestParam("subDepId") Integer subDepId,@RequestParam("docId") ArrayList<Integer> docId,@RequestParam("branch") String branch,
 			@RequestParam("refType") String refType,@RequestParam("refNo") String refNo,@RequestParam("remark") String remark,@RequestParam("token") String usertoken,@RequestParam("isHOUser") Boolean isHOUser) throws Exception{
 		
-		System.out.println(depId);
-		System.out.println(subDepId);
-		System.out.println(docId);
-		System.out.println(refType);
-		System.out.println(refNo);
-		System.out.println(remark);
-		System.out.println(usertoken);
-		System.out.println(branch);
-		System.out.println(isHOUser);
+		//System.out.println(depId);
+		//System.out.println(subDepId);
+		//System.out.println(docId);
+		//System.out.println(refType);
+		//System.out.println(refNo);
+		//System.out.println(remark);
+		//System.out.println(usertoken);
+		//System.out.println(branch);
+		//System.out.println(isHOUser);
 		
-		System.out.println(docId.size());
-		System.out.println(docId.get(0));
+		//System.out.println(docId.size());
+		//System.out.println(docId.get(0));
 		
 		String userCode=new JwtDecoder().generate(usertoken);
 		
@@ -188,7 +188,7 @@ public class CourierController {
 	
 	@RequestMapping(value="/courier/sendCourier/{token:.+}/{couType}",method=RequestMethod.POST)
 	public String sendCouriers(@PathVariable String token,@PathVariable String couType,@RequestBody CourierDetailsHelperDto courierDetailsHelperDto) throws Exception{
-		System.out.println(courierDetailsHelperDto.toString());
+		//System.out.println(courierDetailsHelperDto.toString());
 		String userCode=new JwtDecoder().generate(token);
 		return courierService.sendCourier(courierDetailsHelperDto,userCode,couType);
 		
@@ -196,7 +196,7 @@ public class CourierController {
 	
 	@RequestMapping(value="/courier/receiveCourier/{token:.+}",method=RequestMethod.POST)
 	public String receiveCouriers(@PathVariable String token,@RequestBody CourierDetailsHelperDto courierDetailsHelperDto) throws Exception{
-		System.out.println(courierDetailsHelperDto.toString());
+		//System.out.println(courierDetailsHelperDto.toString());
 		String userCode=new JwtDecoder().generate(token);
 		return courierService.receiveCourier(courierDetailsHelperDto, userCode);
 		
@@ -204,7 +204,7 @@ public class CourierController {
 	
 	@RequestMapping(value="/courier/receiveCourierDocument/{token:.+}",method=RequestMethod.POST)
 	public String receiveCourierDocument(@PathVariable String token,@RequestBody CourierDetailsHelperDto courierDetailsHelperDto) throws Exception{
-		System.out.println(courierDetailsHelperDto.toString());
+		//System.out.println(courierDetailsHelperDto.toString());
 		String userCode=new JwtDecoder().generate(token);
 		return courierService.receiveCourierDocument(courierDetailsHelperDto, userCode);
 		

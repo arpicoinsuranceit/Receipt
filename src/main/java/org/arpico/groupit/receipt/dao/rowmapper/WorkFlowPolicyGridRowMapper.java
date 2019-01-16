@@ -24,7 +24,7 @@ public class WorkFlowPolicyGridRowMapper implements RowMapper<WorkFlowPolicyGrid
 		try {
 			model.setHealth(rs.getString("health"));
 		}catch (Exception e) {
-			System.out.println("No Health");
+			//System.out.println("No Health");
 		}
 		
 		return model;

@@ -59,7 +59,7 @@ public class SetoffServiceImpl implements SetoffService {
 
 		AgentMastModel agentMastModel = agentMastModels.get(0);
 
-		System.out.println(Arrays.toString(numberGen));
+		//System.out.println(Arrays.toString(numberGen));
 
 		if (numberGen[0].equals("Success")) {
 
@@ -168,9 +168,9 @@ public class SetoffServiceImpl implements SetoffService {
 
 				billingTransactionsModel.setDuedat(calendar.getTime());
 
-				System.out.println("calendar.get(Calendar.YEAR) : " + calendar.get(Calendar.YEAR));
+				//System.out.println("calendar.get(Calendar.YEAR) : " + calendar.get(Calendar.YEAR));
 
-				System.out.println("calendar2.get(Calendar.YEAR) : " + calendar2.get(Calendar.YEAR));
+				//System.out.println("calendar2.get(Calendar.YEAR) : " + calendar2.get(Calendar.YEAR));
 
 				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -183,7 +183,7 @@ public class SetoffServiceImpl implements SetoffService {
 
 				int diffInMonths = (int) ChronoUnit.MONTHS.between(policyDate, currentDate);
 
-				System.out.println("diffInMonths : " + diffInMonths);
+				//System.out.println("diffInMonths : " + diffInMonths);
 
 				billingTransactionsModel.setPolyer((diffInMonths / 12) + 1);
 
@@ -227,7 +227,7 @@ public class SetoffServiceImpl implements SetoffService {
 			SaveReceiptDto saveReceiptDto, InBillingTransactionsModel deposit, Double hrbamt,
 			ProposalL3Dto autoIssueData, String setoffType, Integer batchNo) throws Exception {
 
-		System.out.println("Setoff");
+		//System.out.println("Setoff");
 
 		List<InBillingTransactionsModel> setoffList = new ArrayList<InBillingTransactionsModel>();
 
@@ -344,11 +344,15 @@ public class SetoffServiceImpl implements SetoffService {
 					System.out.println("Recovery Added");
 					System.out.println("SETOFF SIZE : " + setoffList.size());
 				}
+				
+				
 
 				InBillingTransactionsModel invoiceNew = createInvoice(inProposalsModel, invoice, userCode, locCode,
 						true, batchNo);
 				setoffList.add(invoiceNew);
 
+				setoffList.forEach(System.out::println);
+				
 			} else {
 
 				System.out.println("autoIssueData.getTotprm() >= autoIssueData.getPayment() : false");
@@ -569,12 +573,12 @@ public class SetoffServiceImpl implements SetoffService {
 //							invAmount = invoice.getAmount();
 //							setoffList.add(invoice);
 
-							System.out.println("After set fund amt to model");
-							System.out.println(fundModels.get(i).toString());
+							//System.out.println("After set fund amt to model");
+							//System.out.println(fundModels.get(i).toString());
 
-							// System.out.println(invoice.toString());
+							// //System.out.println(invoice.toString());
 
-							System.out.println("totPrm : " + totPrm);
+							//System.out.println("totPrm : " + totPrm);
 							break;
 
 						} else {

@@ -139,12 +139,12 @@ public class CommonValidationImpl implements CommonValidations {
 		if (bankService.findBankById(saveReceiptDto.getBankCode())) {
 			if (obj != null) {
 
-				System.out.println("if");
+				//System.out.println("if");
 
 				return ok;
 			} else {
 
-				System.out.println("else");
+				//System.out.println("else");
 
 				return proposalnotavailable;
 			}

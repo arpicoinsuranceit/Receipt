@@ -162,7 +162,7 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 
 		try {
 			InProposalsModel inProposalsModel = inProposalCustomDao.getProposalFromPprnum(Integer.valueOf(pprNum));
-			// System.out.println(inProposalsModel.getInProposalsModelPK().getPrpseq());
+			// //System.out.println(inProposalsModel.getInProposalsModelPK().getPrpseq());
 			if (inProposalsModel != null) {
 				InPropMedicalReqModel inPropMedicalReqModels = inPropMedicalReqCustomDao.getMedicalReq(
 						Integer.valueOf(pprNum), inProposalsModel.getInProposalsModelPK().getPrpseq(), "AD-CT", "N");
@@ -291,7 +291,7 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 		List<CodeTransferDto> codeTransferDtos = new ArrayList<>();
 		if (usercode != null) {
 			List<CodeTransferModel> codeTransferModels = codeTransferDao.findByStatusAndCreateBy("PENDING", usercode);
-			System.out.println(codeTransferModels.size() + "size .. ");
+			//System.out.println(codeTransferModels.size() + "size .. ");
 			if (!codeTransferModels.isEmpty()) {
 				codeTransferModels.forEach(code -> {
 					if (code.getPolNum() == null || code.getPolNum() == "" || code.getPolNum().isEmpty()) {
@@ -953,9 +953,9 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 		if (userCode != null) {
 			List<String> loccodes = branchUnderwriteDao.findLocCodes(userCode);
 
-			System.out.println("calles getCodeTransfersToApprove " + userCode);
+			//System.out.println("calles getCodeTransfersToApprove " + userCode);
 
-			loccodes.forEach(System.out::println);
+			//loccodes.forEach(//System.out::println);
 
 			List<CodeTransferModel> codeTransferModels = codeTransferDao.findByStatusAndLocCodeIn("PENDING", loccodes);
 			List<CodeTransferDto> codeTransferDtos = new ArrayList<>();
@@ -1000,7 +1000,7 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 		List<CodeTransferDto> codeTransferDtos = new ArrayList<>();
 		if (usercode != null) {
 			List<CodeTransferModel> codeTransferModels = codeTransferDao.findByStatusAndCreateBy("PENDING", usercode, new PageRequest(page, offset));
-			System.out.println(codeTransferModels.size() + "size .. ");
+			//System.out.println(codeTransferModels.size() + "size .. ");
 			if (!codeTransferModels.isEmpty()) {
 				codeTransferModels.forEach(code -> {
 					if (code.getPolNum() == null || code.getPolNum() == "" || code.getPolNum().isEmpty()) {

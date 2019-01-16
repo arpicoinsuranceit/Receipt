@@ -18,7 +18,7 @@ public class ReceiptRePrintController {
 	@RequestMapping(value="receiptRePrint/{docCode}/{receiptNo}/{token:.+}")
 	public ResponseEntity<Object> receiptRePrint(@PathVariable("docCode")String docCode,@PathVariable("receiptNo")Integer receiptNo, @PathVariable("token")String token) throws Exception {
 		
-		System.out.println(docCode +" docCode" + receiptNo +" receiptNo");
+		//System.out.println(docCode +" docCode" + receiptNo +" receiptNo");
 		
 		return reprintService.getReprint(docCode, receiptNo, token);
 	}

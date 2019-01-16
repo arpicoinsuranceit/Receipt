@@ -35,9 +35,9 @@ public class SubDepartmentDocumentServiceImpl implements SubDepartmentDocumentSe
 	public List<DocumentTypeDto> findBySubDepartment(Integer subDepId,Boolean isHOUser) throws Exception {
 		
 		SubDepartmentModel subDepartmentModel=subDepartmentDao.findOne(subDepId);
-		//System.out.println(subDepartmentModel.toString());
+		////System.out.println(subDepartmentModel.toString());
 		List<SubDepartmentDocumentModel> subDepartmentDocumentModels=subDepartmentDocumentDao.findBySubDepartment(subDepartmentModel);
-		//System.out.println(subDepartmentDocumentModels.toString());
+		////System.out.println(subDepartmentDocumentModels.toString());
 		List<DocumentTypeDto> documentTypeDtos=new ArrayList<>();
 		
 		subDepartmentDocumentModels.forEach(sdd -> {

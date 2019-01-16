@@ -237,9 +237,9 @@ public class WorkflowServiceImpl implements WorkflowService {
 
 		if (inProposalsModel != null) {
 
-			System.out.println(inProposalsModel.getPaytrm());
+			//System.out.println(inProposalsModel.getPaytrm());
 
-			System.out.println(inProposalsModel.getSinprm());
+			//System.out.println(inProposalsModel.getSinprm());
 
 			if (inProposalsModel.getPaytrm().equals("12")) {
 				freq = "M";
@@ -594,8 +594,8 @@ public class WorkflowServiceImpl implements WorkflowService {
 					daoParameters.getParaForIn(branches));
 		}
 
-		System.out.println("flowPolicyGridModels.size()" + flowPolicyGridModels.size());
-		System.out.println("promisesModels.size()" + promisesModels.size());
+		//System.out.println("flowPolicyGridModels.size()" + flowPolicyGridModels.size());
+		//System.out.println("promisesModels.size()" + promisesModels.size());
 
 		for (WorkFlowPolicyGridModel polGrid : flowPolicyGridModels) {
 
@@ -605,7 +605,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
 				for (InPromisesModel promise : promisesModels) {
 
-					System.out.println(promise.getPolicyNo() + "       " + polGrid.getPolicy());
+					//System.out.println(promise.getPolicyNo() + "       " + polGrid.getPolicy());
 
 					if (promise.getPprno().equals(polGrid.getProposal())) {
 
@@ -641,8 +641,8 @@ public class WorkflowServiceImpl implements WorkflowService {
 
 	private WorkFlowPolicyGridDto getFolwPolicyGridDto(WorkFlowPolicyGridModel polGrid) {
 
-		System.out.println(polGrid.getPprNum());
-		System.out.println(polGrid.getAgent());
+		//System.out.println(polGrid.getPprNum());
+		//System.out.println(polGrid.getAgent());
 
 		if (polGrid.getPprNum() != null && polGrid.getPprNum().length() > 0) {
 
@@ -792,10 +792,10 @@ public class WorkflowServiceImpl implements WorkflowService {
 					date1, date2, type2);
 		}
 
-		System.out.println(flowPolicyGridModels.size());
+		//System.out.println(flowPolicyGridModels.size());
 
-		System.out.println("flowPolicyGridModels.size() temp" + flowPolicyGridModels.size());
-		System.out.println("promisesModels.size()" + promisesModels.size());
+		//System.out.println("flowPolicyGridModels.size() temp" + flowPolicyGridModels.size());
+		//System.out.println("promisesModels.size()" + promisesModels.size());
 
 		for (WorkFlowPolicyGridModel polGrid : flowPolicyGridModels) {
 
@@ -804,7 +804,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
 				for (InPromisesModel promise : promisesModels) {
 
-					System.out.println(promise.getPolicyNo() + "       " + polGrid.getPolicy());
+					//System.out.println(promise.getPolicyNo() + "       " + polGrid.getPolicy());
 
 					if (promise.getPprno().equals(polGrid.getProposal())) {
 
@@ -824,7 +824,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 				}
 			} else {
 
-				System.out.println("Else");
+				//System.out.println("Else");
 
 				WorkFlowPolicyGridDto dto = getFolwPolicyGridDto(polGrid);
 
@@ -834,7 +834,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
 				}
 
-				System.out.println(flowPolicyGridDtos.size());
+				//System.out.println(flowPolicyGridDtos.size());
 			}
 
 		}
@@ -874,7 +874,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 	private NotRelChequeDto getNotRelChequeDto(NotRelChequeModel model) {
 		NotRelChequeDto dto = new NotRelChequeDto();
 		
-		System.out.println(model.getReceipt());
+		//System.out.println(model.getReceipt());
 
 		dto.setAgent(model.getAgent());
 		dto.setChqbnk(model.getChqbnk());
