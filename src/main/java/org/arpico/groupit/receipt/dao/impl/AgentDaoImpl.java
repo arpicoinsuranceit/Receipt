@@ -72,7 +72,7 @@ public class AgentDaoImpl implements AgentDao {
 	@Override
 	public Integer getAgnInqListCount(String locCodes) throws Exception {
 		return jdbcTemplate.queryForObject(
-				"select *  from inagentmast where sbucod = '450' and loccod in (" + locCodes + ")", Integer.class);
+				"select count(*)  from inagentmast where sbucod = '450' and loccod in (" + locCodes + ")", Integer.class);
 	}
 
 }
