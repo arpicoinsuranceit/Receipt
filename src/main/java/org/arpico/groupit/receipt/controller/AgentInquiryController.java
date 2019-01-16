@@ -1,9 +1,6 @@
 package org.arpico.groupit.receipt.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Resource;
 
 import org.arpico.groupit.receipt.dto.AgnInqAgnListDto;
 import org.arpico.groupit.receipt.service.AgentInquiryService;
@@ -22,14 +19,21 @@ public class AgentInquiryController {
 	@Autowired
 	private AgentInquiryService agentInquiryService;
 
-	@GetMapping("/getlist/{token:.+}")
-	public List<AgnInqAgnListDto> getAgentList(@PathVariable String token) throws Exception {
+	@GetMapping("/getlist/{token:.+}/{page}/{offset}")
+	public List<AgnInqAgnListDto> getAgentList(@PathVariable String token, @PathVariable Integer page, @PathVariable Integer offset) throws Exception {
 
-		List<AgnInqAgnListDto> agnListDtos = agentInquiryService.getAgentListByBranch(token);
+		List<AgnInqAgnListDto> agnListDtos = agentInquiryService.getAgentListByBranch(token, page, offset);
 
-		
-		
 		return agnListDtos;
+
+	}
+	
+	@GetMapping("/getlistCount/{token:.+}")
+	public Integer getAgentListCount(@PathVariable String token, @PathVariable Integer page, @PathVariable Integer offset) throws Exception {
+
+		Integer count = agentInquiryService.getAgentListByBranchCountLength(token);
+
+		return count;
 
 	}
 

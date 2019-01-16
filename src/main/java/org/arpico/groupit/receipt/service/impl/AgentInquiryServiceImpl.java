@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.websocket.server.ServerEndpoint;
-
 import org.arpico.groupit.receipt.client.UserManagementClient;
 import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dto.AgnInqAgnListDto;
@@ -29,7 +27,7 @@ public class AgentInquiryServiceImpl implements AgentInquiryService {
 	private DaoParameters daoParameters; 
 
 	@Override
-	public List<AgnInqAgnListDto> getAgentListByBranch(String token) throws Exception {
+	public List<AgnInqAgnListDto> getAgentListByBranch(String token, Integer page, Integer offset) throws Exception {
 		
 		String agentCode = new JwtDecoder().generate(token);
 
@@ -45,7 +43,7 @@ public class AgentInquiryServiceImpl implements AgentInquiryService {
 		
 		List<AgnInqAgnListDto> agnInqAgnListDtos = new ArrayList<>();
 
-		List<AgnInqAgnListModel> agnInqAgnListModels = agentDao.getAgnInqList(locCodes);
+		List<AgnInqAgnListModel> agnInqAgnListModels = agentDao.getAgnInqList(locCodes, page, offset);
 
 		agnInqAgnListModels.forEach(e -> {
 			agnInqAgnListDtos.add(getAgnInqListDto(e));
@@ -68,6 +66,27 @@ public class AgentInquiryServiceImpl implements AgentInquiryService {
 		dto.setSupvid(e.getSupvid());
 
 		return dto;
+	}
+
+	@Override
+	public Integer getAgentListByBranchCountLength(String token) throws Exception {
+		
+		
+		String agentCode = new JwtDecoder().generate(token);
+
+		String agentBranch = userManagementClient.getBranch(agentCode);
+		
+		System.out.println(agentBranch);
+
+		String[] tempArr = agentBranch.split(",");
+		
+		List<String> agentBranchs = new ArrayList<>(Arrays.asList(tempArr));
+		
+		String locCodes = daoParameters.getParaForIn(agentBranchs);
+		
+		Integer count = agentDao.getAgnInqListCount(locCodes);
+		
+		return count;
 	}
 
 }

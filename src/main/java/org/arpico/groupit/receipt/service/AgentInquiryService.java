@@ -6,7 +6,9 @@ import org.arpico.groupit.receipt.dto.AgnInqAgnListDto;
 
 public interface AgentInquiryService {
 	
-	List<AgnInqAgnListDto> getAgentListByBranch(String token) throws Exception;
+	List<AgnInqAgnListDto> getAgentListByBranch(String token, Integer page, Integer offset) throws Exception;
+
+	Integer getAgentListByBranchCountLength(String token) throws Exception;
 	
 
 }

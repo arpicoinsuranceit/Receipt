@@ -13,7 +13,6 @@ import org.arpico.groupit.receipt.client.UserManagementClient;
 import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
 import org.arpico.groupit.receipt.dao.InLoanTransactionCustomDao;
-import org.arpico.groupit.receipt.dao.InLoanTransactionsDao;
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
 import org.arpico.groupit.receipt.dao.InTransactionCustomDao;
 import org.arpico.groupit.receipt.dao.RmsDocTxndCustomDao;
@@ -94,9 +93,6 @@ public class ReprintServiceImpl implements ReprintService {
 
 	@Value("${gl_acc_param}")
 	private String accounts;
-
-	@Autowired
-	private InLoanTransactionsDao inLoanTransactionDao;
 
 	@Autowired
 	private InLoanTransactionCustomDao inLoanTransactionCustomDao;

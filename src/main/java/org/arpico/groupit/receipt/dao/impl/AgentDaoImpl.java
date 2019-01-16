@@ -23,8 +23,8 @@ public class AgentDaoImpl implements AgentDao {
 
 		String query = "SELECT agncod, shrtnm, loccod FROM inagentmast where sbucod = '450' " + sql
 				+ " and agncod like '" + agentCode + "%' and agnsta IN ('ACT','INA') order by agncod";
-		
-		//System.out.println(query);
+
+		// System.out.println(query);
 
 		return jdbcTemplate.query(query, new AgentRowMapper());
 	}
@@ -53,7 +53,7 @@ public class AgentDaoImpl implements AgentDao {
 		return jdbcTemplate.query("SELECT agncod, prnnam, loccod ,agncls FROM inagentmast "
 				+ "where sbucod = '450' and agnsta in ('ACT','INA')", new AgentRowMapper());
 	}
-	
+
 	@Override
 	public List<AgentModel> findAgentByLocations(String locCodes) throws Exception {
 		return jdbcTemplate.query("SELECT agncod, shrtnm, loccod FROM inagentmast "
@@ -62,11 +62,17 @@ public class AgentDaoImpl implements AgentDao {
 	}
 
 	@Override
-	public List<AgnInqAgnListModel> getAgnInqList(String locCodes) throws Exception {
+	public List<AgnInqAgnListModel> getAgnInqList(String locCodes, Integer page, Integer offset) throws Exception {
 		return jdbcTemplate.query("select agncod, agnnam, agnnic, agnsta, sliirg, "
 				+ "if(agncls = 'IC', unlcod, bancod) as supvid, agndob, subdcd, agnrdt "
-				+ "from inagentmast where sbucod = '450' and loccod in ("+locCodes+") ;",
-				new AgnInqAgnListRowMapper());
+				+ "from inagentmast where sbucod = '450' and loccod in (" + locCodes + ") limit " + page + ", " + offset
+				+ ";", new AgnInqAgnListRowMapper());
+	}
+
+	@Override
+	public Integer getAgnInqListCount(String locCodes) throws Exception {
+		return jdbcTemplate.queryForObject(
+				"select *  from inagentmast where sbucod = '450' and loccod in (" + locCodes + ")", Integer.class);
 	}
 
 }
