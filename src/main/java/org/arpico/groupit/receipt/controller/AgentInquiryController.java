@@ -22,7 +22,7 @@ public class AgentInquiryController {
 	@Autowired
 	private AgentInquiryService agentInquiryService;
 
-	@GetMapping("/getlist/{token}")
+	@GetMapping("/getlist/{token:.+}")
 	public List<AgnInqAgnListDto> getAgentList(@PathVariable String token) throws Exception {
 
 		List<AgnInqAgnListDto> agnListDtos = agentInquiryService.getAgentListByBranch(token);
