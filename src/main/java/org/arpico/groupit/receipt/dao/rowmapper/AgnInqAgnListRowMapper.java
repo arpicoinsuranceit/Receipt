@@ -12,15 +12,15 @@ public class AgnInqAgnListRowMapper implements RowMapper<AgnInqAgnListModel>{
 	public AgnInqAgnListModel mapRow(ResultSet rs, int rowNum) throws SQLException {
 		AgnInqAgnListModel model = new AgnInqAgnListModel();
 		
-		model.setAgncod(rs.getInt(""));
-		model.setAgndob(rs.getDate(""));
-		model.setAgnnam(rs.getString(""));
-		model.setAgnnic(rs.getString(""));
-		model.setAgnrdt(rs.getDate(""));
-		model.setAgnsta(rs.getString(""));
-		model.setSliirg(rs.getString(""));
-		model.setSubdcd(rs.getString(""));
-		model.setSupvid(rs.getString(""));
+		model.setAgncod(rs.getInt("agncod"));
+		model.setAgndob(rs.getDate("agndob"));
+		model.setAgnnam(rs.getString("agnnam"));
+		model.setAgnnic(rs.getString("agnnic"));
+		model.setAgnrdt(rs.getDate("agnrdt"));
+		model.setAgnsta(rs.getString("agnsta"));
+		model.setSliirg(rs.getString("sliirg"));
+		model.setSubdcd(rs.getString("subdcd"));
+		model.setSupvid(rs.getString("supvid"));
 		
 		return model;
 	}
