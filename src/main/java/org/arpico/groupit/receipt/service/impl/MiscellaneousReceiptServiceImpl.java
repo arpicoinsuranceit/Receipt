@@ -40,6 +40,8 @@ import org.arpico.groupit.receipt.service.NumberGenerator;
 import org.arpico.groupit.receipt.util.AppConstant;
 import org.arpico.groupit.receipt.util.CurrencyFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -47,8 +49,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@PropertySource("classpath:application.properties")
 public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptService {
 
+	@Value("${gl_acc_param}")
+	private String admin_email1;
+	
+	@Value("${gl_acc_param}")
+	private String admin_email2;
+	
 	@Autowired
 	private JwtDecoder decoder;
 
@@ -123,14 +132,15 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 					try {
 						EmailDto emailDto = new EmailDto();
 
-						String toEmail = userDao.getUserEmail(user);
+						String toEmail = admin_email1;
 						// String toEmail="anjana.t@arpicoinsurance.com";
-						String fromEmail = toEmail;
+						String fromEmail = userDao.getUserEmail(user);
 
 						if (toEmail != null && toEmail != "" && fromEmail != null && fromEmail != "") {
 
 							List<String> ccMails = new ArrayList<>();
 							ccMails.add(fromEmail);
+							ccMails.add(admin_email2);
 
 							emailDto.setAttachments(new ArrayList<>());
 							emailDto.setCcMails(ccMails);
@@ -154,8 +164,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 
 								for (RmsItemMasterModel item : itemList) {
 									if (item.getItemCode().equals(docTxndModel.getItemCode())) {
-										body += count + ".\t " + item.getItemName() + "(" + item.getItemCode() + ") : "
-												+ docTxndModel.getQty();
+										body += count + ".\t " + item.getItemName() + "(" + item.getItemCode() + ")";
 									}
 								}
 
