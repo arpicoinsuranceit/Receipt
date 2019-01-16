@@ -29,7 +29,7 @@ public class AgentInquiryController {
 	}
 	
 	@GetMapping("/getlistCount/{token:.+}")
-	public Integer getAgentListCount(@PathVariable String token, @PathVariable Integer page, @PathVariable Integer offset) throws Exception {
+	public Integer getAgentListCount(@PathVariable String token) throws Exception {
 
 		Integer count = agentInquiryService.getAgentListByBranchCountLength(token);
 
