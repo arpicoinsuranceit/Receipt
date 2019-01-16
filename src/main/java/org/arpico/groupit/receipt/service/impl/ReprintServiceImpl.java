@@ -107,6 +107,8 @@ public class ReprintServiceImpl implements ReprintService {
 		String agentCode = new JwtDecoder().generate(token);
 
 		String agentBranch = userManagementClient.getBranch(agentCode);
+		
+		System.out.println(agentBranch);
 
 		String[] tempArr = agentBranch.split(",");
 

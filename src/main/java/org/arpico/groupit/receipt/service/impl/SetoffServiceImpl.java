@@ -494,7 +494,11 @@ public class SetoffServiceImpl implements SetoffService {
 				InBillingTransactionsModel lastInvoice = billingTransactionsCustomDao
 						.getLasiInvoice(inProposalsModel.getInProposalsModelPK().getPprnum());
 
-				unsetoffs.add(createInvoice(inProposalsModel, lastInvoice, userCode, locCode, false, batchNo));
+				
+				InBillingTransactionsModel tempInvoice =createInvoice(inProposalsModel, lastInvoice, userCode, locCode, false, batchNo);
+				
+				unsetoffs.add(tempInvoice);
+				setoffList.add(tempInvoice);
 			}
 
 			Double totPrm = 0.0;
@@ -517,7 +521,7 @@ public class SetoffServiceImpl implements SetoffService {
 				System.out.println("TOT PREMIUM : " + totPrm);
 				System.out.println("INV AMOUNT : " + invAmount);
 
-				if (totPrm > invAmount) {
+				if (totPrm >= invAmount) {
 
 					System.out.println("TOTPRM : " + totPrm);
 					System.out.println("INVAMOUNT : " + invAmount);
@@ -632,7 +636,7 @@ public class SetoffServiceImpl implements SetoffService {
 				setoffList.add(invoice);
 			}
 
-			while (totPrm > invAmount) {
+			while (totPrm >= invAmount) {
 
 				System.out.println("TOTPRM : " + totPrm);
 				System.out.println("INVAMOUNT : " + invAmount);

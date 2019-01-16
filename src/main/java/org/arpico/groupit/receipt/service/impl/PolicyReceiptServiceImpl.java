@@ -199,7 +199,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 			if (batNoArr[0].equals("Success")) {
 				
-				System.out.println("BATCH NO GENERATED : " + locCode);
+				System.out.println("BATCH NO GENERATED : " + batNoArr[1]);
 
 				InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
 						saveReceiptDto, userCode, locCode);
