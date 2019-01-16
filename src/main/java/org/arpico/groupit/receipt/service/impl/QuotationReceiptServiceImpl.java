@@ -20,6 +20,7 @@ import org.arpico.groupit.receipt.dao.InPropAddBenefictDao;
 import org.arpico.groupit.receipt.dao.InPropFamDetailsDao;
 import org.arpico.groupit.receipt.dao.InPropLoadingDao;
 import org.arpico.groupit.receipt.dao.InPropMedicalReqDao;
+import org.arpico.groupit.receipt.dao.InPropNomDetailsDao;
 import org.arpico.groupit.receipt.dao.InPropShedulesDao;
 import org.arpico.groupit.receipt.dao.InPropSurrenderValsDao;
 import org.arpico.groupit.receipt.dao.InProposalDao;
@@ -27,6 +28,7 @@ import org.arpico.groupit.receipt.dao.InTransactionsDao;
 import org.arpico.groupit.receipt.dao.RmsUserDao;
 import org.arpico.groupit.receipt.dto.ChildrenDto;
 import org.arpico.groupit.receipt.dto.MedicalRequirementsDto;
+import org.arpico.groupit.receipt.dto.NomineeDto;
 import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
 import org.arpico.groupit.receipt.dto.QuoBenfDto;
 import org.arpico.groupit.receipt.dto.QuoChildBenefDto;
@@ -45,6 +47,7 @@ import org.arpico.groupit.receipt.model.InPropAddBenefitModel;
 import org.arpico.groupit.receipt.model.InPropFamDetailsModel;
 import org.arpico.groupit.receipt.model.InPropLoadingModel;
 import org.arpico.groupit.receipt.model.InPropMedicalReqModel;
+import org.arpico.groupit.receipt.model.InPropNomDetailsModel;
 import org.arpico.groupit.receipt.model.InPropSchedulesModel;
 import org.arpico.groupit.receipt.model.InPropSurrenderValsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
@@ -52,6 +55,7 @@ import org.arpico.groupit.receipt.model.InTransactionsModel;
 import org.arpico.groupit.receipt.model.pk.InPropFamDetailsModelPK;
 import org.arpico.groupit.receipt.model.pk.InPropLoadingModelPK;
 import org.arpico.groupit.receipt.model.pk.InPropMedicalReqModelPK;
+import org.arpico.groupit.receipt.model.pk.InPropNomDetailsModelPK;
 import org.arpico.groupit.receipt.model.pk.InPropSchedulesModelPK;
 import org.arpico.groupit.receipt.model.pk.InPropSurrenderValsPK;
 import org.arpico.groupit.receipt.model.pk.InProposalsModelPK;
@@ -126,10 +130,13 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 	@Autowired
 	private ItextReceipt itextReceipt;
+	
+	@Autowired
+	private InPropNomDetailsDao inPropNomDetailsDao;
 
 	@Autowired
 	private JwtDecoder decoder;
-	
+
 	@Autowired
 	private InfosysWSClient infosysWSClient;
 
@@ -148,7 +155,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 			if (agentModels != null && agentModels.size() > 0) {
 
 				String[] numberGen = numberGenerator.generateNewId("", "", "PROSQ", "");
-				
+
 				String[] batNoArr = numberGenerator.generateNewId("", "", "#TXNSQ#", "");
 
 				if (numberGen[0].equals("Success") && batNoArr[0].equals("Success")) {
@@ -156,7 +163,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					ViewQuotationDto resp = quotationClient.getQuotation(saveReceiptDto.getSeqNo(),
 							saveReceiptDto.getQuotationId());
 
-					//System.out.println(resp);
+					// System.out.println(resp);
 
 					List<MedicalRequirementsDto> medicalRequirementsDtos = quotationClient
 							.getMediReq(saveReceiptDto.getSeqNo(), saveReceiptDto.getQuotationId());
@@ -167,13 +174,16 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					List<SurrenderValsDto> surrenderValsDtos = quotationClient
 							.getSurrenderVals(saveReceiptDto.getSeqNo(), saveReceiptDto.getQuotationId());
 
+					List<NomineeDto> nomineeDtos = quotationClient.getNominee(saveReceiptDto.getSeqNo(),
+							saveReceiptDto.getQuotationId());
+
 					// //System.out.println(sheduleDtos.size());
 					// Primary Keys
 					InProposalsModelPK inProposalsModelPK = getProposalModelPK(saveReceiptDto,
 							agentModels.get(0).getLocation());
 					inProposalsModelPK.setPprnum(numberGen[1]);
 
-					//System.out.println(inProposalsModelPK.getPprnum());
+					// System.out.println(inProposalsModelPK.getPprnum());
 
 					InProposalsModel inProposalsModel = getProposalModel(resp, saveReceiptDto);
 
@@ -266,16 +276,31 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 										saveReceiptDto.getQuotationId(), surVal, inProposalsModelPK.getPprnum(),
 										inProposalsModelPK.getPrpseq(), inProposalsModelPK.getLoccod())));
 					}
+					
+					
+					final List<InPropNomDetailsModel> inPropNomDetailsModels = new ArrayList<>();
+					if (nomineeDtos != null && nomineeDtos.size() > 0) {
+						nomineeDtos.forEach(
+								nom -> {
+									try {
+										inPropNomDetailsModels.add(getNominee(saveReceiptDto.getAgentCode(),
+												saveReceiptDto.getQuotationId(), nom, inProposalsModelPK.getPprnum(),
+												inProposalsModelPK.getPrpseq(), inProposalsModelPK.getLoccod()));
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
+								});
+					}
+					
+					
+					
 
 					/////////// When Ho //////////
 					/*
-					if (locCode.equalsIgnoreCase("HO")) {
-						inProposalsModel.setPprsta("L1");
-					} else {
-						inProposalsModel.setProsta("L1");
-					}
-					*/
-					
+					 * if (locCode.equalsIgnoreCase("HO")) { inProposalsModel.setPprsta("L1"); }
+					 * else { inProposalsModel.setProsta("L1"); }
+					 */
+
 					inProposalDao.save(inProposalsModel);
 					inPropAddBenefictDao.save(addBenefitModels);
 					if (inPropScheduleList != null) {
@@ -284,10 +309,11 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					if (inPropMedicalReqModels != null && inPropMedicalReqModels.size() > 0) {
 						inPropMedicalReqDao.save(inPropMedicalReqModels);
 					}
-					
+
 					inPropFamDetailsDao.save(propFamDetailsModels);
-					inPropLoadingDao.save(inPropLoadingModels);					
+					inPropLoadingDao.save(inPropLoadingModels);
 					inPropSurrenderValsDao.save(inPropSurrenderValsModels);
+					inPropNomDetailsDao.save(inPropNomDetailsModels);
 
 					InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
 							saveReceiptDto, userCode, locCode);
@@ -298,7 +324,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					inBillingTransactionsModel.setAdmfee(0.0);
 					inBillingTransactionsModel.setPolfee(0.0);
 					inBillingTransactionsModel.setTxnbno(Integer.parseInt(batNoArr[1]));
-					
+
 					inTransactionDao.save(inTransactionsModel);
 					inBillingTransactionDao.save(inBillingTransactionsModel);
 
@@ -323,15 +349,16 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 							"Successfully saved. Proposal Number : " + numberGen[1] + ", Receipt No : RCNB / "
 									+ inBillingTransactionsModel.getBillingTransactionsModelPK().getDocnum());
 					responseDto.setMessage(numberGen[1]);
-					
-					SMSDto smsDto=new SMSDto();
+
+					SMSDto smsDto = new SMSDto();
 					smsDto.setDocCode("RCNB");
 					smsDto.setSmsType("quotation");
 					smsDto.setRcptNo(Integer.toString(dto.getDocNum()));
-					smsDto.setUserCode(userCode);;
-					
+					smsDto.setUserCode(userCode);
+					;
+
 					infosysWSClient.sendSMS(smsDto);
-					
+
 					responseDto.setData(itextReceipt.createReceipt(dto));
 
 				} else {
@@ -357,6 +384,31 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 		return responseDto;
 
+	}
+
+	private InPropNomDetailsModel getNominee(String agentCode, Integer quotationId, NomineeDto nom, String pprnum,
+			Integer prpseq, String loccod) throws Exception {
+		
+		System.out.println(nom.getNomineeDateofBirth() +" : nom.getNomineeDateofBirth()");
+		
+		InPropNomDetailsModelPK pk = new InPropNomDetailsModelPK();
+		
+		pk.setLoccod(loccod);
+		pk.setNomnam(nom.getNomineeName());
+		pk.setPprnum(Integer.parseInt(pprnum));
+		pk.setPrpseq(prpseq);
+		pk.setSbucod(AppConstant.SBU_CODE);
+
+		InPropNomDetailsModel model = new InPropNomDetailsModel();
+		
+		model.setInPropNomDetailsModelPK(pk);
+		model.setLockin(new Date());
+		model.setNomdob(new SimpleDateFormat("yyyy-MM-dd").parse(nom.getNomineeDateofBirth()));
+		model.setNomrel(nom.getRelation());
+		model.setNomtyp(nom.getRelation());
+		
+
+		return model;
 	}
 
 	private ReceiptPrintDto getReceiptPrintDto(InProposalsModel inProposalsModel,
@@ -693,8 +745,8 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 	private InProposalsModel getProposalModel(ViewQuotationDto resp, SaveReceiptDto saveReceiptDto) throws Exception {
 		InProposalsModel inProposalsModel = new InProposalsModel();
 
-		////System.out.println(resp.get_mainlife().get_mDob());
-		//System.out.println(resp);
+		//// System.out.println(resp.get_mainlife().get_mDob());
+		// System.out.println(resp);
 
 		inProposalsModel.setPpdini(resp.get_mainlife().get_mName());
 		inProposalsModel.setPpdnam(resp.get_mainlife().get_mName());
@@ -812,7 +864,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 		String[] numberGen = numberGenerator.generateNewId("450", "", "CSPINSQ", "");
 
-		//System.out.println(numberGen[0]);
+		// System.out.println(numberGen[0]);
 
 		CustomerModel customerModel = new CustomerModel();
 		customerModel.setSbucod(AppConstant.SBU_CODE);
@@ -841,7 +893,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		customerModel.setPpdtel(resp.get_mainlife().get_mMobile());
 		if (resp.get_spouse() != null && resp.get_spouse().get_sAge() != null && resp.get_spouse().get_sGender() != null
 				&& resp.get_spouse().getOccuCode() != null) {
-			//System.out.println(resp.get_spouse().toString());
+			// System.out.println(resp.get_spouse().toString());
 			customerModel.setSagnxt(Integer.parseInt(resp.get_spouse().get_sAge()));
 			try {
 				customerModel.setSpodob(new SimpleDateFormat("dd-MM-yyyy").parse(resp.get_spouse().get_sDob()));

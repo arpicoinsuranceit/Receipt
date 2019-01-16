@@ -41,7 +41,7 @@ public class QuotationReceiptController {
 			e1.printStackTrace();
 		}
 		
-		//System.out.println(valid);
+		System.out.println(valid);
 		
 		try {
 			if (valid.equalsIgnoreCase("ok")) {
