@@ -405,7 +405,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		model.setLockin(new Date());
 		model.setNomdob(new SimpleDateFormat("yyyy-MM-dd").parse(nom.getNomineeDateofBirth()));
 		model.setNomrel(nom.getRelation());
-		model.setNomtyp(nom.getRelation());
+		model.setNomtyp("MSFB");
 		
 
 		return model;
