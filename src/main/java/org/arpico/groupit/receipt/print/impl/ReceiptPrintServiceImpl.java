@@ -352,20 +352,25 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 			bnkDetTable.addCell(chqDateVal);
 
 			document.add(bnkDetTable);
-
+			document.add(new Paragraph(""));
+			document.add(new Paragraph(""));
+			document.add(new Paragraph(""));
+			document.add(new Paragraph(""));
+			document.add(new Paragraph(""));
+			document.add(new Paragraph(""));
+			document.add(new Paragraph(""));
+			
+		}else {
+			document.add(new Paragraph(""));
+			document.add(new Paragraph(""));
+			document.add(new Paragraph(""));
+			document.add(new Paragraph(""));
 			document.add(new Paragraph(""));
 		}
 		
-		document.add(new Paragraph(""));
-		document.add(new Paragraph(""));
-		document.add(new Paragraph(""));
-		document.add(new Paragraph(""));
-		document.add(new Paragraph(""));
-		document.add(new Paragraph(""));
-		document.add(new Paragraph(""));
-		document.add(new Paragraph(""));
-		document.add(new Paragraph(""));
-		document.add(new Paragraph(""));
+		
+		
+		
 		float[] saleDtlTblColmWidths = { 60, 60, 200 };
 		Table saleDtlTbl = new Table(saleDtlTblColmWidths);
 
@@ -828,20 +833,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 			Document document = new Document(pdf, ps);
 			document.setMargins(20, 15, 20, 15);
 
-			// PdfCanvas under = new PdfCanvas(pdf.getPage(0).newContentStreamBefore(), new
-			// PdfResources(), pdf);
-			//
-			// PdfFont font =
-			// PdfFontFactory.createFont(FontProgramFactory.createFont(FontConstants.HELVETICA));
-			// Paragraph p = new Paragraph("This watermark is added UNDER the existing
-			// content").setFont(font)
-			// .setFontSize(15);
-			// new Canvas(under, pdf, pdf.getDefaultPageSize()).showTextAligned(p, 297, 550,
-			// 1, TextAlignment.CENTER,
-			// VerticalAlignment.TOP, 0);
-			//
-			// PdfCanvas over = new PdfCanvas(pdf.getPage(0));
-			// over.setFillColor(Color.BLACK);
+			
 
 			System.out.println(receiptPrintDto.getRctStatus());
 
@@ -1285,11 +1277,8 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 				pyModVal.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 				pyModVal.add(new Paragraph(payMethod).setFontSize(10));
 				cusTable.addCell(pyModVal);
-				
-
-			}
+				}
 			
-
 			Cell amount = new Cell();
 			amount.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 			amount.add(new Paragraph("Amount").setFontSize(10));
@@ -1605,7 +1594,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 			PdfWriter writer = new PdfWriter(baos);
 			PdfDocument pdf = new PdfDocument(writer);
 			Document document = new Document(pdf, ps);
-			document.setMargins(20, 15, 20, 15);
+			document.setMargins(17, 20, 20, 25);
 
 			System.out.println(receiptPrintDto.getRctStatus());
 
@@ -1625,7 +1614,7 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 			Table cusTable = new Table(customerDetailsTableWidth);
 
 			Cell name = new Cell();
-			name.setBorder(Border.NO_BORDER);
+			name.setBorder(Border.NO_BORDER).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f);
 			name.add(new Paragraph("Name").setFontSize(10).setPadding(0f).setMargin(0f).setMarginBottom(0f).setMarginTop(0f));
 			cusTable.addCell(name);
 			Cell nameVal = new Cell();
