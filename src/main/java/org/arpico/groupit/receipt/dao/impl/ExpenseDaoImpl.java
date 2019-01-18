@@ -39,7 +39,7 @@ public class ExpenseDaoImpl implements ExpenseDao {
 
 		List<ExpenseModel> expenseModels = jdbcTemplate.query(
 				"select ITEM_CODE, ITM_DESC, UNIT_PRICE from rms_itmmaster where SBU_CODE = '450' and ITEM_CODE = '"
-						+ code + "' and  ITM_GROUP in ('COM')",
+						+ code + "' and  ITM_GROUP in ('COM', 'BOO')",
 				new ExpenceRowMapper());
 
 		return expenseModels;

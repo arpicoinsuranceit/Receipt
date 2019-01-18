@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.rowmapper.AgentFullRowMapper;
+import org.arpico.groupit.receipt.dao.rowmapper.AgentMasterDetailsRowMapper;
 import org.arpico.groupit.receipt.dao.rowmapper.AgentRowMapper;
 import org.arpico.groupit.receipt.dao.rowmapper.AgnInqAgnListRowMapper;
+import org.arpico.groupit.receipt.model.AgentMasterDetailsModel;
 import org.arpico.groupit.receipt.model.AgentModel;
 import org.arpico.groupit.receipt.model.AgnInqAgnListModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +74,24 @@ public class AgentDaoImpl implements AgentDao {
 	@Override
 	public Integer getAgnInqListCount(String locCodes) throws Exception {
 		return jdbcTemplate.queryForObject(
-				"select count(*)  from inagentmast where sbucod = '450' and loccod in (" + locCodes + ")", Integer.class);
+				"select count(*)  from inagentmast where sbucod = '450' and loccod in (" + locCodes + ")",
+				Integer.class);
+	}
+
+	@Override
+	public AgentMasterDetailsModel getAgentMasterdetails(Integer agnCode) throws Exception {
+		return jdbcTemplate.queryForObject(
+				"select a.agncod, concat(a.loccod, ' | ' , l.loc_name) as loccod , concat(r.rgncod, ' | ' , r.rgnnam) as rgncod, "
+						+ "concat(z.zoncod , ' | ', z.zonnam) as zoncod, a.agntit, a.agnnam, a.midnam, a.lasnam, a.shrtnm, a.agnsta, a.agnsex, "
+						+ "a.agnrdt, a.agnrem, a.agnlcm as grntsta , a.appdat, a.orcrem, a.agncls as descignation , if(a.subdcd = 'IC', a.unlcod, a.bancod) as superisor,  "
+						+ "a.misapp, a.maprm, a.subtyp as agnnature , a.agnnic, a.agnepf, a.sliirg,a.agnmst, a.agndob, a.agnorc, 'not set yest' as type, a.subdcd, a.cntper, "
+						+ "a.cntofn, a.cntrsn, a.cnttlx, a.cntfax, a.cntmob, a.cnteml, a.agnad1,a.agnad2,a.agncty, a.agnofn, a.agnrsn, a.agntlx, a.agnfax, "
+						+ "a.agnmob, a.agnweb, a.agneml, a.efcdat from inagentmast a "
+						+ "	inner join rms_locations l on a.sbucod = l.sbu_code and a.loccod = l.loc_code  "
+						+ "    inner join inregion r on l.sbu_code = r.sbucod and l.rgncod = r.rgncod "
+						+ "    inner join inzonemast z on r.sbucod = z.sbucod and r.zoncod = z.zoncod "
+						+ "    where a.sbucod = 450 and a.agncod = '" + agnCode + "'",
+				new AgentMasterDetailsRowMapper());
 	}
 
 }

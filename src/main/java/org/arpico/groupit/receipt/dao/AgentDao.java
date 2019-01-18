@@ -2,6 +2,7 @@ package org.arpico.groupit.receipt.dao;
 
 import java.util.List;
 
+import org.arpico.groupit.receipt.model.AgentMasterDetailsModel;
 import org.arpico.groupit.receipt.model.AgentModel;
 import org.arpico.groupit.receipt.model.AgnInqAgnListModel;
 
@@ -22,4 +23,6 @@ public interface AgentDao {
 	List<AgnInqAgnListModel> getAgnInqList(String locCodes, Integer page, Integer offset) throws Exception;
 
 	Integer getAgnInqListCount(String locCodes) throws Exception;
+	
+	AgentMasterDetailsModel getAgentMasterdetails (Integer agnCode) throws Exception;
 }
