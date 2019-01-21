@@ -24,5 +24,5 @@ public interface AgentDao {
 
 	Integer getAgnInqListCount(String locCodes) throws Exception;
 	
-	AgentMasterDetailsModel getAgentMasterdetails (Integer agnCode) throws Exception;
+	AgentMasterDetailsModel getAgentMasterdetails(Integer agnCode) throws Exception;
 }

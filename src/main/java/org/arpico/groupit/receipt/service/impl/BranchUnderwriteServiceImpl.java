@@ -662,15 +662,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		
 		/* Save Nominee Details */
 		if(nomDetailsModels != null && !nomDetailsModels.isEmpty()) {
-			
-			//System.out.println("nomDetailsModels save" );
-			
-			//System.out.println(nomDetailsModels.size() + " nomDetailsModels.size()" );
-			nomDetailsModels.forEach(nom -> {
-				//System.out.println(nom.toString());
-				//System.out.println("////// 1 //////");
-				//System.out.println(propNomDetailsDao.save(nom));
-			});
+			propNomDetailsDao.save(nomDetailsModels);
 			
 		}
 		
@@ -733,7 +725,12 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		newInProposalsModel.setPpdad3(saveUnderwriteDto.getMainlifeUnderwriteDto().getAddress3());
 		newInProposalsModel.setPpddob(dateFormat.parse(new SimpleDateFormat("yyyy-MM-dd").format(new SimpleDateFormat("dd-MM-yyyy").parse(quotationDto.get_mainlife().get_mDob()))));
 		newInProposalsModel.setPpdnag(Integer.valueOf(quotationDto.get_mainlife().get_mAge()));
-		newInProposalsModel.setPpdnic(quotationDto.get_mainlife().get_mNic());
+		if(quotationDto.get_mainlife().get_mNic().isEmpty() || quotationDto.get_mainlife().get_mNic() == null) {
+			newInProposalsModel.setPpdnic(saveUnderwriteDto.getMainlifeUnderwriteDto().getNic());
+		}else {
+			newInProposalsModel.setPpdnic(quotationDto.get_mainlife().get_mNic());
+		}
+		
 		newInProposalsModel.setPpdsex(quotationDto.get_mainlife().get_mGender());
 		newInProposalsModel.setPpdcst(saveUnderwriteDto.getMainlifeUnderwriteDto().getCivilStatus());
 		newInProposalsModel.setPpdtel(saveUnderwriteDto.getMainlifeUnderwriteDto().getTele());
@@ -772,7 +769,14 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 
 		newInProposalsModel.setRlftrm(quotationDto.get_plan().get_payingterm() != null ? quotationDto.get_plan().get_payingterm() : "0");
 		newInProposalsModel.setJlfsex(quotationDto.get_mainlife().get_mGender());
-		newInProposalsModel.setNewnic(quotationDto.get_mainlife().get_mNic());
+		
+		if(quotationDto.get_mainlife().get_mNic().isEmpty() || quotationDto.get_mainlife().get_mNic() == null) {
+			newInProposalsModel.setNewnic(saveUnderwriteDto.getMainlifeUnderwriteDto().getNic());
+		}else {
+			newInProposalsModel.setNewnic(quotationDto.get_mainlife().get_mNic());
+		}
+		
+		
 		
 		
 		
@@ -807,7 +811,12 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 			newInProposalsModel.setSpoini(saveUnderwriteDto.getSpouseUnderwriteDto().getSpouseNameInitial());
 			newInProposalsModel.setSpoocu(saveUnderwriteDto.getSpouseUnderwriteDto().getSpouseOccupation());
 			newInProposalsModel.setStitle(quotationDto.get_spouse().get_sTitle());
-			newInProposalsModel.setSponic(quotationDto.get_spouse().get_sNic());
+			if(quotationDto.get_spouse().get_sNic().isEmpty() || quotationDto.get_spouse().get_sNic() ==  null) {
+				newInProposalsModel.setSponic(saveUnderwriteDto.getSpouseUnderwriteDto().getSpouseNic());
+			}else {
+				newInProposalsModel.setSponic(quotationDto.get_spouse().get_sNic());
+			}
+			
 			newInProposalsModel.setSpodob(dateFormat.parse(new SimpleDateFormat("yyyy-MM-dd").format(new SimpleDateFormat("dd-MM-yyyy").parse(quotationDto.get_spouse().get_sDob()))));
 			newInProposalsModel.setSagnxt(Integer.valueOf(quotationDto.get_spouse().get_sAge()));
 			newInProposalsModel.setShighc(Double.valueOf(saveUnderwriteDto.getSpouseUnderwriteDto().getSpouseHeight()));
@@ -1208,9 +1217,9 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 			});
 		}
 		
-		//System.out.println(inPropNomDetailsModels.size() + " inPropNomDetailsModels.size()");
+		System.out.println(inPropNomDetailsModels.size() + " inPropNomDetailsModels.size()");
 		
-		//System.out.println(inPropNomDetailsModels.toString());
+		System.out.println(inPropNomDetailsModels.toString());
 		
 		return inPropNomDetailsModels;
 	}

@@ -143,7 +143,7 @@ public class BranchUnderwriteController {
 	
 	@RequestMapping(value = "/saveUnderwrite", method = RequestMethod.POST)
 	public ResponseEntity<Object> saveUnderwrite(@RequestBody SaveUnderwriteDto saveUnderwriteDto) {
-		//System.out.println(saveUnderwriteDto.toString());
+		System.out.println(saveUnderwriteDto.toString());
 		 
 		try {
 			return branchUnderwriteService.saveUnderwrite(saveUnderwriteDto);
