@@ -105,6 +105,8 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 	@Override
 	public ResponseEntity<Object> save(MiscellaneousReceiptInvDto dto, String token) throws Exception {
 		ResponseDto responseDto = null;
+		
+		System.out.println(dto.toString());
 
 		String user = decoder.generate(token);
 
@@ -397,7 +399,7 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 		model.setExcrat("1.0000");
 		model.setCurrCode("LKR");
 		model.setSysupload(AppConstant.EMPTY_STRING);
-		model.setOldRemark(AppConstant.EMPTY_STRING);
+		model.setOldRemark(dto.getBank());
 
 		return model;
 	}
