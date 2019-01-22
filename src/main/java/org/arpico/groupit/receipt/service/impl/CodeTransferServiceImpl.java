@@ -469,7 +469,7 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 				codeTransferGridDto.setCrAgn(ct.getAgentCode());
 				codeTransferGridDto.setCrBranch(ct.getBranch());
 				codeTransferGridDto.setNewAgn(saveCodeTransferDto.getAgent());
-				codeTransferGridDto.setNewBranch(userDao.getUserLocations(saveCodeTransferDto.getAgent()).get(0));
+				codeTransferGridDto.setNewBranch(inAgentMastDao.getAgentDetails(saveCodeTransferDto.getAgent()).get(0).getLocation());
 				codeTransferGridDto.setNo(ct.getPprNum());
 
 				codeTransferGrid.add(codeTransferGridDto);
@@ -560,7 +560,7 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 				codeTransferGridDto.setCrAgn(ct.getAgentCode());
 				codeTransferGridDto.setCrBranch(ct.getBranch());
 				codeTransferGridDto.setNewAgn(saveCodeTransferDto.getAgent());
-				codeTransferGridDto.setNewBranch(userDao.getUserLocations(saveCodeTransferDto.getAgent()).get(0));
+				codeTransferGridDto.setNewBranch(inAgentMastDao.getAgentDetails(saveCodeTransferDto.getAgent()).get(0).getLocation());
 				codeTransferGridDto.setNo(ct.getPprNum());
 
 				codeTransferGrid.add(codeTransferGridDto);
