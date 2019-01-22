@@ -24,6 +24,6 @@ public interface InBillingTransactionsCustomDao{
 	
 	List<PaymentHistoryModel> getPaymentHistory (String pprNum) throws Exception;
 	
-	List<InBillingTransactionsModel> getSetoffsForRcpl(Integer docnum) throws Exception;
+	List<InBillingTransactionsModel> getSetoffsForRcpl(Integer docnum, String docCode) throws Exception;
 
 }

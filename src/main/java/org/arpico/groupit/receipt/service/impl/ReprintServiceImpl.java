@@ -192,7 +192,7 @@ public class ReprintServiceImpl implements ReprintService {
 		}
 
 		List<InBillingTransactionsModel> inBillingTransactionsModels = billingTransactionsCustomDao
-				.getSetoffsForRcpl(receiptNo);
+				.getSetoffsForRcpl(receiptNo, docCode);
 
 		List<HashMap<String, String>> setoffList = new ArrayList<>();
 
