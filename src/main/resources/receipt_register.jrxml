@@ -125,25 +125,58 @@ WHERE
      and trim(a.creaby) like $P{creaby}
 and date_format(a.txndat,'%Y-%m-%d') between $P{pfdate} and  $P{ptdate}
 order by a.`bancod`,a.docnum) b
-]]>
+
+union all
+
+select * from
+(SELECT
+     a.sbu_code `sbucod`,
+     b.sbu_name,
+     a.loc_code `loccod`,
+     a.doc_code `doccod`,
+     a.doc_no `docnum`,
+     a.inv_amt as `totprm`,
+     0 as `paymod`,
+     "----" as `amtwrd`,
+     0 as `chqnum`,
+     "Inventory Receipts" as `bancod`,
+     0 as `advcod`,
+     a.cre_date,
+     a.cre_by,
+     a.txn_date,
+     0 as ppdnam,
+     0 as chqdat,
+     a.inv_amt cash,
+     0 as chq,
+     0 as creditcar,
+     0 as paytrm
+FROM
+     rms_doc_txnm a
+     INNER JOIN `rms_sbu` b ON a.`sbu_code` = b.`sbu_code`
+     inner join rms_doc_txnd p on a.sbu_code=p.sbu_code and a.loc_code=p.loc_code and a.doc_code=p.doc_code and a.doc_no=p.doc_no
+WHERE
+     a.sbu_code = $P{psbucod}
+     and trim(a.cre_by) like $P{creaby}
+and date_format(a.txn_date,'%Y-%m-%d') between $P{pfdate} and $P{ptdate}
+order by a.doc_no) a]]>
 	</queryString>
 	<field name="sbucod" class="java.lang.String"/>
 	<field name="sbu_name" class="java.lang.String"/>
 	<field name="loccod" class="java.lang.String"/>
 	<field name="doccod" class="java.lang.String"/>
 	<field name="docnum" class="java.lang.Integer"/>
-	<field name="totprm" class="java.math.BigDecimal"/>
+	<field name="totprm" class="java.lang.Double"/>
 	<field name="paymod" class="java.lang.String"/>
 	<field name="amtwrd" class="java.lang.String"/>
 	<field name="chqnum" class="java.lang.String"/>
 	<field name="bancod" class="java.lang.String"/>
 	<field name="advcod" class="java.lang.String"/>
-	<field name="creadt" class="java.sql.Timestamp"/>
+	<field name="creadt" class="java.sql.Date"/>
 	<field name="creaby" class="java.lang.String"/>
 	<field name="txndat" class="java.sql.Date"/>
 	<field name="ppdnam" class="java.lang.String"/>
 	<field name="chqdat" class="java.lang.String"/>
-	<field name="cash" class="java.math.BigDecimal"/>
+	<field name="cash" class="java.lang.Double"/>
 	<field name="chq" class="java.math.BigDecimal"/>
 	<field name="creditcar" class="java.math.BigDecimal"/>
 	<field name="paytrm" class="java.lang.String"/>
