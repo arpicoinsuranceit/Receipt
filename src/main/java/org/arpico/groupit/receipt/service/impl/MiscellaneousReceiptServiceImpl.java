@@ -153,7 +153,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 							emailDto.setSubject("Miscellaneous Receipt (INV)");
 
 							String body = "Miscellaneous Receipt (INV) \n\n";
-							body += "Receipt No : " + docTxnmModel.getRmsDocTxnmModelPK().getDocCode() + "\n";
+							body += "Receipt No : " + docTxnmModel.getRmsDocTxnmModelPK().getDocCode() + " | " + docTxnmModel.getRmsDocTxnmModelPK().getDocCode() + "\n";
 							body += "Receipted Date : " + docTxnmModel.getCreDate() + "\n";
 							body += "Branch : " + docTxndModels.get(0).getDimm04() + "\n";
 							body += "Advisor Code : " + docTxnmModel.getRef1() + "\n\n Items \n\n";
