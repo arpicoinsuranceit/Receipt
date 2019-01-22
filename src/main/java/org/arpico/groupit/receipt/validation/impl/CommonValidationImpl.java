@@ -177,4 +177,31 @@ public class CommonValidationImpl implements CommonValidations {
 		}
 	}
 
+	@Override
+	public String validatePolicyreceipt(SaveReceiptDto saveReceiptDto) throws Exception {
+		ProposalNoSeqNoDto obj = proposalServce.getPolicyNoSeqNoDto(Integer.toString(saveReceiptDto.getPolId()));
+
+		System.out.println(saveReceiptDto.toString());
+		
+		System.out.println(saveReceiptDto.toString());
+		
+		if (bankService.findBankById(saveReceiptDto.getBankCode())) {
+			
+			System.out.println("Bank Founded");
+			if (obj != null) {
+
+				//System.out.println("if");
+
+				return ok;
+			} else {
+
+				//System.out.println("else");
+
+				return proposalnotavailable;
+			}
+		} else {
+			return bankNotAvailable;
+		}
+	}
+
 }

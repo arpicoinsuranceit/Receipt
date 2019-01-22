@@ -52,10 +52,10 @@ import org.springframework.transaction.annotation.Transactional;
 @PropertySource("classpath:application.properties")
 public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptService {
 
-	@Value("${gl_acc_param}")
+	@Value("${admin_email1}")
 	private String admin_email1;
 	
-	@Value("${gl_acc_param}")
+	@Value("${admin_email2}")
 	private String admin_email2;
 	
 	@Autowired
@@ -400,6 +400,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		model.setAmtfcu(dto.getAmount());
 		model.setRemarks(dto.getRemark() != null ? dto.getRemark() : AppConstant.EMPTY_STRING);
 		model.setRef3(dto.getChqNo() != null ? dto.getChqNo() : AppConstant.EMPTY_STRING);
+		model.setRef4(dto.getBank());
 
 		///////// Empty //////////////////////////////
 
@@ -426,7 +427,6 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		model.setCnfuser(AppConstant.EMPTY_STRING);
 		model.setGlgrup(AppConstant.EMPTY_STRING);
 		model.setLocser(AppConstant.EMPTY_STRING);
-		model.setRef4(AppConstant.EMPTY_STRING);
 		model.setRef5(AppConstant.EMPTY_STRING);
 
 		////// END Empty //////////////////////////////

@@ -24,6 +24,7 @@ public interface ProposalServce {
 			String agentCode, String locCode, InBillingTransactionsModel deposit) throws Exception;
 
 	List<SearchDto> getSearch(String value, String type, String receiptType) throws Exception;
-	
+
+	ProposalNoSeqNoDto getPolicyNoSeqNoDto(String string) throws Exception;
 	
 }

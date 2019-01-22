@@ -657,5 +657,14 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 		return models;
 	}
 
+	@Override
+	public List<ProposalNoSeqNoModel> getPolicyNoSeqNoModel(String polNum) throws Exception {
+		List<ProposalNoSeqNoModel> list = jdbcTemplate.query(
+				"select polnum as pprnum, prpseq from inproposals " + "where sbucod = '450' and polnum = '" + polNum
+						+ "' and pprsta in ('plisu', 'plaps', 'lamd', 'plapp', 'plnrv')",
+				new ProposalNoSeqNoRowMapper());
+		return list;
+	}
+
 
 }

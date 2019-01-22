@@ -4,9 +4,12 @@ import java.util.List;
 
 import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
 import org.arpico.groupit.receipt.dto.ProposalNoSeqNoDto;
+import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.dto.SaveReceiptDto;
 import org.arpico.groupit.receipt.service.PolicyReceiptService;
+import org.arpico.groupit.receipt.validation.CommonValidations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +25,9 @@ public class PolicyReceiptController {
 
 	@Autowired
 	private PolicyReceiptService policyReceiptService;
+	
+	@Autowired
+	private CommonValidations commonValidations;
 
 	@RequestMapping(value = "/policysearch/{val}", method = RequestMethod.GET)
 	public List<ProposalNoSeqNoDto> getProposalNSeqNo(@PathVariable String val) {
@@ -49,15 +55,38 @@ public class PolicyReceiptController {
 	@RequestMapping(value = "/savereceiptPol", method = RequestMethod.POST)
 	public ResponseEntity<Object> savePolicyReceipt(@RequestBody SaveReceiptDto saveReceiptDto) {
 		// System.out.println(saveReceiptDto.toString());
-
-		System.out.println("POLICY RECEIPT SAVE");
+		
+		String valid = "Error";
 
 		try {
-			return policyReceiptService.savePolicyReceipt(saveReceiptDto);
+			valid = commonValidations.validatePolicyreceipt(saveReceiptDto);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		
+		System.out.println("POLICY RECEIPT SAVE");
+
+		
+		
+		try {
+			
+			if (valid.equalsIgnoreCase("ok")) {
+				
+				System.out.println("POLICY RECEIPT SAVE VALIDATION PASS");
+				
+				return policyReceiptService.savePolicyReceipt(saveReceiptDto);
+			} else {
+				
+				System.out.println("POLICY RECEIPT SAVE VALIDATION FAIL");
+				
+				return new ResponseEntity<>(valid, HttpStatus.NOT_ACCEPTABLE);
+			}
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
+			return new ResponseEntity<>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return null;
 	}
 
 }

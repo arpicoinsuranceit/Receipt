@@ -12,5 +12,7 @@ public interface CommonValidations {
 	public String validateMiscellaneousReceiptInvInputs(MiscellaneousReceiptInvDto dto, String token) throws Exception;
 	
 	public String validateMiscellaneousReceiptGlInputs(MiscellaneousReceiptInvDto dto, String token) throws Exception;
+
+	public String validatePolicyreceipt(SaveReceiptDto saveReceiptDto) throws Exception;
 	
 }

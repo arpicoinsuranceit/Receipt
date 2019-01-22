@@ -1153,4 +1153,19 @@ public class ProposalServiceImpl implements ProposalServce {
 		dto.setSeqNum(e.getInProposalsModelPK().getPrpseq());
 		return dto;
 	}
+
+	@Override
+	public ProposalNoSeqNoDto getPolicyNoSeqNoDto(String polNum) throws Exception {
+		ProposalNoSeqNoDto proposalNoSeqNoDtos = null;
+
+		List<ProposalNoSeqNoModel> list = inProposalCustomDao.getPolicyNoSeqNoModel(polNum);
+
+		//System.out.println(list.size());
+
+		if (list != null && !(list.isEmpty())) {
+			proposalNoSeqNoDtos = getProposalNoSeqNoDto(list.get(0));
+		}
+
+		return proposalNoSeqNoDtos;
+	}
 }

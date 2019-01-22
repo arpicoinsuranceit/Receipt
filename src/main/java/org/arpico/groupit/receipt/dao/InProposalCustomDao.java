@@ -62,4 +62,6 @@ public interface InProposalCustomDao {
 
 	List<WorkFlowPolicyGridModel> getWorkFlowPolicylaps(String type, String paraForIn, Integer date1, Integer date2, String type2);
 
+	List<ProposalNoSeqNoModel> getPolicyNoSeqNoModel(String polNum) throws Exception;
+
 }

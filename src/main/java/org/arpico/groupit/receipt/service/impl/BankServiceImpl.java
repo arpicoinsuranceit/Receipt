@@ -38,9 +38,9 @@ public class BankServiceImpl implements BankService {
 		
 		String location = new DaoParameters().getParaForIn(data);
 		String dataSql = "where SBUCOD = '450' ";
-		if (!locationsTemp.contains("HO")) {
+		//if (!locationsTemp.contains("HO")) {
 			dataSql += " and loccod in (" + location + ")";
-		}
+		//}
 		
 		List<BankModel> bankModels = bankDao.getBankList(dataSql);
 		
