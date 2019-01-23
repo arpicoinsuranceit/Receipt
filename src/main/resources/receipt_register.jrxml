@@ -80,7 +80,7 @@ select * from
 FROM
      rms_recm a
      INNER JOIN `rms_sbu` b ON a.`sbu_code` = b.`sbu_code`
-     inner join rms_recd p on a.sbu_code=p.sbu_code and a.loc_code=p.loc_code and a.doc_code=p.doc_code and a.doc_no=p.doc_no
+
 WHERE
      a.sbu_code = $P{psbucod}
      and trim(a.cre_by) like $P{creaby}
@@ -153,7 +153,7 @@ select * from
 FROM
      rms_doc_txnm a
      INNER JOIN `rms_sbu` b ON a.`sbu_code` = b.`sbu_code`
-     inner join rms_doc_txnd p on a.sbu_code=p.sbu_code and a.loc_code=p.loc_code and a.doc_code=p.doc_code and a.doc_no=p.doc_no
+
 WHERE
      a.sbu_code = $P{psbucod}
      and trim(a.cre_by) like $P{creaby}

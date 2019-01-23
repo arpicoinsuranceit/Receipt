@@ -1,6 +1,7 @@
 package org.arpico.groupit.receipt.dto;
 
 import java.util.Date;
+import java.util.List;
 
 public class AgentMasterDto {
 
@@ -52,6 +53,21 @@ public class AgentMasterDto {
 	private String web;
 	private String email;
 	private String efficenciveDate;
+	
+	private String agencyAgreement;
+	private String agencyAgreementIsuDa;
+	private String agencyAgreementAcpDat;
+	private String supAgreement;
+	private String supAgreementIsuDat;
+	private String supAgreementAcpDat;
+	private String travelAllow;
+	private String travelAllowIsuDat;
+	private String travelAllowAcpDat;
+	private List<SettlementDetailsDto> settlement;
+	private List<TargetsDto> target;
+	private List<HierarchyTransferDto> hierarchy;
+	private List<DesignationDto> designations;
+	private List<EducationDto> education;
 
 	public String getCode() {
 		return code;
@@ -435,6 +451,142 @@ public class AgentMasterDto {
 
 	public void setEfficenciveDate(String efficenciveDate) {
 		this.efficenciveDate = efficenciveDate;
+	}
+
+	public String getAgencyAgreement() {
+		return agencyAgreement;
+	}
+
+	public void setAgencyAgreement(String agencyAgreement) {
+		this.agencyAgreement = agencyAgreement;
+	}
+
+	public String getAgencyAgreementIsuDa() {
+		return agencyAgreementIsuDa;
+	}
+
+	public void setAgencyAgreementIsuDa(String agencyAgreementIsuDa) {
+		this.agencyAgreementIsuDa = agencyAgreementIsuDa;
+	}
+
+	public String getAgencyAgreementAcpDat() {
+		return agencyAgreementAcpDat;
+	}
+
+	public void setAgencyAgreementAcpDat(String agencyAgreementAcpDat) {
+		this.agencyAgreementAcpDat = agencyAgreementAcpDat;
+	}
+
+	public String getSupAgreement() {
+		return supAgreement;
+	}
+
+	public void setSupAgreement(String supAgreement) {
+		this.supAgreement = supAgreement;
+	}
+
+	public String getSupAgreementIsuDat() {
+		return supAgreementIsuDat;
+	}
+
+	public void setSupAgreementIsuDat(String supAgreementIsuDat) {
+		this.supAgreementIsuDat = supAgreementIsuDat;
+	}
+
+	public String getSupAgreementAcpDat() {
+		return supAgreementAcpDat;
+	}
+
+	public void setSupAgreementAcpDat(String supAgreementAcpDat) {
+		this.supAgreementAcpDat = supAgreementAcpDat;
+	}
+
+	public String getTravelAllow() {
+		return travelAllow;
+	}
+
+	public void setTravelAllow(String travelAllow) {
+		this.travelAllow = travelAllow;
+	}
+
+	public String getTravelAllowIsuDat() {
+		return travelAllowIsuDat;
+	}
+
+	public void setTravelAllowIsuDat(String travelAllowIsuDat) {
+		this.travelAllowIsuDat = travelAllowIsuDat;
+	}
+
+	public String getTravelAllowAcpDat() {
+		return travelAllowAcpDat;
+	}
+
+	public void setTravelAllowAcpDat(String travelAllowAcpDat) {
+		this.travelAllowAcpDat = travelAllowAcpDat;
+	}
+
+	public List<SettlementDetailsDto> getSettlement() {
+		return settlement;
+	}
+
+	public void setSettlement(List<SettlementDetailsDto> settlement) {
+		this.settlement = settlement;
+	}
+
+	public List<TargetsDto> getTarget() {
+		return target;
+	}
+
+	public void setTarget(List<TargetsDto> target) {
+		this.target = target;
+	}
+
+	public List<HierarchyTransferDto> getHierarchy() {
+		return hierarchy;
+	}
+
+	public void setHierarchy(List<HierarchyTransferDto> hierarchy) {
+		this.hierarchy = hierarchy;
+	}
+
+	public List<DesignationDto> getDesignations() {
+		return designations;
+	}
+
+	public void setDesignations(List<DesignationDto> designations) {
+		this.designations = designations;
+	}
+
+	public List<EducationDto> getEducation() {
+		return education;
+	}
+
+	public void setEducation(List<EducationDto> education) {
+		this.education = education;
+	}
+
+	@Override
+	public String toString() {
+		return "AgentMasterDto [code=" + code + ", branch=" + branch + ", region=" + region + ", zone=" + zone
+				+ ", title=" + title + ", fName=" + fName + ", lName=" + lName + ", mName=" + mName + ", sName=" + sName
+				+ ", status=" + status + ", sex=" + sex + ", DateOfResign=" + DateOfResign + ", remark=" + remark
+				+ ", grantStatus=" + grantStatus + ", appoinmentDate=" + appoinmentDate + ", orcRem=" + orcRem
+				+ ", designation=" + designation + ", supervisor=" + supervisor + ", misappropiate=" + misappropiate
+				+ ", missappRem=" + missappRem + ", agnNat=" + agnNat + ", nic=" + nic + ", epf=" + epf + ", sliiRegNo="
+				+ sliiRegNo + ", remarks=" + remarks + ", civlStatus=" + civlStatus + ", dob=" + dob + ", ocrStatus="
+				+ ocrStatus + ", type=" + type + ", subDesignation=" + subDesignation + ", contactPerson="
+				+ contactPerson + ", contactTelOffice=" + contactTelOffice + ", contactTelRecidence="
+				+ contactTelRecidence + ", contactTelx=" + contactTelx + ", contactFax=" + contactFax
+				+ ", contactMobile=" + contactMobile + ", contactEMail=" + contactEMail + ", address1=" + address1
+				+ ", address2=" + address2 + ", city=" + city + ", telOffice=" + telOffice + ", telRecidence="
+				+ telRecidence + ", telX=" + telX + ", fax=" + fax + ", mobile=" + mobile + ", web=" + web + ", email="
+				+ email + ", efficenciveDate=" + efficenciveDate + ", agencyAgreement=" + agencyAgreement
+				+ ", agencyAgreementIsuDa=" + agencyAgreementIsuDa + ", agencyAgreementAcpDat=" + agencyAgreementAcpDat
+				+ ", supAgreement=" + supAgreement + ", supAgreementIsuDat=" + supAgreementIsuDat
+				+ ", supAgreementAcpDat=" + supAgreementAcpDat + ", travelAllow=" + travelAllow + ", travelAllowIsuDat="
+				+ travelAllowIsuDat + ", travelAllowAcpDat=" + travelAllowAcpDat + ", settlement=" + settlement
+				+ ", target=" + target + ", hierarchy=" + hierarchy + ", designations=" + designations + ", education="
+				+ education + "]";
 	}
 
 	

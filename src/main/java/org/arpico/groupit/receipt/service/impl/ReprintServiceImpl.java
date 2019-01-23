@@ -208,7 +208,7 @@ public class ReprintServiceImpl implements ReprintService {
 		});
 
 		InProposalsModel inProposalsModel = inProposalCustomDao
-				.getProposal(Integer.parseInt(inTransactionsModel.getPprnum()), inTransactionsModel.getSeqnum());
+				.getProposalFromPprnum(Integer.parseInt(inTransactionsModel.getPprnum()));
 
 		ReceiptPrintDto receiptPrintDto = getReceiptPrintDtoInTran(inProposalsModel, inTransactionsModel);
 		receiptPrintDto.setSetOffs(setoffList);
