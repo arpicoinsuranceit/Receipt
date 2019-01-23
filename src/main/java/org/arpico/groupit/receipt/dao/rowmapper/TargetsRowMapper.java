@@ -13,11 +13,11 @@ public class TargetsRowMapper implements RowMapper<TargetsModel>{
 		
 		TargetsModel targetsModel=new TargetsModel();
 		
-		targetsModel.setAchAmount(rs.getDouble("trgach"));
+		targetsModel.setAchAmount(rs.getDouble("trgaca"));
 		targetsModel.setCfAmount(rs.getDouble("trgtcfa"));
 		targetsModel.setMonth(rs.getString("trgmon"));
 		targetsModel.setOrRate(rs.getDouble("trgorc"));
-		targetsModel.setPremium(rs.getDouble("trgamt"));
+		targetsModel.setPremium(rs.getDouble("trgach"));
 		targetsModel.setTargetAmount(rs.getDouble("trgamt"));
 		
 		return targetsModel;
