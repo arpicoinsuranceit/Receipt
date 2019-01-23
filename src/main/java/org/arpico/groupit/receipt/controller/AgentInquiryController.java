@@ -2,6 +2,7 @@ package org.arpico.groupit.receipt.controller;
 
 import java.util.List;
 
+import org.arpico.groupit.receipt.dto.AgentMasterDto;
 import org.arpico.groupit.receipt.dto.AgnInqAgnListDto;
 import org.arpico.groupit.receipt.service.AgentInquiryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,11 @@ public class AgentInquiryController {
 
 		return count;
 
+	}
+	
+	@GetMapping("/getAgentDetails/{agentCode:.+}")
+	public AgentMasterDto getAgentDetails(@PathVariable String agentCode)throws Exception{
+		return agentInquiryService.getAgentFullDetails(agentCode);
 	}
 
 }
