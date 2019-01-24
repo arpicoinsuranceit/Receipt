@@ -21,7 +21,7 @@ public class AgentController {
 	
 	@RequestMapping(value = "/getAgents", method = RequestMethod.POST)
 	public List<AgentDto> getAgentDtos (@RequestParam Integer agentCode, @RequestParam String token){
-		
+		System.out.println(agentCode + " agentCode");
 		try {
 			return agentService.getAgentList(agentCode, token);
 		} catch (Exception e) {
