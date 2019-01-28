@@ -18,7 +18,7 @@ public class NumberGeneratorImpl implements NumberGenerator {
 
 	@Override
 	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public String[] generateNewId(String sbuCode, String locationCode, String serialId, String instatus)
+	synchronized public String[] generateNewId(String sbuCode, String locationCode, String serialId, String instatus)
 			throws Exception {
 
 		long increment_by = 0;

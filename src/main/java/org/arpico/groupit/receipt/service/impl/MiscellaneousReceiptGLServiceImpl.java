@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.arpico.groupit.receipt.client.InfosysWSClient;
 import org.arpico.groupit.receipt.dao.GlCharOfAccsDao;
 import org.arpico.groupit.receipt.dao.GlTranTempDao;
 import org.arpico.groupit.receipt.dao.InGLIntegParametersDao;
@@ -13,12 +14,15 @@ import org.arpico.groupit.receipt.dao.RmsRecdDao;
 import org.arpico.groupit.receipt.dao.RmsRecmCustomDao;
 import org.arpico.groupit.receipt.dao.RmsRecmDao;
 import org.arpico.groupit.receipt.dto.AccountGLDto;
+import org.arpico.groupit.receipt.dto.EmailDto;
 import org.arpico.groupit.receipt.dto.MiscellaneousReceiptInvDto;
 import org.arpico.groupit.receipt.dto.ReceiptPrintDto;
 import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.dto.RmsRecmDto;
 import org.arpico.groupit.receipt.model.AccountGLModel;
 import org.arpico.groupit.receipt.model.GlTranTempModel;
+import org.arpico.groupit.receipt.model.RmsDocTxndModel;
+import org.arpico.groupit.receipt.model.RmsItemMasterModel;
 import org.arpico.groupit.receipt.model.RmsRecdModel;
 import org.arpico.groupit.receipt.model.RmsRecmGridModel;
 import org.arpico.groupit.receipt.model.RmsRecmModel;
@@ -47,6 +51,12 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 	@Value("${gl_acc_param}")
 	private String accounts;
 
+	@Value("${glrc_email}")
+	private String glrcEmail;
+
+	@Value("${prtinttest}")
+	private String test;
+
 	@Autowired
 	private DaoParameters daoParameters;
 
@@ -73,10 +83,10 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 
 	@Autowired
 	private GlTranTempDao glTranTempDao;
-	
+
 	@Autowired
 	private RmsRecmCustomDao rmsRecmCustomDao;
-	
+
 	@Autowired
 	private InGLIntegParametersDao inGLIntegParametersDao;
 
@@ -105,7 +115,7 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 	@Override
 	public ResponseEntity<Object> save(MiscellaneousReceiptInvDto dto, String token) throws Exception {
 		ResponseDto responseDto = null;
-		
+
 		System.out.println(dto.toString());
 
 		String user = decoder.generate(token);
@@ -124,9 +134,16 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 
 			List<GlTranTempModel> tranTempModels = new ArrayList<>();
 
+			boolean isIbsl = false;
+
 			for (Integer i = 0; i < dto.getAccounts().size(); i++) {
 
 				AccountGLDto e = dto.getAccounts().get(i);
+
+				System.out.println("e.getId() : " + e.getId());
+				if (e.getId() == 300) {
+					isIbsl = true;
+				}
 
 				RmsRecdModel recdModel = getRecdModel(dto, user, docNo, e, i);
 
@@ -155,6 +172,64 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 					printDto = getReceiptPrintDto(recmModel, recdModels, user, dto, false);
 				} catch (Exception e) {
 					e.printStackTrace();
+				}
+
+				if (isIbsl) {
+
+					System.out.println("e.getId() : ");
+
+					try {
+						EmailDto emailDto = new EmailDto();
+
+						String toEmail = glrcEmail;
+						// String toEmail="anjana.t@arpicoinsurance.com";
+						String fromEmail = glrcEmail;
+						// String fromEmail = "anjana.t@arpicoinsurance.com";
+
+						if (toEmail != null && toEmail != "" && fromEmail != null && fromEmail != "") {
+
+							List<String> ccMails = new ArrayList<>();
+							// ccMails.add(fromEmail);
+							// ccMails.add(admin_email2);
+							// ccMails.add("anjana.t@arpicoinsurance.com");
+
+							emailDto.setAttachments(new ArrayList<>());
+							emailDto.setCcMails(ccMails);
+							emailDto.setFromMail(fromEmail);
+							emailDto.setToMail(toEmail);
+							emailDto.setToken("no token");
+
+							emailDto.setUserCode(user);
+
+							emailDto.setSubject("Miscellaneous Receipt (GLRC) " + test);
+
+							String body = "Miscellaneous Receipt (GLRC) " + test + " \n\n";
+							body += "Receipt No : " + recmModel.getRmsRecmModelPK().getDocCode() + " | "
+									+ recmModel.getRmsRecmModelPK().getDocNo() + "\n";
+							body += "Receipted Date : " + recmModel.getCreDate() + "\n";
+							body += "Branch : " + dto.getBranch() + "\n";
+							body += "Remark : " + recmModel.getRemark() + "\n\n ";
+
+							for (RmsRecdModel recd : recdModels) {
+								body += "\t\t" + recd.getRemarks() + "\n";
+							}
+
+							body += "\n\n";
+
+							body += "Amount : " + recmModel.getAmtfcu();
+							body += "User Name : " + recmModel.getCreBy();
+
+							emailDto.setBody(body);
+
+							emailDto.setDepartment(AppConstant.EMAIL_ADMIN);
+
+							new InfosysWSClient().sendEmail(emailDto);
+
+						}
+
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 
 				responseDto = new ResponseDto();
@@ -308,7 +383,7 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 		printDto.setDocNum(recmModel.getRmsRecmModelPK().getDocNo());
 		printDto.setRctDate(new Date());
 		printDto.setLocation(recmModel.getRmsRecmModelPK().getLocCode());
-		//printDto.setRemark(recmModel.getRemark());
+		// printDto.setRemark(recmModel.getRemark());
 		printDto.setUserName(user);
 		printDto.setCusName(recmModel.getRemark());
 		printDto.setLocation(recmModel.getRmsRecmModelPK().getLocCode());
@@ -369,10 +444,10 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 		RmsRecmModel model = new RmsRecmModel();
 
 		String data = "";
-		if(dto.getPaymode().equalsIgnoreCase("CQ")) {
-			data = " ("+dto.getChqNo()+")";
+		if (dto.getPaymode().equalsIgnoreCase("CQ")) {
+			data = " (" + dto.getChqNo() + ")";
 		}
-		
+
 		model.setRmsRecmModelPK(modelPK);
 
 		model.setAmtfcu(dto.getAmount());
@@ -406,29 +481,29 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 
 	@Override
 	public List<RmsRecmDto> getLatestReceipts(String token) throws Exception {
-		
+
 		String creBy = decoder.generate(token);
-		
+
 		List<RmsRecmGridModel> gridModels = rmsRecmCustomDao.findTop10(creBy);
-		
+
 		List<RmsRecmDto> dtos = new ArrayList<>();
-		
+
 		gridModels.forEach(e -> {
 			dtos.add(getDto(e));
 		});
-		
+
 		return dtos;
 	}
 
 	private RmsRecmDto getDto(RmsRecmGridModel e) {
 		RmsRecmDto recmDto = new RmsRecmDto();
-		
+
 		recmDto.setAmtfcu(e.getAmtfcu());
 		recmDto.setCreateDate(e.getCreateDate());
 		recmDto.setDocCode(e.getDocCode());
 		recmDto.setDonNo(e.getDonNo());
 		recmDto.setRemark(e.getRemark());
-		
+
 		return recmDto;
 	}
 
