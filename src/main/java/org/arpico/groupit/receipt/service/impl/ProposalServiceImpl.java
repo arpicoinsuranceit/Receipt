@@ -865,9 +865,7 @@ public class ProposalServiceImpl implements ProposalServce {
 		model.setPpdsex(inProposalsModel.getPpdsex());
 		model.setPpdtel(inProposalsModel.getPpdtel());
 		model.setPprsta(AppConstant.POLICY_STATUS_PLISU);
-		model.setPrpdat(inProposalsModel.getPrpdat());
-		model.setPspndt(inProposalsModel.getPspndt());
-		model.setPrflng(inProposalsModel.getPrflng());
+		model.setPrdcod(inProposalsModel.getPrdcod());
 		model.setPrdnam(inProposalsModel.getPrdnam());
 		model.setPremum(inProposalsModel.getPremum());
 		model.setPrflng(inProposalsModel.getPrflng());
@@ -892,8 +890,6 @@ public class ProposalServiceImpl implements ProposalServce {
 		model.setSagnxt(inProposalsModel.getSagnxt());
 		model.setSeqnum(inProposalsModel.getSeqnum());
 		model.setShighc(inProposalsModel.getShighc());
-		model.setSeqnum(inProposalsModel.getSeqnum());
-		model.setShighc(inProposalsModel.getShighc());
 		model.setSinprm(inProposalsModel.getSinprm());
 		model.setSmksta(inProposalsModel.getSmksta());
 		model.setSndapp(inProposalsModel.getSndapp());
@@ -914,6 +910,7 @@ public class ProposalServiceImpl implements ProposalServce {
 		model.setSwighk(inProposalsModel.getSwighk());
 		model.setTaxamt(inProposalsModel.getTaxamt());
 		model.setToptrm(inProposalsModel.getToptrm());
+		model.setTotprm(inProposalsModel.getTotprm());
 		model.setTrgprm(inProposalsModel.getTrgprm());
 		model.setTxndat(inProposalsModel.getTxndat());
 		model.setUnddec(inProposalsModel.getUnddec());
