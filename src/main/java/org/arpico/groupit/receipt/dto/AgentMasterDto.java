@@ -54,6 +54,9 @@ public class AgentMasterDto {
 	private String email;
 	private String efficenciveDate;
 	
+	private String enteredBy;
+	private String approvedBy;
+	
 	private String agencyAgreement;
 	private String agencyAgreementIsuDa;
 	private String agencyAgreementAcpDat;
@@ -452,6 +455,24 @@ public class AgentMasterDto {
 	public void setEfficenciveDate(String efficenciveDate) {
 		this.efficenciveDate = efficenciveDate;
 	}
+	
+	
+
+	public String getEnteredBy() {
+		return enteredBy;
+	}
+
+	public void setEnteredBy(String enteredBy) {
+		this.enteredBy = enteredBy;
+	}
+
+	public String getApprovedBy() {
+		return approvedBy;
+	}
+
+	public void setApprovedBy(String approvedBy) {
+		this.approvedBy = approvedBy;
+	}
 
 	public String getAgencyAgreement() {
 		return agencyAgreement;
@@ -580,14 +601,16 @@ public class AgentMasterDto {
 				+ ", contactMobile=" + contactMobile + ", contactEMail=" + contactEMail + ", address1=" + address1
 				+ ", address2=" + address2 + ", city=" + city + ", telOffice=" + telOffice + ", telRecidence="
 				+ telRecidence + ", telX=" + telX + ", fax=" + fax + ", mobile=" + mobile + ", web=" + web + ", email="
-				+ email + ", efficenciveDate=" + efficenciveDate + ", agencyAgreement=" + agencyAgreement
-				+ ", agencyAgreementIsuDa=" + agencyAgreementIsuDa + ", agencyAgreementAcpDat=" + agencyAgreementAcpDat
-				+ ", supAgreement=" + supAgreement + ", supAgreementIsuDat=" + supAgreementIsuDat
-				+ ", supAgreementAcpDat=" + supAgreementAcpDat + ", travelAllow=" + travelAllow + ", travelAllowIsuDat="
-				+ travelAllowIsuDat + ", travelAllowAcpDat=" + travelAllowAcpDat + ", settlement=" + settlement
-				+ ", target=" + target + ", hierarchy=" + hierarchy + ", designations=" + designations + ", education="
-				+ education + "]";
+				+ email + ", efficenciveDate=" + efficenciveDate + ", enteredBy=" + enteredBy + ", approvedBy="
+				+ approvedBy + ", agencyAgreement=" + agencyAgreement + ", agencyAgreementIsuDa=" + agencyAgreementIsuDa
+				+ ", agencyAgreementAcpDat=" + agencyAgreementAcpDat + ", supAgreement=" + supAgreement
+				+ ", supAgreementIsuDat=" + supAgreementIsuDat + ", supAgreementAcpDat=" + supAgreementAcpDat
+				+ ", travelAllow=" + travelAllow + ", travelAllowIsuDat=" + travelAllowIsuDat + ", travelAllowAcpDat="
+				+ travelAllowAcpDat + ", settlement=" + settlement + ", target=" + target + ", hierarchy=" + hierarchy
+				+ ", designations=" + designations + ", education=" + education + "]";
 	}
+
+	
 
 	
 
