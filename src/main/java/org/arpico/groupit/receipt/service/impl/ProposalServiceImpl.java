@@ -484,7 +484,10 @@ public class ProposalServiceImpl implements ProposalServce {
 						System.out.println("NEW PROPOSAL CREATED" + proposalsModelNew.toString());
 
 						Integer updatedSeqNo = proposalsModelNew.getInProposalsModelPK().getPrpseq();
-						seqNo = updatedSeqNo;
+						
+						System.out.println(updatedSeqNo);
+						
+						//seqNo = updatedSeqNo;
 
 						List<InPropAddBenefitModel> addBenefitModels = addBenefictCustomDao.getBenefByPprSeq(pprNo,
 								seqNo);
@@ -492,6 +495,8 @@ public class ProposalServiceImpl implements ProposalServce {
 							addBenefitModels = incrementSeqAddBenef(addBenefitModels, updatedSeqNo);
 							
 							System.out.println("ADD BENEFICT" + addBenefitModels.toString());
+							
+							addBenefitModels.forEach(System.out::println);
 							
 							// addBenefictDao.save(addBenefitModels);
 						}
@@ -522,6 +527,12 @@ public class ProposalServiceImpl implements ProposalServce {
 								.getMedicalReqByPprNoAndSeq(pprNo, seqNo);
 						if (inPropMedicalReqModels != null && !inPropMedicalReqModels.isEmpty()) {
 							inPropMedicalReqModels = incrementPropMedical(inPropMedicalReqModels, updatedSeqNo);
+							
+							inPropMedicalReqModels.forEach(e -> {
+								if(e.getInPropMedicalReqModelPK().getMedcod().substring(0, 2).equals("AD") && e.getAddnot().length() > 14 && e.getAddnot().substring(0, 13).equals("Premium Short")) {
+									e.setTessta("Y");
+								}
+							});
 							// propMedicalReqDao.save(inPropMedicalReqModels);
 							System.out.println("MEDICALS" + inPropMedicalReqModels.toString());
 						}
@@ -686,66 +697,98 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	private List<InPropSurrenderValsModel> incrementSurrenderVals(
 			List<InPropSurrenderValsModel> propSurrenderValsModels, Integer updatedSeqNo, String polNo) {
+		
+		List<InPropSurrenderValsModel> list = new ArrayList<>();
 		propSurrenderValsModels.forEach(e -> {
 			e.getInPropSurrenderValsPK().setPrpseq(updatedSeqNo);
 			e.setPolnum(polNo);
+			
+			list.add(e);
 		});
-		return propSurrenderValsModels;
+		return list;
 	}
 
 	private List<InPropSchedulesModel> incremenntScheduleSeq(List<InPropSchedulesModel> propSchedulesModels,
 			Integer updatedSeqNo) {
+		
+		List<InPropSchedulesModel> list = new ArrayList<>();
+		
 		propSchedulesModels.forEach(e -> {
 			e.getInPropSchedulesPK().setPrpseq(updatedSeqNo);
+			list.add(e);
 		});
-		return propSchedulesModels;
+		return list;
 	}
 
 	private List<InPropPrePolsModel> incrementPropPolSeq(List<InPropPrePolsModel> inPropPrePolsModels,
 			Integer updatedSeqNo) {
+		
+		List<InPropPrePolsModel> list = new ArrayList<>();
+		
 		inPropPrePolsModels.forEach(e -> {
 			e.getInPropPrePolsModelPK().setPrpseq(updatedSeqNo);
+			list.add(e);
 		});
-		return inPropPrePolsModels;
+		return list;
 	}
 
 	private List<InPropNomDetailsModel> incrementPropNomDetailsSeq(List<InPropNomDetailsModel> propNomDetailsModels,
 			Integer updatedSeqNo) {
+		
+		List<InPropNomDetailsModel> list = new ArrayList<>();
+		
 		propNomDetailsModels.forEach(e -> {
 			e.getInPropNomDetailsModelPK().setPrpseq(updatedSeqNo);
+			list.add(e);
 		});
-		return propNomDetailsModels;
+		return list;
 	}
 
 	private List<InPropMedicalReqModel> incrementPropMedical(List<InPropMedicalReqModel> inPropMedicalReqModels,
 			Integer seqNo) {
+		
+		List<InPropMedicalReqModel> list = new ArrayList<>();
+		
 		inPropMedicalReqModels.forEach(e -> {
 			e.getInPropMedicalReqModelPK().setPrpseq(seqNo);
+			list.add(e);
 		});
-		return inPropMedicalReqModels;
+		return list;
 	}
 
 	private List<InPropLoadingModel> getInPropLoadings(List<InPropLoadingModel> inPropLoadingModels, Integer seqNo) {
+		
+		List<InPropLoadingModel> list = new ArrayList<>();
+		
 		inPropLoadingModels.forEach(e -> {
 			e.getInPropLoadingPK().setPrpseq(seqNo);
+			list.add(e);
 		});
-		return inPropLoadingModels;
+		return list;
 	}
 
 	private List<InPropFamDetailsModel> incrementSeqFamDetails(List<InPropFamDetailsModel> famDetailsModels,
 			Integer seqNo) {
+		
+		List<InPropFamDetailsModel> list = new ArrayList<>();
+		
 		famDetailsModels.forEach(e -> {
 			e.getInPropFamDetailsPK().setPrpseq(seqNo);
+			list.add(e);
 		});
-		return famDetailsModels;
+		return list;
 	}
 
 	private List<InPropAddBenefitModel> incrementSeqAddBenef(List<InPropAddBenefitModel> addBenefitModels,
 			Integer seqNo) {
+		
+		List<InPropAddBenefitModel> list = new ArrayList<>();
+		
 		addBenefitModels.forEach(e -> {
 			e.getInPropAddBenefitPK().setPrpseq(seqNo);
+			list.add(e);
 		});
-		return addBenefitModels;
+		return list;
 	}
 
 	private InProposalsModel getProposalPolicyStage(InProposalsModel inProposalsModel, String polNo,
@@ -865,9 +908,7 @@ public class ProposalServiceImpl implements ProposalServce {
 		model.setPpdsex(inProposalsModel.getPpdsex());
 		model.setPpdtel(inProposalsModel.getPpdtel());
 		model.setPprsta(AppConstant.POLICY_STATUS_PLISU);
-		model.setPrpdat(inProposalsModel.getPrpdat());
-		model.setPspndt(inProposalsModel.getPspndt());
-		model.setPrflng(inProposalsModel.getPrflng());
+		model.setPrdcod(inProposalsModel.getPrdcod());
 		model.setPrdnam(inProposalsModel.getPrdnam());
 		model.setPremum(inProposalsModel.getPremum());
 		model.setPrflng(inProposalsModel.getPrflng());
@@ -892,8 +933,6 @@ public class ProposalServiceImpl implements ProposalServce {
 		model.setSagnxt(inProposalsModel.getSagnxt());
 		model.setSeqnum(inProposalsModel.getSeqnum());
 		model.setShighc(inProposalsModel.getShighc());
-		model.setSeqnum(inProposalsModel.getSeqnum());
-		model.setShighc(inProposalsModel.getShighc());
 		model.setSinprm(inProposalsModel.getSinprm());
 		model.setSmksta(inProposalsModel.getSmksta());
 		model.setSndapp(inProposalsModel.getSndapp());
@@ -914,6 +953,7 @@ public class ProposalServiceImpl implements ProposalServce {
 		model.setSwighk(inProposalsModel.getSwighk());
 		model.setTaxamt(inProposalsModel.getTaxamt());
 		model.setToptrm(inProposalsModel.getToptrm());
+		model.setTotprm(inProposalsModel.getTotprm());
 		model.setTrgprm(inProposalsModel.getTrgprm());
 		model.setTxndat(inProposalsModel.getTxndat());
 		model.setUnddec(inProposalsModel.getUnddec());

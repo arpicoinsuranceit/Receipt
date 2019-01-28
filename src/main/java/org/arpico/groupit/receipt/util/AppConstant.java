@@ -35,6 +35,19 @@ public class AppConstant {
 	public static final String URI_SEND_EMAIL = "http://10.10.10.11:8090/sendEmail";
 	public static final String URI_SEND_SMS = "http://10.10.10.11:8090/sendSMS";
 	
+	public static final String URI_DASH_PARA = "http://10.10.10.12:8085/getdashboardpara";
+	public static final String URI_INQ_COUNT = "http://10.10.10.12:8085/getCount/";
+	public static final String URI_INQ_LOAD_DATA = "http://10.10.10.12:8085/getallinquiries/";
+	public static final String URI_PROPOSAL_GEN_DATA = "http://10.10.10.12:8085/getGeneral/";
+	public static final String URI_PROPOSAL_CHILD =  "http://10.10.10.12:8085/getChildren/";
+	public static final String URI_PROPOSAL_NOMINEE =  "http://10.10.10.12:8085/getNominee/";
+	public static final String URI_PROPOSAL_BENEFICT =  "http://10.10.10.12:8085/getBenefict/";
+	public static final String URI_PROPOSAL_MED_REQ =  "http://10.10.10.12:8085/getMedQry/";
+	public static final String URI_PROPOSAL_TRANS =  "http://10.10.10.12:8085/getTransferDetails/";
+	public static final String URI_PROPOSAL_SETTLEMENTS =  "http://10.10.10.12:8085/getSettlementDetails/";
+	public static final String URI_PROPOSAL_PAYMENT_HISTORY =  "http://10.10.10.12:8085/getPaymentHistory/";
+	public static final String URI_PROPOSAL_POL_DIS_ACH =  "http://10.10.10.12:8085/getPolicyDisAch/";
+	
 	public static final String DOC_CODE_FOR_RECEIPT = "RCPP";
 	public static final String POLICY_STATUS_PLISU = "PLISU";
 	public static final String DOC_CODE_OIIS = "OIIS";
@@ -49,6 +62,8 @@ public class AppConstant {
 	public static final String EMAIL_DEP_CODE_LIFE_SERVICE = "LIFE_SERVICE";
 	public static final String EMAIL_DEP_CODE_SALES = "SALES";
 	public static final String EMAIL_ADMIN = "ADMIN";
+	
+	
 	
 	
 	
