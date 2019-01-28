@@ -54,10 +54,13 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 
 	@Value("${admin_email1}")
 	private String admin_email1;
-	
+
 	@Value("${admin_email2}")
 	private String admin_email2;
 	
+	@Value("${prtinttest}")
+	private String test;
+
 	@Autowired
 	private JwtDecoder decoder;
 
@@ -104,7 +107,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 
 		String[] numberGen = numberGenerator.generateNewId("", "", "SQOIIS", "");
 
-		//System.out.println(Arrays.toString(numberGen));
+		// System.out.println(Arrays.toString(numberGen));
 
 		if (numberGen[0].equals("Success")) {
 
@@ -121,85 +124,99 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 				docTxndModels.add(getDocTxndModelInv(dto, user, docNo, e, i, itemMasterModel));
 			}
 
-			RmsDocTxnmModel docTxnmModel2 = rmsDocTxnmDao.save(docTxnmModel);
-			List<RmsDocTxndModel> docTxndModels2 = (List<RmsDocTxndModel>) rmsDocTxndDao.save(docTxndModels);
+			boolean saved = false;
 
+			try {
+				RmsDocTxnmModel docTxnmModel2 = rmsDocTxnmDao.save(docTxnmModel);
+				List<RmsDocTxndModel> docTxndModels2 = (List<RmsDocTxndModel>) rmsDocTxndDao.save(docTxndModels);
+				
+				//throw new RuntimeException();
+				
+				saved = true;
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			ReceiptPrintDto printDto = null;
 
-			if (docTxnmModel2 != null) {
-				if (docTxndModels2 != null) {
+			if (saved) {
 
-					try {
-						EmailDto emailDto = new EmailDto();
+				try {
+					EmailDto emailDto = new EmailDto();
 
-						String toEmail = admin_email1;
-						// String toEmail="anjana.t@arpicoinsurance.com";
-						String fromEmail = userDao.getUserEmail(user);
+					String toEmail = admin_email1;
+					//String toEmail="anjana.t@arpicoinsurance.com";
+					String fromEmail = userDao.getUserEmail(user);
+					//String fromEmail = "anjana.t@arpicoinsurance.com";
 
-						if (toEmail != null && toEmail != "" && fromEmail != null && fromEmail != "") {
+					if (toEmail != null && toEmail != "" && fromEmail != null && fromEmail != "") {
 
-							List<String> ccMails = new ArrayList<>();
-							ccMails.add(fromEmail);
-							ccMails.add(admin_email2);
+						List<String> ccMails = new ArrayList<>();
+						ccMails.add(fromEmail);
+						ccMails.add(admin_email2);
+						//ccMails.add("anjana.t@arpicoinsurance.com");
 
-							emailDto.setAttachments(new ArrayList<>());
-							emailDto.setCcMails(ccMails);
-							emailDto.setFromMail(fromEmail);
-							emailDto.setToMail(toEmail);
-							emailDto.setToken("no token");
+						emailDto.setAttachments(new ArrayList<>());
+						emailDto.setCcMails(ccMails);
+						emailDto.setFromMail(fromEmail);
+						emailDto.setToMail(toEmail);
+						emailDto.setToken("no token");
 
-							emailDto.setUserCode(user);
+						emailDto.setUserCode(user);
 
-							emailDto.setSubject("Miscellaneous Receipt (INV)");
+						emailDto.setSubject("Miscellaneous Receipt (INV) " + test);
 
-							String body = "Miscellaneous Receipt (INV) \n\n";
-							body += "Receipt No : " + docTxnmModel.getRmsDocTxnmModelPK().getDocCode() + " | " + docTxnmModel.getRmsDocTxnmModelPK().getDocNo() + "\n";
-							body += "Receipted Date : " + docTxnmModel.getCreDate() + "\n";
-							body += "Branch : " + docTxndModels.get(0).getDimm04() + "\n";
-							body += "Advisor Code : " + docTxnmModel.getRef1() + "\n\n Items \n\n";
+						String body = "Miscellaneous Receipt (INV) "+test+" \n\n";
+						body += "Receipt No : " + docTxnmModel.getRmsDocTxnmModelPK().getDocCode() + " | "
+								+ docTxnmModel.getRmsDocTxnmModelPK().getDocNo() + "\n";
+						body += "Receipted Date : " + docTxnmModel.getCreDate() + "\n";
+						body += "Branch : " + docTxndModels.get(0).getDimm04() + "\n";
+						body += "Advisor Code : " + docTxnmModel.getRef1() + "\n\n Items \n\n";
 
-							Integer count = 1;
+						Integer count = 1;
 
-							for (RmsDocTxndModel docTxndModel : docTxndModels) {
+						for (RmsDocTxndModel docTxndModel : docTxndModels) {
 
-								for (RmsItemMasterModel item : itemList) {
-									if (item.getItemCode().equals(docTxndModel.getItemCode())) {
-										body += count + ".\t " + item.getItemName() + "(" + item.getItemCode() + ")";
-									}
+							for (RmsItemMasterModel item : itemList) {
+								if (item.getItemCode().equals(docTxndModel.getItemCode())) {
+									body += count + ".\t " + item.getItemName() + "(" + item.getItemCode() + ") \n";
 								}
-
 							}
-
-							body += "\n\n";
-
-							body += "User Name : " + docTxnmModel.getCreBy();
-							body += "Remark : " + docTxnmModel.getRemarks();
-
-							emailDto.setBody(body);
-
-							emailDto.setDepartment(AppConstant.EMAIL_ADMIN);
-
-							new InfosysWSClient().sendEmail(emailDto);
+							
+							count++;
 
 						}
 
-					} catch (Exception e) {
-						// TODO: handle exception
+						body += "\n\n";
+
+						body += "User Name : " + docTxnmModel.getCreBy();
+						body += "Remark : " + docTxnmModel.getRemarks();
+
+						emailDto.setBody(body);
+
+						emailDto.setDepartment(AppConstant.EMAIL_ADMIN);
+
+						new InfosysWSClient().sendEmail(emailDto);
+
 					}
 
-					try {
-						printDto = getReceiptPrintDto(docTxnmModel, docTxndModels, user, itemList, dto, false);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-
-					responseDto = new ResponseDto();
-					responseDto.setCode("200");
-					responseDto.setStatus("Success");
-					responseDto.setMessage(docNo);
-					responseDto.setData(itextReceipt.createReceipt(printDto));
-					return new ResponseEntity<>(responseDto, HttpStatus.OK);
+				} catch (Exception e) {
+					// TODO: handle exception
 				}
+
+				try {
+					printDto = getReceiptPrintDto(docTxnmModel, docTxndModels, user, itemList, dto, false);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+				responseDto = new ResponseDto();
+				responseDto.setCode("200");
+				responseDto.setStatus("Success");
+				responseDto.setMessage(docNo);
+				responseDto.setData(itextReceipt.createReceipt(printDto));
+				return new ResponseEntity<>(responseDto, HttpStatus.OK);
+
 			}
 		} else {
 			responseDto = new ResponseDto();
@@ -236,7 +253,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		printDto.setRemark(docTxnmModel.getRemarks());
 		printDto.setUserName(userName);
 
-		//System.out.println(miscellaneousReceiptInvDto.getChqNo());
+		// System.out.println(miscellaneousReceiptInvDto.getChqNo());
 		if (miscellaneousReceiptInvDto.getChqNo() != null && !miscellaneousReceiptInvDto.getChqNo().equals("")) {
 			printDto.setChqNo(Integer.parseInt(miscellaneousReceiptInvDto.getChqNo()));
 		}
@@ -249,9 +266,9 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 			printDto.setBankCode(Integer.parseInt(miscellaneousReceiptInvDto.getChqBank()));
 		}
 
-		//System.out.println("Item List");
+		// System.out.println("Item List");
 
-		//docTxndModels.forEach(//System.out::println);
+		// docTxndModels.forEach(//System.out::println);
 
 		for (RmsDocTxndModel docTxndModel : docTxndModels) {
 			InventoryDetailsDto detailsDto = new InventoryDetailsDto();
@@ -278,7 +295,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 
 		printDto.setInventoryDtl(detailsDtos);
 
-		//detailsDtos.forEach(//System.out::println);
+		// detailsDtos.forEach(//System.out::println);
 
 		return printDto;
 	}
