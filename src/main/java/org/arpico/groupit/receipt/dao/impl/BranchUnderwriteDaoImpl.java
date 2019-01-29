@@ -72,6 +72,27 @@ public class BranchUnderwriteDaoImpl implements BranchUnderwriteDao {
 			return propCount;
 		}
 	}
+
+	@Override
+	public List<String> findLocCodesZonalBranch(String usercode) {
+		List<String> userLocList = null;
+		
+		userLocList = jdbcTemplate.query("select l.loccod from rms_locations l inner join inregion r on l.sbucod=r.sbucod and l.rgncod=r.rgncod " + 
+				"where r.sbucod='450' and zoncod = (select IF(ac.frmval = 'AAA' AND tovalu = 'ZZZ', ac.vlsta,  ac.frmval)  from smaccesscontrol ac where ac.sbucod='450' and ac.userid='"+usercode+"');", new ResultSetExtractor<List<String>>() {
+
+			@Override
+			public List<String> extractData(ResultSet rs) throws SQLException, DataAccessException {
+				List<String> userLocListTemp = new ArrayList<>();
+				while(rs.next()) {
+					String loccode=rs.getString("LOC_CODE");
+					userLocListTemp.add(loccode);
+				}
+				return userLocListTemp;
+			}
+		});
+		
+		return userLocList;
+	}
 	
 
 }
