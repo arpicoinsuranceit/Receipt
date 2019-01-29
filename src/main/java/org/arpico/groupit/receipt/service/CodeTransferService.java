@@ -30,7 +30,7 @@ public interface CodeTransferService {
 
 	ResponseEntity<Object> getPolicyDetails(String polNum, String token) throws Exception;
 
-	public List<CodeTransferDto> getCodeTransfersToApprove(String token) throws Exception;
+	public List<CodeTransferDto> getCodeTransfersToApprove(String token,String dashPara,String userType) throws Exception;
 
 	public ResponseEntity<Object> getCodePendingProposalDetails(String token) throws Exception;
 	

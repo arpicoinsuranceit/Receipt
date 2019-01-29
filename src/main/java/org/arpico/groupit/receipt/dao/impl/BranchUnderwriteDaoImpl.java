@@ -74,17 +74,17 @@ public class BranchUnderwriteDaoImpl implements BranchUnderwriteDao {
 	}
 
 	@Override
-	public List<String> findLocCodesZonalBranch(String usercode) {
+	public List<String> findLocCodesZonalBranch(String zoneCodes) {
 		List<String> userLocList = null;
 		
-		userLocList = jdbcTemplate.query("select l.loccod from rms_locations l inner join inregion r on l.sbucod=r.sbucod and l.rgncod=r.rgncod " + 
-				"where r.sbucod='450' and zoncod = (select IF(ac.frmval = 'AAA' AND tovalu = 'ZZZ', ac.vlsta,  ac.frmval)  from smaccesscontrol ac where ac.sbucod='450' and ac.userid='"+usercode+"');", new ResultSetExtractor<List<String>>() {
+		userLocList = jdbcTemplate.query("select l.loccod from rms_locations l inner join inregion r on l.sbucod=r.sbucod and l.rgncod=r.rgncod  " + 
+				"where r.sbucod='450' and r.zoncod in ("+zoneCodes+") ", new ResultSetExtractor<List<String>>() {
 
 			@Override
 			public List<String> extractData(ResultSet rs) throws SQLException, DataAccessException {
 				List<String> userLocListTemp = new ArrayList<>();
 				while(rs.next()) {
-					String loccode=rs.getString("LOC_CODE");
+					String loccode=rs.getString("loccod");
 					userLocListTemp.add(loccode);
 				}
 				return userLocListTemp;

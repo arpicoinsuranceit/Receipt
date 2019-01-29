@@ -948,41 +948,69 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 	}
 
 	@Override
-	public List<CodeTransferDto> getCodeTransfersToApprove(String userCode) throws Exception {
+	public List<CodeTransferDto> getCodeTransfersToApprove(String userCode,String dashPara,String userType) throws Exception {
 //		String userCode=new JwtDecoder().generate(token);
 		if (userCode != null) {
-			List<String> loccodes = branchUnderwriteDao.findLocCodesZonalBranch(userCode);
-
-			//System.out.println("calles getCodeTransfersToApprove " + userCode);
-
-			//loccodes.forEach(//System.out::println);
-
+			List<String> loccodes=new ArrayList<>();
+			
+			if(userType.equals("ZONE")) {
+				
+				String zones="";
+				String zoneCodes[]=dashPara.split(",");
+				
+				if(zoneCodes.length > 0) {
+					for (String string : zoneCodes) {
+						zones+="'"+string+"'"+",";
+					}
+				}
+				
+				zones=zones.replaceAll(",$", "");
+				
+				loccodes = branchUnderwriteDao.findLocCodesZonalBranch(zones);
+				
+			}
+			
+			if(userType.equals("BRANCH")) {
+				String brnCodes[]=dashPara.split(",");
+				
+				if(brnCodes.length > 0) {
+					for (String string : brnCodes) {
+						loccodes.add(string);
+					}
+				}
+				
+			}
+			
+			
 			List<CodeTransferModel> codeTransferModels = codeTransferDao.findByStatusAndLocCodeIn("PENDING", loccodes);
 			List<CodeTransferDto> codeTransferDtos = new ArrayList<>();
 
 			if (!codeTransferModels.isEmpty()) {
 				codeTransferModels.forEach(code -> {
-					CodeTransferDto codeTransferDto = new CodeTransferDto();
-					codeTransferDto.setApprovedBy(code.getApprovedBy());
-					codeTransferDto.setApprovedDate(code.getApprovedDate());
-					codeTransferDto.setApproverRemark(code.getApproverRemark());
-					codeTransferDto.setCodeTransferId(code.getCodeTransferId());
-					codeTransferDto.setCreateBy(code.getCreateBy());
-					codeTransferDto.setCreateDate(code.getCreateDate());
-					codeTransferDto.setLocCode(code.getLocCode());
-					codeTransferDto.setModifyBy(code.getModifyBy());
-					codeTransferDto.setModifyDate(code.getModifyDate());
-					codeTransferDto.setNewAgentCode(code.getNewAgentCode());
-					codeTransferDto.setOldAgentCode(code.getOldAgentCode());
-					codeTransferDto.setPolNum(code.getPolNum());
-					codeTransferDto.setPprNum(code.getPprNum());
-					codeTransferDto.setReason(code.getReason());
-					codeTransferDto.setRequestBy(code.getRequestBy());
-					codeTransferDto.setRequestDate(code.getRequestDate());
-					codeTransferDto.setSbuCode(code.getSbuCode());
-					codeTransferDto.setStatus(code.getStatus());
+					if(!code.getCreateBy().equals(userCode)) {
+						CodeTransferDto codeTransferDto = new CodeTransferDto();
+						codeTransferDto.setApprovedBy(code.getApprovedBy());
+						codeTransferDto.setApprovedDate(code.getApprovedDate());
+						codeTransferDto.setApproverRemark(code.getApproverRemark());
+						codeTransferDto.setCodeTransferId(code.getCodeTransferId());
+						codeTransferDto.setCreateBy(code.getCreateBy());
+						codeTransferDto.setCreateDate(code.getCreateDate());
+						codeTransferDto.setLocCode(code.getLocCode());
+						codeTransferDto.setModifyBy(code.getModifyBy());
+						codeTransferDto.setModifyDate(code.getModifyDate());
+						codeTransferDto.setNewAgentCode(code.getNewAgentCode());
+						codeTransferDto.setOldAgentCode(code.getOldAgentCode());
+						codeTransferDto.setPolNum(code.getPolNum());
+						codeTransferDto.setPprNum(code.getPprNum());
+						codeTransferDto.setReason(code.getReason());
+						codeTransferDto.setRequestBy(code.getRequestBy());
+						codeTransferDto.setRequestDate(code.getRequestDate());
+						codeTransferDto.setSbuCode(code.getSbuCode());
+						codeTransferDto.setStatus(code.getStatus());
 
-					codeTransferDtos.add(codeTransferDto);
+						codeTransferDtos.add(codeTransferDto);
+					}
+					
 
 				});
 			}
