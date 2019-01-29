@@ -198,6 +198,13 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 							.getBenefictByProduct(resp.getProductCode());
 
 					for (InPropAddBenefitModel inPropAddBenefitModel : addBenefitModels) {
+						
+						if(inProposalsModel.getPrdcod().equals("ASFP")) {
+							if(inPropAddBenefitModel.getInPropAddBenefitPK().getRidcod().equals("L10")) {
+								inProposalsModel.setPayamt(inPropAddBenefitModel.getSumasu());
+							}
+						}
+						
 						inPropAddBenefitModel.getInPropAddBenefitPK().setLoccod(inProposalsModelPK.getLoccod());
 						inPropAddBenefitModel.getInPropAddBenefitPK()
 								.setPprnum(Integer.parseInt(inProposalsModelPK.getPprnum()));
