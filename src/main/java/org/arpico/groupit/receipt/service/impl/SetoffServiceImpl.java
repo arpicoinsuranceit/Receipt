@@ -646,7 +646,7 @@ public class SetoffServiceImpl implements SetoffService {
 
 			Double invAmount = invoice.getAmount();
 
-			if (totPrm > invAmount) {
+			if (totPrm >= invAmount) {
 				setoffList.add(invoice);
 			}
 
