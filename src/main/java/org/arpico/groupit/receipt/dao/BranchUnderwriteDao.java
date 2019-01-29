@@ -8,6 +8,8 @@ public interface BranchUnderwriteDao {
 	
 	List<String> findLocCodes(String usercode);
 	
+	List<String> findLocCodesZonalBranch(String usercode);
+	
 	List<InProposalUnderwriteModel> findProposalToUnderwrite(String locodes,Integer limit,Integer offset,boolean isHO);
 	
 	Integer findProposalCount(boolean isHO,String locodes);

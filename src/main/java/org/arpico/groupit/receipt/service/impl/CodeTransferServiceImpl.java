@@ -951,7 +951,7 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 	public List<CodeTransferDto> getCodeTransfersToApprove(String userCode) throws Exception {
 //		String userCode=new JwtDecoder().generate(token);
 		if (userCode != null) {
-			List<String> loccodes = branchUnderwriteDao.findLocCodes(userCode);
+			List<String> loccodes = branchUnderwriteDao.findLocCodesZonalBranch(userCode);
 
 			//System.out.println("calles getCodeTransfersToApprove " + userCode);
 
