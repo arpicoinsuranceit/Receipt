@@ -16,7 +16,7 @@ public class SmSequenceDaoImpl implements SmSequenceDao{
 	
 	@Override
 	public SmSequenceModel getSequence(String serial) throws Exception {
-		return (SmSequenceModel) jdbcTemplate.queryForObject("select * from smsequence where SBUCOD = '450' and  seqid = '" + serial + "' and SBUCOD = '450'", new SmSequenceRowMapper());
+		return (SmSequenceModel) jdbcTemplate.queryForObject("select * from smsequence where SBUCOD = '450' and  seqid = '" + serial + "' for update", new SmSequenceRowMapper());
 	}
 
 	@Override
