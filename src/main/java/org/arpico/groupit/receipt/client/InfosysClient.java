@@ -183,7 +183,7 @@ public class InfosysClient {
 		try {
 
 			RestTemplate restTemplate = new RestTemplate();
-			PaymentHistoryInqDto [] result = restTemplate.postForObject(AppConstant.URI_PROPOSAL_SETTLEMENTS, data,
+			PaymentHistoryInqDto [] result = restTemplate.postForObject(AppConstant.URI_PROPOSAL_PAYMENT_HISTORY, data,
 					PaymentHistoryInqDto[].class);
 
 			List<PaymentHistoryInqDto> paymentHistoryInqDtos = Arrays.asList(result);
@@ -199,7 +199,7 @@ public class InfosysClient {
 		try {
 
 			RestTemplate restTemplate = new RestTemplate();
-			PolicyDispatchAcknowDto result = restTemplate.postForObject(AppConstant.URI_PROPOSAL_GEN_DATA, polnum,
+			PolicyDispatchAcknowDto result = restTemplate.postForObject(AppConstant.URI_PROPOSAL_POL_DIS_ACH, polnum,
 					PolicyDispatchAcknowDto.class);
 			
 

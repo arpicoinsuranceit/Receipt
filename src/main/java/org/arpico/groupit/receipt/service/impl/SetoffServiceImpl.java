@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-
 import org.arpico.groupit.receipt.dao.CommisDaoCustom;
 import org.arpico.groupit.receipt.dao.InAgentMastDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
@@ -59,7 +58,7 @@ public class SetoffServiceImpl implements SetoffService {
 
 		AgentMastModel agentMastModel = agentMastModels.get(0);
 
-		//System.out.println(Arrays.toString(numberGen));
+		// System.out.println(Arrays.toString(numberGen));
 
 		if (numberGen[0].equals("Success")) {
 
@@ -168,9 +167,11 @@ public class SetoffServiceImpl implements SetoffService {
 
 				billingTransactionsModel.setDuedat(calendar.getTime());
 
-				//System.out.println("calendar.get(Calendar.YEAR) : " + calendar.get(Calendar.YEAR));
+				// System.out.println("calendar.get(Calendar.YEAR) : " +
+				// calendar.get(Calendar.YEAR));
 
-				//System.out.println("calendar2.get(Calendar.YEAR) : " + calendar2.get(Calendar.YEAR));
+				// System.out.println("calendar2.get(Calendar.YEAR) : " +
+				// calendar2.get(Calendar.YEAR));
 
 				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -183,7 +184,7 @@ public class SetoffServiceImpl implements SetoffService {
 
 				int diffInMonths = (int) ChronoUnit.MONTHS.between(policyDate, currentDate);
 
-				//System.out.println("diffInMonths : " + diffInMonths);
+				// System.out.println("diffInMonths : " + diffInMonths);
 
 				billingTransactionsModel.setPolyer((diffInMonths / 12) + 1);
 
@@ -227,7 +228,9 @@ public class SetoffServiceImpl implements SetoffService {
 			SaveReceiptDto saveReceiptDto, InBillingTransactionsModel deposit, Double hrbamt,
 			ProposalL3Dto autoIssueData, String setoffType, Integer batchNo) throws Exception {
 
-		//System.out.println("Setoff");
+		List<AgentMastModel> agentMastModels = inAgentMastDao.getAgentDetails(inProposalsModel.getAdvcod());
+
+		// System.out.println("Setoff");
 
 		List<InBillingTransactionsModel> setoffList = new ArrayList<InBillingTransactionsModel>();
 
@@ -279,6 +282,7 @@ public class SetoffServiceImpl implements SetoffService {
 				InBillingTransactionsModel recoveryModel = null;
 
 				for (InBillingTransactionsModel inBillingTransactionsModel : fundModels) {
+					inBillingTransactionsModel.setAdvcod(Integer.parseInt(inProposalsModel.getAdvcod()));
 					inBillingTransactionsModel.setPolnum(invoice.getPolnum());
 					inBillingTransactionsModel.getBillingTransactionsModelPK().setLinnum(linnum);
 					inBillingTransactionsModel.setTxnyer(invoice.getTxnyer());
@@ -325,6 +329,8 @@ public class SetoffServiceImpl implements SetoffService {
 						inBillingTransactionsModel.setComiss(commis.setScale(2, RoundingMode.HALF_UP).doubleValue());
 					}
 
+					inBillingTransactionsModel.setUnlcod(agentMastModels.get(0).getUnlcod());
+
 					recoveryModel = getCopyBilling(inBillingTransactionsModel, batchNo);
 					setoffList.add(inBillingTransactionsModel);
 					linnum++;
@@ -344,15 +350,13 @@ public class SetoffServiceImpl implements SetoffService {
 					System.out.println("Recovery Added");
 					System.out.println("SETOFF SIZE : " + setoffList.size());
 				}
-				
-				
 
 				InBillingTransactionsModel invoiceNew = createInvoice(inProposalsModel, invoice, userCode, locCode,
 						true, batchNo);
 				setoffList.add(invoiceNew);
 
 				setoffList.forEach(System.out::println);
-				
+
 			} else {
 
 				System.out.println("autoIssueData.getTotprm() >= autoIssueData.getPayment() : false");
@@ -380,6 +384,9 @@ public class SetoffServiceImpl implements SetoffService {
 
 						InBillingTransactionsModel fundModel = fundModels.get(i);
 
+						fundModel.setUnlcod(agentMastModels.get(0).getUnlcod());
+						fundModel.setAdvcod(Integer.parseInt(inProposalsModel.getAdvcod()));
+
 						System.out.println(fundModel.toString());
 
 						if (fundModel.getDepost() >= invAmount) {
@@ -397,7 +404,8 @@ public class SetoffServiceImpl implements SetoffService {
 
 							setoffList.add(getSetoff(fundModel, invoice,
 									(fundModel.getBillingTransactionsModelPK().getLinnum() + 1), userCode,
-									inProposalsModel, hrbamt, commisModel, invAmount, true, batchNo));
+									inProposalsModel, hrbamt, commisModel, invAmount, true, batchNo,
+									agentMastModels.get(0).getUnlcod()));
 
 							System.out.println("setoffList size : " + setoffList.size());
 
@@ -442,7 +450,8 @@ public class SetoffServiceImpl implements SetoffService {
 
 								setoffList.add(getSetoff(fundModel, invoice,
 										(fundModel.getBillingTransactionsModelPK().getLinnum() + 1), userCode,
-										inProposalsModel, hrbamt, commisModel, fundModel.getDepost(), true, batchNo));
+										inProposalsModel, hrbamt, commisModel, fundModel.getDepost(), true, batchNo,
+										agentMastModels.get(0).getUnlcod()));
 
 								System.out.println("setoffList size : " + setoffList.size());
 
@@ -466,10 +475,10 @@ public class SetoffServiceImpl implements SetoffService {
 
 		} else if (setoffType.equalsIgnoreCase("OLD")) {
 			System.out.println("SETOFF : Policy Setoff");
-			
+
 			List<InBillingTransactionsModel> fundModels = billingTransactionsCustomDao
 					.getRefundList(inProposalsModel.getInProposalsModelPK().getPprnum());
-			
+
 			System.out.println("SETOFF : FUND SIZE : " + fundModels.size());
 
 			fundModels.forEach(System.out::println);
@@ -494,9 +503,9 @@ public class SetoffServiceImpl implements SetoffService {
 				InBillingTransactionsModel lastInvoice = billingTransactionsCustomDao
 						.getLasiInvoice(inProposalsModel.getInProposalsModelPK().getPprnum());
 
-				
-				InBillingTransactionsModel tempInvoice =createInvoice(inProposalsModel, lastInvoice, userCode, locCode, false, batchNo);
-				
+				InBillingTransactionsModel tempInvoice = createInvoice(inProposalsModel, lastInvoice, userCode, locCode,
+						false, batchNo);
+
 				unsetoffs.add(tempInvoice);
 				setoffList.add(tempInvoice);
 			}
@@ -543,6 +552,9 @@ public class SetoffServiceImpl implements SetoffService {
 
 						InBillingTransactionsModel fundModel = fundModels.get(i);
 
+						fundModel.setUnlcod(agentMastModels.get(0).getUnlcod());
+						fundModel.setAdvcod(Integer.parseInt(inProposalsModel.getAdvcod()));
+
 						System.out.println(fundModel.toString());
 
 						if (fundModel.getDepost() >= invAmount) {
@@ -560,7 +572,8 @@ public class SetoffServiceImpl implements SetoffService {
 
 							setoffList.add(getSetoff(fundModel, invoice,
 									(fundModel.getBillingTransactionsModelPK().getLinnum() + 1), userCode,
-									inProposalsModel, hrbamt, commisModel, invAmount, false, batchNo));
+									inProposalsModel, hrbamt, commisModel, invAmount, false, batchNo,
+									agentMastModels.get(0).getUnlcod()));
 
 							System.out.println("setoffList size : " + setoffList.size());
 
@@ -577,12 +590,12 @@ public class SetoffServiceImpl implements SetoffService {
 //							invAmount = invoice.getAmount();
 //							setoffList.add(invoice);
 
-							//System.out.println("After set fund amt to model");
-							//System.out.println(fundModels.get(i).toString());
+							// System.out.println("After set fund amt to model");
+							// System.out.println(fundModels.get(i).toString());
 
 							// //System.out.println(invoice.toString());
 
-							//System.out.println("totPrm : " + totPrm);
+							// System.out.println("totPrm : " + totPrm);
 							break;
 
 						} else {
@@ -605,7 +618,8 @@ public class SetoffServiceImpl implements SetoffService {
 
 								setoffList.add(getSetoff(fundModel, invoice,
 										(fundModel.getBillingTransactionsModelPK().getLinnum() + 1), userCode,
-										inProposalsModel, hrbamt, commisModel, fundModel.getDepost(), false, batchNo));
+										inProposalsModel, hrbamt, commisModel, fundModel.getDepost(), false, batchNo,
+										agentMastModels.get(0).getUnlcod()));
 
 								System.out.println("setoffList size : " + setoffList.size());
 
@@ -632,7 +646,7 @@ public class SetoffServiceImpl implements SetoffService {
 
 			Double invAmount = invoice.getAmount();
 
-			if (totPrm > invAmount) {
+			if (totPrm >= invAmount) {
 				setoffList.add(invoice);
 			}
 
@@ -673,10 +687,12 @@ public class SetoffServiceImpl implements SetoffService {
 
 						setoffList.add(getSetoff(fundModel, invoice,
 								(fundModel.getBillingTransactionsModelPK().getLinnum() + 1), userCode, inProposalsModel,
-								hrbamt, commisModel, invAmount, false, batchNo));
+								hrbamt, commisModel, invAmount, false, batchNo, agentMastModels.get(0).getUnlcod()));
 
 						System.out.println("setoffList size : " + setoffList.size());
 
+						fundModel.setUnlcod(agentMastModels.get(0).getUnlcod());
+						fundModel.setAdvcod(Integer.parseInt(inProposalsModel.getAdvcod()));
 						fundModel.setDepost((fundModel.getDepost() - invAmount));
 						fundModel.setAmount(((fundModel.getDepost() - invAmount) * -1));
 						fundModel.getBillingTransactionsModelPK()
@@ -718,7 +734,8 @@ public class SetoffServiceImpl implements SetoffService {
 
 							setoffList.add(getSetoff(fundModel, invoice,
 									(fundModel.getBillingTransactionsModelPK().getLinnum() + 1), userCode,
-									inProposalsModel, hrbamt, commisModel, fundModel.getDepost(), false, batchNo));
+									inProposalsModel, hrbamt, commisModel, fundModel.getDepost(), false, batchNo,
+									agentMastModels.get(0).getUnlcod()));
 
 							System.out.println("setoffList size : " + setoffList.size());
 
@@ -728,6 +745,8 @@ public class SetoffServiceImpl implements SetoffService {
 							System.out.println("invAmount : " + invAmount);
 							System.out.println("totPrm : " + totPrm);
 
+							fundModel.setUnlcod(agentMastModels.get(0).getUnlcod());
+							fundModel.setAdvcod(Integer.parseInt(inProposalsModel.getAdvcod()));
 							fundModel.setDepost(0.0);
 							fundModel.setAmount(0.0);
 							fundModels.set(i, fundModel);
@@ -740,7 +759,7 @@ public class SetoffServiceImpl implements SetoffService {
 
 		}
 
-		//throw new SQLException();
+		// throw new SQLException();
 		return setoffList;
 	}
 
@@ -812,7 +831,7 @@ public class SetoffServiceImpl implements SetoffService {
 
 	private InBillingTransactionsModel getSetoff(InBillingTransactionsModel fund, InBillingTransactionsModel invoice,
 			Integer linnum, String userCode, InProposalsModel inProposalsModel, Double hrbamt, CommisModel commisModel,
-			Double amount, boolean isAutoIssue, Integer batchNo) {
+			Double amount, boolean isAutoIssue, Integer batchNo, String unlCode) {
 
 		InBillingTransactionsModelPK pk = new InBillingTransactionsModelPK();
 
@@ -824,6 +843,9 @@ public class SetoffServiceImpl implements SetoffService {
 		pk.setTxndat(fund.getBillingTransactionsModelPK().getTxndat());
 
 		InBillingTransactionsModel setoff = new InBillingTransactionsModel();
+
+		setoff.setUnlcod(unlCode);
+		setoff.setAdvcod(Integer.parseInt(inProposalsModel.getAdvcod()));
 
 		setoff.setAdvcod(fund.getAdvcod());
 		setoff.setAgncls(fund.getAgncls());

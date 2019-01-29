@@ -87,6 +87,9 @@ public class ProposalInquiryServiceImpl implements ProposalInquiryService {
 
 		String data = proposalNo + "&" + inProposalsModel.getInProposalsModelPK().getLoccod() + "&"
 				+ inProposalsModel.getInProposalsModelPK().getPrpseq();
+		
+		String data2 = inProposalsModel.getPolnum() + "&" + inProposalsModel.getInProposalsModelPK().getLoccod() + "&"
+				+ inProposalsModel.getInProposalsModelPK().getPrpseq();
 
 		ProposalGeneralDto generalDto = infosysClient.getPropInqGenData(proposalNo);
 		List<ChildInqDto> childDtos = infosysClient.getChildren(data);
@@ -95,7 +98,10 @@ public class ProposalInquiryServiceImpl implements ProposalInquiryService {
 		List<MedicalReqDto> medicalReqDtos = infosysClient.getMedDetails(data);
 		List<TransferHistoryDto> transferHistoryDtos = infosysClient.getTransHist(proposalNo);
 		List<SettlementDto> settlementDtos = infosysClient.getSettlement(proposalNo);
-		List<PaymentHistoryInqDto> paymentHistoryInqDtos = infosysClient.getPayHist(data);
+		
+		System.out.println("data2: " +data2);
+		
+		List<PaymentHistoryInqDto> paymentHistoryInqDtos = infosysClient.getPayHist(data2);
 
 		PolicyDispatchAcknowDto policyDispatchAcknowDto = null;
 		if (inProposalsModel.getPolnum() != null && !inProposalsModel.getPolnum().equals("")) {
