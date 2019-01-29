@@ -59,6 +59,8 @@ public class AgentMasterDetailsRowMapper implements RowMapper<AgentMasterDetails
 		model.setSuperisor(rs.getString("superisor"));
 		model.setType(rs.getString("type"));
 		model.setZoncod(rs.getString("zoncod"));
+		model.setAppBy(rs.getString("appusr"));
+		model.setEntBy(rs.getString("entusr"));
 		
 		return model;
 	}

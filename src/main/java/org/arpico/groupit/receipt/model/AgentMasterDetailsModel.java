@@ -51,6 +51,8 @@ public class AgentMasterDetailsModel {
 	private String agnweb;
 	private String agneml;
 	private Date efcdat;
+	private String entBy;
+	private String appBy;
 
 	public Integer getAgncod() {
 		return agncod;
@@ -427,10 +429,26 @@ public class AgentMasterDetailsModel {
 	public void setEfcdat(Date efcdat) {
 		this.efcdat = efcdat;
 	}
+	
+	public String getEntBy() {
+		return entBy;
+	}
+
+	public void setEntBy(String entBy) {
+		this.entBy = entBy;
+	}
+
+	public String getAppBy() {
+		return appBy;
+	}
+
+	public void setAppBy(String appBy) {
+		this.appBy = appBy;
+	}
 
 	@Override
 	public String toString() {
-		return "AgentMasterDetailsDao [agncod=" + agncod + ", loccod=" + loccod + ", rgncod=" + rgncod + ", zoncod="
+		return "AgentMasterDetailsModel [agncod=" + agncod + ", loccod=" + loccod + ", rgncod=" + rgncod + ", zoncod="
 				+ zoncod + ", agntit=" + agntit + ", agnnam=" + agnnam + ", midnam=" + midnam + ", lasnam=" + lasnam
 				+ ", shrtnm=" + shrtnm + ", agnsta=" + agnsta + ", agnsex=" + agnsex + ", agnrdt=" + agnrdt
 				+ ", agnrem=" + agnrem + ", grntsta=" + grntsta + ", appdat=" + appdat + ", orcrem=" + orcrem
@@ -441,7 +459,10 @@ public class AgentMasterDetailsModel {
 				+ ", cnttlx=" + cnttlx + ", cntfax=" + cntfax + ", cntmob=" + cntmob + ", cnteml=" + cnteml
 				+ ", agnad1=" + agnad1 + ", agnad2=" + agnad2 + ", agncty=" + agncty + ", agnofn=" + agnofn
 				+ ", agnrsn=" + agnrsn + ", agntlx=" + agntlx + ", agnfax=" + agnfax + ", agnmob=" + agnmob
-				+ ", agnweb=" + agnweb + ", agneml=" + agneml + ", efcdat=" + efcdat + "]";
+				+ ", agnweb=" + agnweb + ", agneml=" + agneml + ", efcdat=" + efcdat + ", entBy=" + entBy + ", appBy="
+				+ appBy + "]";
 	}
+
+	
 
 }

@@ -127,8 +127,8 @@ public class AgentInquiryServiceImpl implements AgentInquiryService {
 		agentMasterDto.setContactFax(detailsModel.getCntfax());
 		agentMasterDto.setContactMobile(detailsModel.getCntmob());
 		agentMasterDto.setContactPerson(detailsModel.getCntper());
-		//agentMasterDto.setContactTelOffice(detailsModel.get);
-		//agentMasterDto.setContactTelRecidence(detailsModel.get);
+		agentMasterDto.setContactTelOffice(detailsModel.getCntofn());
+		agentMasterDto.setContactTelRecidence(detailsModel.getCntrsn());
 		agentMasterDto.setContactTelx(detailsModel.getCnttlx());
 		//agentMasterDto.setDateOfResign(detailsModel.get);
 		agentMasterDto.setDesignation(detailsModel.getDescignation());
@@ -156,12 +156,14 @@ public class AgentInquiryServiceImpl implements AgentInquiryService {
 		agentMasterDto.setStatus(detailsModel.getAgnsta());
 		agentMasterDto.setSubDesignation(detailsModel.getSubdcd());
 		agentMasterDto.setSupervisor(detailsModel.getSuperisor());
-		//agentMasterDto.setTelOffice(detailsModel.getagnt);
-		//agentMasterDto.setTelRecidence(detailsModel.get);
+		agentMasterDto.setTelOffice(detailsModel.getAgnofn());
+		agentMasterDto.setTelRecidence(detailsModel.getAgnrsn());
 		agentMasterDto.setTelX(detailsModel.getAgntlx());
 		agentMasterDto.setTitle(detailsModel.getAgntit());
 		agentMasterDto.setType(detailsModel.getType());
 		agentMasterDto.setZone(detailsModel.getZoncod());
+		agentMasterDto.setApprovedBy(detailsModel.getAppBy());
+		agentMasterDto.setEnteredBy(detailsModel.getEntBy());
 		
 		List<SettlementDetailsModel> settlementDetailsModels=agentInquiryDao.getSettlementDetails(AppConstant.SBU_CODE, agentCode);
 		List<SettlementDetailsDto> settlementDetailsDtos=new ArrayList<>();
