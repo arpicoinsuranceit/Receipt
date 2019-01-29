@@ -89,8 +89,8 @@ public class CodeTransferController {
 	}
 	
 	@RequestMapping(value="/code_transfer/getCodeTransfersToApprove", method = RequestMethod.POST)
-	public List<CodeTransferDto> getCodeTransfersToApprove(@RequestParam("userCode")String userCode)throws Exception{
-		return codeTransferService.getCodeTransfersToApprove(userCode);
+	public List<CodeTransferDto> getCodeTransfersToApprove(@RequestParam("userCode") String userCode,@RequestParam("dashPara") String dashPara,@RequestParam("userType") String userType)throws Exception{
+		return codeTransferService.getCodeTransfersToApprove(userCode,dashPara,userType);
 	}
 
 }
