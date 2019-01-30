@@ -330,6 +330,8 @@ public class SetoffServiceImpl implements SetoffService {
 					}
 
 					inBillingTransactionsModel.setUnlcod(agentMastModels.get(0).getUnlcod());
+					inBillingTransactionsModel.setAgncls(agentMastModels.get(0).getAgncls());
+					inBillingTransactionsModel.setBrncod(agentMastModels.get(0).getLocation());
 
 					recoveryModel = getCopyBilling(inBillingTransactionsModel, batchNo);
 					setoffList.add(inBillingTransactionsModel);
@@ -386,6 +388,8 @@ public class SetoffServiceImpl implements SetoffService {
 
 						fundModel.setUnlcod(agentMastModels.get(0).getUnlcod());
 						fundModel.setAdvcod(Integer.parseInt(inProposalsModel.getAdvcod()));
+						fundModel.setAgncls(agentMastModels.get(0).getAgncls());
+						fundModel.setBrncod(agentMastModels.get(0).getLocation());
 
 						System.out.println(fundModel.toString());
 
@@ -554,6 +558,8 @@ public class SetoffServiceImpl implements SetoffService {
 
 						fundModel.setUnlcod(agentMastModels.get(0).getUnlcod());
 						fundModel.setAdvcod(Integer.parseInt(inProposalsModel.getAdvcod()));
+						fundModel.setAgncls(agentMastModels.get(0).getAgncls());
+						fundModel.setBrncod(agentMastModels.get(0).getLocation());
 
 						System.out.println(fundModel.toString());
 
@@ -693,6 +699,9 @@ public class SetoffServiceImpl implements SetoffService {
 
 						fundModel.setUnlcod(agentMastModels.get(0).getUnlcod());
 						fundModel.setAdvcod(Integer.parseInt(inProposalsModel.getAdvcod()));
+						fundModel.setAgncls(agentMastModels.get(0).getAgncls());
+						fundModel.setBrncod(agentMastModels.get(0).getLocation());
+						
 						fundModel.setDepost((fundModel.getDepost() - invAmount));
 						fundModel.setAmount(((fundModel.getDepost() - invAmount) * -1));
 						fundModel.getBillingTransactionsModelPK()
@@ -746,6 +755,9 @@ public class SetoffServiceImpl implements SetoffService {
 							System.out.println("totPrm : " + totPrm);
 
 							fundModel.setUnlcod(agentMastModels.get(0).getUnlcod());
+							fundModel.setAgncls(agentMastModels.get(0).getAgncls());
+							fundModel.setBrncod(agentMastModels.get(0).getLocation());
+							
 							fundModel.setAdvcod(Integer.parseInt(inProposalsModel.getAdvcod()));
 							fundModel.setDepost(0.0);
 							fundModel.setAmount(0.0);
