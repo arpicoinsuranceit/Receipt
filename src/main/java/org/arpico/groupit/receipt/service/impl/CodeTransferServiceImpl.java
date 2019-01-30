@@ -871,6 +871,9 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 			inProposalsModel.setPprsta(curPprSta);
 			inProposalsModel.getInProposalsModelPK().setPrpseq(pprSeqNew);
 			inProposalsModel.setAdvcod(codeTransferModel.getNewAgentCode());
+			inProposalsModel.setCreadt(new Date());
+			inProposalsModel.setCreaby(user);
+			inProposalsModel.setLockin(new Date());
 
 			InProposalsModel newInProposalModel = inProposalDao.save(inProposalsModel);
 
