@@ -32,7 +32,7 @@ public interface CodeTransferService {
 
 	public List<CodeTransferDto> getCodeTransfersToApprove(String token,String dashPara,String userType) throws Exception;
 
-	public ResponseEntity<Object> getCodePendingProposalDetails(String token) throws Exception;
+	public ResponseEntity<Object> getCodePendingProposalDetails(String token,String dashPara,String userType) throws Exception;
 	
 
 }
