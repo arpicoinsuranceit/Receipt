@@ -924,11 +924,16 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 						saveReceiptDto
 								.setPropId(Integer.valueOf(newInProposalModel.getInProposalsModelPK().getPprnum()));
 
+						System.out.println("*** before call auto issue in code transfer approve ***" + new Date());
+						
 						proposalService.checkPolicy(newInProposalModel,
 								Integer.valueOf(newInProposalModel.getInProposalsModelPK().getPprnum()),
 								newInProposalModel.getInProposalsModelPK().getPrpseq(), saveReceiptDto,
 								newInProposalModel.getAdvcod(), newInProposalModel.getInProposalsModelPK().getLoccod(),
 								billingTransactionsModels.get(0));
+						
+						System.out.println("*** after call auto issue in code transfer approve ***" + new Date());
+						
 					}
 
 				}
