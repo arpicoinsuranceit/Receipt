@@ -230,25 +230,25 @@ public class ProposalServiceImpl implements ProposalServce {
 		String[] batNoArr = numberGenerator.generateNewId("", "", "#TXNSQ#", "");
 
 		if (batNoArr[0].equals("Success")) {
-			
+
 			System.out.println("RECEIPT NUMBER GENERATED : " + batNoArr[1]);
 
 			if (locCode != null) {
-				
+
 				System.out.println("LOCATION FOUND : " + locCode);
 
-				//System.out.println("if");
+				// System.out.println("if");
 
 				InProposalsModel inProposalsModel = inProposalCustomDao.getProposal(saveReceiptDto.getPropId(),
 						saveReceiptDto.getPropSeq());
 
-				//System.out.println(inProposalsModel);
+				// System.out.println(inProposalsModel);
 
 				if (inProposalsModel != null) {
-					
+
 					System.out.println("PROPOSAL FOUND : " + inProposalsModel.toString());
 
-					//System.out.println("//System.out.println(inProposalsModel); ok ");
+					// System.out.println("//System.out.println(inProposalsModel); ok ");
 
 					Integer pprNo = Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum());
 					Integer seqNo = inProposalsModel.getInProposalsModelPK().getPrpseq();
@@ -258,28 +258,26 @@ public class ProposalServiceImpl implements ProposalServce {
 							saveReceiptDto, userCode, locCode);
 					inTransactionsModel.getInTransactionsModelPK().setDoccod("RCPP");
 
-					
-					
-					//System.out.println(inTransactionsModel);
+					// System.out.println(inTransactionsModel);
 
 					try {
 						inTransactionsModel.setPolnum(Integer.parseInt(inProposalsModel.getPolnum()));
 					} catch (Exception e) {
-						//e.printStackTrace();
+						// e.printStackTrace();
 						System.out.println("POLICY NUMBER NOT FOUND");
-						//System.out.println("Proposal not found");
+						// System.out.println("Proposal not found");
 					}
 
 					System.out.println("TRANSACTIONMODEL GENETATED : " + inTransactionsModel.toString());
-					
-					//System.out.println("WORK");
 
-					//System.out.println(inTransactionsModel.toString());
+					// System.out.println("WORK");
+
+					// System.out.println(inTransactionsModel.toString());
 
 					InBillingTransactionsModel inBillingTransactionsModel = commonethodUtility
 							.getInBillingTransactionModel(inProposalsModel, saveReceiptDto, inTransactionsModel);
 
-					//System.out.println(inBillingTransactionsModel.toString());
+					// System.out.println(inBillingTransactionsModel.toString());
 
 					inBillingTransactionsModel.setTxnbno(AppConstant.ZERO);
 
@@ -293,19 +291,19 @@ public class ProposalServiceImpl implements ProposalServce {
 					inBillingTransactionsModel.setTxnbno(Integer.parseInt(batNoArr[1]));
 
 					System.out.println("BILLINGTRANSACTIONMODEL GENETATED : " + inBillingTransactionsModel.toString());
-					//System.out.println(inBillingTransactionsModel.toString());
+					// System.out.println(inBillingTransactionsModel.toString());
 					try {
 						saveReceipt(inTransactionsModel, inBillingTransactionsModel);
 
 						System.out.println("RECEIPT SAVED IN BOTH TRANSACTION TABLE");
-						
-						//System.out.println("save in");
+
+						// System.out.println("save in");
 
 						if (!saveReceiptDto.getPayMode().equals("CQ")
 								&& inProposalsModel.getPprsta().equalsIgnoreCase("L3")) {
 
 							System.out.println("L3 and CASH, DD OR CC");
-							
+
 							inBillingTransactionsModel.setTxnbno(1);
 
 							checkPolicy(inProposalsModel, pprNo, seqNo, saveReceiptDto, userCode, locCode,
@@ -314,7 +312,7 @@ public class ProposalServiceImpl implements ProposalServce {
 							System.out.println("CHEQUE OR NOT L3");
 						}
 
-						//System.out.println("dto");
+						// System.out.println("dto");
 
 						ReceiptPrintDto dto = null;
 
@@ -405,7 +403,7 @@ public class ProposalServiceImpl implements ProposalServce {
 
 		List<AgentModel> agentModels = agentDao.findAgentByCodeAll(inProposalsModel.getAdvcod());
 
-		//System.out.println(inProposalsModel.getAdvcod());
+		// System.out.println(inProposalsModel.getAdvcod());
 
 		String userName = rmsUserDao.getName(agentCode);
 
@@ -450,7 +448,7 @@ public class ProposalServiceImpl implements ProposalServce {
 			throws Exception {
 
 		System.out.println("CHCK POLICY METHOD");
-		
+
 		try {
 			if (inProposalsModel.getPprsta().equalsIgnoreCase("L3")) {
 
@@ -465,13 +463,13 @@ public class ProposalServiceImpl implements ProposalServce {
 					if (numberGen[0].equals("Success") && batNoArr2[0].equals("Success")) {
 
 						System.out.println("BATHC NO AND POLICY NO GENERATED");
-						
+
 						inProposalsModel.setPprsta("INAC");
 						inProposalsModel.setLockin(new Date());
 						// inProposalsModel.setIcpdat(new Date());
 
 						// inProposalDao.save(inProposalsModel);
-						
+
 						System.out.println("PROPOSAL STATUS CHANGE" + inProposalsModel.toString());
 
 						InProposalsModel proposalsModelNew = getProposalPolicyStage(inProposalsModel, numberGen[1],
@@ -479,25 +477,25 @@ public class ProposalServiceImpl implements ProposalServce {
 
 						// inProposalDao.save(proposalsModelNew);
 
-						//System.out.println("proposal save done");
-						
+						// System.out.println("proposal save done");
+
 						System.out.println("NEW PROPOSAL CREATED" + proposalsModelNew.toString());
 
 						Integer updatedSeqNo = proposalsModelNew.getInProposalsModelPK().getPrpseq();
-						
+
 						System.out.println(updatedSeqNo);
-						
-						//seqNo = updatedSeqNo;
+
+						// seqNo = updatedSeqNo;
 
 						List<InPropAddBenefitModel> addBenefitModels = addBenefictCustomDao.getBenefByPprSeq(pprNo,
 								seqNo);
 						if (addBenefitModels != null && !addBenefitModels.isEmpty()) {
 							addBenefitModels = incrementSeqAddBenef(addBenefitModels, updatedSeqNo);
-							
+
 							System.out.println("ADD BENEFICT" + addBenefitModels.toString());
-							
+
 							addBenefitModels.forEach(System.out::println);
-							
+
 							// addBenefictDao.save(addBenefitModels);
 						}
 
@@ -527,9 +525,11 @@ public class ProposalServiceImpl implements ProposalServce {
 								.getMedicalReqByPprNoAndSeq(pprNo, seqNo);
 						if (inPropMedicalReqModels != null && !inPropMedicalReqModels.isEmpty()) {
 							inPropMedicalReqModels = incrementPropMedical(inPropMedicalReqModels, updatedSeqNo);
-							
+
 							inPropMedicalReqModels.forEach(e -> {
-								if(e.getInPropMedicalReqModelPK().getMedcod().substring(0, 2).equals("AD") && e.getAddnot().length() > 14 && e.getAddnot().substring(0, 13).equals("Premium Short")) {
+								if (e.getInPropMedicalReqModelPK().getMedcod().substring(0, 2).equals("AD")
+										&& e.getAddnot().length() > 14
+										&& e.getAddnot().substring(0, 13).equals("Premium Short")) {
 									e.setTessta("Y");
 								}
 							});
@@ -592,24 +592,23 @@ public class ProposalServiceImpl implements ProposalServce {
 						List<InBillingTransactionsModel> setoffList = setoffService.setoff(proposalsModelNew, userCode,
 								locCode, saveReceiptDto, deposit, hrbamt, proposalL3Dtos.get(0), "NEW",
 								Integer.parseInt(batNoArr2[1]));
-						
+
 						System.out.println("SETOFF LIST SIZE : " + setoffList.size());
-						
-						//System.out.println("SETOFF : setoffList : "  + setoffList.size());
+
+						// System.out.println("SETOFF : setoffList : " + setoffList.size());
 
 						// inBillingTransactionDao.save(setoffList);
-
 
 						try {
 
 							saveData(inProposalsModel, proposalsModelNew, addBenefitModels, famDetailsModels,
 									inPropLoadingModels, inPropMedicalReqModels, propNomDetailsModels,
 									inPropPrePolsModels, propSchedulesModels, propSurrenderValsModels, setoffList);
-							
+
 							System.out.println("SETOFF : settoff list saved");
 
 						} catch (Exception e) {
-							
+
 							System.out.println("SETOFF : settoff list error");
 							e.printStackTrace();
 						}
@@ -635,6 +634,28 @@ public class ProposalServiceImpl implements ProposalServce {
 			List<InPropSchedulesModel> propSchedulesModels, List<InPropSurrenderValsModel> propSurrenderValsModels,
 			List<InBillingTransactionsModel> setoffList) throws Exception {
 
+		InBillingTransactionsModel model = null;
+
+		for (InBillingTransactionsModel e : setoffList) {
+			if (model != null) {
+				if (e.getBillingTransactionsModelPK().getDoccod().equals("PRMI") && e.getBillingTransactionsModelPK()
+						.getDocnum() > model.getBillingTransactionsModelPK().getDocnum()) {
+					model = e;
+				}
+			} else {
+				if (e.getBillingTransactionsModelPK().getDoccod().equals("PRMI")) {
+					model = e;
+				}
+			}
+		}
+
+		if (model != null) {
+
+			inProposalsModel.setLinyer(model.getIcpyer());
+			inProposalsModel.setLinmon(model.getIcpmon());
+
+		}
+		
 		inProposalDao.save(inProposalsModel);
 
 		System.out.println("Proposal Status Update Done");
@@ -697,12 +718,12 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	private List<InPropSurrenderValsModel> incrementSurrenderVals(
 			List<InPropSurrenderValsModel> propSurrenderValsModels, Integer updatedSeqNo, String polNo) {
-		
+
 		List<InPropSurrenderValsModel> list = new ArrayList<>();
 		propSurrenderValsModels.forEach(e -> {
 			e.getInPropSurrenderValsPK().setPrpseq(updatedSeqNo);
 			e.setPolnum(polNo);
-			
+
 			list.add(e);
 		});
 		return list;
@@ -710,9 +731,9 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	private List<InPropSchedulesModel> incremenntScheduleSeq(List<InPropSchedulesModel> propSchedulesModels,
 			Integer updatedSeqNo) {
-		
+
 		List<InPropSchedulesModel> list = new ArrayList<>();
-		
+
 		propSchedulesModels.forEach(e -> {
 			e.getInPropSchedulesPK().setPrpseq(updatedSeqNo);
 			list.add(e);
@@ -722,9 +743,9 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	private List<InPropPrePolsModel> incrementPropPolSeq(List<InPropPrePolsModel> inPropPrePolsModels,
 			Integer updatedSeqNo) {
-		
+
 		List<InPropPrePolsModel> list = new ArrayList<>();
-		
+
 		inPropPrePolsModels.forEach(e -> {
 			e.getInPropPrePolsModelPK().setPrpseq(updatedSeqNo);
 			list.add(e);
@@ -734,9 +755,9 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	private List<InPropNomDetailsModel> incrementPropNomDetailsSeq(List<InPropNomDetailsModel> propNomDetailsModels,
 			Integer updatedSeqNo) {
-		
+
 		List<InPropNomDetailsModel> list = new ArrayList<>();
-		
+
 		propNomDetailsModels.forEach(e -> {
 			e.getInPropNomDetailsModelPK().setPrpseq(updatedSeqNo);
 			list.add(e);
@@ -746,9 +767,9 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	private List<InPropMedicalReqModel> incrementPropMedical(List<InPropMedicalReqModel> inPropMedicalReqModels,
 			Integer seqNo) {
-		
+
 		List<InPropMedicalReqModel> list = new ArrayList<>();
-		
+
 		inPropMedicalReqModels.forEach(e -> {
 			e.getInPropMedicalReqModelPK().setPrpseq(seqNo);
 			list.add(e);
@@ -757,9 +778,9 @@ public class ProposalServiceImpl implements ProposalServce {
 	}
 
 	private List<InPropLoadingModel> getInPropLoadings(List<InPropLoadingModel> inPropLoadingModels, Integer seqNo) {
-		
+
 		List<InPropLoadingModel> list = new ArrayList<>();
-		
+
 		inPropLoadingModels.forEach(e -> {
 			e.getInPropLoadingPK().setPrpseq(seqNo);
 			list.add(e);
@@ -769,9 +790,9 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	private List<InPropFamDetailsModel> incrementSeqFamDetails(List<InPropFamDetailsModel> famDetailsModels,
 			Integer seqNo) {
-		
+
 		List<InPropFamDetailsModel> list = new ArrayList<>();
-		
+
 		famDetailsModels.forEach(e -> {
 			e.getInPropFamDetailsPK().setPrpseq(seqNo);
 			list.add(e);
@@ -781,9 +802,9 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	private List<InPropAddBenefitModel> incrementSeqAddBenef(List<InPropAddBenefitModel> addBenefitModels,
 			Integer seqNo) {
-		
+
 		List<InPropAddBenefitModel> list = new ArrayList<>();
-		
+
 		addBenefitModels.forEach(e -> {
 			e.getInPropAddBenefitPK().setPrpseq(seqNo);
 			list.add(e);
@@ -815,22 +836,21 @@ public class ProposalServiceImpl implements ProposalServce {
 			icpDate += Integer.toString(calendar1.get(Calendar.DATE));
 		}
 
-		//System.out.println("ICP DATE : " + icpDate);
-		//System.out.println("EXP DATE : " + expDate);
+		// System.out.println("ICP DATE : " + icpDate);
+		// System.out.println("EXP DATE : " + expDate);
 
 		InProposalsModelPK pk = new InProposalsModelPK();
-		
+
 		pk.setDoccod(inProposalsModel.getInProposalsModelPK().getDoccod());
 		pk.setLoccod(inProposalsModel.getInProposalsModelPK().getLoccod());
 		pk.setPprnum(inProposalsModel.getInProposalsModelPK().getPprnum());
 		pk.setPrpseq(inProposalsModel.getInProposalsModelPK().getPrpseq() + 1);
 		pk.setSbucod(inProposalsModel.getInProposalsModelPK().getSbucod());
-		
-		
+
 		InProposalsModel model = new InProposalsModel();
-		
+
 		model.setInProposalsModelPK(pk);
-		
+
 		model.setAccnum(inProposalsModel.getAccnum());
 		model.setAdmfee(inProposalsModel.getAdmfee());
 		model.setAdvcod(inProposalsModel.getAdvcod());
@@ -1079,7 +1099,7 @@ public class ProposalServiceImpl implements ProposalServce {
 
 		List<ProposalNoSeqNoModel> list = inProposalCustomDao.getProposalNoSeqNoModel(pprNo);
 
-		//System.out.println(list.size());
+		// System.out.println(list.size());
 
 		if (list != null && !(list.isEmpty())) {
 			proposalNoSeqNoDtos = getProposalNoSeqNoDto(list.get(0));
@@ -1200,7 +1220,7 @@ public class ProposalServiceImpl implements ProposalServce {
 
 		List<ProposalNoSeqNoModel> list = inProposalCustomDao.getPolicyNoSeqNoModel(polNum);
 
-		//System.out.println(list.size());
+		// System.out.println(list.size());
 
 		if (list != null && !(list.isEmpty())) {
 			proposalNoSeqNoDtos = getProposalNoSeqNoDto(list.get(0));

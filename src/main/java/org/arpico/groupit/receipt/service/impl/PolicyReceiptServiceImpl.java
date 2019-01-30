@@ -374,6 +374,25 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		if (setoffs != null && setoffs.size() > 0) {
 			inBillingTransactionDao.save(setoffs);
 		}
+		
+		InBillingTransactionsModel model = null;
+		
+		for (InBillingTransactionsModel e : setoffs) {
+			if(model!=null) {
+				if(e.getBillingTransactionsModelPK().getDoccod().equals("PRMI") && e.getBillingTransactionsModelPK().getDocnum()> model.getBillingTransactionsModelPK().getDocnum()) {
+					model =e;
+				}
+			}else{
+				if(e.getBillingTransactionsModelPK().getDoccod().equals("PRMI")) {
+					model = e;
+				}
+			}
+		}
+		
+		if(model != null) {
+			inProposalCustomDao.changeLinNum(model.getPprnum(), model.getIcpyer(), model.getIcpmon());
+		}
+		
 		return true;
 	}
 
