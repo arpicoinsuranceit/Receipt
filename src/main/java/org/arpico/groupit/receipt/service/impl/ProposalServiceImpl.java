@@ -29,6 +29,7 @@ import org.arpico.groupit.receipt.dao.InPropSurrenderValsCustomDao;
 import org.arpico.groupit.receipt.dao.InPropSurrenderValsDao;
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
 import org.arpico.groupit.receipt.dao.InProposalDao;
+import org.arpico.groupit.receipt.dao.InTransactionCustomDao;
 import org.arpico.groupit.receipt.dao.InTransactionsDao;
 import org.arpico.groupit.receipt.dao.RmsUserDao;
 import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
@@ -77,6 +78,9 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	@Autowired
 	private InProposalDao inProposalDao;
+	
+	@Autowired
+	private InTransactionCustomDao transactionCustomDao;
 
 	@Autowired
 	private InProposalCustomDao inProposalCustomDao;
@@ -656,6 +660,10 @@ public class ProposalServiceImpl implements ProposalServce {
 
 		}
 		
+		
+		updatePolNum(proposalsModelNew.getInProposalsModelPK().getPprnum(), proposalsModelNew.getPolnum());
+		
+		
 		inProposalDao.save(inProposalsModel);
 
 		System.out.println("Proposal Status Update Done");
@@ -714,6 +722,12 @@ public class ProposalServiceImpl implements ProposalServce {
 
 		inBillingTransactionDao.save(setoffList);
 
+	}
+
+	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	private void updatePolNum(String pprnum, String polnum) throws Exception {
+		billingTransactionsCustomDao.updatePolNum(pprnum, polnum);
+		transactionCustomDao.updatePolNum(pprnum, polnum);
 	}
 
 	private List<InPropSurrenderValsModel> incrementSurrenderVals(
