@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.arpico.groupit.receipt.dao.AgentDao;
+import org.arpico.groupit.receipt.dao.BranchUnderwriteDao;
 import org.arpico.groupit.receipt.dao.RmsUserDao;
 import org.arpico.groupit.receipt.dto.AgentDto;
 import org.arpico.groupit.receipt.model.AgentModel;
@@ -30,6 +31,9 @@ public class AgentServiceImpl implements AgentService {
 
 	@Autowired
 	private DaoParameters daoParameters;
+	
+	@Autowired
+	private BranchUnderwriteDao branchUnderwriteDao;
 
 	@Override
 	public List<AgentDto> getAgentList(Integer agentCode, String token) throws Exception {
@@ -103,6 +107,44 @@ public class AgentServiceImpl implements AgentService {
 	public List<AgentDto> getAgentList(Integer agentCode, String token, String branchCode) throws Exception {
 		String sql = "";
 		sql = "and loccod IN ('" + branchCode + "')";
+
+		List<AgentModel> agentModels = agentDao.findAgentLikeAgentCode(agentCode, sql);
+		List<AgentDto> agentDtos = new ArrayList<>();
+		for (AgentModel agentModel : agentModels) {
+			AgentDto agentDto = getAgent(agentModel);
+			agentDtos.add(agentDto);
+		}
+		return agentDtos;
+	}
+	
+	@Override
+	public List<AgentDto> getAgentListByRegion(Integer agentCode, String token, String branchCode) throws Exception {
+		
+		String regions="";
+		String regionCodes[]=branchCode.split(",");
+		
+		if(regionCodes.length > 0) {
+			for (String string : regionCodes) {
+				regions+="'"+string+"'"+",";
+			}
+		}
+		
+		regions=regions.replaceAll(",$", "");
+		
+		List<String> brnCodes = branchUnderwriteDao.findLocCodesZonalBranch(regions,"REGION");
+		
+		String branches="";
+		
+		if(!brnCodes.isEmpty()) {
+			for (String string : brnCodes) {
+				branches+="'"+string+"'"+",";
+			}
+		}
+		
+		branches=branches.replaceAll(",$", "");
+		
+		String sql = "";
+		sql = "and loccod IN (" + branches + ")";
 
 		List<AgentModel> agentModels = agentDao.findAgentLikeAgentCode(agentCode, sql);
 		List<AgentDto> agentDtos = new ArrayList<>();

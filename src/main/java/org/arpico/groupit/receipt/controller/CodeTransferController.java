@@ -29,8 +29,8 @@ public class CodeTransferController {
 	}
 	
 	@RequestMapping(value="/code_transfer/getCodePendingProposalDetails", method = RequestMethod.POST)
-	public ResponseEntity<Object> getCodePendingProposalDetails(@RequestParam("token")String token)throws Exception{
-		return codeTransferService.getCodePendingProposalDetails(token);
+	public ResponseEntity<Object> getCodePendingProposalDetails(@RequestParam("token")String token,@RequestParam("dashPara") String dashPara,@RequestParam("userType") String userType)throws Exception{
+		return codeTransferService.getCodePendingProposalDetails(token,dashPara,userType);
 	}
 	
 	@RequestMapping(value="/code_transfer/getPolicyDetails/{polNum}/{token:.+}", method = RequestMethod.GET)
@@ -39,7 +39,7 @@ public class CodeTransferController {
 	}
 	
 	@RequestMapping(value="/code_transfer/getPendingCodeTransfersPrp", method = RequestMethod.POST)
-	public List<CodeTransferDto> getPendingCodeTransfersPrp(@RequestParam("token") String token)throws Exception{
+	public List<CodeTransferDto> getPendingCodeTransfersPrp(@RequestParam("token")String token)throws Exception{
 		return codeTransferService.getPendingCodeTransferPrp(token);
 	}
 	
@@ -55,7 +55,7 @@ public class CodeTransferController {
 	}
 	
 	@RequestMapping(value="/code_transfer/getCanceledCodeTransfersPrp", method = RequestMethod.POST)
-	public List<CodeTransferDto> getCanceledCodeTransfersPrp(@RequestParam("token") String token)throws Exception{
+	public List<CodeTransferDto> getCanceledCodeTransfersPrp(@RequestParam("token")String token)throws Exception{
 		return codeTransferService.getCanceledCodeTransferPrp(token);
 	}
 	

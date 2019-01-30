@@ -477,7 +477,7 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 				CodeTransferModel codeTransferModel = new CodeTransferModel();
 				codeTransferModel.setCreateBy(userCode);
 				codeTransferModel.setCreateDate(new Date());
-				codeTransferModel.setLocCode(ct.getBranch());
+				codeTransferModel.setLocCode(inAgentMastDao.getAgentDetails(ct.getAgentCode()).get(0).getLocation());
 				codeTransferModel.setNewAgentCode(saveCodeTransferDto.getAgent());
 				codeTransferModel.setOldAgentCode(ct.getAgentCode());
 				codeTransferModel.setPprNum(ct.getPprNum());
@@ -871,6 +871,9 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 			inProposalsModel.setPprsta(curPprSta);
 			inProposalsModel.getInProposalsModelPK().setPrpseq(pprSeqNew);
 			inProposalsModel.setAdvcod(codeTransferModel.getNewAgentCode());
+			inProposalsModel.setCreadt(new Date());
+			inProposalsModel.setCreaby(user);
+			inProposalsModel.setLockin(new Date());
 
 			InProposalsModel newInProposalModel = inProposalDao.save(inProposalsModel);
 
@@ -921,11 +924,16 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 						saveReceiptDto
 								.setPropId(Integer.valueOf(newInProposalModel.getInProposalsModelPK().getPprnum()));
 
+						System.out.println("*** before call auto issue in code transfer approve ***" + new Date());
+						
 						proposalService.checkPolicy(newInProposalModel,
 								Integer.valueOf(newInProposalModel.getInProposalsModelPK().getPprnum()),
 								newInProposalModel.getInProposalsModelPK().getPrpseq(), saveReceiptDto,
 								newInProposalModel.getAdvcod(), newInProposalModel.getInProposalsModelPK().getLoccod(),
 								billingTransactionsModels.get(0));
+						
+						System.out.println("*** after call auto issue in code transfer approve ***" + new Date());
+						
 					}
 
 				}
@@ -953,7 +961,7 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 		if (userCode != null) {
 			List<String> loccodes=new ArrayList<>();
 			
-			if(userType.equals("ZONE")) {
+			if(userType.equals("ZONE") || userType.equals("REGION")) {
 				
 				String zones="";
 				String zoneCodes[]=dashPara.split(",");
@@ -966,7 +974,7 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 				
 				zones=zones.replaceAll(",$", "");
 				
-				loccodes = branchUnderwriteDao.findLocCodesZonalBranch(zones);
+				loccodes = branchUnderwriteDao.findLocCodesZonalBranch(zones,userType);
 				
 			}
 			
@@ -980,6 +988,8 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 				}
 				
 			}
+			
+			
 			
 			
 			List<CodeTransferModel> codeTransferModels = codeTransferDao.findByStatusAndLocCodeIn("PENDING", loccodes);
@@ -1064,10 +1074,37 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 	}
 	
 	@Override
-	public ResponseEntity<Object> getCodePendingProposalDetails(String token) throws Exception {
+	public ResponseEntity<Object> getCodePendingProposalDetails(String token,String dashPara,String userType) throws Exception {
 		//ResponseDto dto = null;
 		String userCode = new JwtDecoder().generate(token);
-		List<String> locCodes = branchUnderwriteDao.findLocCodes(userCode);
+		List<String> locCodes = new ArrayList<>();
+		
+		if(userType.equals("REGION")) {
+			String regions="";
+			String regionCodes[]=dashPara.split(",");
+			
+			if(regionCodes.length > 0) {
+				for (String string : regionCodes) {
+					regions+="'"+string+"'"+",";
+				}
+			}
+			
+			regions=regions.replaceAll(",$", "");
+			
+			List<String> brnCodes = branchUnderwriteDao.findLocCodesZonalBranch(regions,userType);
+			
+			brnCodes.forEach(brn -> {
+				locCodes.add(brn);
+			});
+			
+		}else {
+			List<String> brnCodes = branchUnderwriteDao.findLocCodes(userCode);
+			
+			brnCodes.forEach(brn -> {
+				locCodes.add(brn);
+			});
+		}
+		
 		List<CodeTransferHelperDto> codeTransferHelperDtos=new ArrayList<>();
 		
 		List<InPropMedicalReqModel> inPropMedicalReqModels = inPropMedicalReqCustomDao.getMedicalReqForCodeTransfer("AD-CT", "N");
