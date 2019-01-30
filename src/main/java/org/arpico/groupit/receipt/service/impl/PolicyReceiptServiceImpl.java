@@ -162,24 +162,24 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		basicDetailsDto.setProposalNo(basicsModel.getProposalNo());
 		basicDetailsDto.setSeqNo(basicsModel.getSeqNo());
 		basicDetailsDto.setPremium(basicsModel.getPremium());
-		
+
 		basicDetailsDto.setId2(basicsModel.getId2());
-		
-		//System.out.println("basicsModel.getMobNo() : " + basicsModel.getMobNo());
-		
+
+		// System.out.println("basicsModel.getMobNo() : " + basicsModel.getMobNo());
+
 		if (basicsModel.getMobNo() != null && basicsModel.getMobNo().length() > 0) {
 			basicDetailsDto.setMobile("true");
 		} else {
 			basicDetailsDto.setMobile("false");
 		}
 		basicDetailsDto.setStatus(basicsModel.getPrsta());
-		
+
 		return basicDetailsDto;
 	}
 
 	@Override
 	public ResponseEntity<Object> savePolicyReceipt(SaveReceiptDto saveReceiptDto) throws Exception {
-		
+
 		System.out.println("POLICY RECEIPT SAVE");
 
 		ResponseDto dto = null;
@@ -194,11 +194,11 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		String[] batNoArr = numberGenerator.generateNewId("", "", "#TXNSQ#", "");
 
 		if (locCode != null) {
-			
+
 			System.out.println("LOCATION FOUND : " + locCode);
 
 			if (batNoArr[0].equals("Success")) {
-				
+
 				System.out.println("BATCH NO GENERATED : " + batNoArr[1]);
 
 				InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
@@ -221,28 +221,28 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 				deposit.setAdmfee(0.0);
 				deposit.setPolfee(0.0);
 				deposit.setTxntyp("POLDEP");
-				
+
 				System.out.println("BILLINGTRANSACTION GENERATED : " + deposit.toString());
 
 				// inBillingTransactionDao.save(deposit);
 				ReceiptPrintDto printDto = null;
 				try {
 					saveReceipt(inTransactionsModel, deposit);
-					
+
 					System.out.println(" SAVE RECEIPTS");
 
 					List<InBillingTransactionsModel> setoffs = null;
 
 					if (!saveReceiptDto.equals("CQ")) {
-						
+
 						System.out.println("NOT A CHEQUE");
 
-						//System.out.println(" SETOFF : Not EQ Cheque Pass");
-						
+						// System.out.println(" SETOFF : Not EQ Cheque Pass");
+
 						String[] batNoArr2 = numberGenerator.generateNewId("", "", "#TXNSQ#", "");
 
 						if (batNoArr2[0].equals("Success")) {
-							
+
 							System.out.println("BATCH NO GENERATED");
 
 							List<InPropAddBenefitModel> addBenefitModels = addBenefictCustomDao.getBenefByPprSeq(
@@ -254,28 +254,27 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 							setoffs = setoffService.setoff(inProposalsModel, userCode, locCode, saveReceiptDto, deposit,
 									hrbamt, null, "OLD", Integer.parseInt(batNoArr2[1]));
 
-							//System.out.println(" SETOFF : Setoff : " + setoffs.size());
-							
+							// System.out.println(" SETOFF : Setoff : " + setoffs.size());
+
 							System.out.println("SETOFF SIZE : " + setoffs.size());
-							
+
 							System.out.println("PROPOSAL SATATUS  : " + inProposalsModel.getPprsta());
-							
-							if(inProposalsModel.getPprsta().equalsIgnoreCase("PLISU") || inProposalsModel.getPprsta().equalsIgnoreCase("PLAPS")) {
+
+							if (inProposalsModel.getPprsta().equalsIgnoreCase("PLISU")
+									|| inProposalsModel.getPprsta().equalsIgnoreCase("PLAPS")) {
 								try {
 									saveTransactions(setoffs);
 									System.out.println("SETOFF SAVE");
-									
+
 								} catch (Exception e) {
-									
+
 									System.out.println("SETOFF SAVE ERROR");
-									
+
 									e.printStackTrace();
 								}
 							} else {
 								System.out.println("NOT PLISU && PLAPS");
 							}
-							
-							
 
 						} else {
 							ResponseDto responseDto = new ResponseDto();
@@ -374,6 +373,46 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		if (setoffs != null && setoffs.size() > 0) {
 			inBillingTransactionDao.save(setoffs);
 		}
+
+		System.out.println("setoff saved");
+
+		InBillingTransactionsModel model = null;
+
+		for (InBillingTransactionsModel e : setoffs) {
+			if (model != null) {
+				System.out.println("not null");
+				if (e.getBillingTransactionsModelPK().getDoccod().equals("PRMI") && e.getBillingTransactionsModelPK()
+						.getDocnum() > model.getBillingTransactionsModelPK().getDocnum()) {
+
+					System.out.println("prim");
+					System.out.println((e.getBillingTransactionsModelPK().getDocnum()));
+
+					model = e;
+				}
+			} else {
+				System.out.println("null");
+				if (e.getBillingTransactionsModelPK().getDoccod().equals("PRMI")) {
+					System.out.println("prim");
+					System.out.println((e.getBillingTransactionsModelPK().getDocnum()));
+
+					model = e;
+				}
+			}
+
+			if (model != null) {
+				System.out.println(model.toString());
+			}
+		}
+
+		
+		System.out.println("Last");
+		
+		System.out.println(model.toString());
+		
+		if (model != null) {
+			inProposalCustomDao.changeLinNum(model.getPprnum(), model.getTxnyer(), model.getTxnmth());
+		}
+
 		return true;
 	}
 
@@ -390,7 +429,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 		List<AgentModel> agentModels = agentDao.findAgentByCodeAll(inProposalsModel.getAdvcod());
 
-		//System.out.println(inProposalsModel.getAdvcod());
+		// System.out.println(inProposalsModel.getAdvcod());
 
 		String userName = rmsUserDao.getName(agentCode);
 
@@ -425,7 +464,13 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		if (inTransactionsModel.getChqbnk() != null) {
 			printDto.setBankCode(Integer.parseInt(inTransactionsModel.getChqbnk()));
 		}
-		printDto.setSetOffs(setoffList);
+
+		if (inProposalsModel.getPprsta().equalsIgnoreCase("PLISU")
+				|| inProposalsModel.getPprsta().equalsIgnoreCase("PLAPS")) {
+
+			printDto.setSetOffs(setoffList);
+
+		}
 		return printDto;
 	}
 

@@ -25,6 +25,8 @@ public interface InTransactionCustomDao {
 	List<LastReceiptSummeryModel> getLastLoanReceiptsByPolNo(String polNo) throws Exception;
 
 	List<NotRelChequeModel> getNotRelCheques(String sql) throws Exception;
+
+	Integer updatePolNum(String pprnum, String polnum) throws Exception;
 	
 	
 }

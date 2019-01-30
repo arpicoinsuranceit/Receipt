@@ -64,4 +64,6 @@ public interface InProposalCustomDao {
 
 	List<ProposalNoSeqNoModel> getPolicyNoSeqNoModel(String polNum) throws Exception;
 
+	void changeLinNum(Integer pprnum, Integer icpyer, Integer icpmon);
+
 }

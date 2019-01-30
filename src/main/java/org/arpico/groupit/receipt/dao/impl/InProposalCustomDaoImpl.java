@@ -666,5 +666,13 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 		return list;
 	}
 
+	@Override
+	public void changeLinNum(Integer pprnum, Integer icpyer, Integer icpmon) {
+		
+		jdbcTemplate.update("update inproposals set linyer = "+icpyer+" , linmon = "+icpmon+" where sbucod = '450' and pprnum = '"+pprnum+"' and pprsta <> 'INAC'");
+		
+		
+	}
+
 
 }

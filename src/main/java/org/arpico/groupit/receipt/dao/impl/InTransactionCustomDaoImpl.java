@@ -63,7 +63,7 @@ public class InTransactionCustomDaoImpl implements InTransactionCustomDao {
 						+ "where sbucod='450' and polnum  = '" + polNo + "'  order by creadt desc limit 2",
 				new LastReceiptRowMapper());
 	}
-	
+
 	@Override
 	public List<LastReceiptSummeryModel> getLastLoanReceiptsByPolNo(String polNo) throws Exception {
 
@@ -99,7 +99,7 @@ public class InTransactionCustomDaoImpl implements InTransactionCustomDao {
 
 	@Override
 	public List<InTransactionsModel> getTransactionByPprNum(String pprNum) throws Exception {
-		return (List<InTransactionsModel>)jdbcTemplate.query(
+		return (List<InTransactionsModel>) jdbcTemplate.query(
 				"SELECT * FROM intransactions where sbucod = '450' and pprnum = '" + pprNum + "' ;",
 				new InTransactionRowMapper());
 	}
@@ -114,15 +114,20 @@ public class InTransactionCustomDaoImpl implements InTransactionCustomDao {
 
 	@Override
 	public List<NotRelChequeModel> getNotRelCheques(String sql) throws Exception {
-		return (List<NotRelChequeModel>) jdbcTemplate.query(
-				"select concat(b.doccod,' - ',b.docnum) receipt, " + 
-				"	   p.pprnum as proposal, p.polnum, p.ppdnam, b.totprm, concat(p.advcod,' / ',a.prnnam) agent,a.loccod , b.chqnum, b.chqdat, b.chqbnk, " + 
-				"       b.creadt " + 
-				"						from inproposals p  " + 
-				"							inner join intransactions b on p.sbucod=b.sbucod and p.pprnum=b.pprnum  " + 
-				"							inner join inagentmast a on a.sbucod=p.sbucod and a.agncod=p.advcod  " + 
-				"where b.sbucod='450' "+sql+" and b.paymod = 'CQ'  and b.chqrel = 'N' group by b.docnum order by b.creadt desc",
+		return (List<NotRelChequeModel>) jdbcTemplate.query("select concat(b.doccod,' - ',b.docnum) receipt, "
+				+ "	   p.pprnum as proposal, p.polnum, p.ppdnam, b.totprm, concat(p.advcod,' / ',a.prnnam) agent,a.loccod , b.chqnum, b.chqdat, b.chqbnk, "
+				+ "       b.creadt " + "						from inproposals p  "
+				+ "							inner join intransactions b on p.sbucod=b.sbucod and p.pprnum=b.pprnum  "
+				+ "							inner join inagentmast a on a.sbucod=p.sbucod and a.agncod=p.advcod  "
+				+ "where b.sbucod='450' " + sql
+				+ " and b.paymod = 'CQ'  and b.chqrel = 'N' group by b.docnum order by b.creadt desc",
 				new NotRelChequeRowMapper());
+	}
+
+	@Override
+	public Integer updatePolNum(String pprnum, String polnum) throws Exception {
+		return jdbcTemplate.update(
+				"update intransactions set polnum = " + polnum + " where sbucod = '450' and pprnum = " + pprnum + "");
 	}
 
 }
