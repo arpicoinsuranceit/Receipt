@@ -78,6 +78,7 @@ public class SetoffServiceImpl implements SetoffService {
 			billingTransactionsModel.setAdmfee(inProposalsModel.getAdmfee());
 			billingTransactionsModel.setAdvcod(Integer.parseInt(inProposalsModel.getAdvcod()));
 			billingTransactionsModel.setAgncls(agentMastModel.getAgncls());
+			
 			if (previousInvoice != null) {
 				billingTransactionsModel.setAmount(inProposalsModel.getTotprm());
 			} else {

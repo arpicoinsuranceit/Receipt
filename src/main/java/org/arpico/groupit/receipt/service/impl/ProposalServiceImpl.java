@@ -622,7 +622,7 @@ public class ProposalServiceImpl implements ProposalServce {
 					System.out.println("FAIL CHECK POLICY");
 				}
 			} else {
-				System.out.println("FAIL CHECK POLICY");
+				System.out.println("FAIL CHECK POLICY NOT L3 LEVEL");
 			}
 
 		} catch (Exception e) {

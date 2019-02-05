@@ -49,7 +49,7 @@ FROM
      inner join inproposals p on a.sbucod=p.sbucod and a.pprnum=p.pprnum and p.pprsta<>'INAC'
 WHERE
      a.sbucod = $P{psbucod}
-     and trim(a.creaby) like $P{creaby}
+     and trim(a.creaby) like $P{creaby} and (a.remark <> 'Refunded' or a.remark is null)
 and date_format(a.txndat,'%Y-%m-%d') between $P{pfdate} and  $P{ptdate}
 order by a.`bancod`,a.docnum) b
 

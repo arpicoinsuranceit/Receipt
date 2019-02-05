@@ -1,6 +1,7 @@
 package org.arpico.groupit.receipt.service.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -123,8 +124,15 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService 
 					if (doccod.equals("RCPP") || doccod.equals("RCPL")) {
 						InProposalsModel inProposalsModel = inProposalCustomDao
 								.getProposalFromPprnum(Integer.valueOf(inTransactionsModel.getPprnum()));
+						
+						Calendar cal = Calendar.getInstance();
+						cal.setTime(new Date());
+						Calendar cal1 = Calendar.getInstance();
+						cal1.setTime(inProposalsModel.getPoldat());
 
-						if (inProposalsModel.getPolnum() != null && inProposalsModel.getPolnum() != ""){
+						if (inProposalsModel.getPolnum() != null && inProposalsModel.getPolnum() != "" && 
+								cal.get(Calendar.MONTH) != cal1.get(Calendar.MONTH)){
+							
 							InPropMedicalReqModelPK inPropMedicalReqModelPK = new InPropMedicalReqModelPK();
 
 							inPropMedicalReqModelPK.setInstyp("main");
