@@ -896,7 +896,7 @@ public class CodeTransferServiceImpl implements CodeTransferService {
 						tran.setAdvcod(codeTransferModel.getNewAgentCode());
 					});
 				}
-
+				
 				inTransactionsDao.save(inTransactionsModels);
 
 				List<AgentMastModel> agentMastModels = inAgentMastDao
