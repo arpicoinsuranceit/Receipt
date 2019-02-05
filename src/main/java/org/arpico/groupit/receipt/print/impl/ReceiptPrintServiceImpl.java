@@ -1363,14 +1363,19 @@ public class ReceiptPrintServiceImpl implements ReceiptPrintService {
 			settlementVal.setWidth(100);
 			settlementVal.setTextAlignment(TextAlignment.LEFT);
 			
-			
-			
 			Paragraph p=new Paragraph();
-			receiptPrintDto.getSetOffs().forEach(e -> {
-				p.add(" "+e.get("txnMonth") + " - " + e.get("txnYear")+" : "+e.get("amount")+" , "+" ").setFontSize(5);
-				//settlementVal.add(p);
-			});
+			try {
+				
+				receiptPrintDto.getSetOffs().forEach(e -> {
+					p.add(" "+e.get("txnMonth") + " - " + e.get("txnYear")+" : "+e.get("amount")+" , "+" ").setFontSize(5);
+					//settlementVal.add(p);
+				});
+				
+			} catch (Exception e2) {
+				System.out.println("SETOFF NOT FOUND");
+			}
 			settlementVal.add(p);
+			
 			
 			
 			/////// settltments ////////////////

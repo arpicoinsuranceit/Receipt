@@ -104,8 +104,8 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 //						}
 //					});
 
-			amount = jdbcTemplate.query("SELECT sum(amount) `sum` FROM inbillingtransactions "
-					+ " where sbucod = '450' and pprnum=? and  txnyer <= year(curdate()) and txnmth <= month(curdate())",
+			amount = jdbcTemplate.query("SELECT sum(amount)+(select sum(depost) from inbillingtransactions where sbucod='450' and pprnum='"+pprNo+"') `sum` FROM inbillingtransactions " +  
+					" where sbucod = '450' and pprnum=? and  txnyer <= year(curdate()) and txnmth <= month(curdate());",
 					args.toArray(), new ResultSetExtractor<Double>() {
 
 						@Override
