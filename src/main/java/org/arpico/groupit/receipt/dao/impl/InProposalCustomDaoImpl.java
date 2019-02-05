@@ -70,10 +70,10 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 				.query("select * from inproposals where sbucod = '450' and pprnum = '" + propId + "' and prpseq = '"
 						+ propSeq + "'", new InProposalsRowMapper());
 
-		//System.out.println(models.size());
+		// System.out.println(models.size());
 
 		if (!models.isEmpty()) {
-			//System.out.println("if");
+			// System.out.println("if");
 			return models.get(0);
 		}
 
@@ -83,22 +83,24 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 	@Override
 	public List<ProposalL3Dto> checkL3(Integer propId) throws Exception {
 		List<ProposalL3Dto> models = jdbcTemplate.query(
-				"SELECT x.pprnum, (x.totprm + x.polfee) totprm, x.payment, y.reqcnt,x.spiamt FROM "
-						+ "	(SELECT  a.sbucod, a.pprnum, a.prpseq, a.totprm, a.polfee, "
-						+ "		(SELECT SUM(totprm) FROM intransactions b WHERE a.sbucod = b.sbucod AND a.pprnum = b.pprnum "
-						+ "         AND if(b.paymod<>'CQ',1,if(b.paymod='CQ' and b.chqrel='Y',1,0)) = 1) payment, s.spiamt "
-						+ "			FROM inproposals a "
-						+ "		INNER JOIN inshort_premium_act_product s ON a.sbucod = s.sbucod AND a.prdcod = s.prdcod WHERE "
-						+ "			a.sbucod = '450' AND a.pprsta IN ('L3') AND a.pprnum = '" + propId + "' "
-						+ "     AND s.status = 'ACT') x " + "        INNER JOIN "
-						+ "			(SELECT sbucod, pprnum, prpseq, medcod, "
-						+ "				(SELECT COUNT(*) FROM inpropmedicalreq a WHERE a.sbucod = b.sbucod AND a.loccod = b.loccod "
-						+ "                        AND a.prpseq = b.prpseq AND a.pprnum = b.pprnum AND a.medcod LIKE 'AD%' AND a.tessta = 'N' "
-						+ "                        AND addnot NOT LIKE 'Premium Short%') reqcnt "
-						+ "			FROM inpropmedicalreq b WHERE sbucod = '450' AND pprnum = '" + propId
-						+ "' AND medcod LIKE 'AD%' AND addnot LIKE 'Premium Short%' " + "	AND tessta = 'N') "
-						+ "y ON x.sbucod = y.sbucod AND x.pprnum = y.pprnum AND x.prpseq = y.prpseq "
-						+ "WHERE ((x.totprm + x.polfee) - x.spiamt) <= x.payment AND reqcnt < 1 GROUP BY x.pprnum",
+				"SELECT x.pprnum, (x.totprm + x.polfee) totprm, x.payment, y.reqcnt,x.spiamt FROM  "
+						+ "							(SELECT  a.sbucod, a.pprnum, a.prpseq, a.totprm, a.polfee,  "
+						+ "								(SELECT SUM(totprm) FROM intransactions b WHERE a.sbucod = b.sbucod AND a.pprnum = b.pprnum  "
+						+ "						         AND if(b.paymod<>'CQ',1,if(b.paymod='CQ' and b.chqrel='Y',1,0)) = 1) payment, s.spiamt  "
+						+ "									FROM inproposals a  "
+						+ "								INNER JOIN inshort_premium_act_product s ON a.sbucod = s.sbucod AND a.prdcod = s.prdcod WHERE  "
+						+ "									a.sbucod = '450' AND a.pprsta IN ('L3') AND a.pprnum = '"
+						+ propId + "'  " + "						     AND s.status = 'ACT') x          INNER JOIN  "
+						+ "									(SELECT sbucod, pprnum, prpseq, medcod,  "
+						+ "										(SELECT COUNT(*) FROM inpropmedicalreq a WHERE a.sbucod = b.sbucod AND a.loccod = b.loccod  "
+						+ "						                        AND a.prpseq = b.prpseq AND a.pprnum = b.pprnum AND a.medcod LIKE 'AD%' AND a.tessta = 'N'  "
+						+ "						                        AND addnot NOT LIKE 'Premium Short%') reqcnt  "
+						+ "									FROM inpropmedicalreq b WHERE sbucod = '450' AND pprnum = '"
+						+ propId + "' "
+						+ "                                    AND medcod LIKE 'AD%' AND (addnot LIKE 'Premium Short%' OR mednam = 'Advisor Code Required') "
+						+ "                                    AND IF(medcod = 'AD-CT',tessta = 'Y',tessta = 'N'))  "
+						+ "						y ON x.sbucod = y.sbucod AND x.pprnum = y.pprnum AND x.prpseq = y.prpseq  "
+						+ "						WHERE ((x.totprm + x.polfee) - x.spiamt) <= x.payment AND reqcnt < 1 GROUP BY x.pprnum",
 				new ProposalL3RowMapper());
 
 		return models;
@@ -106,8 +108,9 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 
 	@Override
 	public List<ProposalNoSeqNoModel> getPolicyNoSeqNoModelList(String val) throws Exception {
-		List<ProposalNoSeqNoModel> list = jdbcTemplate.query("select polnum as pprnum, prpseq from inproposals "
-				+ "where sbucod = '450' and  polnum like '" + val + "%' and  pprsta in ('plisu', 'plaps', 'lamd', 'plapp', 'plnrv')",
+		List<ProposalNoSeqNoModel> list = jdbcTemplate.query(
+				"select polnum as pprnum, prpseq from inproposals " + "where sbucod = '450' and  polnum like '" + val
+						+ "%' and  pprsta in ('plisu', 'plaps', 'lamd', 'plapp', 'plnrv')",
 				new ProposalNoSeqNoRowMapper());
 //		
 //		List<ProposalNoSeqNoModel> list = jdbcTemplate.query(
@@ -116,7 +119,7 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 //				new ProposalNoSeqNoRowMapper());
 		return list;
 	}
-	
+
 	@Override
 	public List<ProposalNoSeqNoModel> getPolicyNoSeqNoModelListLoanRcpt(String val) throws Exception {
 		List<ProposalNoSeqNoModel> list = jdbcTemplate.query("select polnum as pprnum, prpseq from inproposals "
@@ -154,7 +157,7 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 				+ "where sbucod = '450' and polnum = '" + polId + "' and prpseq = '" + propSeq + "'",
 				new InProposalsRowMapper());
 
-		//System.out.println(models.size());
+		// System.out.println(models.size());
 
 		if (!models.isEmpty()) {
 			return models.get(0);
@@ -247,7 +250,7 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 
 	@Override
 	public InProposalsModel getProposalFromPprnumWorkFolw(Integer pprnum) throws Exception {
-		
+
 //		System.out.println("SELECT  " + "    p.sbucod, " + "    p.loccod, "
 //				+ "    p.ppdnam, " + "    p.ppdini, " + "    p.ppdad1, " + "    p.ppdad2, " + "    p.ppdad3, "
 //				+ "    p.ppddob, " + "    p.ppdnag, " + "    p.ppdnic, " + "    p.ppdsex, " + "    p.ppdcst, "
@@ -321,8 +324,6 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 				+ "	inpropoccupation o ON o.sbucod = p.sbucod AND o.ocucod = p.ppdocu " + "WHERE "
 				+ "    p.sbucod = '450' AND p.pprnum = '" + pprnum + "' " + "        AND p.pprsta <> 'INAC' "
 				+ "ORDER BY p.prpseq DESC " + "LIMIT 1", new InProposalsRowMapper());
-		
-		
 
 		return models;
 	}
@@ -372,7 +373,8 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 	@Override
 	public List<InProposalsModel> searchProposal(String sql) throws Exception {
 
-		//System.out.println("select * from inproposals where sbucod = '450' and " + sql);
+		// System.out.println("select * from inproposals where sbucod = '450' and " +
+		// sql);
 
 		List<InProposalsModel> models = jdbcTemplate.query("select * from inproposals where sbucod = '450' and " + sql,
 				new InProposalsRowMapper());
@@ -382,7 +384,7 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 
 	@Override
 	public List<ShortPremiumModel> getShortPremium(String sql, Integer page, Integer offset) throws Exception {
-		
+
 //		System.out.println("select p.quonum, p.pprnum, p.prpseq, concat(p.advcod,' - ',a.prnnam) agent, p.loccod, m.addnot from inproposals p  "
 //						+ "	   inner join inpropmedicalreq m on p.sbucod=m.sbucod and p.pprnum=m.pprnum and p.prpseq=m.prpseq and p.pprsta='L3' "
 //						+ "    inner join inagentmast a on a.sbucod=p.sbucod and a.agncod=p.advcod "
@@ -393,8 +395,9 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 				"select p.quonum, p.pprnum, p.prpseq, concat(p.advcod,' - ',a.prnnam) agent, p.loccod, m.addnot from inproposals p  "
 						+ "	   inner join inpropmedicalreq m on p.sbucod=m.sbucod and p.pprnum=m.pprnum and p.prpseq=m.prpseq and p.pprsta='L3' "
 						+ "    inner join inagentmast a on a.sbucod=p.sbucod and a.agncod=p.advcod "
-						+ "      where m.sbucod='450' " + sql 
-						+ "      and m.medcod like 'AD%' and tessta = 'N' and addnot like 'Premium Short%' limit "+ (page) + ", " + offset,
+						+ "      where m.sbucod='450' " + sql
+						+ "      and m.medcod like 'AD%' and tessta = 'N' and addnot like 'Premium Short%' limit "
+						+ (page) + ", " + offset,
 				new ShortPremiumRowMapper());
 
 		return models;
@@ -405,33 +408,22 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 		Integer count = jdbcTemplate.queryForObject("select count(m.addnot) from inproposals p  "
 				+ "	inner join inpropmedicalreq m on p.sbucod=m.sbucod and p.pprnum=m.pprnum and p.prpseq=m.prpseq and p.pprsta='L3' "
 				+ "where m.sbucod='450' " + sql
-				+ " and m.medcod like 'AD%' and tessta = 'N' and addnot like 'Premium Short%'",
-				Integer.class);
+				+ " and m.medcod like 'AD%' and tessta = 'N' and addnot like 'Premium Short%'", Integer.class);
 
 		return count;
 	}
-	
+
 	@Override
 	public List<ShortPremiumModel> getPendingReq(String sql, Integer page, Integer offset) throws Exception {
-		List<ShortPremiumModel> models = jdbcTemplate.query("SELECT  " + 
-				"    p.quonum, " + 
-				"    p.pprnum, " + 
-				"    p.prpseq, " + 
-				"    CONCAT(p.advcod, ' - ', a.prnnam) agent, " + 
-				"    p.loccod, " + 
-				"    COUNT(m.addnot) as reqcnt " + 
-				"FROM " + 
-				"    inproposals p " + 
-				"        INNER JOIN " + 
-				"    inpropmedicalreq m ON p.sbucod = m.sbucod " + 
-				"        AND p.pprnum = m.pprnum " + 
-				"        AND p.prpseq = m.prpseq " + 
-				"        AND p.pprsta IN ('L0' , 'L1', 'L2', 'L3') " + 
-				"        INNER JOIN " + 
-				"    inagentmast a ON a.sbucod = p.sbucod " + 
-				"        AND a.agncod = p.advcod " + 
-				"WHERE " + 
-				"    m.sbucod = '450' "+ sql +" AND tessta = 'N' group by p.pprnum limit " + page + "," + offset ,
+		List<ShortPremiumModel> models = jdbcTemplate.query(
+				"SELECT  " + "    p.quonum, " + "    p.pprnum, " + "    p.prpseq, "
+						+ "    CONCAT(p.advcod, ' - ', a.prnnam) agent, " + "    p.loccod, "
+						+ "    COUNT(m.addnot) as reqcnt " + "FROM " + "    inproposals p " + "        INNER JOIN "
+						+ "    inpropmedicalreq m ON p.sbucod = m.sbucod " + "        AND p.pprnum = m.pprnum "
+						+ "        AND p.prpseq = m.prpseq " + "        AND p.pprsta IN ('L0' , 'L1', 'L2', 'L3') "
+						+ "        INNER JOIN " + "    inagentmast a ON a.sbucod = p.sbucod "
+						+ "        AND a.agncod = p.advcod " + "WHERE " + "    m.sbucod = '450' " + sql
+						+ " AND tessta = 'N' group by p.pprnum limit " + page + "," + offset,
 				new PendingReqRowMapper());
 
 		return models;
@@ -439,221 +431,112 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 
 	@Override
 	public Integer getPendingReqCount(String sql) throws Exception {
-		Integer count = jdbcTemplate.queryForObject("SELECT    " + 
-				"    SUM(x.rowcon)   " + 
-				"FROM   " + 
-				"    (SELECT    " + 
-				"        1 rowcon   " + 
-				"    FROM   " + 
-				"        inproposals p   " + 
-				"    INNER JOIN inpropmedicalreq m ON p.sbucod = m.sbucod   " + 
-				"        AND p.pprnum = m.pprnum   " + 
-				"        AND p.prpseq = m.prpseq   " + 
-				"        AND p.pprsta IN ('L0' , 'L1', 'L2', 'L3')   " + 
-				"    WHERE   " + 
-				"        m.sbucod = '450' "+ sql +" AND tessta = 'N'   " + 
-				"    GROUP BY p.pprnum) x",
+		Integer count = jdbcTemplate.queryForObject(
+				"SELECT    " + "    SUM(x.rowcon)   " + "FROM   " + "    (SELECT    " + "        1 rowcon   "
+						+ "    FROM   " + "        inproposals p   "
+						+ "    INNER JOIN inpropmedicalreq m ON p.sbucod = m.sbucod   "
+						+ "        AND p.pprnum = m.pprnum   " + "        AND p.prpseq = m.prpseq   "
+						+ "        AND p.pprsta IN ('L0' , 'L1', 'L2', 'L3')   " + "    WHERE   "
+						+ "        m.sbucod = '450' " + sql + " AND tessta = 'N'   " + "    GROUP BY p.pprnum) x",
 				Integer.class);
 
 		return count;
 	}
 
 	@Override
-	public List<WorkFlowPolicyGridModel> getWorkFlowPolicylaps(String type, Integer date1, Integer date2, String type2) {
-		
-		String query = "SELECT  " + 
-				"    n.policy, " + 
-				"    MAX(n.duedat) duedat, " + 
-				"    (n.totprm * 2) totprm, " + 
-				"    n.ppdini, " + 
-				"    n.agent, " + 
-				"    n.brncod, " + 
-				"    n.pprnum, " + 
-				"    (SELECT  " + 
-				"            GROUP_CONCAT(ab.ridcod) " + 
-				"        FROM " + 
-				"            inpropaddbenefit ab " + 
-				"        WHERE " + 
-				"            n.sbucod = ab.sbucod " + 
-				"                AND n.pprnum = ab.pprnum " + 
-				"                AND n.prpseq = ab.prpseq " + 
-				"                AND ab.ridcod IN ('HRB' , 'HRBC', " + 
-				"                'HRBS', " + 
-				"                'SUHRB', " + 
-				"                'SUHRBS', " + 
-				"                'SUHRBC', " + 
-				"                'HCBI', " + 
-				"                'HCBIC', " + 
-				"                'HCBIS', " + 
-				"                'HCBF', " + 
-				"                'HCBFS', " + 
-				"                'HCBFC', " + 
-				"                'SHCBI', " + 
-				"                'SHCBIC', " + 
-				"                'SHCBIS', " + 
-				"                'HB', " + 
-				"                'HBS', " + 
-				"                'HBC') " + 
-				"                AND ab.sumasu > 0.0) health " + 
-				"FROM " + 
-				"    (SELECT  " + 
-				"        x.policy, " + 
-				"            x.sbucod, " + 
-				"            x.pprnum, " + 
-				"            x.polnum, " + 
-				"            x.pprsta, " + 
-				"            MAX(x.duedat) duedat, " + 
-				"            x.agent, " + 
-				"            x.ppdini, " + 
-				"            x.brncod, " + 
-				"            x.prpseq, " + 
-				"            x.totprm, " + 
-				"            IF(DATEDIFF(SYSDATE(), DATE_ADD(MAX(x.duedat), INTERVAL x.addmth MONTH)) > "+ date1 +" " + 
-				"                AND DATEDIFF(SYSDATE(), DATE_ADD(MAX(x.duedat), INTERVAL x.addmth MONTH)) <= "+date2+", '"+type+"', 'PLISU') updsta, " + 
-				"            x.advcod " + 
-				"    FROM " + 
-				"        (SELECT  " + 
-				"        b.sbucod, " + 
-				"            b.pprnum, " + 
-				"            b.polnum, " + 
-				"            b.pprsta, " + 
-				"            b.prpseq, " + 
-				"            b.advcod, " + 
-				"            CONCAT(b.advcod, '-', am.prnnam) agent, " + 
-				"            b.ppdini, " + 
-				"            a.brncod, " + 
-				"            b.totprm, " + 
-				"            CONCAT(a.txnyer,'-',if(length(a.txnmth)=1,CONCAT('0',a.txnmth),a.txnmth),'-',if(day(b.comdat) > 28,28,if(length(day(b.comdat))=1,CONCAT('0',day(b.comdat)),day(b.comdat))))  duedat, " + 
-				"            CASE " + 
-				"                WHEN b.paytrm = 12 THEN 1 " + 
-				"                WHEN b.paytrm = 4 THEN 3 " + 
-				"                WHEN b.paytrm = 2 THEN 6 " + 
-				"                WHEN b.paytrm = 1 THEN 12 " + 
-				"            END addmth, " + 
-				"            CONCAT(b.prdcod, '/', b.polnum) policy " + 
-				"    FROM " + 
-				"        inbillingtransactions a " + 
-				"    INNER JOIN inproposals b ON a.sbucod = b.sbucod " + 
-				"        AND a.pprnum = b.pprnum " + 
-				"        AND b.pprsta = '"+type2+"' " + 
-				"        AND (b.sinprm IS NULL OR b.sinprm = '') " + 
-				"    INNER JOIN inagentmast am ON am.sbucod = b.sbucod " + 
-				"        AND am.agncod = b.advcod " + 
-				"    WHERE " + 
-				"        a.sbucod = '450' " + 
-				"            AND DATE_FORMAT(a.creadt, '%Y-%m-%d') <= CURRENT_DATE() " + 
-				"            AND a.amount <> 0 " + 
-				"    GROUP BY a.sbucod , a.pprnum , a.polnum , a.txnyer , a.txnmth " + 
-				"    HAVING (SUM(a.amount) + (MAX(a.otham1) + MAX(a.otham2) + MAX(a.otham3) + MAX(a.otham4))) = 0) x " + 
-				"    GROUP BY x.sbucod , x.polnum) n " + 
-				"WHERE " + 
-				"    CONVERT( n.updsta USING UTF8) != n.pprsta;";
-		
-		//System.out.println(query);
-		List<WorkFlowPolicyGridModel> models = jdbcTemplate.query(query,
-				new WorkFlowPolicyGridRowMapper());
+	public List<WorkFlowPolicyGridModel> getWorkFlowPolicylaps(String type, Integer date1, Integer date2,
+			String type2) {
+
+		String query = "SELECT  " + "    n.policy, " + "    MAX(n.duedat) duedat, " + "    (n.totprm * 2) totprm, "
+				+ "    n.ppdini, " + "    n.agent, " + "    n.brncod, " + "    n.pprnum, " + "    (SELECT  "
+				+ "            GROUP_CONCAT(ab.ridcod) " + "        FROM " + "            inpropaddbenefit ab "
+				+ "        WHERE " + "            n.sbucod = ab.sbucod " + "                AND n.pprnum = ab.pprnum "
+				+ "                AND n.prpseq = ab.prpseq " + "                AND ab.ridcod IN ('HRB' , 'HRBC', "
+				+ "                'HRBS', " + "                'SUHRB', " + "                'SUHRBS', "
+				+ "                'SUHRBC', " + "                'HCBI', " + "                'HCBIC', "
+				+ "                'HCBIS', " + "                'HCBF', " + "                'HCBFS', "
+				+ "                'HCBFC', " + "                'SHCBI', " + "                'SHCBIC', "
+				+ "                'SHCBIS', " + "                'HB', " + "                'HBS', "
+				+ "                'HBC') " + "                AND ab.sumasu > 0.0) health " + "FROM " + "    (SELECT  "
+				+ "        x.policy, " + "            x.sbucod, " + "            x.pprnum, " + "            x.polnum, "
+				+ "            x.pprsta, " + "            MAX(x.duedat) duedat, " + "            x.agent, "
+				+ "            x.ppdini, " + "            x.brncod, " + "            x.prpseq, "
+				+ "            x.totprm, "
+				+ "            IF(DATEDIFF(SYSDATE(), DATE_ADD(MAX(x.duedat), INTERVAL x.addmth MONTH)) > " + date1
+				+ " " + "                AND DATEDIFF(SYSDATE(), DATE_ADD(MAX(x.duedat), INTERVAL x.addmth MONTH)) <= "
+				+ date2 + ", '" + type + "', 'PLISU') updsta, " + "            x.advcod " + "    FROM "
+				+ "        (SELECT  " + "        b.sbucod, " + "            b.pprnum, " + "            b.polnum, "
+				+ "            b.pprsta, " + "            b.prpseq, " + "            b.advcod, "
+				+ "            CONCAT(b.advcod, '-', am.prnnam) agent, " + "            b.ppdini, "
+				+ "            a.brncod, " + "            b.totprm, "
+				+ "            CONCAT(a.txnyer,'-',if(length(a.txnmth)=1,CONCAT('0',a.txnmth),a.txnmth),'-',if(day(b.comdat) > 28,28,if(length(day(b.comdat))=1,CONCAT('0',day(b.comdat)),day(b.comdat))))  duedat, "
+				+ "            CASE " + "                WHEN b.paytrm = 12 THEN 1 "
+				+ "                WHEN b.paytrm = 4 THEN 3 " + "                WHEN b.paytrm = 2 THEN 6 "
+				+ "                WHEN b.paytrm = 1 THEN 12 " + "            END addmth, "
+				+ "            CONCAT(b.prdcod, '/', b.polnum) policy " + "    FROM "
+				+ "        inbillingtransactions a " + "    INNER JOIN inproposals b ON a.sbucod = b.sbucod "
+				+ "        AND a.pprnum = b.pprnum " + "        AND b.pprsta = '" + type2 + "' "
+				+ "        AND (b.sinprm IS NULL OR b.sinprm = '') "
+				+ "    INNER JOIN inagentmast am ON am.sbucod = b.sbucod " + "        AND am.agncod = b.advcod "
+				+ "    WHERE " + "        a.sbucod = '450' "
+				+ "            AND DATE_FORMAT(a.creadt, '%Y-%m-%d') <= CURRENT_DATE() "
+				+ "            AND a.amount <> 0 "
+				+ "    GROUP BY a.sbucod , a.pprnum , a.polnum , a.txnyer , a.txnmth "
+				+ "    HAVING (SUM(a.amount) + (MAX(a.otham1) + MAX(a.otham2) + MAX(a.otham3) + MAX(a.otham4))) = 0) x "
+				+ "    GROUP BY x.sbucod , x.polnum) n " + "WHERE " + "    CONVERT( n.updsta USING UTF8) != n.pprsta;";
+
+		// System.out.println(query);
+		List<WorkFlowPolicyGridModel> models = jdbcTemplate.query(query, new WorkFlowPolicyGridRowMapper());
 		return models;
 	}
 
 	@Override
 	public List<WorkFlowPolicyGridModel> getWorkFlowPolicylaps(String type, String paraForIn, Integer date1,
 			Integer date2, String type2) {
-		
-		//System.out.println("Branch");
-		
-		String query = "SELECT  " + 
-				"    n.policy, " + 
-				"    MAX(n.duedat) duedat, " + 
-				"    (n.totprm * 2) totprm, " + 
-				"    n.ppdini, " + 
-				"    n.agent, " + 
-				"    n.brncod, " + 
-				"    n.pprnum, " + 
-				"    (SELECT  " + 
-				"            GROUP_CONCAT(ab.ridcod) " + 
-				"        FROM " + 
-				"            inpropaddbenefit ab " + 
-				"        WHERE " + 
-				"            n.sbucod = ab.sbucod " + 
-				"                AND n.pprnum = ab.pprnum " + 
-				"                AND n.prpseq = ab.prpseq " + 
-				"                AND ab.ridcod IN ('HRB' , 'HRBC', " + 
-				"                'HRBS', " + 
-				"                'SUHRB', " + 
-				"                'SUHRBS', " + 
-				"                'SUHRBC', " + 
-				"                'HCBI', " + 
-				"                'HCBIC', " + 
-				"                'HCBIS', " + 
-				"                'HCBF', " + 
-				"                'HCBFS', " + 
-				"                'HCBFC', " + 
-				"                'SHCBI', " + 
-				"                'SHCBIC', " + 
-				"                'SHCBIS', " + 
-				"                'HB', " + 
-				"                'HBS', " + 
-				"                'HBC') " + 
-				"                AND ab.sumasu > 0.0) health " + 
-				"FROM " + 
-				"    (SELECT  " + 
-				"        x.policy, " + 
-				"            x.sbucod, " + 
-				"            x.pprnum, " + 
-				"            x.polnum, " + 
-				"            x.pprsta, " + 
-				"            MAX(x.duedat) duedat, " + 
-				"            x.agent, " + 
-				"            x.ppdini, " + 
-				"            x.brncod, " + 
-				"            x.prpseq, " + 
-				"            x.totprm, " + 
-				"            IF(DATEDIFF(SYSDATE(), DATE_ADD(MAX(x.duedat), INTERVAL x.addmth MONTH)) > "+ date1 +" " + 
-				"                AND DATEDIFF(SYSDATE(), DATE_ADD(MAX(x.duedat), INTERVAL x.addmth MONTH)) <= "+date2+", '"+type+"', 'PLISU') updsta, " + 
-				"            x.advcod " + 
-				"    FROM " + 
-				"        (SELECT  " + 
-				"        b.sbucod, " + 
-				"            b.pprnum, " + 
-				"            b.polnum, " + 
-				"            b.pprsta, " + 
-				"            b.prpseq, " + 
-				"            b.advcod, " + 
-				"            CONCAT(b.advcod, '-', am.prnnam) agent, " + 
-				"            b.ppdini, " + 
-				"            a.brncod, " + 
-				"            b.totprm, " + 
-				"            CONCAT(a.txnyer,'-',if(length(a.txnmth)=1,CONCAT('0',a.txnmth),a.txnmth),'-',if(day(b.comdat) > 28,28,if(length(day(b.comdat))=1,CONCAT('0',day(b.comdat)),day(b.comdat))))  duedat, " + 
-				"            CASE " + 
-				"                WHEN b.paytrm = 12 THEN 1 " + 
-				"                WHEN b.paytrm = 4 THEN 3 " + 
-				"                WHEN b.paytrm = 2 THEN 6 " + 
-				"                WHEN b.paytrm = 1 THEN 12 " + 
-				"            END addmth, " + 
-				"            CONCAT(b.prdcod, '/', b.polnum) policy " + 
-				"    FROM " + 
-				"        inbillingtransactions a " + 
-				"    INNER JOIN inproposals b ON a.sbucod = b.sbucod " + 
-				"        AND a.pprnum = b.pprnum " + 
-				"        AND b.pprsta = '"+type2+"' " + 
-				"        AND (b.sinprm IS NULL OR b.sinprm = '') " + 
-				"    INNER JOIN inagentmast am ON am.sbucod = b.sbucod " + 
-				"        AND am.agncod = b.advcod " + 
-				"    WHERE " + 
-				"        a.sbucod = '450' " + 
-				"            AND b.loccod IN ("+paraForIn+") " + 
-				"            AND DATE_FORMAT(a.creadt, '%Y-%m-%d') <= CURRENT_DATE() " + 
-				"            AND a.amount <> 0 " + 
-				"    GROUP BY a.sbucod , a.pprnum , a.polnum , a.txnyer , a.txnmth " + 
-				"    HAVING (SUM(a.amount) + (MAX(a.otham1) + MAX(a.otham2) + MAX(a.otham3) + MAX(a.otham4))) = 0) x " + 
-				"    GROUP BY x.sbucod , x.polnum) n " + 
-				"WHERE " + 
-				"    CONVERT( n.updsta USING UTF8) != n.pprsta;";
-		
-		//System.out.println(query);
-		
-		List<WorkFlowPolicyGridModel> models = jdbcTemplate.query(query,
-				new WorkFlowPolicyGridRowMapper());
+
+		// System.out.println("Branch");
+
+		String query = "SELECT  " + "    n.policy, " + "    MAX(n.duedat) duedat, " + "    (n.totprm * 2) totprm, "
+				+ "    n.ppdini, " + "    n.agent, " + "    n.brncod, " + "    n.pprnum, " + "    (SELECT  "
+				+ "            GROUP_CONCAT(ab.ridcod) " + "        FROM " + "            inpropaddbenefit ab "
+				+ "        WHERE " + "            n.sbucod = ab.sbucod " + "                AND n.pprnum = ab.pprnum "
+				+ "                AND n.prpseq = ab.prpseq " + "                AND ab.ridcod IN ('HRB' , 'HRBC', "
+				+ "                'HRBS', " + "                'SUHRB', " + "                'SUHRBS', "
+				+ "                'SUHRBC', " + "                'HCBI', " + "                'HCBIC', "
+				+ "                'HCBIS', " + "                'HCBF', " + "                'HCBFS', "
+				+ "                'HCBFC', " + "                'SHCBI', " + "                'SHCBIC', "
+				+ "                'SHCBIS', " + "                'HB', " + "                'HBS', "
+				+ "                'HBC') " + "                AND ab.sumasu > 0.0) health " + "FROM " + "    (SELECT  "
+				+ "        x.policy, " + "            x.sbucod, " + "            x.pprnum, " + "            x.polnum, "
+				+ "            x.pprsta, " + "            MAX(x.duedat) duedat, " + "            x.agent, "
+				+ "            x.ppdini, " + "            x.brncod, " + "            x.prpseq, "
+				+ "            x.totprm, "
+				+ "            IF(DATEDIFF(SYSDATE(), DATE_ADD(MAX(x.duedat), INTERVAL x.addmth MONTH)) > " + date1
+				+ " " + "                AND DATEDIFF(SYSDATE(), DATE_ADD(MAX(x.duedat), INTERVAL x.addmth MONTH)) <= "
+				+ date2 + ", '" + type + "', 'PLISU') updsta, " + "            x.advcod " + "    FROM "
+				+ "        (SELECT  " + "        b.sbucod, " + "            b.pprnum, " + "            b.polnum, "
+				+ "            b.pprsta, " + "            b.prpseq, " + "            b.advcod, "
+				+ "            CONCAT(b.advcod, '-', am.prnnam) agent, " + "            b.ppdini, "
+				+ "            a.brncod, " + "            b.totprm, "
+				+ "            CONCAT(a.txnyer,'-',if(length(a.txnmth)=1,CONCAT('0',a.txnmth),a.txnmth),'-',if(day(b.comdat) > 28,28,if(length(day(b.comdat))=1,CONCAT('0',day(b.comdat)),day(b.comdat))))  duedat, "
+				+ "            CASE " + "                WHEN b.paytrm = 12 THEN 1 "
+				+ "                WHEN b.paytrm = 4 THEN 3 " + "                WHEN b.paytrm = 2 THEN 6 "
+				+ "                WHEN b.paytrm = 1 THEN 12 " + "            END addmth, "
+				+ "            CONCAT(b.prdcod, '/', b.polnum) policy " + "    FROM "
+				+ "        inbillingtransactions a " + "    INNER JOIN inproposals b ON a.sbucod = b.sbucod "
+				+ "        AND a.pprnum = b.pprnum " + "        AND b.pprsta = '" + type2 + "' "
+				+ "        AND (b.sinprm IS NULL OR b.sinprm = '') "
+				+ "    INNER JOIN inagentmast am ON am.sbucod = b.sbucod " + "        AND am.agncod = b.advcod "
+				+ "    WHERE " + "        a.sbucod = '450' " + "            AND b.loccod IN (" + paraForIn + ") "
+				+ "            AND DATE_FORMAT(a.creadt, '%Y-%m-%d') <= CURRENT_DATE() "
+				+ "            AND a.amount <> 0 "
+				+ "    GROUP BY a.sbucod , a.pprnum , a.polnum , a.txnyer , a.txnmth "
+				+ "    HAVING (SUM(a.amount) + (MAX(a.otham1) + MAX(a.otham2) + MAX(a.otham3) + MAX(a.otham4))) = 0) x "
+				+ "    GROUP BY x.sbucod , x.polnum) n " + "WHERE " + "    CONVERT( n.updsta USING UTF8) != n.pprsta;";
+
+		// System.out.println(query);
+
+		List<WorkFlowPolicyGridModel> models = jdbcTemplate.query(query, new WorkFlowPolicyGridRowMapper());
 		return models;
 	}
 
@@ -668,11 +551,10 @@ public class InProposalCustomDaoImpl implements InProposalCustomDao {
 
 	@Override
 	public void changeLinNum(Integer pprnum, Integer icpyer, Integer icpmon) {
-		
-		jdbcTemplate.update("update inproposals set linyer = "+icpyer+" , linmon = "+icpmon+" where sbucod = '450' and pprnum = '"+pprnum+"' and pprsta <> 'INAC'");
-		
-		
-	}
 
+		jdbcTemplate.update("update inproposals set linyer = " + icpyer + " , linmon = " + icpmon
+				+ " where sbucod = '450' and pprnum = '" + pprnum + "' and pprsta <> 'INAC'");
+
+	}
 
 }

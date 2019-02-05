@@ -1,5 +1,6 @@
 package org.arpico.groupit.receipt.service.impl;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -494,7 +495,7 @@ public class ProposalServiceImpl implements ProposalServce {
 						List<InPropAddBenefitModel> addBenefitModels = addBenefictCustomDao.getBenefByPprSeq(pprNo,
 								seqNo);
 						if (addBenefitModels != null && !addBenefitModels.isEmpty()) {
-							addBenefitModels = incrementSeqAddBenef(addBenefitModels, updatedSeqNo);
+							addBenefitModels = incrementSeqAddBenef(addBenefitModels, updatedSeqNo, proposalsModelNew.getIcpdat());
 
 							System.out.println("ADD BENEFICT" + addBenefitModels.toString());
 
@@ -502,6 +503,8 @@ public class ProposalServiceImpl implements ProposalServce {
 
 							// addBenefictDao.save(addBenefitModels);
 						}
+						
+						
 
 						// //System.out.println("benef save done");
 
@@ -815,12 +818,36 @@ public class ProposalServiceImpl implements ProposalServce {
 	}
 
 	private List<InPropAddBenefitModel> incrementSeqAddBenef(List<InPropAddBenefitModel> addBenefitModels,
-			Integer seqNo) {
+			Integer seqNo, Date icpDate) {
 
 		List<InPropAddBenefitModel> list = new ArrayList<>();
 
 		addBenefitModels.forEach(e -> {
 			e.getInPropAddBenefitPK().setPrpseq(seqNo);
+			
+			if(e.getRidtrm() > 0) {
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+				String expDate = "";
+
+				Calendar calendar1 = new GregorianCalendar();
+				calendar1.setTime(icpDate);
+
+				expDate += (calendar1.get(Calendar.YEAR) + e.getRidtrm()) + "-"
+						+ (calendar1.get(Calendar.MONTH) + 1) + "-";
+
+				if (calendar1.get(Calendar.DATE) > 28) {
+					expDate += "28";
+				} else {
+					expDate += Integer.toString(calendar1.get(Calendar.DATE));
+				}
+
+				try {
+					e.setExpdat(dateFormat.parse(expDate));
+				} catch (ParseException e1) {
+					e1.printStackTrace();
+				}
+			}
 			list.add(e);
 		});
 		return list;

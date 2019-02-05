@@ -407,8 +407,6 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		
 		System.out.println("Last");
 		
-		System.out.println(model.toString());
-		
 		if (model != null) {
 			inProposalCustomDao.changeLinNum(model.getPprnum(), model.getTxnyer(), model.getTxnmth());
 		}
