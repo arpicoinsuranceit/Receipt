@@ -9,7 +9,7 @@ public class AppConstant {
 	public static final boolean FALSE = false;
 	public static final String NO_VALUE = "";
 	public static final Integer ZERO = 0;
-	public static final Date DATE = new Date();
+	//public static final Date DATE = new Date();
 	public static final String EMPTY_STRING = "";
 	public static final String NULL = null;
 	public static final Double ZERO_FOR_DECIMAL = 0.0000;

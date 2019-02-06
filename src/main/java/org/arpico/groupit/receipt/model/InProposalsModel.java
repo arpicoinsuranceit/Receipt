@@ -52,7 +52,7 @@ public class InProposalsModel {
 	private Integer quonum;
 	private Integer seqnum;
 	private String ntitle;
-	private Date lockin = AppConstant.DATE;
+	private Date lockin = new Date();
 	private String sinprm;
 	private String pprsta;
 	private String prosta; 

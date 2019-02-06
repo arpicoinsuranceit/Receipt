@@ -18,7 +18,7 @@ public class InPropFamDetailsModel implements Serializable {
 	private String fmlrel;
 	private Date fmldob;
 	private String fmlnic;
-	private Date lockin = AppConstant.DATE;
+	private Date lockin = new Date();
 	private String fmlsex;
 	private Double fmlshr;
 	private Float fmlage;

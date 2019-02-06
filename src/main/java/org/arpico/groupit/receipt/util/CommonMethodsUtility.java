@@ -54,7 +54,7 @@ public class CommonMethodsUtility {
 			inTransactionsModel.setAdvcod(saveReceiptDto.getAgentCode());
 			inTransactionsModel.setAmtwrd(saveReceiptDto.getPayAmountWord());
 			inTransactionsModel.setBancod(saveReceiptDto.getBankCode());
-			inTransactionsModel.setBildat(AppConstant.DATE);
+			inTransactionsModel.setBildat(new Date());
 			inTransactionsModel.setBilpik("Y");
 			inTransactionsModel.setChqrel("N");
 			inTransactionsModel.setCompad("N");
@@ -114,7 +114,7 @@ public class CommonMethodsUtility {
 			billingTransactionsModelPK.setDocnum(inTransactionsModel.getInTransactionsModelPK().getDocnum());
 			billingTransactionsModelPK.setLinnum(inTransactionsModel.getInTransactionsModelPK().getLinnum());
 			billingTransactionsModelPK.setSbucod(AppConstant.SBU_CODE);
-			billingTransactionsModelPK.setTxndat(AppConstant.DATE);
+			billingTransactionsModelPK.setTxndat(inTransactionsModel.getTxndat());
 			billingTransactionsModelPK.setLoccod(inTransactionsModel.getInTransactionsModelPK().getLoccod());
 
 			InBillingTransactionsModel billingTransactionsModel = new InBillingTransactionsModel();
