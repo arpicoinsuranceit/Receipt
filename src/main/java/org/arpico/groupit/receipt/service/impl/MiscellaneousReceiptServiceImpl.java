@@ -229,7 +229,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		return new ResponseEntity<>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-	private ReceiptPrintDto getReceiptPrintDto(RmsDocTxnmModel docTxnmModel, List<RmsDocTxndModel> docTxndModels,
+	public ReceiptPrintDto getReceiptPrintDto(RmsDocTxnmModel docTxnmModel, List<RmsDocTxndModel> docTxndModels,
 			String user, List<RmsItemMasterModel> itemList, MiscellaneousReceiptInvDto miscellaneousReceiptInvDto,
 			boolean b) throws Exception {
 		ReceiptPrintDto printDto = new ReceiptPrintDto();
@@ -300,7 +300,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		return printDto;
 	}
 
-	private RmsDocTxndModel getDocTxndModelInv(MiscellaneousReceiptInvDto dto, String user, String docNo, ExpenseDto e,
+	public RmsDocTxndModel getDocTxndModelInv(MiscellaneousReceiptInvDto dto, String user, String docNo, ExpenseDto e,
 			Integer seqNo, RmsItemMasterModel itemMasterModel) throws Exception {
 		// SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -381,7 +381,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		return model;
 	}
 
-	private RmsDocTxnmModel getRmsDocTxnmModelInv(MiscellaneousReceiptInvDto dto, String user, String docNo,
+	public RmsDocTxnmModel getRmsDocTxnmModelInv(MiscellaneousReceiptInvDto dto, String user, String docNo,
 			String physicalBranch) throws Exception {
 
 		BankModel bankModel = bankDao.getBankById(dto.getBank());
@@ -466,7 +466,7 @@ public class MiscellaneousReceiptServiceImpl implements MiscellaneousReceiptServ
 		return docTxnmGridDtos;
 	}
 
-	private RmsDocTxnmGridDto getTxnmGridDto(RmsDocTxnmGridModel e) {
+	public RmsDocTxnmGridDto getTxnmGridDto(RmsDocTxnmGridModel e) {
 		RmsDocTxnmGridDto dto = new RmsDocTxnmGridDto();
 		dto.setAgentCode(e.getAgentCode());
 		dto.setAmount(new BigDecimal(e.getAmount()).setScale(2, RoundingMode.HALF_UP).doubleValue());

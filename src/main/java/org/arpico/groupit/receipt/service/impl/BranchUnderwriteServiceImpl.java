@@ -75,6 +75,7 @@ import org.arpico.groupit.receipt.model.pk.InPropSurrenderValsPK;
 import org.arpico.groupit.receipt.model.pk.InProposalsModelPK;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.BranchUnderwriteService;
+import org.arpico.groupit.receipt.service.BranchUnderwriteTransactionService;
 import org.arpico.groupit.receipt.service.NumberGenerator;
 import org.arpico.groupit.receipt.util.AppConstant;
 import org.arpico.groupit.receipt.util.CalculationUtils;
@@ -179,6 +180,9 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	
 	@Autowired
 	private InPropAddBenefictCustomDao inPropAddBenefictCustomDao;
+	
+	@Autowired
+	private BranchUnderwriteTransactionService branchUnderwriteTransactionService;
 	
 	private boolean isExistDepartment=false;
 	
@@ -519,11 +523,11 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 			if(saveUnderwriteDto.getSendToApprove()) {
 				inProposalsModel.setPprsta("INAC");
 				inProposalsModel.setLockin(new Date());
-				saveProposal(inProposalsModel,newInProposalsModel,inPropLoadingModels,addBenefitModels,propFamDetailsModels,inPropScheduleList,inPropMedicalReqModels,inPropSurrenderValsModels,nomDetailsModels,prePolsModels);
-				saveCourierDocument(Integer.valueOf(newInProposalsModelPK.getPprnum()), newInProposalsModelPK.getPrpseq(), locCode, agentCode);
+				branchUnderwriteTransactionService.saveProposal(inProposalsModel,newInProposalsModel,inPropLoadingModels,addBenefitModels,propFamDetailsModels,inPropScheduleList,inPropMedicalReqModels,inPropSurrenderValsModels,nomDetailsModels,prePolsModels);
+				branchUnderwriteTransactionService.saveCourierDocument(Integer.valueOf(newInProposalsModelPK.getPprnum()), newInProposalsModelPK.getPrpseq(), locCode, agentCode, isExistDepartment , departmentCourierModel);
 			}else {
 				newInProposalsModel.setProsta("L0");
-				saveProposalNotApprove(newInProposalsModel,inPropLoadingModels,addBenefitModels,propFamDetailsModels,inPropScheduleList,inPropMedicalReqModels,inPropSurrenderValsModels,nomDetailsModels,prePolsModels);
+				branchUnderwriteTransactionService.saveProposalNotApprove(newInProposalsModel,inPropLoadingModels,addBenefitModels,propFamDetailsModels,inPropScheduleList,inPropMedicalReqModels,inPropSurrenderValsModels,nomDetailsModels,prePolsModels);
 			}
 			
 			ResponseDto  responseDto=new ResponseDto();
@@ -541,153 +545,152 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 
 	}
 
-	
-	@Transactional
-	private void saveProposalNotApprove(InProposalsModel newInProposalsModel,
-			List<InPropLoadingModel> inPropLoadingModels, List<InPropAddBenefitModel> addBenefitModels,
-			List<InPropFamDetailsModel> propFamDetailsModels, List<InPropSchedulesModel> inPropScheduleList,
-			List<InPropMedicalReqModel> inPropMedicalReqModels,
-			List<InPropSurrenderValsModel> inPropSurrenderValsModels, List<InPropNomDetailsModel> nomDetailsModels,
-			List<InPropPrePolsModel> prePolsModels) {
-		
-		//System.out.println("inProposalsModel not approve save" );
+//	@Transactional
+//	public void saveProposalNotApprove(InProposalsModel newInProposalsModel,
+//			List<InPropLoadingModel> inPropLoadingModels, List<InPropAddBenefitModel> addBenefitModels,
+//			List<InPropFamDetailsModel> propFamDetailsModels, List<InPropSchedulesModel> inPropScheduleList,
+//			List<InPropMedicalReqModel> inPropMedicalReqModels,
+//			List<InPropSurrenderValsModel> inPropSurrenderValsModels, List<InPropNomDetailsModel> nomDetailsModels,
+//			List<InPropPrePolsModel> prePolsModels) {
+//		
+//		//System.out.println("inProposalsModel not approve save" );
+//
+//
+//		//System.out.println("newInProposalsModel save" );
+//		/* Save new Line of InProposal */
+//		inProposalDao.save(newInProposalsModel);
+//		
+//		/* remove exist prop loading */
+//		try {
+//			propLoadingCustomDao.removePropLoadingByPprNumAndSeq(Integer.valueOf(newInProposalsModel.getInProposalsModelPK().getPprnum()), newInProposalsModel.getInProposalsModelPK().getPrpseq());
+//		} catch (Exception e1) {
+//			e1.printStackTrace();
+//		}
+//		
+//
+//		/* Save In Prop Loadings */
+//		if(inPropLoadingModels != null && !inPropLoadingModels.isEmpty()) {
+//	
+//			propLoadingDao.save(inPropLoadingModels);
+//		}
+//		
+//		/* Remove In Add Loadings */
+//		
+//		try {
+//			inPropAddBenefictCustomDao.removeBenefByPprSeq(Integer.valueOf(newInProposalsModel.getInProposalsModelPK().getPprnum()), newInProposalsModel.getInProposalsModelPK().getPrpseq());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//		
+//		/* Save In Add Loadings */
+//		if(addBenefitModels != null && !addBenefitModels.isEmpty()) {
+//			
+//			////System.out.println("addBenefitModels save" );
+//			
+//			addBenefictDao.save(addBenefitModels);
+//		}
+//		
+//		/* Remove Family Details */
+//		try {
+//			famDetailsCustomDao.removeFamilyByPprNoAndSeqNo(Integer.valueOf(newInProposalsModel.getInProposalsModelPK().getPprnum()), newInProposalsModel.getInProposalsModelPK().getPrpseq());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//		/* Save Family Details */
+//		if(propFamDetailsModels != null && !propFamDetailsModels.isEmpty()) {
+//			
+//			////System.out.println("propFamDetailsModels save" );
+//			
+//			famDetailsDao.save(propFamDetailsModels);
+//		}
+//		
+//		/* Remove Shedule */
+//		
+//		try {
+//			propScheduleCustomDao.removeScheduleByPprNoAndSeqNo(Integer.valueOf(newInProposalsModel.getInProposalsModelPK().getPprnum()), newInProposalsModel.getInProposalsModelPK().getPrpseq());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//		
+//		/* Save Shedule */
+//		if(inPropScheduleList != null && !inPropScheduleList.isEmpty()) {
+//			
+//			////System.out.println("inPropScheduleList save" );
+//			
+//			propScheduleDao.save(inPropScheduleList);
+//		}
+//		
+//		/* Remove Medical Requirements */
+//		
+//		try {
+//			propMedicalReqCustomDao.removeMedicalReqByPprNoAndSeq(Integer.valueOf(newInProposalsModel.getInProposalsModelPK().getPprnum()), newInProposalsModel.getInProposalsModelPK().getPrpseq());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//		/* Save Medical Requirements */
+//		if(inPropMedicalReqModels != null && !inPropMedicalReqModels.isEmpty()) {
+//			
+//			////System.out.println("inPropMedicalReqModels save" );
+//			
+//			propMedicalReqDao.save(inPropMedicalReqModels);
+//		}
+//		
+//		/* Remove Surrender Values */
+//		try {
+//			surrenderValCustomDao.removeSurrenderValByInpprNoAndSeq(Integer.valueOf(newInProposalsModel.getInProposalsModelPK().getPprnum()), newInProposalsModel.getInProposalsModelPK().getPrpseq());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//		/* Save Surrender Values */
+//		if(inPropSurrenderValsModels != null && !inPropSurrenderValsModels.isEmpty()) {
+//			
+//			////System.out.println("inPropSurrenderValsModels save" );
+//			
+//			surrenderValDao.save(inPropSurrenderValsModels);
+//		}
+//		
+//		/* Remove Nominee Details */
+//		try {
+//			
+//			propNomDetailsCustomDao.removeNomByPprNoAndPprSeq(Integer.valueOf(newInProposalsModel.getInProposalsModelPK().getPprnum()), newInProposalsModel.getInProposalsModelPK().getPrpseq());
+//			
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//		/* Save Nominee Details */
+//		if(nomDetailsModels != null && !nomDetailsModels.isEmpty()) {
+//			propNomDetailsDao.save(nomDetailsModels);
+//			
+//		}
+//		
+//		/* Remove Previous Policies */
+//		try {
+//			propPrePolsCustomDao.removePrePolByPprNoAndPprSeq(Integer.valueOf(newInProposalsModel.getInProposalsModelPK().getPprnum()), newInProposalsModel.getInProposalsModelPK().getPrpseq());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//		/* Save Previous Policies */
+//		if(prePolsModels != null && !prePolsModels.isEmpty()) {
+//			
+//			////System.out.println("prePolsModels save" );
+//			
+//			propPrePolsDao.save(prePolsModels);
+//		}
+//		
+//	}
 
-
-		//System.out.println("newInProposalsModel save" );
-		/* Save new Line of InProposal */
-		inProposalDao.save(newInProposalsModel);
-		
-		/* remove exist prop loading */
-		try {
-			propLoadingCustomDao.removePropLoadingByPprNumAndSeq(Integer.valueOf(newInProposalsModel.getInProposalsModelPK().getPprnum()), newInProposalsModel.getInProposalsModelPK().getPrpseq());
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
-		
-
-		/* Save In Prop Loadings */
-		if(inPropLoadingModels != null && !inPropLoadingModels.isEmpty()) {
-	
-			propLoadingDao.save(inPropLoadingModels);
-		}
-		
-		/* Remove In Add Loadings */
-		
-		try {
-			inPropAddBenefictCustomDao.removeBenefByPprSeq(Integer.valueOf(newInProposalsModel.getInProposalsModelPK().getPprnum()), newInProposalsModel.getInProposalsModelPK().getPrpseq());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		
-		/* Save In Add Loadings */
-		if(addBenefitModels != null && !addBenefitModels.isEmpty()) {
-			
-			////System.out.println("addBenefitModels save" );
-			
-			addBenefictDao.save(addBenefitModels);
-		}
-		
-		/* Remove Family Details */
-		try {
-			famDetailsCustomDao.removeFamilyByPprNoAndSeqNo(Integer.valueOf(newInProposalsModel.getInProposalsModelPK().getPprnum()), newInProposalsModel.getInProposalsModelPK().getPrpseq());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		/* Save Family Details */
-		if(propFamDetailsModels != null && !propFamDetailsModels.isEmpty()) {
-			
-			////System.out.println("propFamDetailsModels save" );
-			
-			famDetailsDao.save(propFamDetailsModels);
-		}
-		
-		/* Remove Shedule */
-		
-		try {
-			propScheduleCustomDao.removeScheduleByPprNoAndSeqNo(Integer.valueOf(newInProposalsModel.getInProposalsModelPK().getPprnum()), newInProposalsModel.getInProposalsModelPK().getPrpseq());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		
-		/* Save Shedule */
-		if(inPropScheduleList != null && !inPropScheduleList.isEmpty()) {
-			
-			////System.out.println("inPropScheduleList save" );
-			
-			propScheduleDao.save(inPropScheduleList);
-		}
-		
-		/* Remove Medical Requirements */
-		
-		try {
-			propMedicalReqCustomDao.removeMedicalReqByPprNoAndSeq(Integer.valueOf(newInProposalsModel.getInProposalsModelPK().getPprnum()), newInProposalsModel.getInProposalsModelPK().getPrpseq());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		/* Save Medical Requirements */
-		if(inPropMedicalReqModels != null && !inPropMedicalReqModels.isEmpty()) {
-			
-			////System.out.println("inPropMedicalReqModels save" );
-			
-			propMedicalReqDao.save(inPropMedicalReqModels);
-		}
-		
-		/* Remove Surrender Values */
-		try {
-			surrenderValCustomDao.removeSurrenderValByInpprNoAndSeq(Integer.valueOf(newInProposalsModel.getInProposalsModelPK().getPprnum()), newInProposalsModel.getInProposalsModelPK().getPrpseq());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		/* Save Surrender Values */
-		if(inPropSurrenderValsModels != null && !inPropSurrenderValsModels.isEmpty()) {
-			
-			////System.out.println("inPropSurrenderValsModels save" );
-			
-			surrenderValDao.save(inPropSurrenderValsModels);
-		}
-		
-		/* Remove Nominee Details */
-		try {
-			
-			propNomDetailsCustomDao.removeNomByPprNoAndPprSeq(Integer.valueOf(newInProposalsModel.getInProposalsModelPK().getPprnum()), newInProposalsModel.getInProposalsModelPK().getPrpseq());
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		/* Save Nominee Details */
-		if(nomDetailsModels != null && !nomDetailsModels.isEmpty()) {
-			propNomDetailsDao.save(nomDetailsModels);
-			
-		}
-		
-		/* Remove Previous Policies */
-		try {
-			propPrePolsCustomDao.removePrePolByPprNoAndPprSeq(Integer.valueOf(newInProposalsModel.getInProposalsModelPK().getPprnum()), newInProposalsModel.getInProposalsModelPK().getPrpseq());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		/* Save Previous Policies */
-		if(prePolsModels != null && !prePolsModels.isEmpty()) {
-			
-			////System.out.println("prePolsModels save" );
-			
-			propPrePolsDao.save(prePolsModels);
-		}
-		
-	}
-
-//	private void removeNominee(Integer valueOf, Integer prpseq) throws Exception {
+//	public void removeNominee(Integer valueOf, Integer prpseq) throws Exception {
 //		propNomDetailsCustomDao.removeNomByPprNoAndPprSeq(valueOf, prpseq);
 //	}
 
-	private List<InPropPrePolsModel> getPreviousPol(List<InPropPreviousPolModel> inPropPrePolsModels,
+	public List<InPropPrePolsModel> getPreviousPol(List<InPropPreviousPolModel> inPropPrePolsModels,
 			InProposalsModel newInProposalsModel) {
 		List<InPropPrePolsModel> polsModels=new ArrayList<>();
 		
@@ -713,7 +716,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	}
 
 	/* Set Data to InProposalModel */
-	private InProposalsModel getInProposalModel(InProposalsModel inProposalsModel, SaveUnderwriteDto saveUnderwriteDto,
+	public InProposalsModel getInProposalModel(InProposalsModel inProposalsModel, SaveUnderwriteDto saveUnderwriteDto,
 			ViewQuotationDto quotationDto) throws Exception {
 		SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
 		InProposalsModel newInProposalsModel= new InProposalsModel();
@@ -844,7 +847,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	}
 	
 	/* Set Mainlife and Spouse Benefits */
-	private void getInPropAddBebefit(QuoBenfDto benfDto, List<InPropAddBenefitModel> addBenefitModels, String insType,
+	public void getInPropAddBebefit(QuoBenfDto benfDto, List<InPropAddBenefitModel> addBenefitModels, String insType,
 			String frequency, List<InPropLoadingModel> inPropLoadingModels, String ocuCode) throws Exception {
 
 		for (InPropAddBenefitModel addBenefitModel : addBenefitModels) {
@@ -973,7 +976,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	}
 	
 	/* Set Child Benefits */
-	private List<InPropAddBenefitModel> getChildBenefits(ArrayList<QuoChildBenefDto> get_childrenBenefits,
+	public List<InPropAddBenefitModel> getChildBenefits(ArrayList<QuoChildBenefDto> get_childrenBenefits,
 			List<InPropAddBenefitModel> addBenefitModels, String insType, String frequency,
 			List<InPropLoadingModel> inPropLoadingModels) throws Exception {
 
@@ -1037,7 +1040,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	}
 
 	/* Set Child Details */
-	private InPropFamDetailsModel getFamily(ChildrenDto childrenDto, String pprnum, Integer prpseq, String branchCode)
+	public InPropFamDetailsModel getFamily(ChildrenDto childrenDto, String pprnum, Integer prpseq, String branchCode)
 			throws ParseException {
 		InPropFamDetailsModelPK famDetailsModelPK = new InPropFamDetailsModelPK();
 		famDetailsModelPK.setFmlnam(childrenDto.get_cName());
@@ -1064,7 +1067,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	}
 	
 	/* Set Schedule Details */
-	private InPropSchedulesModel getPropShedule(SheduleDto sheduleDto, String pprnum, Integer prpseq,
+	public InPropSchedulesModel getPropShedule(SheduleDto sheduleDto, String pprnum, Integer prpseq,
 			String branchCode) {
 
 		InPropSchedulesModelPK inPropSchedulesPK = new InPropSchedulesModelPK();
@@ -1086,7 +1089,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		return inPropSchedules;
 	}
 	
-	private InPropMedicalReqModel getMediReq(MedicalRequirementsDto mediReq, String pprnum, Integer prpseq,
+	public InPropMedicalReqModel getMediReq(MedicalRequirementsDto mediReq, String pprnum, Integer prpseq,
 			String branchCode) {
 
 		InPropMedicalReqModelPK inPropMedicalReqModelPK = new InPropMedicalReqModelPK();
@@ -1113,7 +1116,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		return inPropMedicalReqModel;
 	}
 	
-	private InPropMedicalReqModel getAdditionalReq(String insType,String mediCode,String mediName,String note, String pprnum, Integer prpseq,
+	public InPropMedicalReqModel getAdditionalReq(String insType,String mediCode,String mediName,String note, String pprnum, Integer prpseq,
 			String branchCode) {
 
 		InPropMedicalReqModelPK inPropMedicalReqModelPK = new InPropMedicalReqModelPK();
@@ -1140,7 +1143,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		return inPropMedicalReqModel;
 	}
 	
-	private InPropSurrenderValsModel getSurrenderVals(String agentCode, Integer QuoId, SurrenderValsDto surVal,
+	public InPropSurrenderValsModel getSurrenderVals(String agentCode, Integer QuoId, SurrenderValsDto surVal,
 			String pprnum, Integer prpseq, String branchCode) {
 		InPropSurrenderValsPK inPropSurrenderValsPK = new InPropSurrenderValsPK();
 
@@ -1164,7 +1167,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		return inPropSurrenderValsModel;
 	}
 	
-	private List<InPropNomDetailsModel> getNomineeDetails(SaveUnderwriteDto saveUnderwriteDto,
+	public List<InPropNomDetailsModel> getNomineeDetails(SaveUnderwriteDto saveUnderwriteDto,
 			String pprnum, Integer prpseq, String branchCode){
 		SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
 		
@@ -1224,92 +1227,92 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		return inPropNomDetailsModels;
 	}
 	
+//	@Transactional
+//	public void saveProposal(InProposalsModel inProposalsModel, InProposalsModel newInProposalsModel,
+//			List<InPropLoadingModel> inPropLoadingModels, List<InPropAddBenefitModel> addBenefitModels,
+//			List<InPropFamDetailsModel> propFamDetailsModels, List<InPropSchedulesModel> inPropScheduleList,
+//			List<InPropMedicalReqModel> inPropMedicalReqModels,
+//			List<InPropSurrenderValsModel> inPropSurrenderValsModels, List<InPropNomDetailsModel> nomDetailsModels,
+//			List<InPropPrePolsModel> prePolsModels) {
+//		
+//		
+//		//System.out.println("inProposalsModel save" );
+//		
+//		/* Inactive Before Line of InProposal */
+//		inProposalDao.save(inProposalsModel);
+//		
+//
+//		//System.out.println("newInProposalsModel save" );
+//		/* Save new Line of InProposal */
+//		inProposalDao.save(newInProposalsModel);
+//		
+//		/* Save In Prop Loadings */
+//		if(inPropLoadingModels != null && !inPropLoadingModels.isEmpty()) {
+//			
+//			////System.out.println("inPropLoadingModels save" );
+//			
+//			propLoadingDao.save(inPropLoadingModels);
+//		}
+//		
+//		/* Save In Add Loadings */
+//		if(addBenefitModels != null && !addBenefitModels.isEmpty()) {
+//			
+//			////System.out.println("addBenefitModels save" );
+//			
+//			addBenefictDao.save(addBenefitModels);
+//		}
+//
+//		/* Save Family Details */
+//		if(propFamDetailsModels != null && !propFamDetailsModels.isEmpty()) {
+//			
+//			////System.out.println("propFamDetailsModels save" );
+//			
+//			famDetailsDao.save(propFamDetailsModels);
+//		}
+//		
+//		/* Save Shedule */
+//		if(inPropScheduleList != null && !inPropScheduleList.isEmpty()) {
+//			
+//			////System.out.println("inPropScheduleList save" );
+//			
+//			propScheduleDao.save(inPropScheduleList);
+//		}
+//		
+//		/* Save Medical Requirements */
+//		if(inPropMedicalReqModels != null && !inPropMedicalReqModels.isEmpty()) {
+//			
+//			////System.out.println("inPropMedicalReqModels save" );
+//			
+//			propMedicalReqDao.save(inPropMedicalReqModels);
+//		}
+//		
+//		/* Save Surrender Values */
+//		if(inPropSurrenderValsModels != null && !inPropSurrenderValsModels.isEmpty()) {
+//			
+//			////System.out.println("inPropSurrenderValsModels save" );
+//			
+//			surrenderValDao.save(inPropSurrenderValsModels);
+//		}
+//		/* Save Nominee Details */
+//		if(nomDetailsModels != null && !nomDetailsModels.isEmpty()) {
+//			
+//			////System.out.println("nomDetailsModels save" );
+//			
+//			propNomDetailsDao.save(nomDetailsModels);
+//		}
+//		
+//		/* Save Previous Policies */
+//		if(prePolsModels != null && !prePolsModels.isEmpty()) {
+//			
+//			////System.out.println("prePolsModels save" );
+//			
+//			propPrePolsDao.save(prePolsModels);
+//		}
+//		
+//	}
+//	
 	@Transactional
-	private void saveProposal(InProposalsModel inProposalsModel, InProposalsModel newInProposalsModel,
-			List<InPropLoadingModel> inPropLoadingModels, List<InPropAddBenefitModel> addBenefitModels,
-			List<InPropFamDetailsModel> propFamDetailsModels, List<InPropSchedulesModel> inPropScheduleList,
-			List<InPropMedicalReqModel> inPropMedicalReqModels,
-			List<InPropSurrenderValsModel> inPropSurrenderValsModels, List<InPropNomDetailsModel> nomDetailsModels,
-			List<InPropPrePolsModel> prePolsModels) {
-		
-		
-		//System.out.println("inProposalsModel save" );
-		
-		/* Inactive Before Line of InProposal */
-		inProposalDao.save(inProposalsModel);
-		
-
-		//System.out.println("newInProposalsModel save" );
-		/* Save new Line of InProposal */
-		inProposalDao.save(newInProposalsModel);
-		
-		/* Save In Prop Loadings */
-		if(inPropLoadingModels != null && !inPropLoadingModels.isEmpty()) {
-			
-			////System.out.println("inPropLoadingModels save" );
-			
-			propLoadingDao.save(inPropLoadingModels);
-		}
-		
-		/* Save In Add Loadings */
-		if(addBenefitModels != null && !addBenefitModels.isEmpty()) {
-			
-			////System.out.println("addBenefitModels save" );
-			
-			addBenefictDao.save(addBenefitModels);
-		}
-
-		/* Save Family Details */
-		if(propFamDetailsModels != null && !propFamDetailsModels.isEmpty()) {
-			
-			////System.out.println("propFamDetailsModels save" );
-			
-			famDetailsDao.save(propFamDetailsModels);
-		}
-		
-		/* Save Shedule */
-		if(inPropScheduleList != null && !inPropScheduleList.isEmpty()) {
-			
-			////System.out.println("inPropScheduleList save" );
-			
-			propScheduleDao.save(inPropScheduleList);
-		}
-		
-		/* Save Medical Requirements */
-		if(inPropMedicalReqModels != null && !inPropMedicalReqModels.isEmpty()) {
-			
-			////System.out.println("inPropMedicalReqModels save" );
-			
-			propMedicalReqDao.save(inPropMedicalReqModels);
-		}
-		
-		/* Save Surrender Values */
-		if(inPropSurrenderValsModels != null && !inPropSurrenderValsModels.isEmpty()) {
-			
-			////System.out.println("inPropSurrenderValsModels save" );
-			
-			surrenderValDao.save(inPropSurrenderValsModels);
-		}
-		/* Save Nominee Details */
-		if(nomDetailsModels != null && !nomDetailsModels.isEmpty()) {
-			
-			////System.out.println("nomDetailsModels save" );
-			
-			propNomDetailsDao.save(nomDetailsModels);
-		}
-		
-		/* Save Previous Policies */
-		if(prePolsModels != null && !prePolsModels.isEmpty()) {
-			
-			////System.out.println("prePolsModels save" );
-			
-			propPrePolsDao.save(prePolsModels);
-		}
-		
-	}
-	
-	@Transactional
-	private String saveCourierDocument(Integer pprNo, Integer seqNo,String branchCode, String userCode) throws Exception {
+	public String saveCourierDocumenkt(Integer pprNo, Integer seqNo,String branchCode, String userCode) throws Exception {
 		
 		List<InPropMedicalReqModel> medicalReqModels=propMedicalReqCustomDao.getMedicalReqByPprNoAndSeq(pprNo, seqNo);
 		List<SubDepartmentModel> subDepartmentModels=subDepartmentDao.findBySudDepNameContaining("Underwriting");

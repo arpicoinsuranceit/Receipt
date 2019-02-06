@@ -33,7 +33,7 @@ public class ExpenseServiceImpl implements ExpenseService {
 		return expenseDtos;
 	}
 
-	private ExpenseDto getExpenceDto(ExpenseModel e) {
+	public ExpenseDto getExpenceDto(ExpenseModel e) {
 		ExpenseDto expenseDto = new ExpenseDto();
 		expenseDto.setExpenseId(e.getExpenceId());
 		expenseDto.setDescription(e.getDescription());

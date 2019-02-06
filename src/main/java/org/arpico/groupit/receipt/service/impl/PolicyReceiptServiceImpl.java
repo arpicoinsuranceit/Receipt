@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.arpico.groupit.receipt.client.InfosysWSClient;
 import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.InAgentMastDao;
@@ -15,7 +14,6 @@ import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsDao;
 import org.arpico.groupit.receipt.dao.InPropAddBenefictCustomDao;
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
-import org.arpico.groupit.receipt.dao.InTransactionsDao;
 import org.arpico.groupit.receipt.dao.RmsUserDao;
 import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
 import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
@@ -39,6 +37,7 @@ import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.InTransactionService;
 import org.arpico.groupit.receipt.service.NumberGenerator;
 import org.arpico.groupit.receipt.service.PolicyReceiptService;
+import org.arpico.groupit.receipt.service.ReceiptTransactionService;
 import org.arpico.groupit.receipt.service.SetoffService;
 import org.arpico.groupit.receipt.util.AppConstant;
 import org.arpico.groupit.receipt.util.CommonMethodsUtility;
@@ -46,9 +45,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PolicyReceiptServiceImpl implements PolicyReceiptService {
@@ -61,9 +57,9 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 	@Autowired
 	private CommonMethodsUtility commonethodUtility;
-
+/*
 	@Autowired
-	private InTransactionsDao inTransactionDao;
+	private InTransactionsDao inTransactionDao;*/
 
 	@Autowired
 	private InBillingTransactionsDao inBillingTransactionDao;
@@ -101,6 +97,9 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 	@Autowired
 	private InfosysWSClient infosysWSClient;
+	
+	@Autowired
+	private ReceiptTransactionService receiptTransactionService;
 
 	@Override
 	public List<ProposalNoSeqNoDto> getPolicyNoSeqNoDtoList(String val) throws Exception {
@@ -132,7 +131,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		return proposalNoSeqNoDtos;
 	}
 
-	private ProposalNoSeqNoDto getPolicyNoSeqNoDto(ProposalNoSeqNoModel proposalNoSeqNoModel) {
+	public ProposalNoSeqNoDto getPolicyNoSeqNoDto(ProposalNoSeqNoModel proposalNoSeqNoModel) {
 		ProposalNoSeqNoDto dto = new ProposalNoSeqNoDto();
 		dto.setProposalNo(proposalNoSeqNoModel.getProposalNo());
 		dto.setSeqNo(proposalNoSeqNoModel.getSeqNo());
@@ -151,7 +150,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		return basicDetailsDto;
 	}
 
-	private ProposalBasicDetailsDto getBasicDetailsDto(InProposalBasicsModel basicsModel) {
+	public ProposalBasicDetailsDto getBasicDetailsDto(InProposalBasicsModel basicsModel) {
 
 		ProposalBasicDetailsDto basicDetailsDto = new ProposalBasicDetailsDto();
 
@@ -227,13 +226,13 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 				// inBillingTransactionDao.save(deposit);
 				ReceiptPrintDto printDto = null;
 				try {
-					saveReceipt(inTransactionsModel, deposit);
+					receiptTransactionService.saveReceipt(inTransactionsModel, deposit);
 
 					System.out.println(" SAVE RECEIPTS");
 
 					List<InBillingTransactionsModel> setoffs = null;
 
-					if (!saveReceiptDto.equals("CQ")) {
+					if (!saveReceiptDto.getPayMode().equals("CQ")) {
 
 						System.out.println("NOT A CHEQUE");
 
@@ -263,7 +262,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 							if (inProposalsModel.getPprsta().equalsIgnoreCase("PLISU")
 									|| inProposalsModel.getPprsta().equalsIgnoreCase("PLAPS")) {
 								try {
-									saveTransactions(setoffs);
+									receiptTransactionService.saveTransactions(setoffs);
 									System.out.println("SETOFF SAVE");
 
 								} catch (Exception e) {
@@ -367,61 +366,61 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		return new ResponseEntity<>(dto, HttpStatus.NOT_FOUND);
 	}
 
-	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	private boolean saveTransactions(List<InBillingTransactionsModel> setoffs) throws Exception {
+//	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+//	public boolean saveTransactions(List<InBillingTransactionsModel> setoffs) throws Exception {
+//
+//		if (setoffs != null && setoffs.size() > 0) {
+//			inBillingTransactionDao.save(setoffs);
+//		}
+//
+//		System.out.println("setoff saved");
+//
+//		InBillingTransactionsModel model = null;
+//
+//		for (InBillingTransactionsModel e : setoffs) {
+//			if (model != null) {
+//				System.out.println("not null");
+//				if (e.getBillingTransactionsModelPK().getDoccod().equals("PRMI") && e.getBillingTransactionsModelPK()
+//						.getDocnum() > model.getBillingTransactionsModelPK().getDocnum()) {
+//
+//					System.out.println("prim");
+//					System.out.println((e.getBillingTransactionsModelPK().getDocnum()));
+//
+//					model = e;
+//				}
+//			} else {
+//				System.out.println("null");
+//				if (e.getBillingTransactionsModelPK().getDoccod().equals("PRMI")) {
+//					System.out.println("prim");
+//					System.out.println((e.getBillingTransactionsModelPK().getDocnum()));
+//
+//					model = e;
+//				}
+//			}
+//
+//			if (model != null) {
+//				System.out.println(model.toString());
+//			}
+//		}
+//
+//		
+//		System.out.println("Last");
+//		
+//
+//		if (model != null) {
+//			inProposalCustomDao.changeLinNum(model.getPprnum(), model.getTxnyer(), model.getTxnmth());
+//		}
+//
+//		return true;
+//	}
 
-		if (setoffs != null && setoffs.size() > 0) {
-			inBillingTransactionDao.save(setoffs);
-		}
+//	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+//	public void saveReceipt(InTransactionsModel inTransactionsModel, InBillingTransactionsModel deposit) {
+//		inTransactionDao.save(inTransactionsModel);
+//		inBillingTransactionDao.save(deposit);
+//	}
 
-		System.out.println("setoff saved");
-
-		InBillingTransactionsModel model = null;
-
-		for (InBillingTransactionsModel e : setoffs) {
-			if (model != null) {
-				System.out.println("not null");
-				if (e.getBillingTransactionsModelPK().getDoccod().equals("PRMI") && e.getBillingTransactionsModelPK()
-						.getDocnum() > model.getBillingTransactionsModelPK().getDocnum()) {
-
-					System.out.println("prim");
-					System.out.println((e.getBillingTransactionsModelPK().getDocnum()));
-
-					model = e;
-				}
-			} else {
-				System.out.println("null");
-				if (e.getBillingTransactionsModelPK().getDoccod().equals("PRMI")) {
-					System.out.println("prim");
-					System.out.println((e.getBillingTransactionsModelPK().getDocnum()));
-
-					model = e;
-				}
-			}
-
-			if (model != null) {
-				System.out.println(model.toString());
-			}
-		}
-
-		
-		System.out.println("Last");
-		
-
-		if (model != null) {
-			inProposalCustomDao.changeLinNum(model.getPprnum(), model.getTxnyer(), model.getTxnmth());
-		}
-
-		return true;
-	}
-
-	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	private void saveReceipt(InTransactionsModel inTransactionsModel, InBillingTransactionsModel deposit) {
-		inTransactionDao.save(inTransactionsModel);
-		inBillingTransactionDao.save(deposit);
-	}
-
-	private ReceiptPrintDto getReceiptPrintDto(InProposalsModel inProposalsModel,
+	public ReceiptPrintDto getReceiptPrintDto(InProposalsModel inProposalsModel,
 			InTransactionsModel inTransactionsModel, String agentCode, String locCode, boolean b,
 			List<HashMap<String, String>> setoffList) throws Exception {
 		ReceiptPrintDto printDto = new ReceiptPrintDto();

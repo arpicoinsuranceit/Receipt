@@ -60,7 +60,7 @@ public class AgentServiceImpl implements AgentService {
 		return agentDtos;
 	}
 
-	private AgentDto getAgent(AgentModel agentModel) {
+	public AgentDto getAgent(AgentModel agentModel) {
 		AgentDto agentDto = new AgentDto();
 		agentDto.setAgentCode(agentModel.getAgentCode());
 		agentDto.setAgentName(agentModel.getAgentName());

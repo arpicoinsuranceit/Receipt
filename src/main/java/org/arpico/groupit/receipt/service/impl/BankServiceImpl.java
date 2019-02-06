@@ -57,7 +57,7 @@ public class BankServiceImpl implements BankService {
 		return bankDtos;
 	}
 
-	private BankDto getBankDto(BankModel bankModel) {
+	public BankDto getBankDto(BankModel bankModel) {
 		BankDto bankDto = new BankDto();
 
 		bankDto.setBankCode(bankModel.getBankCode());

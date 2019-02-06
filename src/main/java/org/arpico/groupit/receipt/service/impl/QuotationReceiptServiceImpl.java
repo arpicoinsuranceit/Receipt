@@ -63,6 +63,7 @@ import org.arpico.groupit.receipt.print.ItextReceipt;
 import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.NumberGenerator;
 import org.arpico.groupit.receipt.service.QuotationReceiptService;
+import org.arpico.groupit.receipt.service.ReceiptTransactionService;
 import org.arpico.groupit.receipt.util.AppConstant;
 import org.arpico.groupit.receipt.util.CalculationUtils;
 import org.arpico.groupit.receipt.util.CommonMethodsUtility;
@@ -139,6 +140,9 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 	@Autowired
 	private InfosysWSClient infosysWSClient;
+	
+	@Autowired
+	private ReceiptTransactionService receiptTransactionService; 
 
 	@Override
 	public ResponseDto saveQuotationReceipt(SaveReceiptDto saveReceiptDto) throws Exception {
@@ -308,7 +312,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					 * else { inProposalsModel.setProsta("L1"); }
 					 */
 
-					inProposalDao.save(inProposalsModel);
+					/*inProposalDao.save(inProposalsModel);
 					inPropAddBenefictDao.save(addBenefitModels);
 					if (inPropScheduleList != null) {
 						inPropShedulesDao.save(inPropScheduleList);
@@ -320,7 +324,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					inPropFamDetailsDao.save(propFamDetailsModels);
 					inPropLoadingDao.save(inPropLoadingModels);
 					inPropSurrenderValsDao.save(inPropSurrenderValsModels);
-					inPropNomDetailsDao.save(inPropNomDetailsModels);
+					inPropNomDetailsDao.save(inPropNomDetailsModels);*/
 
 					InTransactionsModel inTransactionsModel = commonethodUtility.getInTransactionModel(inProposalsModel,
 							saveReceiptDto, userCode, locCode);
@@ -332,8 +336,12 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 					inBillingTransactionsModel.setPolfee(0.0);
 					inBillingTransactionsModel.setTxnbno(Integer.parseInt(batNoArr[1]));
 
-					inTransactionDao.save(inTransactionsModel);
-					inBillingTransactionDao.save(inBillingTransactionsModel);
+					/*inTransactionDao.save(inTransactionsModel);
+					inBillingTransactionDao.save(inBillingTransactionsModel);*/
+					
+					receiptTransactionService.saveQuoReceipt(inProposalsModel, addBenefitModels, inPropScheduleList,
+							inPropMedicalReqModels, propFamDetailsModels, inPropLoadingModels, inPropSurrenderValsModels, 
+							inPropNomDetailsModels, inTransactionsModel, inBillingTransactionsModel);
 
 					ReceiptPrintDto dto = getReceiptPrintDto(inProposalsModel, inTransactionsModel, userCode, locCode,
 							false, agentModels.get(0));
