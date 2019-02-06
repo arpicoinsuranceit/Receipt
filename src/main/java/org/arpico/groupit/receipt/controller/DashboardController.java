@@ -321,7 +321,7 @@ public class DashboardController {
 		return dashboardPieDto;
 	}
 
-	private Date addDate(Date dt) {
+	public Date addDate(Date dt) {
 
 //		Calendar c = Calendar.getInstance();
 //		c.setTime(dt);

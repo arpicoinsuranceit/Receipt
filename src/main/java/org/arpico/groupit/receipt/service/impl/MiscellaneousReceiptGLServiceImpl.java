@@ -105,7 +105,7 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 		return accountGLDtos;
 	}
 
-	private AccountGLDto getAccountGLDto(AccountGLModel e) {
+	 AccountGLDto getAccountGLDto(AccountGLModel e) {
 		AccountGLDto dto = new AccountGLDto();
 		dto.setId(e.getId());
 		dto.setDescription(e.getDescription());
@@ -259,7 +259,7 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 
 	}
 
-	private GlTranTempModel getTransTempModelDR(MiscellaneousReceiptInvDto dto, String user, String docNo,
+	 GlTranTempModel getTransTempModelDR(MiscellaneousReceiptInvDto dto, String user, String docNo,
 			Object object, int i, String batno, Object object2, RmsRecmModel recmModel) throws Exception {
 
 		String accCode = inGLIntegParametersDao.getAccCode(dto.getBank());
@@ -315,7 +315,7 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 		return model;
 	}
 
-	private GlTranTempModel getTransTempModel(MiscellaneousReceiptInvDto dto, String user, String docNo, AccountGLDto e,
+	 GlTranTempModel getTransTempModel(MiscellaneousReceiptInvDto dto, String user, String docNo, AccountGLDto e,
 			Integer i, String batno, RmsRecdModel recdModel, RmsRecmModel recmModel) {
 
 		GlTranTempModelPK pk = new GlTranTempModelPK();
@@ -371,7 +371,7 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 		return model;
 	}
 
-	private ReceiptPrintDto getReceiptPrintDto(RmsRecmModel recmModel, List<RmsRecdModel> recdModels, String user,
+	 ReceiptPrintDto getReceiptPrintDto(RmsRecmModel recmModel, List<RmsRecdModel> recdModels, String user,
 			MiscellaneousReceiptInvDto dto, boolean b) {
 		ReceiptPrintDto printDto = new ReceiptPrintDto();
 
@@ -398,7 +398,7 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 		return printDto;
 	}
 
-	private RmsRecdModel getRecdModel(MiscellaneousReceiptInvDto dto, String user, String docNo, AccountGLDto e,
+	 RmsRecdModel getRecdModel(MiscellaneousReceiptInvDto dto, String user, String docNo, AccountGLDto e,
 			Integer i) {
 		RmsRecdModelPK modelPK = new RmsRecdModelPK();
 
@@ -433,7 +433,7 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 		return model;
 	}
 
-	private RmsRecmModel getRmsRecmModel(MiscellaneousReceiptInvDto dto, String user, String docNo, String batno) {
+	 RmsRecmModel getRmsRecmModel(MiscellaneousReceiptInvDto dto, String user, String docNo, String batno) {
 
 		RmsRecmModelPK modelPK = new RmsRecmModelPK();
 		modelPK.setDocCode(AppConstant.DOC_CODE_GLRC);
@@ -495,7 +495,7 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 		return dtos;
 	}
 
-	private RmsRecmDto getDto(RmsRecmGridModel e) {
+	 RmsRecmDto getDto(RmsRecmGridModel e) {
 		RmsRecmDto recmDto = new RmsRecmDto();
 
 		recmDto.setAmtfcu(e.getAmtfcu());

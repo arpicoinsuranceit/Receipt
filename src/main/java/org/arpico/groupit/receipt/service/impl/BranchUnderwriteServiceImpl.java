@@ -543,7 +543,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 
 	
 	@Transactional
-	private void saveProposalNotApprove(InProposalsModel newInProposalsModel,
+	public void saveProposalNotApprove(InProposalsModel newInProposalsModel,
 			List<InPropLoadingModel> inPropLoadingModels, List<InPropAddBenefitModel> addBenefitModels,
 			List<InPropFamDetailsModel> propFamDetailsModels, List<InPropSchedulesModel> inPropScheduleList,
 			List<InPropMedicalReqModel> inPropMedicalReqModels,
@@ -683,11 +683,11 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		
 	}
 
-//	private void removeNominee(Integer valueOf, Integer prpseq) throws Exception {
+//	public void removeNominee(Integer valueOf, Integer prpseq) throws Exception {
 //		propNomDetailsCustomDao.removeNomByPprNoAndPprSeq(valueOf, prpseq);
 //	}
 
-	private List<InPropPrePolsModel> getPreviousPol(List<InPropPreviousPolModel> inPropPrePolsModels,
+	public List<InPropPrePolsModel> getPreviousPol(List<InPropPreviousPolModel> inPropPrePolsModels,
 			InProposalsModel newInProposalsModel) {
 		List<InPropPrePolsModel> polsModels=new ArrayList<>();
 		
@@ -713,7 +713,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	}
 
 	/* Set Data to InProposalModel */
-	private InProposalsModel getInProposalModel(InProposalsModel inProposalsModel, SaveUnderwriteDto saveUnderwriteDto,
+	public InProposalsModel getInProposalModel(InProposalsModel inProposalsModel, SaveUnderwriteDto saveUnderwriteDto,
 			ViewQuotationDto quotationDto) throws Exception {
 		SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
 		InProposalsModel newInProposalsModel= new InProposalsModel();
@@ -844,7 +844,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	}
 	
 	/* Set Mainlife and Spouse Benefits */
-	private void getInPropAddBebefit(QuoBenfDto benfDto, List<InPropAddBenefitModel> addBenefitModels, String insType,
+	public void getInPropAddBebefit(QuoBenfDto benfDto, List<InPropAddBenefitModel> addBenefitModels, String insType,
 			String frequency, List<InPropLoadingModel> inPropLoadingModels, String ocuCode) throws Exception {
 
 		for (InPropAddBenefitModel addBenefitModel : addBenefitModels) {
@@ -973,7 +973,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	}
 	
 	/* Set Child Benefits */
-	private List<InPropAddBenefitModel> getChildBenefits(ArrayList<QuoChildBenefDto> get_childrenBenefits,
+	public List<InPropAddBenefitModel> getChildBenefits(ArrayList<QuoChildBenefDto> get_childrenBenefits,
 			List<InPropAddBenefitModel> addBenefitModels, String insType, String frequency,
 			List<InPropLoadingModel> inPropLoadingModels) throws Exception {
 
@@ -1037,7 +1037,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	}
 
 	/* Set Child Details */
-	private InPropFamDetailsModel getFamily(ChildrenDto childrenDto, String pprnum, Integer prpseq, String branchCode)
+	public InPropFamDetailsModel getFamily(ChildrenDto childrenDto, String pprnum, Integer prpseq, String branchCode)
 			throws ParseException {
 		InPropFamDetailsModelPK famDetailsModelPK = new InPropFamDetailsModelPK();
 		famDetailsModelPK.setFmlnam(childrenDto.get_cName());
@@ -1064,7 +1064,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	}
 	
 	/* Set Schedule Details */
-	private InPropSchedulesModel getPropShedule(SheduleDto sheduleDto, String pprnum, Integer prpseq,
+	public InPropSchedulesModel getPropShedule(SheduleDto sheduleDto, String pprnum, Integer prpseq,
 			String branchCode) {
 
 		InPropSchedulesModelPK inPropSchedulesPK = new InPropSchedulesModelPK();
@@ -1086,7 +1086,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		return inPropSchedules;
 	}
 	
-	private InPropMedicalReqModel getMediReq(MedicalRequirementsDto mediReq, String pprnum, Integer prpseq,
+	public InPropMedicalReqModel getMediReq(MedicalRequirementsDto mediReq, String pprnum, Integer prpseq,
 			String branchCode) {
 
 		InPropMedicalReqModelPK inPropMedicalReqModelPK = new InPropMedicalReqModelPK();
@@ -1113,7 +1113,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		return inPropMedicalReqModel;
 	}
 	
-	private InPropMedicalReqModel getAdditionalReq(String insType,String mediCode,String mediName,String note, String pprnum, Integer prpseq,
+	public InPropMedicalReqModel getAdditionalReq(String insType,String mediCode,String mediName,String note, String pprnum, Integer prpseq,
 			String branchCode) {
 
 		InPropMedicalReqModelPK inPropMedicalReqModelPK = new InPropMedicalReqModelPK();
@@ -1140,7 +1140,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		return inPropMedicalReqModel;
 	}
 	
-	private InPropSurrenderValsModel getSurrenderVals(String agentCode, Integer QuoId, SurrenderValsDto surVal,
+	public InPropSurrenderValsModel getSurrenderVals(String agentCode, Integer QuoId, SurrenderValsDto surVal,
 			String pprnum, Integer prpseq, String branchCode) {
 		InPropSurrenderValsPK inPropSurrenderValsPK = new InPropSurrenderValsPK();
 
@@ -1164,7 +1164,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 		return inPropSurrenderValsModel;
 	}
 	
-	private List<InPropNomDetailsModel> getNomineeDetails(SaveUnderwriteDto saveUnderwriteDto,
+	public List<InPropNomDetailsModel> getNomineeDetails(SaveUnderwriteDto saveUnderwriteDto,
 			String pprnum, Integer prpseq, String branchCode){
 		SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
 		
@@ -1225,7 +1225,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	}
 	
 	@Transactional
-	private void saveProposal(InProposalsModel inProposalsModel, InProposalsModel newInProposalsModel,
+	public void saveProposal(InProposalsModel inProposalsModel, InProposalsModel newInProposalsModel,
 			List<InPropLoadingModel> inPropLoadingModels, List<InPropAddBenefitModel> addBenefitModels,
 			List<InPropFamDetailsModel> propFamDetailsModels, List<InPropSchedulesModel> inPropScheduleList,
 			List<InPropMedicalReqModel> inPropMedicalReqModels,
@@ -1309,7 +1309,7 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	}
 	
 	@Transactional
-	private String saveCourierDocument(Integer pprNo, Integer seqNo,String branchCode, String userCode) throws Exception {
+	public String saveCourierDocument(Integer pprNo, Integer seqNo,String branchCode, String userCode) throws Exception {
 		
 		List<InPropMedicalReqModel> medicalReqModels=propMedicalReqCustomDao.getMedicalReqByPprNoAndSeq(pprNo, seqNo);
 		List<SubDepartmentModel> subDepartmentModels=subDepartmentDao.findBySudDepNameContaining("Underwriting");

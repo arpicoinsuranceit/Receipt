@@ -304,7 +304,7 @@ public class DashboardServiceImpl implements DashboardService {
 		return nameSeriesDtos;
 	}
 
-	private String getDate(DashboardGridModel model, String type) {
+	 String getDate(DashboardGridModel model, String type) {
 
 		String date = "";
 
@@ -396,7 +396,7 @@ public class DashboardServiceImpl implements DashboardService {
 		return dtos;
 	}
 
-	private LastReceiptSummeryDto getLastReceipt(DashboardDetailsModel e) {
+	 LastReceiptSummeryDto getLastReceipt(DashboardDetailsModel e) {
 		LastReceiptSummeryDto dto = new LastReceiptSummeryDto();
 
 		dto.setAmount(e.getAmount());
@@ -837,7 +837,7 @@ public class DashboardServiceImpl implements DashboardService {
 		return nameSeriesDtos;
 	}
 
-	private String getDate(PayModeGridModel model, String type) {
+	 String getDate(PayModeGridModel model, String type) {
 		String date = "";
 
 		String day = model.getDay();

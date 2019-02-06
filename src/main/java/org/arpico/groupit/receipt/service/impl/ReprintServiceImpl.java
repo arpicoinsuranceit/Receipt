@@ -173,7 +173,7 @@ public class ReprintServiceImpl implements ReprintService {
 
 	}
 
-	private byte[] getFromInTrans(String docCode, Integer receiptNo, List<String> agentBranchs) throws Exception {
+	 byte[] getFromInTrans(String docCode, Integer receiptNo, List<String> agentBranchs) throws Exception {
 
 		InTransactionsModel inTransactionsModel = null;
 		try {
@@ -219,7 +219,7 @@ public class ReprintServiceImpl implements ReprintService {
 
 	}
 
-	private byte[] getFromInLoanTrans(String docCode, Integer receiptNo, List<String> agentBranchs) throws Exception {
+	 byte[] getFromInLoanTrans(String docCode, Integer receiptNo, List<String> agentBranchs) throws Exception {
 
 		InLoanTransactionsModel inLoanTransactionsModel = null;
 		try {
@@ -246,7 +246,7 @@ public class ReprintServiceImpl implements ReprintService {
 
 	}
 
-	private byte[] getFromDocTxnm(String docCode, Integer receiptNo, List<String> agentBranchs) throws Exception {
+	 byte[] getFromDocTxnm(String docCode, Integer receiptNo, List<String> agentBranchs) throws Exception {
 		RmsDocTxnmModel docTxnmModel = null;
 		List<RmsDocTxndModel> docTxndModels = null;
 		try {
@@ -273,7 +273,7 @@ public class ReprintServiceImpl implements ReprintService {
 
 	}
 
-	private byte[] getFromRecm(String docCode, Integer receiptNo, List<String> agentBranchs) throws Exception {
+	 byte[] getFromRecm(String docCode, Integer receiptNo, List<String> agentBranchs) throws Exception {
 
 		List<String> accountList = new ArrayList<>(Arrays.asList(accounts.split(",")));
 
@@ -315,7 +315,7 @@ public class ReprintServiceImpl implements ReprintService {
 		return itextReceipt.createReceipt(receiptPrintDto);
 	}
 
-	private ReceiptPrintDto getReceiptPrintDtoInTran(InProposalsModel inProposalsModel,
+	 ReceiptPrintDto getReceiptPrintDtoInTran(InProposalsModel inProposalsModel,
 			InTransactionsModel inTransactionsModel) throws Exception {
 		
 		//System.out.println("inTransactionsModel.getCreadt() : " + inTransactionsModel.getCreadt());
@@ -362,7 +362,7 @@ public class ReprintServiceImpl implements ReprintService {
 		return printDto;
 	}
 
-	private ReceiptPrintDto getReceiptPrintDtoINV(RmsDocTxnmModel docTxnmModel, List<RmsDocTxndModel> docTxndModels)
+	 ReceiptPrintDto getReceiptPrintDtoINV(RmsDocTxnmModel docTxnmModel, List<RmsDocTxndModel> docTxndModels)
 			throws Exception {
 		ReceiptPrintDto printDto = new ReceiptPrintDto();
 
@@ -427,7 +427,7 @@ public class ReprintServiceImpl implements ReprintService {
 		return printDto;
 	}
 
-	private ReceiptPrintDto getReceiptPrintDtoGL(RmsRecmModel recmModel, List<MisGlItemModel> glItemModels,
+	 ReceiptPrintDto getReceiptPrintDtoGL(RmsRecmModel recmModel, List<MisGlItemModel> glItemModels,
 			String payMode) throws Exception {
 		ReceiptPrintDto printDto = new ReceiptPrintDto();
 
@@ -460,7 +460,7 @@ public class ReprintServiceImpl implements ReprintService {
 		return printDto;
 	}
 
-	private ReceiptPrintDto getReceiptPrintDtoRCLN(InProposalsModel inProposalsModel,
+	 ReceiptPrintDto getReceiptPrintDtoRCLN(InProposalsModel inProposalsModel,
 			InLoanTransactionsModel inTransactionsModel, String agentCode, String locCode) throws Exception {
 		ReceiptPrintDto printDto = new ReceiptPrintDto();
 

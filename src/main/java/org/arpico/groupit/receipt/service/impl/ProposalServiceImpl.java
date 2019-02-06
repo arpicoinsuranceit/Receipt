@@ -184,7 +184,7 @@ public class ProposalServiceImpl implements ProposalServce {
 		return proposalNoSeqNoDtos;
 	}
 
-	private ProposalNoSeqNoDto getProposalNoSeqNoDto(ProposalNoSeqNoModel proposalNoSeqNoModel) {
+	 ProposalNoSeqNoDto getProposalNoSeqNoDto(ProposalNoSeqNoModel proposalNoSeqNoModel) {
 		ProposalNoSeqNoDto dto = new ProposalNoSeqNoDto();
 		dto.setProposalNo(proposalNoSeqNoModel.getProposalNo());
 		dto.setSeqNo(proposalNoSeqNoModel.getSeqNo());
@@ -201,7 +201,7 @@ public class ProposalServiceImpl implements ProposalServce {
 		return basicDetailsDto;
 	}
 
-	private ProposalBasicDetailsDto getBasicDetailsDto(InProposalBasicsModel basicsModel) {
+	 ProposalBasicDetailsDto getBasicDetailsDto(InProposalBasicsModel basicsModel) {
 
 		ProposalBasicDetailsDto basicDetailsDto = new ProposalBasicDetailsDto();
 
@@ -393,7 +393,7 @@ public class ProposalServiceImpl implements ProposalServce {
 	}
 
 	@Transactional
-	private void saveReceipt(InTransactionsModel inTransactionsModel,
+	 void saveReceipt(InTransactionsModel inTransactionsModel,
 			InBillingTransactionsModel inBillingTransactionsModel) {
 		inTransactionDao.save(inTransactionsModel);
 
@@ -401,7 +401,7 @@ public class ProposalServiceImpl implements ProposalServce {
 
 	}
 
-	private ReceiptPrintDto getReceiptPrintDto(InProposalsModel inProposalsModel,
+	 ReceiptPrintDto getReceiptPrintDto(InProposalsModel inProposalsModel,
 			InTransactionsModel inTransactionsModel, String agentCode, String locCode, boolean b) throws Exception {
 
 		ReceiptPrintDto printDto = new ReceiptPrintDto();
@@ -634,7 +634,7 @@ public class ProposalServiceImpl implements ProposalServce {
 	}
 
 	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	private void saveData(InProposalsModel inProposalsModel, InProposalsModel proposalsModelNew,
+	 void saveData(InProposalsModel inProposalsModel, InProposalsModel proposalsModelNew,
 			List<InPropAddBenefitModel> addBenefitModels, List<InPropFamDetailsModel> famDetailsModels,
 			List<InPropLoadingModel> inPropLoadingModels, List<InPropMedicalReqModel> inPropMedicalReqModels,
 			List<InPropNomDetailsModel> propNomDetailsModels, List<InPropPrePolsModel> inPropPrePolsModels,
@@ -728,12 +728,12 @@ public class ProposalServiceImpl implements ProposalServce {
 	}
 
 	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	private void updatePolNum(String pprnum, String polnum) throws Exception {
+	 void updatePolNum(String pprnum, String polnum) throws Exception {
 		billingTransactionsCustomDao.updatePolNum(pprnum, polnum);
 		transactionCustomDao.updatePolNum(pprnum, polnum);
 	}
 
-	private List<InPropSurrenderValsModel> incrementSurrenderVals(
+	 List<InPropSurrenderValsModel> incrementSurrenderVals(
 			List<InPropSurrenderValsModel> propSurrenderValsModels, Integer updatedSeqNo, String polNo) {
 
 		List<InPropSurrenderValsModel> list = new ArrayList<>();
@@ -746,7 +746,7 @@ public class ProposalServiceImpl implements ProposalServce {
 		return list;
 	}
 
-	private List<InPropSchedulesModel> incremenntScheduleSeq(List<InPropSchedulesModel> propSchedulesModels,
+	 List<InPropSchedulesModel> incremenntScheduleSeq(List<InPropSchedulesModel> propSchedulesModels,
 			Integer updatedSeqNo) {
 
 		List<InPropSchedulesModel> list = new ArrayList<>();
@@ -758,7 +758,7 @@ public class ProposalServiceImpl implements ProposalServce {
 		return list;
 	}
 
-	private List<InPropPrePolsModel> incrementPropPolSeq(List<InPropPrePolsModel> inPropPrePolsModels,
+	 List<InPropPrePolsModel> incrementPropPolSeq(List<InPropPrePolsModel> inPropPrePolsModels,
 			Integer updatedSeqNo) {
 
 		List<InPropPrePolsModel> list = new ArrayList<>();
@@ -770,7 +770,7 @@ public class ProposalServiceImpl implements ProposalServce {
 		return list;
 	}
 
-	private List<InPropNomDetailsModel> incrementPropNomDetailsSeq(List<InPropNomDetailsModel> propNomDetailsModels,
+	 List<InPropNomDetailsModel> incrementPropNomDetailsSeq(List<InPropNomDetailsModel> propNomDetailsModels,
 			Integer updatedSeqNo) {
 
 		List<InPropNomDetailsModel> list = new ArrayList<>();
@@ -782,7 +782,7 @@ public class ProposalServiceImpl implements ProposalServce {
 		return list;
 	}
 
-	private List<InPropMedicalReqModel> incrementPropMedical(List<InPropMedicalReqModel> inPropMedicalReqModels,
+	 List<InPropMedicalReqModel> incrementPropMedical(List<InPropMedicalReqModel> inPropMedicalReqModels,
 			Integer seqNo) {
 
 		List<InPropMedicalReqModel> list = new ArrayList<>();
@@ -794,7 +794,7 @@ public class ProposalServiceImpl implements ProposalServce {
 		return list;
 	}
 
-	private List<InPropLoadingModel> getInPropLoadings(List<InPropLoadingModel> inPropLoadingModels, Integer seqNo) {
+	 List<InPropLoadingModel> getInPropLoadings(List<InPropLoadingModel> inPropLoadingModels, Integer seqNo) {
 
 		List<InPropLoadingModel> list = new ArrayList<>();
 
@@ -805,7 +805,7 @@ public class ProposalServiceImpl implements ProposalServce {
 		return list;
 	}
 
-	private List<InPropFamDetailsModel> incrementSeqFamDetails(List<InPropFamDetailsModel> famDetailsModels,
+	 List<InPropFamDetailsModel> incrementSeqFamDetails(List<InPropFamDetailsModel> famDetailsModels,
 			Integer seqNo) {
 
 		List<InPropFamDetailsModel> list = new ArrayList<>();
@@ -817,7 +817,7 @@ public class ProposalServiceImpl implements ProposalServce {
 		return list;
 	}
 
-	private List<InPropAddBenefitModel> incrementSeqAddBenef(List<InPropAddBenefitModel> addBenefitModels,
+	 List<InPropAddBenefitModel> incrementSeqAddBenef(List<InPropAddBenefitModel> addBenefitModels,
 			Integer seqNo, Date icpDate) {
 
 		List<InPropAddBenefitModel> list = new ArrayList<>();
@@ -853,7 +853,7 @@ public class ProposalServiceImpl implements ProposalServce {
 		return list;
 	}
 
-	private InProposalsModel getProposalPolicyStage(InProposalsModel inProposalsModel, String polNo,
+	 InProposalsModel getProposalPolicyStage(InProposalsModel inProposalsModel, String polNo,
 			SaveReceiptDto saveReceiptDto) throws Exception {
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -1243,7 +1243,7 @@ public class ProposalServiceImpl implements ProposalServce {
 		return null;
 	}
 
-	private SearchDto getSearchDto(InProposalsModel e) {
+	 SearchDto getSearchDto(InProposalsModel e) {
 		SearchDto dto = new SearchDto();
 		dto.setCustName(e.getPpdini());
 		dto.setNic(e.getPpdnic());

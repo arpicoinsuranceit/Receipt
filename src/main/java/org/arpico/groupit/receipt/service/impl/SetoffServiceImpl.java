@@ -775,7 +775,7 @@ public class SetoffServiceImpl implements SetoffService {
 		return setoffList;
 	}
 
-	private InBillingTransactionsModel getCopyBilling(InBillingTransactionsModel billing, Integer batchNo) {
+	 InBillingTransactionsModel getCopyBilling(InBillingTransactionsModel billing, Integer batchNo) {
 
 		InBillingTransactionsModelPK pk = new InBillingTransactionsModelPK();
 
@@ -841,7 +841,7 @@ public class SetoffServiceImpl implements SetoffService {
 		return model;
 	}
 
-	private InBillingTransactionsModel getSetoff(InBillingTransactionsModel fund, InBillingTransactionsModel invoice,
+	 InBillingTransactionsModel getSetoff(InBillingTransactionsModel fund, InBillingTransactionsModel invoice,
 			Integer linnum, String userCode, InProposalsModel inProposalsModel, Double hrbamt, CommisModel commisModel,
 			Double amount, boolean isAutoIssue, Integer batchNo, String unlCode) {
 

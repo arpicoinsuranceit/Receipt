@@ -101,6 +101,9 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 	@Autowired
 	private InfosysWSClient infosysWSClient;
+	
+	@Autowired
+	private PolicySaveService policySaveService;
 
 	@Override
 	public List<ProposalNoSeqNoDto> getPolicyNoSeqNoDtoList(String val) throws Exception {
@@ -131,8 +134,8 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 		return proposalNoSeqNoDtos;
 	}
-
-	private ProposalNoSeqNoDto getPolicyNoSeqNoDto(ProposalNoSeqNoModel proposalNoSeqNoModel) {
+	
+	public ProposalNoSeqNoDto getPolicyNoSeqNoDto(ProposalNoSeqNoModel proposalNoSeqNoModel) {
 		ProposalNoSeqNoDto dto = new ProposalNoSeqNoDto();
 		dto.setProposalNo(proposalNoSeqNoModel.getProposalNo());
 		dto.setSeqNo(proposalNoSeqNoModel.getSeqNo());
@@ -151,7 +154,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		return basicDetailsDto;
 	}
 
-	private ProposalBasicDetailsDto getBasicDetailsDto(InProposalBasicsModel basicsModel) {
+	public ProposalBasicDetailsDto getBasicDetailsDto(InProposalBasicsModel basicsModel) {
 
 		ProposalBasicDetailsDto basicDetailsDto = new ProposalBasicDetailsDto();
 
@@ -227,7 +230,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 				// inBillingTransactionDao.save(deposit);
 				ReceiptPrintDto printDto = null;
 				try {
-					saveReceipt(inTransactionsModel, deposit);
+					policySaveService.saveReceipt(inTransactionsModel, deposit);
 
 					System.out.println(" SAVE RECEIPTS");
 
@@ -368,7 +371,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 	}
 
 	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	private boolean saveTransactions(List<InBillingTransactionsModel> setoffs) throws Exception {
+	public boolean saveTransactions(List<InBillingTransactionsModel> setoffs) throws Exception {
 
 		if (setoffs != null && setoffs.size() > 0) {
 			inBillingTransactionDao.save(setoffs);
@@ -414,13 +417,14 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		return true;
 	}
 
-	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	private void saveReceipt(InTransactionsModel inTransactionsModel, InBillingTransactionsModel deposit) {
+	@Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.NESTED, readOnly = false, rollbackFor = Exception.class)
+	public void saveReceipt(InTransactionsModel inTransactionsModel, InBillingTransactionsModel deposit) {
 		inTransactionDao.save(inTransactionsModel);
+		deposit.getBillingTransactionsModelPK().setDoccod("RCPLL");
 		inBillingTransactionDao.save(deposit);
 	}
 
-	private ReceiptPrintDto getReceiptPrintDto(InProposalsModel inProposalsModel,
+	public ReceiptPrintDto getReceiptPrintDto(InProposalsModel inProposalsModel,
 			InTransactionsModel inTransactionsModel, String agentCode, String locCode, boolean b,
 			List<HashMap<String, String>> setoffList) throws Exception {
 		ReceiptPrintDto printDto = new ReceiptPrintDto();

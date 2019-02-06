@@ -83,7 +83,7 @@ public class LoanReceiptServiceImpl implements LoanReceiptService{
 		return basicDetailsDto;
 	}
 	
-	private ProposalBasicDetailsDto getBasicDetailsDto(InProposalBasicsModel basicsModel) {
+	 ProposalBasicDetailsDto getBasicDetailsDto(InProposalBasicsModel basicsModel) {
 
 		ProposalBasicDetailsDto basicDetailsDto = new ProposalBasicDetailsDto();
 
@@ -216,7 +216,7 @@ public class LoanReceiptServiceImpl implements LoanReceiptService{
 		return new ResponseEntity<>(dto, HttpStatus.NOT_FOUND);
 	}
 	
-	private ReceiptPrintDto getReceiptPrintDto(InProposalsModel inProposalsModel,
+	 ReceiptPrintDto getReceiptPrintDto(InProposalsModel inProposalsModel,
 			InLoanTransactionsModel inTransactionsModel, String agentCode, String locCode, boolean b) throws Exception {
 		ReceiptPrintDto printDto = new ReceiptPrintDto();
 

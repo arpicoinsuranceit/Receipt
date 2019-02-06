@@ -52,7 +52,7 @@ public class AgentInquiryServiceImpl implements AgentInquiryService {
 		return agnInqAgnListDtos;
 	}
 
-	private AgnInqAgnListDto getAgnInqListDto(AgnInqAgnListModel e) {
+	public AgnInqAgnListDto getAgnInqListDto(AgnInqAgnListModel e) {
 		AgnInqAgnListDto dto = new AgnInqAgnListDto();
 
 		dto.setAgncod(e.getAgncod());

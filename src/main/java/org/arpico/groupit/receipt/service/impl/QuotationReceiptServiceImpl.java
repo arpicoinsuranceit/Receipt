@@ -393,7 +393,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 	}
 
-	private InPropNomDetailsModel getNominee(String agentCode, Integer quotationId, NomineeDto nom, String pprnum,
+	 InPropNomDetailsModel getNominee(String agentCode, Integer quotationId, NomineeDto nom, String pprnum,
 			Integer prpseq, String loccod) throws Exception {
 		
 		System.out.println(nom.getNomineeDateofBirth() +" : nom.getNomineeDateofBirth()");
@@ -418,7 +418,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		return model;
 	}
 
-	private ReceiptPrintDto getReceiptPrintDto(InProposalsModel inProposalsModel,
+	 ReceiptPrintDto getReceiptPrintDto(InProposalsModel inProposalsModel,
 			InTransactionsModel inTransactionsModel, String agentCode, String locCode, boolean isDuplicate,
 			AgentModel agentModel) throws Exception {
 		ReceiptPrintDto printDto = new ReceiptPrintDto();
@@ -460,7 +460,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		return printDto;
 	}
 
-	private InPropSurrenderValsModel getSurrenderVals(String agentCode, Integer QuoId, SurrenderValsDto surVal,
+	 InPropSurrenderValsModel getSurrenderVals(String agentCode, Integer QuoId, SurrenderValsDto surVal,
 			String pprnum, Integer prpseq, String branchCode) {
 		InPropSurrenderValsPK inPropSurrenderValsPK = new InPropSurrenderValsPK();
 
@@ -484,7 +484,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		return inPropSurrenderValsModel;
 	}
 
-	private InPropMedicalReqModel getMediReq(MedicalRequirementsDto mediReq, String pprnum, Integer prpseq,
+	 InPropMedicalReqModel getMediReq(MedicalRequirementsDto mediReq, String pprnum, Integer prpseq,
 			String branchCode) {
 
 		InPropMedicalReqModelPK inPropMedicalReqModelPK = new InPropMedicalReqModelPK();
@@ -510,7 +510,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		return inPropMedicalReqModel;
 	}
 
-	private void getInPropAddBebefit(QuoBenfDto benfDto, List<InPropAddBenefitModel> addBenefitModels, String insType,
+	 void getInPropAddBebefit(QuoBenfDto benfDto, List<InPropAddBenefitModel> addBenefitModels, String insType,
 			String frequency, List<InPropLoadingModel> inPropLoadingModels, String ocuCode) throws Exception {
 
 		for (InPropAddBenefitModel addBenefitModel : addBenefitModels) {
@@ -638,7 +638,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		}
 	}
 
-	private InPropSchedulesModel getPropShedule(SheduleDto sheduleDto, String pprnum, Integer prpseq,
+	 InPropSchedulesModel getPropShedule(SheduleDto sheduleDto, String pprnum, Integer prpseq,
 			String branchCode) {
 
 		InPropSchedulesModelPK inPropSchedulesPK = new InPropSchedulesModelPK();
@@ -660,7 +660,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		return inPropSchedules;
 	}
 
-	private InPropFamDetailsModel getFamily(ChildrenDto childrenDto, String pprnum, Integer prpseq, String branchCode)
+	 InPropFamDetailsModel getFamily(ChildrenDto childrenDto, String pprnum, Integer prpseq, String branchCode)
 			throws ParseException {
 		InPropFamDetailsModelPK famDetailsModelPK = new InPropFamDetailsModelPK();
 		famDetailsModelPK.setFmlnam(childrenDto.get_cName());
@@ -686,7 +686,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		return detailsModel;
 	}
 
-	private List<InPropAddBenefitModel> getChildBenefits(ArrayList<QuoChildBenefDto> get_childrenBenefits,
+	 List<InPropAddBenefitModel> getChildBenefits(ArrayList<QuoChildBenefDto> get_childrenBenefits,
 			List<InPropAddBenefitModel> addBenefitModels, String insType, String frequency,
 			List<InPropLoadingModel> inPropLoadingModels) throws Exception {
 
@@ -749,7 +749,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		return addBenefitModels;
 	}
 
-	private InProposalsModel getProposalModel(ViewQuotationDto resp, SaveReceiptDto saveReceiptDto) throws Exception {
+	 InProposalsModel getProposalModel(ViewQuotationDto resp, SaveReceiptDto saveReceiptDto) throws Exception {
 		InProposalsModel inProposalsModel = new InProposalsModel();
 
 		//// System.out.println(resp.get_mainlife().get_mDob());
@@ -856,7 +856,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		return inProposalsModel;
 	}
 
-	private InProposalsModelPK getProposalModelPK(SaveReceiptDto saveReceiptDto, String loccode) {
+	 InProposalsModelPK getProposalModelPK(SaveReceiptDto saveReceiptDto, String loccode) {
 		InProposalsModelPK inProposalsModelPK = new InProposalsModelPK();
 
 		inProposalsModelPK.setLoccod(loccode);
@@ -867,7 +867,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		return inProposalsModelPK;
 	}
 
-	private CustomerModel getCustomer(ViewQuotationDto resp) throws Exception {
+	 CustomerModel getCustomer(ViewQuotationDto resp) throws Exception {
 
 		String[] numberGen = numberGenerator.generateNewId("450", "", "CSPINSQ", "");
 

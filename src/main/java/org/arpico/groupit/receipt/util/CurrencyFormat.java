@@ -57,7 +57,7 @@ public class CurrencyFormat {
     " Eighteen",
     " Nineteen"
     };   
-  private String convertLessThanOneThousand(int number) {
+  public String convertLessThanOneThousand(int number) {
     String soFar;
 
     if (number % 100 < 20){
@@ -77,7 +77,7 @@ public class CurrencyFormat {
     return numNames[number] + " Hundred " + soFar;
 }
 
-    private String convert(int number) {
+    public String convert(int number) {
         /* special case */
         if (number == 0) { return "Zero"; }
 

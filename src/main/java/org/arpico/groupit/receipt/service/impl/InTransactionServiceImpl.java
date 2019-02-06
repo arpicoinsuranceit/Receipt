@@ -34,7 +34,7 @@ public class InTransactionServiceImpl implements InTransactionService {
 		return lastReceiptSummeryDtos;
 	}
 
-	private LastReceiptSummeryDto getLastReceiptDto(LastReceiptSummeryModel e) {
+	 LastReceiptSummeryDto getLastReceiptDto(LastReceiptSummeryModel e) {
 		LastReceiptSummeryDto dto = new LastReceiptSummeryDto();
 
 		dto.setAmount(e.getTotprm());

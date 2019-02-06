@@ -113,7 +113,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 		return promisesGridDtos;
 	}
 
-	private PromisesGridDto getPromisesGridDto(InPromisesModel e) {
+	 PromisesGridDto getPromisesGridDto(InPromisesModel e) {
 		PromisesGridDto dto = new PromisesGridDto();
 		dto.setId(e.getId());
 		dto.setCustName(e.getCustName());
@@ -176,7 +176,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
 	}
 
-	private InPromisesModel getInPromiseModel(String userCode, String branch, PromisesGridDto promise)
+	 InPromisesModel getInPromiseModel(String userCode, String branch, PromisesGridDto promise)
 			throws ParseException {
 		InPromisesModel model = new InPromisesModel();
 		model.setActive(1);
@@ -284,7 +284,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 		return new ResponseEntity<Object>("404", HttpStatus.NOT_FOUND);
 	}
 
-	private WorkfolwProposalDto getWorkfolwProposalDto(InProposalsModel inProposalsModel,
+	 WorkfolwProposalDto getWorkfolwProposalDto(InProposalsModel inProposalsModel,
 			WorkflowProposalMainLifeDto mainLifeDto, WorkflowProposalSpouseDto spouseDto,
 			List<WorkflowProposalChildrenDto> childrenDtos, List<WorkflowProposalBenefictDetailDto> benefictDetailsMain,
 			List<WorkflowProposalBenefictDetailDto> benefictDetailsSpouse,
@@ -335,7 +335,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 		return dto;
 	}
 
-	private List<WorkflowProposalChildrenDto> getWorkflowProposalChildrenDtos(
+	 List<WorkflowProposalChildrenDto> getWorkflowProposalChildrenDtos(
 			List<InPropFamDetailsModel> famDetailsModels) {
 
 		List<WorkflowProposalChildrenDto> childrenDtos = new ArrayList<>();
@@ -358,7 +358,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 		return childrenDtos;
 	}
 
-	private WorkflowProposalMainLifeDto getWorkflowProposalMainLifeDto(InProposalsModel inProposalsModel) {
+	 WorkflowProposalMainLifeDto getWorkflowProposalMainLifeDto(InProposalsModel inProposalsModel) {
 		WorkflowProposalMainLifeDto mainLifeDto = new WorkflowProposalMainLifeDto();
 
 		String address = "";
@@ -392,7 +392,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 		return mainLifeDto;
 	}
 
-	private WorkflowProposalSpouseDto getWorkflowProposalSpouseDto(InProposalsModel inProposalsModel) {
+	 WorkflowProposalSpouseDto getWorkflowProposalSpouseDto(InProposalsModel inProposalsModel) {
 		WorkflowProposalSpouseDto spouseDto = null;
 
 		if (inProposalsModel.getSpoini() != null && inProposalsModel.getSpodob() != null) {
@@ -410,7 +410,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 		return spouseDto;
 	}
 
-	private List<WorkflowProposalBenefictDetailDto> getBenefictDetails(List<InPropAddBenefitModel> addBenefitModels,
+	 List<WorkflowProposalBenefictDetailDto> getBenefictDetails(List<InPropAddBenefitModel> addBenefitModels,
 			String type, String freq) {
 		List<WorkflowProposalBenefictDetailDto> benefictDetails = new ArrayList<>();
 		addBenefitModels.forEach(e -> {
@@ -502,7 +502,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 		return promisesGridDtos;
 	}
 
-	private PromisesGridDto getPromisesGridDtoFromInProposal(InProposalsModel e) {
+	 PromisesGridDto getPromisesGridDtoFromInProposal(InProposalsModel e) {
 
 		PromisesGridDto dto = new PromisesGridDto();
 		dto.setId(0);
@@ -531,7 +531,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 		return new ResponseEntity<Object>(historyDtos, HttpStatus.OK);
 	}
 
-	private PaymentHistoryDto getPaymentHistoryDto(PaymentHistoryModel e) {
+	 PaymentHistoryDto getPaymentHistoryDto(PaymentHistoryModel e) {
 		PaymentHistoryDto dto = new PaymentHistoryDto();
 
 		dto.setDueamt(e.getDueamt());
@@ -557,7 +557,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 		return new ResponseEntity<Object>(lastReceiptSummeryDtos, HttpStatus.OK);
 	}
 
-	private LastReceiptSummeryDto getLastReceiptDto(LastReceiptSummeryModel e) {
+	 LastReceiptSummeryDto getLastReceiptDto(LastReceiptSummeryModel e) {
 		LastReceiptSummeryDto dto = new LastReceiptSummeryDto();
 
 		dto.setAmount(e.getTotprm());
@@ -639,7 +639,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 		return flowPolicyGridDtos;
 	}
 
-	private WorkFlowPolicyGridDto getFolwPolicyGridDto(WorkFlowPolicyGridModel polGrid) {
+	 WorkFlowPolicyGridDto getFolwPolicyGridDto(WorkFlowPolicyGridModel polGrid) {
 
 		//System.out.println(polGrid.getPprNum());
 		//System.out.println(polGrid.getAgent());
@@ -683,7 +683,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 		return premiumDtos;
 	}
 
-	private ShortPremiumDto getShortPremiumDto(ShortPremiumModel e) {
+	 ShortPremiumDto getShortPremiumDto(ShortPremiumModel e) {
 		ShortPremiumDto dto = new ShortPremiumDto();
 
 		dto.setAddnot(e.getAddnot());
@@ -871,7 +871,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
 	}
 
-	private NotRelChequeDto getNotRelChequeDto(NotRelChequeModel model) {
+	 NotRelChequeDto getNotRelChequeDto(NotRelChequeModel model) {
 		NotRelChequeDto dto = new NotRelChequeDto();
 		
 		//System.out.println(model.getReceipt());

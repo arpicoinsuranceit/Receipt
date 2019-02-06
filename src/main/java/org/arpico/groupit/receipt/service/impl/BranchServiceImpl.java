@@ -52,7 +52,7 @@ public class BranchServiceImpl implements BranchService {
 		return branchDtos;
 	}
 
-	private BranchDto getBranchDto(BranchModel e) {
+	public BranchDto getBranchDto(BranchModel e) {
 		BranchDto branchDto = new BranchDto();
 		branchDto.setDescription(e.getDescription());
 		branchDto.setId(e.getId());
