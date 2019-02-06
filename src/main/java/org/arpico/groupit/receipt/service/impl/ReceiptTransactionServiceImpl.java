@@ -1,32 +1,20 @@
 package org.arpico.groupit.receipt.service.impl;
 
 import java.util.List;
-
-import org.arpico.groupit.receipt.client.InfosysWSClient;
-import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsDao;
-import org.arpico.groupit.receipt.dao.InPropAddBenefictCustomDao;
 import org.arpico.groupit.receipt.dao.InPropAddBenefictDao;
-import org.arpico.groupit.receipt.dao.InPropFamDetailsCustomDao;
 import org.arpico.groupit.receipt.dao.InPropFamDetailsDao;
-import org.arpico.groupit.receipt.dao.InPropLoadingCustomDao;
 import org.arpico.groupit.receipt.dao.InPropLoadingDao;
-import org.arpico.groupit.receipt.dao.InPropMedicalReqCustomDao;
 import org.arpico.groupit.receipt.dao.InPropMedicalReqDao;
-import org.arpico.groupit.receipt.dao.InPropNomDetailsCustomDao;
 import org.arpico.groupit.receipt.dao.InPropNomDetailsDao;
-import org.arpico.groupit.receipt.dao.InPropPrePolsCustomDao;
 import org.arpico.groupit.receipt.dao.InPropPrePolsDao;
-import org.arpico.groupit.receipt.dao.InPropShedulesCustomDao;
 import org.arpico.groupit.receipt.dao.InPropShedulesDao;
-import org.arpico.groupit.receipt.dao.InPropSurrenderValsCustomDao;
 import org.arpico.groupit.receipt.dao.InPropSurrenderValsDao;
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
 import org.arpico.groupit.receipt.dao.InProposalDao;
 import org.arpico.groupit.receipt.dao.InTransactionCustomDao;
 import org.arpico.groupit.receipt.dao.InTransactionsDao;
-import org.arpico.groupit.receipt.dao.RmsUserDao;
 import org.arpico.groupit.receipt.model.InBillingTransactionsModel;
 import org.arpico.groupit.receipt.model.InPropAddBenefitModel;
 import org.arpico.groupit.receipt.model.InPropFamDetailsModel;
@@ -38,13 +26,7 @@ import org.arpico.groupit.receipt.model.InPropSchedulesModel;
 import org.arpico.groupit.receipt.model.InPropSurrenderValsModel;
 import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.InTransactionsModel;
-import org.arpico.groupit.receipt.print.ItextReceipt;
-import org.arpico.groupit.receipt.security.JwtDecoder;
-import org.arpico.groupit.receipt.service.InTransactionService;
-import org.arpico.groupit.receipt.service.NumberGenerator;
 import org.arpico.groupit.receipt.service.ReceiptTransactionService;
-import org.arpico.groupit.receipt.service.SetoffService;
-import org.arpico.groupit.receipt.util.CommonMethodsUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -53,19 +35,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class ReceiptTransactionServiceImpl implements ReceiptTransactionService{
-	
+public class ReceiptTransactionServiceImpl implements ReceiptTransactionService {
+
 	@Autowired
 	private InProposalDao inProposalDao;
-	
+
 	@Autowired
 	private InTransactionCustomDao transactionCustomDao;
 
 	@Autowired
 	private InProposalCustomDao inProposalCustomDao;
-
-	@Autowired
-	private CommonMethodsUtility commonethodUtility;
 
 	@Autowired
 	private InTransactionsDao inTransactionDao;
@@ -74,79 +53,31 @@ public class ReceiptTransactionServiceImpl implements ReceiptTransactionService{
 	private InBillingTransactionsDao inBillingTransactionDao;
 
 	@Autowired
-	private NumberGenerator numberGenerator;
-
-	@Autowired
 	private InPropAddBenefictDao addBenefictDao;
-
-	@Autowired
-	private InPropAddBenefictCustomDao addBenefictCustomDao;
 
 	@Autowired
 	private InPropFamDetailsDao famDetailsDao;
 
 	@Autowired
-	private InPropFamDetailsCustomDao famDetailsCustomDao;
-
-	@Autowired
 	private InPropLoadingDao propLoadingDao;
-
-	@Autowired
-	private InPropLoadingCustomDao propLoadingCustomDao;
 
 	@Autowired
 	private InPropMedicalReqDao propMedicalReqDao;
 
 	@Autowired
-	private AgentDao agentDao;
-
-	@Autowired
-	private InPropMedicalReqCustomDao propMedicalReqCustomDao;
-
-	@Autowired
 	private InPropNomDetailsDao propNomDetailsDao;
-
-	@Autowired
-	private InPropNomDetailsCustomDao propNomDetailsCustomDao;
 
 	@Autowired
 	private InPropPrePolsDao propPrePolsDao;
 
 	@Autowired
-	private InPropPrePolsCustomDao propPrePolsCustomDao;
-
-	@Autowired
 	private InPropShedulesDao propScheduleDao;
-
-	@Autowired
-	private InPropShedulesCustomDao propScheduleCustomDao;
 
 	@Autowired
 	private InPropSurrenderValsDao surrenderValDao;
 
 	@Autowired
-	private InPropSurrenderValsCustomDao surrenderValCustomDao;
-
-	@Autowired
-	private InTransactionService inTransactionService;
-
-	@Autowired
 	private InBillingTransactionsCustomDao billingTransactionsCustomDao;
-
-	@Autowired
-	private RmsUserDao rmsUserDao;
-
-	@Autowired
-	private SetoffService setoffService;
-
-	@Autowired
-	private ItextReceipt itextReceipt;
-
-	@Autowired
-	private JwtDecoder decoder;
-
-	@Autowired
-	private InfosysWSClient infosysWSClient;
 
 	@Override
 	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -185,9 +116,7 @@ public class ReceiptTransactionServiceImpl implements ReceiptTransactionService{
 			}
 		}
 
-		
 		System.out.println("Last");
-		
 
 		if (model != null) {
 			inProposalCustomDao.changeLinNum(model.getPprnum(), model.getTxnyer(), model.getTxnmth());
@@ -202,7 +131,7 @@ public class ReceiptTransactionServiceImpl implements ReceiptTransactionService{
 			throws Exception {
 		inTransactionDao.save(inTransactionsModel);
 		inBillingTransactionDao.save(deposit);
-		
+
 	}
 
 	@Override
@@ -233,11 +162,9 @@ public class ReceiptTransactionServiceImpl implements ReceiptTransactionService{
 			inProposalsModel.setLinmon(model.getIcpmon());
 
 		}
-		
-		
+
 		updatePolNum(proposalsModelNew.getInProposalsModelPK().getPprnum(), proposalsModelNew.getPolnum());
-		
-		
+
 		inProposalDao.save(inProposalsModel);
 
 		System.out.println("Proposal Status Update Done");
@@ -295,9 +222,9 @@ public class ReceiptTransactionServiceImpl implements ReceiptTransactionService{
 		System.out.println("proposal surrender Val save done");
 
 		inBillingTransactionDao.save(setoffList);
-		
+
 	}
-	
+
 	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	private void updatePolNum(String pprnum, String polnum) throws Exception {
 		billingTransactionsCustomDao.updatePolNum(pprnum, polnum);
@@ -326,10 +253,10 @@ public class ReceiptTransactionServiceImpl implements ReceiptTransactionService{
 		propLoadingDao.save(inPropLoadingModels);
 		surrenderValDao.save(inPropSurrenderValsModels);
 		propNomDetailsDao.save(inPropNomDetailsModels);
-		
+
 		inTransactionDao.save(inTransactionsModel);
 		inBillingTransactionDao.save(inBillingTransactionsModel);
-		
+
 	}
 
 }

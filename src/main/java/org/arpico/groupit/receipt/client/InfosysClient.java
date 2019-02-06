@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.arpico.groupit.receipt.dto.BenefictInquiryDto;
-import org.arpico.groupit.receipt.dto.ChildDto;
 import org.arpico.groupit.receipt.dto.ChildInqDto;
 import org.arpico.groupit.receipt.dto.DashboardParaDto;
 import org.arpico.groupit.receipt.dto.DataTableResponseDto;
@@ -17,7 +16,6 @@ import org.arpico.groupit.receipt.dto.SettlementDto;
 import org.arpico.groupit.receipt.dto.TransferHistoryDto;
 import org.arpico.groupit.receipt.util.AppConstant;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestTemplate;
 
 @Component

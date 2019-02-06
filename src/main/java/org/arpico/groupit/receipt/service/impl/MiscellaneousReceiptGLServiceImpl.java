@@ -21,8 +21,6 @@ import org.arpico.groupit.receipt.dto.ResponseDto;
 import org.arpico.groupit.receipt.dto.RmsRecmDto;
 import org.arpico.groupit.receipt.model.AccountGLModel;
 import org.arpico.groupit.receipt.model.GlTranTempModel;
-import org.arpico.groupit.receipt.model.RmsDocTxndModel;
-import org.arpico.groupit.receipt.model.RmsItemMasterModel;
 import org.arpico.groupit.receipt.model.RmsRecdModel;
 import org.arpico.groupit.receipt.model.RmsRecmGridModel;
 import org.arpico.groupit.receipt.model.RmsRecmModel;
@@ -77,9 +75,6 @@ public class MiscellaneousReceiptGLServiceImpl implements MiscellaneousReceiptGL
 
 	@Autowired
 	private ItextReceipt itextReceipt;
-
-	@Autowired
-	private RmsGlAccCodesDao accCodesDao;
 
 	@Autowired
 	private GlTranTempDao glTranTempDao;

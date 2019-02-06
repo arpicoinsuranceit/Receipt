@@ -4,13 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.arpico.groupit.receipt.client.QuotationClient;
-import org.arpico.groupit.receipt.dao.BenefictDetailsDao;
-import org.arpico.groupit.receipt.dao.BranchUnderwriteDao;
 import org.arpico.groupit.receipt.dao.CourierDao;
 import org.arpico.groupit.receipt.dao.DepartmentCourierDao;
 import org.arpico.groupit.receipt.dao.DocumentTypeDao;
-import org.arpico.groupit.receipt.dao.InOccuLoadDatDao;
 import org.arpico.groupit.receipt.dao.InPropAddBenefictCustomDao;
 import org.arpico.groupit.receipt.dao.InPropAddBenefictDao;
 import org.arpico.groupit.receipt.dao.InPropFamDetailsCustomDao;
@@ -27,7 +23,6 @@ import org.arpico.groupit.receipt.dao.InPropShedulesCustomDao;
 import org.arpico.groupit.receipt.dao.InPropShedulesDao;
 import org.arpico.groupit.receipt.dao.InPropSurrenderValsCustomDao;
 import org.arpico.groupit.receipt.dao.InPropSurrenderValsDao;
-import org.arpico.groupit.receipt.dao.InProposalCustomDao;
 import org.arpico.groupit.receipt.dao.InProposalDao;
 import org.arpico.groupit.receipt.dao.SubDepartmentDao;
 import org.arpico.groupit.receipt.dao.SubDepartmentDocumentCourierDao;
@@ -48,7 +43,6 @@ import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.SubDepartmentDocumentCourierModel;
 import org.arpico.groupit.receipt.model.SubDepartmentDocumentModel;
 import org.arpico.groupit.receipt.model.SubDepartmentModel;
-import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.BranchUnderwriteTransactionService;
 import org.arpico.groupit.receipt.service.NumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,21 +57,6 @@ public class BranchUnderwriteTransactionServiceImpl implements BranchUnderwriteT
 
 	@Autowired
 	private NumberGenerator numberGenerator;
-
-	@Autowired
-	private BranchUnderwriteDao branchUnderwriteDao;
-
-	@Autowired
-	private InProposalCustomDao inProposalCustomDao;
-
-	@Autowired
-	private BenefictDetailsDao benefictDetailsDao;
-
-	@Autowired
-	private QuotationClient quotationClient;
-
-	@Autowired
-	private InOccuLoadDatDao occuLoadDatdao;
 
 	@Autowired
 	private InPropAddBenefictDao addBenefictDao;
@@ -148,8 +127,6 @@ public class BranchUnderwriteTransactionServiceImpl implements BranchUnderwriteT
 	@Autowired
 	private DepartmentCourierDao departmentCourierDao;
 
-	@Autowired
-	private JwtDecoder decoder;
 
 	@Autowired
 	private InPropAddBenefictCustomDao inPropAddBenefictCustomDao;

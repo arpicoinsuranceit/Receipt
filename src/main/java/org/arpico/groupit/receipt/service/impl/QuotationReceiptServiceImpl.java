@@ -14,17 +14,7 @@ import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.BenefictDetailsDao;
 import org.arpico.groupit.receipt.dao.BranchUnderwriteDao;
 import org.arpico.groupit.receipt.dao.CustomerDao;
-import org.arpico.groupit.receipt.dao.InBillingTransactionsDao;
 import org.arpico.groupit.receipt.dao.InOccuLoadDatDao;
-import org.arpico.groupit.receipt.dao.InPropAddBenefictDao;
-import org.arpico.groupit.receipt.dao.InPropFamDetailsDao;
-import org.arpico.groupit.receipt.dao.InPropLoadingDao;
-import org.arpico.groupit.receipt.dao.InPropMedicalReqDao;
-import org.arpico.groupit.receipt.dao.InPropNomDetailsDao;
-import org.arpico.groupit.receipt.dao.InPropShedulesDao;
-import org.arpico.groupit.receipt.dao.InPropSurrenderValsDao;
-import org.arpico.groupit.receipt.dao.InProposalDao;
-import org.arpico.groupit.receipt.dao.InTransactionsDao;
 import org.arpico.groupit.receipt.dao.RmsUserDao;
 import org.arpico.groupit.receipt.dto.ChildrenDto;
 import org.arpico.groupit.receipt.dto.MedicalRequirementsDto;
@@ -76,12 +66,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 
 	@Autowired
-	private InProposalDao inProposalDao;
-
-	@Autowired
-	private InPropAddBenefictDao inPropAddBenefictDao;
-
-	@Autowired
 	private QuotationClient quotationClient;
 
 	@Autowired
@@ -94,28 +78,7 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 	private BenefictDetailsDao benefictDetailsDao;
 
 	@Autowired
-	private InPropShedulesDao inPropShedulesDao;
-
-	@Autowired
-	private InPropFamDetailsDao inPropFamDetailsDao;
-
-	@Autowired
 	private InOccuLoadDatDao occuLoadDatdao;
-
-	@Autowired
-	private InPropLoadingDao inPropLoadingDao;
-
-	@Autowired
-	private InPropMedicalReqDao inPropMedicalReqDao;
-
-	@Autowired
-	private InTransactionsDao inTransactionDao;
-
-	@Autowired
-	private InPropSurrenderValsDao inPropSurrenderValsDao;
-
-	@Autowired
-	private InBillingTransactionsDao inBillingTransactionDao;
 
 	@Autowired
 	private CommonMethodsUtility commonethodUtility;
@@ -132,9 +95,6 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 	@Autowired
 	private ItextReceipt itextReceipt;
 	
-	@Autowired
-	private InPropNomDetailsDao inPropNomDetailsDao;
-
 	@Autowired
 	private JwtDecoder decoder;
 

@@ -8,7 +8,6 @@ import java.util.List;
 import org.arpico.groupit.receipt.client.UserManagementClient;
 import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.AgentInquiryDao;
-import org.arpico.groupit.receipt.dto.AgentDto;
 import org.arpico.groupit.receipt.dto.AgentMasterDto;
 import org.arpico.groupit.receipt.dto.AgnInqAgnListDto;
 import org.arpico.groupit.receipt.dto.DesignationDto;

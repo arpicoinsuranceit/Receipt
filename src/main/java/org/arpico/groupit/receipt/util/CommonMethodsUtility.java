@@ -15,7 +15,6 @@ import org.arpico.groupit.receipt.model.InProposalsModel;
 import org.arpico.groupit.receipt.model.InTransactionsModel;
 import org.arpico.groupit.receipt.model.pk.InBillingTransactionsModelPK;
 import org.arpico.groupit.receipt.model.pk.InTransactionsModelPK;
-import org.arpico.groupit.receipt.security.JwtDecoder;
 import org.arpico.groupit.receipt.service.NumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

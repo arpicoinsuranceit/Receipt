@@ -11,27 +11,15 @@ import java.util.List;
 import org.arpico.groupit.receipt.client.InfosysWSClient;
 import org.arpico.groupit.receipt.dao.AgentDao;
 import org.arpico.groupit.receipt.dao.InBillingTransactionsCustomDao;
-import org.arpico.groupit.receipt.dao.InBillingTransactionsDao;
 import org.arpico.groupit.receipt.dao.InPropAddBenefictCustomDao;
-import org.arpico.groupit.receipt.dao.InPropAddBenefictDao;
 import org.arpico.groupit.receipt.dao.InPropFamDetailsCustomDao;
-import org.arpico.groupit.receipt.dao.InPropFamDetailsDao;
 import org.arpico.groupit.receipt.dao.InPropLoadingCustomDao;
-import org.arpico.groupit.receipt.dao.InPropLoadingDao;
 import org.arpico.groupit.receipt.dao.InPropMedicalReqCustomDao;
-import org.arpico.groupit.receipt.dao.InPropMedicalReqDao;
 import org.arpico.groupit.receipt.dao.InPropNomDetailsCustomDao;
-import org.arpico.groupit.receipt.dao.InPropNomDetailsDao;
 import org.arpico.groupit.receipt.dao.InPropPrePolsCustomDao;
-import org.arpico.groupit.receipt.dao.InPropPrePolsDao;
 import org.arpico.groupit.receipt.dao.InPropShedulesCustomDao;
-import org.arpico.groupit.receipt.dao.InPropShedulesDao;
 import org.arpico.groupit.receipt.dao.InPropSurrenderValsCustomDao;
-import org.arpico.groupit.receipt.dao.InPropSurrenderValsDao;
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
-import org.arpico.groupit.receipt.dao.InProposalDao;
-import org.arpico.groupit.receipt.dao.InTransactionCustomDao;
-import org.arpico.groupit.receipt.dao.InTransactionsDao;
 import org.arpico.groupit.receipt.dao.RmsUserDao;
 import org.arpico.groupit.receipt.dto.LastReceiptSummeryDto;
 import org.arpico.groupit.receipt.dto.ProposalBasicDetailsDto;
@@ -71,18 +59,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProposalServiceImpl implements ProposalServce {
 
-	@Autowired
-	private InProposalDao inProposalDao;
-	
-	@Autowired
-	private InTransactionCustomDao transactionCustomDao;
 
 	@Autowired
 	private InProposalCustomDao inProposalCustomDao;
@@ -91,34 +71,16 @@ public class ProposalServiceImpl implements ProposalServce {
 	private CommonMethodsUtility commonethodUtility;
 
 	@Autowired
-	private InTransactionsDao inTransactionDao;
-
-	@Autowired
-	private InBillingTransactionsDao inBillingTransactionDao;
-
-	@Autowired
 	private NumberGenerator numberGenerator;
-
-	@Autowired
-	private InPropAddBenefictDao addBenefictDao;
 
 	@Autowired
 	private InPropAddBenefictCustomDao addBenefictCustomDao;
 
 	@Autowired
-	private InPropFamDetailsDao famDetailsDao;
-
-	@Autowired
 	private InPropFamDetailsCustomDao famDetailsCustomDao;
 
 	@Autowired
-	private InPropLoadingDao propLoadingDao;
-
-	@Autowired
 	private InPropLoadingCustomDao propLoadingCustomDao;
-
-	@Autowired
-	private InPropMedicalReqDao propMedicalReqDao;
 
 	@Autowired
 	private AgentDao agentDao;
@@ -127,25 +89,13 @@ public class ProposalServiceImpl implements ProposalServce {
 	private InPropMedicalReqCustomDao propMedicalReqCustomDao;
 
 	@Autowired
-	private InPropNomDetailsDao propNomDetailsDao;
-
-	@Autowired
 	private InPropNomDetailsCustomDao propNomDetailsCustomDao;
-
-	@Autowired
-	private InPropPrePolsDao propPrePolsDao;
 
 	@Autowired
 	private InPropPrePolsCustomDao propPrePolsCustomDao;
 
 	@Autowired
-	private InPropShedulesDao propScheduleDao;
-
-	@Autowired
 	private InPropShedulesCustomDao propScheduleCustomDao;
-
-	@Autowired
-	private InPropSurrenderValsDao surrenderValDao;
 
 	@Autowired
 	private InPropSurrenderValsCustomDao surrenderValCustomDao;

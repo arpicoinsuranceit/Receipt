@@ -15,24 +15,10 @@ import org.arpico.groupit.receipt.dao.CourierDao;
 import org.arpico.groupit.receipt.dao.DepartmentCourierDao;
 import org.arpico.groupit.receipt.dao.DocumentTypeDao;
 import org.arpico.groupit.receipt.dao.InOccuLoadDatDao;
-import org.arpico.groupit.receipt.dao.InPropAddBenefictCustomDao;
-import org.arpico.groupit.receipt.dao.InPropAddBenefictDao;
 import org.arpico.groupit.receipt.dao.InPropFamDetailsCustomDao;
-import org.arpico.groupit.receipt.dao.InPropFamDetailsDao;
-import org.arpico.groupit.receipt.dao.InPropLoadingCustomDao;
-import org.arpico.groupit.receipt.dao.InPropLoadingDao;
 import org.arpico.groupit.receipt.dao.InPropMedicalReqCustomDao;
-import org.arpico.groupit.receipt.dao.InPropMedicalReqDao;
 import org.arpico.groupit.receipt.dao.InPropNomDetailsCustomDao;
-import org.arpico.groupit.receipt.dao.InPropNomDetailsDao;
-import org.arpico.groupit.receipt.dao.InPropPrePolsCustomDao;
-import org.arpico.groupit.receipt.dao.InPropPrePolsDao;
-import org.arpico.groupit.receipt.dao.InPropShedulesCustomDao;
-import org.arpico.groupit.receipt.dao.InPropShedulesDao;
-import org.arpico.groupit.receipt.dao.InPropSurrenderValsCustomDao;
-import org.arpico.groupit.receipt.dao.InPropSurrenderValsDao;
 import org.arpico.groupit.receipt.dao.InProposalCustomDao;
-import org.arpico.groupit.receipt.dao.InProposalDao;
 import org.arpico.groupit.receipt.dao.SubDepartmentDao;
 import org.arpico.groupit.receipt.dao.SubDepartmentDocumentCourierDao;
 import org.arpico.groupit.receipt.dao.SubDepartmentDocumentDao;
@@ -106,51 +92,14 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	@Autowired
 	private InOccuLoadDatDao occuLoadDatdao;
 	
-	@Autowired
-	private InPropAddBenefictDao addBenefictDao;
-
-	@Autowired
-	private InPropFamDetailsDao famDetailsDao;
 	
 	@Autowired
 	private InPropFamDetailsCustomDao famDetailsCustomDao;
 
-	@Autowired
-	private InPropLoadingDao propLoadingDao;
-	
-	@Autowired
-	private InPropLoadingCustomDao propLoadingCustomDao;
-
-	@Autowired
-	private InPropMedicalReqDao propMedicalReqDao;
-
-	@Autowired
-	private InPropNomDetailsDao propNomDetailsDao;
 	
 	@Autowired
 	private InPropNomDetailsCustomDao propNomDetailsCustomDao;
 
-	@Autowired
-	private InPropPrePolsDao propPrePolsDao;
-	
-	@Autowired
-	private InPropPrePolsCustomDao propPrePolsCustomDao;
-
-	@Autowired
-	private InPropShedulesDao propScheduleDao;
-	
-	@Autowired
-	private InPropShedulesCustomDao  propScheduleCustomDao;
-
-	@Autowired
-	private InPropSurrenderValsDao surrenderValDao;
-	
-	@Autowired
-	private InPropSurrenderValsCustomDao surrenderValCustomDao;
-		
-	@Autowired
-	private InProposalDao inProposalDao;
-	
 	@Autowired
 	private InPropMedicalReqCustomDao propMedicalReqCustomDao;
 	
@@ -177,9 +126,6 @@ public class BranchUnderwriteServiceImpl implements BranchUnderwriteService{
 	
 	@Autowired
 	private JwtDecoder decoder;
-	
-	@Autowired
-	private InPropAddBenefictCustomDao inPropAddBenefictCustomDao;
 	
 	@Autowired
 	private BranchUnderwriteTransactionService branchUnderwriteTransactionService;
