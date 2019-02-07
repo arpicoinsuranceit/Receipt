@@ -377,7 +377,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		return true;
 	}
 
-	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	@Transactional(readOnly = false, rollbackFor = Exception.class)
 	private void saveReceipt(InTransactionsModel inTransactionsModel, InBillingTransactionsModel deposit) {
 		inTransactionDao.save(inTransactionsModel);
 		inBillingTransactionDao.save(deposit);
