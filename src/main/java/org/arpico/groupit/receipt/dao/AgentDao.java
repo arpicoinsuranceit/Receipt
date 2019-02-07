@@ -20,9 +20,9 @@ public interface AgentDao {
 
 	List<AgentModel> findAgentByLocations(String locCodes) throws Exception;
 
-	List<AgnInqAgnListModel> getAgnInqList(String locCodes, Integer page, Integer offset) throws Exception;
+	List<AgnInqAgnListModel> getAgnInqList(String locCodes, Integer page, Integer offset,String sql) throws Exception;
 
-	Integer getAgnInqListCount(String locCodes) throws Exception;
+	Integer getAgnInqListCount(String locCodes,String sql) throws Exception;
 	
 	AgentMasterDetailsModel getAgentMasterdetails(Integer agnCode) throws Exception;
 }

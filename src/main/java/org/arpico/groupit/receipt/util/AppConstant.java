@@ -28,7 +28,7 @@ public class AppConstant {
 	public static final String URI_UPDATE_STATUS = "http://localhost:8084/updateStatus";
 	public static final String URI_QUOTATION_DETAILS_FROM_SEQNO = "http://localhost:8084/getQuotationDetailFromSeqNo";
 	public static final String URI_CHECK_NIC_VALIDATION = "http://localhost:8084/checkNicValidation";
-	public static final String URI_BRANCH_FIND = "http://localhost:8086/findbranch";
+	public static final String URI_BRANCH_FIND = "http://localhost:8086/UserManagement/findbranch";
 	public static final String URI_SEND_EMAIL = "http://10.10.10.11:8090/sendEmail";
 	public static final String URI_SEND_SMS = "http://10.10.10.11:8090/sendSMS";
 	

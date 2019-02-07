@@ -20,19 +20,20 @@ public class AgentInquiryController {
 	@Autowired
 	private AgentInquiryService agentInquiryService;
 
-	@GetMapping("/getlist/{token:.+}/{page}/{offset}")
-	public List<AgnInqAgnListDto> getAgentList(@PathVariable String token, @PathVariable Integer page, @PathVariable Integer offset) throws Exception {
+	@GetMapping(value = {"/getlist/{token:.+}/{page}/{offset}/{equality}/{column}/{data}" , "/getlist/{token:.+}/{page}/{offset}/{equality}/{column}"})
+	public List<AgnInqAgnListDto> getAgentList(@PathVariable String token, @PathVariable Integer page, @PathVariable Integer offset,
+			 @PathVariable String equality, @PathVariable String column, @PathVariable(required = false) String data) throws Exception {
 
-		List<AgnInqAgnListDto> agnListDtos = agentInquiryService.getAgentListByBranch(token, page, offset);
+		List<AgnInqAgnListDto> agnListDtos = agentInquiryService.getAgentListByBranch(token, page, offset,equality,column,data);
 
 		return agnListDtos;
 
 	}
 	
-	@GetMapping("/getlistCount/{token:.+}")
-	public Integer getAgentListCount(@PathVariable String token) throws Exception {
+	@GetMapping(value= {"/getlistCount/{token:.+}/{equality}/{column}/{data}" , "/getlistCount/{token:.+}/{equality}/{column}"})
+	public Integer getAgentListCount(@PathVariable String token, @PathVariable String equality, @PathVariable String column, @PathVariable(required = false) String data) throws Exception {
 
-		Integer count = agentInquiryService.getAgentListByBranchCountLength(token);
+		Integer count = agentInquiryService.getAgentListByBranchCountLength(token,equality,column,data);
 
 		return count;
 
