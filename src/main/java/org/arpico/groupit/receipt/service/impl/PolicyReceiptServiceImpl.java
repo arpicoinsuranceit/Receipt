@@ -57,9 +57,9 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 	@Autowired
 	private CommonMethodsUtility commonethodUtility;
-/*
-	@Autowired
-	private InTransactionsDao inTransactionDao;*/
+	/*
+	 * @Autowired private InTransactionsDao inTransactionDao;
+	 */
 
 	@Autowired
 	private InBillingTransactionsDao inBillingTransactionDao;
@@ -97,7 +97,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 	@Autowired
 	private InfosysWSClient infosysWSClient;
-	
+
 	@Autowired
 	private ReceiptTransactionService receiptTransactionService;
 
@@ -240,27 +240,27 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 						String[] batNoArr2 = numberGenerator.generateNewId("", "", "#TXNSQ#", "");
 
-						if (batNoArr2[0].equals("Success")) {
+						if (inProposalsModel.getPprsta().equalsIgnoreCase("PLISU")
+								|| inProposalsModel.getPprsta().equalsIgnoreCase("PLAPS")) {
+							if (batNoArr2[0].equals("Success")) {
 
-							System.out.println("BATCH NO GENERATED");
+								System.out.println("BATCH NO GENERATED");
 
-							List<InPropAddBenefitModel> addBenefitModels = addBenefictCustomDao.getBenefByPprSeq(
-									Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum()),
-									inProposalsModel.getInProposalsModelPK().getPrpseq());
+								List<InPropAddBenefitModel> addBenefitModels = addBenefictCustomDao.getBenefByPprSeq(
+										Integer.parseInt(inProposalsModel.getInProposalsModelPK().getPprnum()),
+										inProposalsModel.getInProposalsModelPK().getPrpseq());
 
-							Double hrbamt = commonethodUtility.getHrbAmt(addBenefitModels);
+								Double hrbamt = commonethodUtility.getHrbAmt(addBenefitModels);
 
-							setoffs = setoffService.setoff(inProposalsModel, userCode, locCode, saveReceiptDto, deposit,
-									hrbamt, null, "OLD", Integer.parseInt(batNoArr2[1]));
+								setoffs = setoffService.setoff(inProposalsModel, userCode, locCode, saveReceiptDto,
+										deposit, hrbamt, null, "OLD", Integer.parseInt(batNoArr2[1]));
 
-							// System.out.println(" SETOFF : Setoff : " + setoffs.size());
+								// System.out.println(" SETOFF : Setoff : " + setoffs.size());
 
-							System.out.println("SETOFF SIZE : " + setoffs.size());
+								System.out.println("SETOFF SIZE : " + setoffs.size());
 
-							System.out.println("PROPOSAL SATATUS  : " + inProposalsModel.getPprsta());
+								System.out.println("PROPOSAL SATATUS  : " + inProposalsModel.getPprsta());
 
-							if (inProposalsModel.getPprsta().equalsIgnoreCase("PLISU")
-									|| inProposalsModel.getPprsta().equalsIgnoreCase("PLAPS")) {
 								try {
 									receiptTransactionService.saveTransactions(setoffs);
 									System.out.println("SETOFF SAVE");
@@ -271,16 +271,16 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 									e.printStackTrace();
 								}
-							} else {
-								System.out.println("NOT PLISU && PLAPS");
-							}
 
+							} else {
+								ResponseDto responseDto = new ResponseDto();
+								responseDto.setCode("204");
+								responseDto.setStatus("Error");
+								responseDto.setMessage("Batch No not Created");
+								return new ResponseEntity<>(responseDto, HttpStatus.OK);
+							}
 						} else {
-							ResponseDto responseDto = new ResponseDto();
-							responseDto.setCode("204");
-							responseDto.setStatus("Error");
-							responseDto.setMessage("Batch No not Created");
-							return new ResponseEntity<>(responseDto, HttpStatus.OK);
+							System.out.println("NOT PLISU && PLAPS");
 						}
 					}
 					try {

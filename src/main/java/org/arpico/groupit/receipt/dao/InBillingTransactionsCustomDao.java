@@ -27,4 +27,6 @@ public interface InBillingTransactionsCustomDao{
 	List<InBillingTransactionsModel> getSetoffsForRcpl(Integer docnum, String docCode) throws Exception;
 
 	Integer updatePolNum(String pprnum, String polnum) throws Exception;
+
+	InBillingTransactionsModel getLastDeposit(String pprnum) throws Exception;
 }

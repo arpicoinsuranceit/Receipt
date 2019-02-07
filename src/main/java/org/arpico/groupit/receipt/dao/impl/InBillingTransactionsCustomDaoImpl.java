@@ -178,4 +178,15 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 				+ " where sbucod = '450' and pprnum = " + pprnum + "");
 	}
 
+	@Override
+	public InBillingTransactionsModel getLastDeposit(String pprnum) throws Exception {
+		InBillingTransactionsModel billingTransactionsModels = jdbcTemplate
+				.queryForObject(
+						"select * from inbillingtransactions  where sbucod = '450' and pprnum = '" + pprnum
+								+ "' and doccod = 'RCPP' order by docnum desc limit 1",
+						new InBillingTransactionRowMapper());
+
+		return billingTransactionsModels;
+	}
+
 }
