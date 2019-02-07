@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="biz_gra_sub" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="607d2383-7143-47e3-8923-a88d8e5eb2bd">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="sbucod" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="year" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="loccod" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="period" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select x.*,a.shrtnm,c.locnam,d.sbu_name from
+(select l.sbucod,l.brncod,if(l.pnladv is null,p.advcod,l.pnladv) agncod,l.pnlamt*-1 amount,p.polnum,year(p.icpdat) icpyer,p.prdcod,
+       l.dspdat dsacdt,p.ppdini cusnam,('LTAK') doccod
+
+from inpoldispatchlog l
+INNER JOIN inproposals p ON p.sbucod=l.sbucod and p.polnum = l.polnum
+
+where l.sbucod=$P{sbucod} and l.pnlyer=$P{year} and l.pnlmth=$P{period} and p.pprsta<>'INAC' and l.brncod like $P{loccod}
+
+union all
+
+select l.sbucod,l.brncod,if(l.rlsadv is null,p.advcod,l.rlsadv) agncod,(l.pnlamt) amount,p.polnum,year(p.icpdat) icpyer,
+       p.prdcod,l.ackdat dsacdt,p.ppdini cusnam,('LTAR') doccod
+
+from inpoldispatchlog l
+INNER JOIN inproposals p ON p.sbucod=l.sbucod and p.polnum = l.polnum
+
+where l.sbucod=$P{sbucod} and rlsyer=$P{year} and rlsemn=$P{period} and p.pprsta<>'INAC'  and l.brncod like $P{loccod}) x
+inner join inagentmast a on x.sbucod=a.sbucod and x.agncod=a.agncod
+inner join rms_locations c on x.sbucod=c.sbucod and x.brncod=c.loccod
+inner join rms_sbu d on x.sbucod=d.sbu_code
+
+order by brncod,agncod,doccod]]>
+	</queryString>
+	<field name="sbucod" class="java.lang.String"/>
+	<field name="brncod" class="java.lang.String"/>
+	<field name="agncod" class="java.lang.String"/>
+	<field name="amount" class="java.math.BigDecimal"/>
+	<field name="polnum" class="java.lang.String"/>
+	<field name="icpyer" class="java.lang.Long"/>
+	<field name="prdcod" class="java.lang.String"/>
+	<field name="dsacdt" class="java.sql.Date"/>
+	<field name="cusnam" class="java.lang.String"/>
+	<field name="doccod" class="java.lang.String"/>
+	<field name="shrtnm" class="java.lang.String"/>
+	<field name="locnam" class="java.lang.String"/>
+	<field name="sbu_name" class="java.lang.String"/>
+	<variable name="subtot" class="java.math.BigDecimal" resetType="Group" resetGroup="doc" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<variable name="agntot" class="java.math.BigDecimal" resetType="Group" resetGroup="agn" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<variable name="gtot" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<group name="agn">
+		<groupExpression><![CDATA[$F{agncod}]]></groupExpression>
+		<groupHeader>
+			<band height="75">
+				<rectangle>
+					<reportElement uuid="9efcaf5c-b1c0-4e1e-9b44-67413b4b7b9d" x="0" y="40" width="603" height="15" forecolor="#CCCCCC"/>
+				</rectangle>
+				<textField>
+					<reportElement uuid="8406e30a-6207-41d7-ae8f-13643bff6237" x="64" y="42" width="61" height="12"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{agncod}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="9ecd9378-3589-45b6-b54d-b9433357c525" x="390" y="42" width="55" height="12"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{brncod}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="beaace8b-70c3-4ecd-a400-41bdc5203dc9" x="0" y="42" width="56" height="12"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+						<paragraph firstLineIndent="4"/>
+					</textElement>
+					<text><![CDATA[Advisor :]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="beaace8b-70c3-4ecd-a400-41bdc5203dc9" x="325" y="42" width="57" height="12"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+						<paragraph firstLineIndent="4"/>
+					</textElement>
+					<text><![CDATA[Branch :]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="f37a4d52-f5d9-4801-af44-c81ea3a9dbf9" x="129" y="42" width="153" height="12"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{shrtnm}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="ab5946ba-9446-4b8a-8ddd-93ed119264ea" x="453" y="42" width="140" height="12"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{locnam}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="9ba0978d-3381-42b1-9396-1feee7cae3eb" x="0" y="13" width="453" height="12"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{sbu_name}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="beaace8b-70c3-4ecd-a400-41bdc5203dc9" x="0" y="25" width="258" height="12"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[Policy Acknowledgements ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="beaace8b-70c3-4ecd-a400-41bdc5203dc9" x="0" y="59" width="128" height="12"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[Policy No.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="64cc1c9e-fed8-473d-972f-2a89f284f8f0" x="135" y="59" width="100" height="12"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="0b1ceebb-9699-4795-ac93-0c1329dcb16c" x="248" y="59" width="169" height="12"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[Cus. Name]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="7ac67cd6-60c0-47b9-a6bf-873547992c44" x="428" y="59" width="100" height="12"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<text><![CDATA[Amount]]></text>
+				</staticText>
+				<line>
+					<reportElement uuid="91ec9d5d-fa85-40c4-a7e0-360a9f0ba123" x="56" y="40" width="1" height="15" forecolor="#CCCCCC"/>
+				</line>
+				<line>
+					<reportElement uuid="78e53b1d-1830-47e5-a8fc-6b523129abd2" x="297" y="40" width="1" height="15" forecolor="#CCCCCC"/>
+				</line>
+				<line>
+					<reportElement uuid="093e79f1-591b-459e-b0fc-3e8b77426cf0" x="384" y="40" width="1" height="15" forecolor="#CCCCCC"/>
+				</line>
+				<line>
+					<reportElement uuid="00693018-ef13-4cc2-926a-917a40f96677" x="0" y="71" width="528" height="1" forecolor="#CCCCCC"/>
+					<graphicElement>
+						<pen lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="21">
+				<textField pattern="#,##0.00">
+					<reportElement uuid="a043efa8-c18f-4af2-9384-c8f04234ceb1" x="428" y="0" width="100" height="12"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{agntot}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement uuid="482fd196-5e4b-4679-9c03-b0207fc8b3c4" x="428" y="0" width="100" height="1"/>
+				</line>
+				<line>
+					<reportElement uuid="f1126a45-ac65-46d0-8975-7145c9856b07" x="428" y="11" width="100" height="1"/>
+				</line>
+				<line>
+					<reportElement uuid="2e3cac23-33bc-4aa8-b64d-7b81552f0cca" x="0" y="16" width="802" height="1"/>
+					<graphicElement>
+						<pen lineStyle="Dotted"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="doc">
+		<groupExpression><![CDATA[$F{doccod}]]></groupExpression>
+		<groupHeader>
+			<band height="16">
+				<textField>
+					<reportElement uuid="bb7cd14e-7f74-4051-9a5c-d20069aa137e" x="0" y="0" width="417" height="12"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{doccod}.equalsIgnoreCase("LTAR")? "Policy Ack. Refund" :
+$F{doccod}.equalsIgnoreCase("LTAK")? "Policy Ack. Decuction" :""]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement uuid="1dd202d7-f557-4899-975f-93195f29d47d" x="0" y="15" width="528" height="1" forecolor="#CCCCCC"/>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField>
+				<reportElement uuid="3f012243-2756-4cc3-ac64-7944bf146e2d" x="0" y="0" width="128" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{polnum}+" / "+$F{prdcod}+" / "+$F{icpyer}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MMM-yyyy">
+				<reportElement uuid="c9c311e3-281c-4a0a-9ad9-cdb7590f34be" x="135" y="0" width="100" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dsacdt}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="07382f08-2cfd-4d7e-936d-63c759ab0eb0" x="248" y="0" width="169" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cusnam}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="13b5132b-ec54-422e-a616-525c230bde36" x="428" y="0" width="100" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="23" splitType="Stretch">
+			<textField pattern="#,##0.00">
+				<reportElement uuid="a53ef4b9-1a16-4170-9a18-2af9058f321e" x="428" y="8" width="100" height="15"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{gtot}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="beaace8b-70c3-4ecd-a400-41bdc5203dc9" x="360" y="8" width="68" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+					<paragraph firstLineIndent="4"/>
+				</textElement>
+				<text><![CDATA[Grand Total]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>
