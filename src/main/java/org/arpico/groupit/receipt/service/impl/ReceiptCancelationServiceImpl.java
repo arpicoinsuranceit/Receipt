@@ -157,28 +157,31 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService 
 						if (inProposalsModel.getPolnum() != null && inProposalsModel.getPolnum() != "" && 
 								cal.get(Calendar.MONTH) != cal1.get(Calendar.MONTH)){
 							
-//							InPropMedicalReqModelPK inPropMedicalReqModelPK = new InPropMedicalReqModelPK();
-//
-//							inPropMedicalReqModelPK.setInstyp("main");
-//							inPropMedicalReqModelPK.setLoccod(inProposalsModel.getInProposalsModelPK().getLoccod());
-//							inPropMedicalReqModelPK.setMedcod("AD-RC");
-//							inPropMedicalReqModelPK.setPprnum(Integer.parseInt(inTransactionsModel.getPprnum()));
-//							inPropMedicalReqModelPK.setPrpseq(inProposalsModel.getInProposalsModelPK().getPrpseq());
-//							inPropMedicalReqModelPK.setSbucod(AppConstant.SBU_CODE);
-//
-//							InPropMedicalReqModel inPropMedicalReqModel = new InPropMedicalReqModel();
-//
-//							inPropMedicalReqModel.setInPropMedicalReqModelPK(inPropMedicalReqModelPK);
-//							inPropMedicalReqModel.setLockin(new Date());
-//							inPropMedicalReqModel.setTessta("N");
-//							inPropMedicalReqModel.setHoscod("NA");
-//							inPropMedicalReqModel.setPaysta("");
-//							inPropMedicalReqModel.setMedorg("Requested");
-//							inPropMedicalReqModel.setPayamt(0.00);
-//							inPropMedicalReqModel.setAddnot("Receipt Cancelation Requirement");
-//							inPropMedicalReqModel.setMednam("Additional Benefit Receipt Cancelation");
-//
-//							propMedicalReqDao.save(inPropMedicalReqModel);
+							if(doccod.equals("RCPP")) {
+								InPropMedicalReqModelPK inPropMedicalReqModelPK = new InPropMedicalReqModelPK();
+								
+								inPropMedicalReqModelPK.setInstyp("main");															
+								inPropMedicalReqModelPK.setLoccod(inProposalsModel.getInProposalsModelPK().getLoccod());
+								inPropMedicalReqModelPK.setMedcod("AD-RC");
+								inPropMedicalReqModelPK.setPprnum(Integer.parseInt(inTransactionsModel.getPprnum()));
+								inPropMedicalReqModelPK.setPrpseq(inProposalsModel.getInProposalsModelPK().getPrpseq());
+								inPropMedicalReqModelPK.setSbucod(AppConstant.SBU_CODE);
+		
+								InPropMedicalReqModel inPropMedicalReqModel = new InPropMedicalReqModel();
+		
+								inPropMedicalReqModel.setInPropMedicalReqModelPK(inPropMedicalReqModelPK);
+								inPropMedicalReqModel.setLockin(new Date());
+								inPropMedicalReqModel.setTessta("N");
+								inPropMedicalReqModel.setHoscod("NA");
+								inPropMedicalReqModel.setPaysta("");
+								inPropMedicalReqModel.setMedorg("Requested");
+								inPropMedicalReqModel.setPayamt(0.00);
+								inPropMedicalReqModel.setAddnot("Receipt Cancelation Requirement");
+								inPropMedicalReqModel.setMednam("Additional Benefit Receipt Cancelation");
+
+								propMedicalReqDao.save(inPropMedicalReqModel);
+							}
+							
 
 							if (userCode != null) {
 
