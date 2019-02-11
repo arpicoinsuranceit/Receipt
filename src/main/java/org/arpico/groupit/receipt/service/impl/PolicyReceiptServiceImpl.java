@@ -420,17 +420,10 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 //		inBillingTransactionDao.save(deposit);
 //	}
 
-<<<<<<< HEAD
-	public ReceiptPrintDto getReceiptPrintDto(InProposalsModel inProposalsModel,
-=======
-	@Transactional(readOnly = false, rollbackFor = Exception.class)
-	private void saveReceipt(InTransactionsModel inTransactionsModel, InBillingTransactionsModel deposit) {
-		inTransactionDao.save(inTransactionsModel);
-		inBillingTransactionDao.save(deposit);
-	}
+
 
 	private ReceiptPrintDto getReceiptPrintDto(InProposalsModel inProposalsModel,
->>>>>>> refs/remotes/origin/feature-agn-inq
+
 			InTransactionsModel inTransactionsModel, String agentCode, String locCode, boolean b,
 			List<HashMap<String, String>> setoffList) throws Exception {
 		ReceiptPrintDto printDto = new ReceiptPrintDto();
