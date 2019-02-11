@@ -94,7 +94,7 @@ public class LoanReceiptServiceImpl implements LoanReceiptService{
 		basicDetailsDto.setProposalNo(basicsModel.getProposalNo());
 		basicDetailsDto.setSeqNo(basicsModel.getSeqNo());
 		basicDetailsDto.setPremium(basicsModel.getPremium());
-		return basicDetailsDto;
+		return basicDetailsDto; 
 	}
 	
 	@Override
