@@ -82,12 +82,10 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 	}
 
 	@Override
-	public Double paybleAmountThisMonth(Integer pprNo) throws Exception {
+	public Double paybleAmountThisMonth(Integer pprNo, String column) throws Exception {
 		Double amount = 0.0;
 
 		try {
-			List<Object> args = new ArrayList<>();
-			args.add(pprNo);
 
 //			amount = jdbcTemplate.query(
 //					"SELECT sum(amount) `sum` FROM inbillingtransactions where sbucod = '450' and pprnum = ? and "
@@ -103,10 +101,13 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 //							return amountTemp;
 //						}
 //					});
+			
+			System.out.println("column ; " + column);
+			System.out.println("pprNo ; " + pprNo);
 
-			amount = jdbcTemplate.query("SELECT sum(amount)+(select sum(depost) from inbillingtransactions where sbucod='450' and pprnum='"+pprNo+"') `sum` FROM inbillingtransactions " +  
-					" where sbucod = '450' and pprnum=? and  txnyer <= year(curdate()) and txnmth <= month(curdate());",
-					args.toArray(), new ResultSetExtractor<Double>() {
+			amount = jdbcTemplate.query("SELECT if(sum(amount) >0,sum(amount),(select totprm from inproposals where sbucod='450' and "+column+"='"+pprNo+"' and pprsta <> 'INAC'))+(select sum(depost) from inbillingtransactions where sbucod='450' and "+column+" ='"+pprNo+"') `sum` FROM inbillingtransactions" + 
+					"					 where sbucod = '450' and "+column+" = '"+pprNo+"' and  txnyer <= year(curdate()) and txnmth <= month(curdate());",
+					 new ResultSetExtractor<Double>() {
 
 						@Override
 						public Double extractData(ResultSet rs) throws SQLException, DataAccessException {

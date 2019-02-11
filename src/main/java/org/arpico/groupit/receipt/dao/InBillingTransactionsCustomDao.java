@@ -16,7 +16,7 @@ public interface InBillingTransactionsCustomDao{
 	
 	List<InBillingTransactionsModel> getRefundList (String pprNum) throws Exception;
 	
-	Double paybleAmountThisMonth(Integer pprNo) throws Exception;
+	Double paybleAmountThisMonth(Integer pprNo, String column) throws Exception;
 
 	InBillingTransactionsModel getLasiInvoice(String pprnum) throws Exception;
 	

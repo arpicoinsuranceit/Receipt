@@ -150,7 +150,7 @@ public class ProposalServiceImpl implements ProposalServce {
 		InProposalBasicsModel basicsModel = inProposalCustomDao.geInProposalBasics(pprNum, seqNum);
 		List<LastReceiptSummeryDto> dtos = inTransactionService.getLastReceiptsByPprNo(pprNum.toString());
 		ProposalBasicDetailsDto basicDetailsDto = getBasicDetailsDto(basicsModel);
-		basicDetailsDto.setAmtPayble(billingTransactionsCustomDao.paybleAmountThisMonth(basicsModel.getProposalNo()));
+		basicDetailsDto.setAmtPayble(billingTransactionsCustomDao.paybleAmountThisMonth(pprNum, "pprnum"));
 		basicDetailsDto.setLastReceiptSummeryDtos(dtos);
 		return basicDetailsDto;
 	}
