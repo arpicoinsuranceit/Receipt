@@ -78,7 +78,7 @@ public class LoanReceiptServiceImpl implements LoanReceiptService{
 		List<LastReceiptSummeryDto> dtos = inTransactionService.getLastLoanReceiptsByPolNo(polNo.toString());
 
 		ProposalBasicDetailsDto basicDetailsDto = getBasicDetailsDto(basicsModel);
-		basicDetailsDto.setAmtPayble(billingTransactionsCustomDao.paybleAmountThisMonth(basicsModel.getProposalNo()));
+		basicDetailsDto.setAmtPayble(billingTransactionsCustomDao.paybleAmountThisMonth(polNo, "polnum"));
 		basicDetailsDto.setLastReceiptSummeryDtos(dtos);
 		return basicDetailsDto;
 	}
