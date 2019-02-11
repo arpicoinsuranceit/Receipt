@@ -120,7 +120,7 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 					});
 		} catch (Exception e) {
 			// TODO: handle exception
-		}
+		} 
 
 		return amount;
 	}
