@@ -6,7 +6,11 @@ import java.util.List;
 
 import org.arpico.groupit.receipt.dao.RmsRecdCustomDao;
 import org.arpico.groupit.receipt.dao.rowmapper.MisGlItemRowMapper;
+import org.arpico.groupit.receipt.dao.rowmapper.RmsDocTxndRowMapper;
+import org.arpico.groupit.receipt.dao.rowmapper.RmsRecdRowMapper;
 import org.arpico.groupit.receipt.model.MisGlItemModel;
+import org.arpico.groupit.receipt.model.RmsDocTxndModel;
+import org.arpico.groupit.receipt.model.RmsRecdModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -51,6 +55,12 @@ public class RmsRecdCustomDaoImpl implements RmsRecdCustomDao {
 				});
 
 		return paymode;
+	}
+	
+	@Override
+	public List<RmsRecdModel> getRmsRecdModels(String docCode, Integer docNum) throws Exception {
+		List<RmsRecdModel> models = jdbcTemplate.query("select * from rms_recd WHERE SBU_CODE = '450' and DOC_CODE = '"+docCode+"' and DOC_NO = '"+docNum+"'", new RmsRecdRowMapper());
+		return models;
 	}
 
 }

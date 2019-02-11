@@ -64,17 +64,17 @@ public class AgentDaoImpl implements AgentDao {
 	}
 
 	@Override
-	public List<AgnInqAgnListModel> getAgnInqList(String locCodes, Integer page, Integer offset) throws Exception {
+	public List<AgnInqAgnListModel> getAgnInqList(String locCodes, Integer page, Integer offset,String sql) throws Exception {
 		return jdbcTemplate.query("select agncod, agnnam, agnnic, agnsta, sliirg, "
 				+ "if(agncls = 'IC', unlcod, bancod) as supvid, agndob, subdcd, agnrdt "
-				+ "from inagentmast where sbucod = '450' and loccod in (" + locCodes + ") limit " + page + ", " + offset
+				+ "from inagentmast where sbucod = '450' "+ sql+ " and loccod in (" + locCodes + ") limit " + page + ", " + offset
 				+ ";", new AgnInqAgnListRowMapper());
 	}
 
 	@Override
-	public Integer getAgnInqListCount(String locCodes) throws Exception {
+	public Integer getAgnInqListCount(String locCodes,String sql) throws Exception {
 		return jdbcTemplate.queryForObject(
-				"select count(*)  from inagentmast where sbucod = '450' and loccod in (" + locCodes + ")",
+				"select count(*)  from inagentmast where sbucod = '450' and loccod in (" + locCodes + ") "+ sql,
 				Integer.class);
 	}
 

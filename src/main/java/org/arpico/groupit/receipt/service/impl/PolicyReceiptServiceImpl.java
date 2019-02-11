@@ -421,9 +421,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 //	}
 
 
-
-	private ReceiptPrintDto getReceiptPrintDto(InProposalsModel inProposalsModel,
-
+	public ReceiptPrintDto getReceiptPrintDto(InProposalsModel inProposalsModel,
 			InTransactionsModel inTransactionsModel, String agentCode, String locCode, boolean b,
 			List<HashMap<String, String>> setoffList) throws Exception {
 		ReceiptPrintDto printDto = new ReceiptPrintDto();

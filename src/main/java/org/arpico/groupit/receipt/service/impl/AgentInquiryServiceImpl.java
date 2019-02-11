@@ -45,7 +45,7 @@ public class AgentInquiryServiceImpl implements AgentInquiryService {
 	private AgentInquiryDao agentInquiryDao;
 
 	@Override
-	public List<AgnInqAgnListDto> getAgentListByBranch(String token, Integer page, Integer offset) throws Exception {
+	public List<AgnInqAgnListDto> getAgentListByBranch(String token, Integer page, Integer offset,String equality,String column,String data) throws Exception {
 		
 		String agentCode = new JwtDecoder().generate(token);
 
@@ -60,8 +60,33 @@ public class AgentInquiryServiceImpl implements AgentInquiryService {
 		String locCodes = daoParameters.getParaForIn(agentBranchs);
 		
 		List<AgnInqAgnListDto> agnInqAgnListDtos = new ArrayList<>();
+		
+		String sql="";
+		
+		if(equality.equals("equal")) {
+			if(data == null || data == "") {
+				sql="";
+			}else {
+				if(column.equals("supvid")) {
+					sql=" and if(agncls = 'IC', unlcod, bancod) ='"+data+"' ";
+				}else {
+					sql=" and "+column+"='"+data+"' ";
+				}
+			}
+		}else {
+			if(data.equals(null) || data == null || data == "") {
+				sql="";
+			}else {
+				if(column.equals("supvid")) {
+					sql=" and if(agncls = 'IC', unlcod, bancod) like '"+data+"%' ";
+				}else {
+					sql=" and "+column+" like '"+data+"%' ";
+				}
+				
+			}
+		}
 
-		List<AgnInqAgnListModel> agnInqAgnListModels = agentDao.getAgnInqList(locCodes, page, offset);
+		List<AgnInqAgnListModel> agnInqAgnListModels = agentDao.getAgnInqList(locCodes, page, offset, sql);
 
 		agnInqAgnListModels.forEach(e -> {
 			agnInqAgnListDtos.add(getAgnInqListDto(e));
@@ -87,7 +112,7 @@ public class AgentInquiryServiceImpl implements AgentInquiryService {
 	}
 
 	@Override
-	public Integer getAgentListByBranchCountLength(String token) throws Exception {
+	public Integer getAgentListByBranchCountLength(String token,String equality,String column,String data) throws Exception {
 		
 		
 		String agentCode = new JwtDecoder().generate(token);
@@ -102,7 +127,31 @@ public class AgentInquiryServiceImpl implements AgentInquiryService {
 		
 		String locCodes = daoParameters.getParaForIn(agentBranchs);
 		
-		Integer count = agentDao.getAgnInqListCount(locCodes);
+		String sql="";
+		
+		if(equality.equals("equal")) {
+			if(data == null || data == "") {
+				sql="";
+			}else {
+				if(column.equals("supvid")) {
+					sql=" and if(agncls = 'IC', unlcod, bancod) ='"+data+"' ";
+				}else {
+					sql=" and "+column+"='"+data+"' ";
+				}
+			}
+		}else {
+			if(data.equals(null) || data == null || data == "") {
+				sql="";
+			}else {
+				if(column.equals("supvid")) {
+					sql=" and if(agncls = 'IC', unlcod, bancod) like '"+data+"%' ";
+				}else {
+					sql=" and "+column+" like '"+data+"%' ";
+				}
+			}
+		}
+		
+		Integer count = agentDao.getAgnInqListCount(locCodes,sql);
 		
 		return count;
 	}

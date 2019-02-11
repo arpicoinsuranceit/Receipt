@@ -16,6 +16,7 @@ public class AppConstant {
 	public static final String SYSTEM_CREATE = "system";
 	public static final String RECOVERY = "RECOVERY";
 	
+
 	public static final String URI_GET_QUO_DETAILS = "http://10.10.10.12:8084/getQuoDetail";
 	public static final String URI_GET_QUO_SEQNUM = "http://10.10.10.12:8084/getQuotationSeqnum";
 	public static final String URI_GET_QUO_SHEDULES = "http://10.10.10.12:8084/getShedule";
