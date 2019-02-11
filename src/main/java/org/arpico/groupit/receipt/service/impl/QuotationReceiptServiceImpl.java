@@ -640,10 +640,10 @@ public class QuotationReceiptServiceImpl implements QuotationReceiptService {
 		InPropFamDetailsModel detailsModel = new InPropFamDetailsModel();
 
 		detailsModel.setInPropFamDetailsPK(famDetailsModelPK);
-		detailsModel.setFmlrel(childrenDto.get_cTitle().toUpperCase());
+		detailsModel.setFmlrel(childrenDto.get_cTitle().equalsIgnoreCase("M") ? "SON" : "DAUGHTER");
 		detailsModel.setFmldob(new SimpleDateFormat("dd-MM-yyyy").parse(childrenDto.get_cDob()));
 		detailsModel.setLockin(new Date());
-		detailsModel.setFmlsex(childrenDto.get_cTitle().equals("Son") ? "M" : "F");
+		detailsModel.setFmlsex(childrenDto.get_cTitle().toUpperCase());
 		detailsModel.setFmlage(childrenDto.get_cAge().floatValue());
 		detailsModel.setCicapp(childrenDto.is_cCibc() ? "Y" : "N");
 		detailsModel.setHbcapp(childrenDto.is_cHbc() ? "Y" : "N");
