@@ -8,6 +8,8 @@ public class ProposalBasicDetailsDto {
 	private String custName;
 	private String custTitle;
 	private String agentCode;
+	private String agentName;
+	private String location;
 	private String product;
 	private Double premium;
 	private Double amtPayble;
@@ -111,6 +113,24 @@ public class ProposalBasicDetailsDto {
 
 	public void setMobile(String mobile) {
 		this.mobile = mobile;
+	}
+	
+	
+
+	public String getAgentName() {
+		return agentName;
+	}
+
+	public void setAgentName(String agentName) {
+		this.agentName = agentName;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
 	}
 
 	@Override
