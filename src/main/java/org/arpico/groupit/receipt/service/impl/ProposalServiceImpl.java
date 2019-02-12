@@ -149,7 +149,7 @@ public class ProposalServiceImpl implements ProposalServce {
 	public ProposalBasicDetailsDto getBasicDetails(Integer pprNum, Integer seqNum) throws Exception {
 		InProposalBasicsModel basicsModel = inProposalCustomDao.geInProposalBasics(pprNum, seqNum);
 		List<LastReceiptSummeryDto> dtos = inTransactionService.getLastReceiptsByPprNo(pprNum.toString());
-		List<AgentModel> agentModel=agentDao.findAgentByCode(basicsModel.getAgentCode());
+		List<AgentModel> agentModel=agentDao.findAgentByCodeAll(basicsModel.getAgentCode());
 		ProposalBasicDetailsDto basicDetailsDto = getBasicDetailsDto(basicsModel);
 
 		basicDetailsDto.setAmtPayble(billingTransactionsCustomDao.paybleAmountThisMonth(pprNum, "pprnum"));
