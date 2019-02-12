@@ -143,7 +143,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 		InProposalBasicsModel basicsModel = inProposalCustomDao.geInPolicyBasics(polNo, seqNo);
 
 		List<LastReceiptSummeryDto> dtos = inTransactionService.getLastReceiptsByPolNo(polNo.toString());
-		List<AgentModel> agentModel=agentDao.findAgentByCode(basicsModel.getAgentCode());
+		List<AgentModel> agentModel=agentDao.findAgentByCodeAll(basicsModel.getAgentCode());
 
 		ProposalBasicDetailsDto basicDetailsDto = getBasicDetailsDto(basicsModel);
 		basicDetailsDto.setAgentName(agentModel.get(0).getAgentName());
