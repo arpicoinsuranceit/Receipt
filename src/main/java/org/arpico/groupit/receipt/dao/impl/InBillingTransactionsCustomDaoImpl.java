@@ -115,12 +115,12 @@ public class InBillingTransactionsCustomDaoImpl implements InBillingTransactions
 							if (rs.next()) {
 								amountTemp = rs.getDouble("sum");
 							}
-							return amountTemp;
+							return amountTemp; 
 						}
 					});
 		} catch (Exception e) {
 			// TODO: handle exception
-		}
+		}  
 
 		return amount;
 	}

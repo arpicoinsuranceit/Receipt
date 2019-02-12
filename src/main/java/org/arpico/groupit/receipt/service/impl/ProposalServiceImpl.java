@@ -174,7 +174,7 @@ public class ProposalServiceImpl implements ProposalServce {
 			basicDetailsDto.setMobile("false");
 		}
 		basicDetailsDto.setStatus(basicsModel.getPrsta());
-		return basicDetailsDto;
+		return basicDetailsDto; 
 	}
 
 	@Override

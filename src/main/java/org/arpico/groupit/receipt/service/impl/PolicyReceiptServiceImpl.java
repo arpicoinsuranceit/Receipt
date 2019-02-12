@@ -113,7 +113,7 @@ public class PolicyReceiptServiceImpl implements PolicyReceiptService {
 
 		}
 
-		return proposalNoSeqNoDtos;
+		return proposalNoSeqNoDtos; 
 	}
 
 	@Override
