@@ -130,11 +130,9 @@ public class ReceiptCancelationServiceImpl implements ReceiptCancelationService 
 		if (canceledReceiptModels.isEmpty()) {
 
 			if (!doccod.equals("RCLN")) {
-
 				try {
 					inTransactionsModel = receiptCancelationCustomDao.findTransctionRow("450", receiptNo, doccod,
 							userCode, loccodes.contains("HO"));
-
 				} catch (Exception e) {
 					dto = new ResponseDto();
 					dto.setCode("204");

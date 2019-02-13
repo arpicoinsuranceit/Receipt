@@ -86,9 +86,9 @@ public class ReceiptCancelationCustomDaoImpl implements ReceiptCancelationCustom
 	public InTransactionsModel findTransctionRow(String sbucode, String docnum,String doccod,String creby,boolean isHo) throws Exception {
 		InTransactionsModel transaction=null;
 		if(isHo) {
-			transaction=jdbcTemplate.queryForObject("SELECT * FROM intransactions where sbucod='"+sbucode+"' and docnum='"+docnum+"' and doccod='"+doccod+"'  having sum(totprm) > 0 ", new InTransactionRowMapper());
+			transaction=jdbcTemplate.queryForObject("SELECT * FROM intransactions where sbucod='"+sbucode+"' and docnum="+docnum+" and doccod='"+doccod+"'  having sum(totprm) > 0 ", new InTransactionRowMapper());
 		}else {
-			transaction=jdbcTemplate.queryForObject("SELECT * FROM intransactions where sbucod='"+sbucode+"' and docnum=(SELECT docnum FROM intransactions where sbucod='"+sbucode+"' and docnum='"+docnum+"' and doccod='"+doccod+"' and creaby='"+creby+"') and doccod='"+doccod+"'  having sum(totprm) > 0 ", new InTransactionRowMapper());
+			transaction=jdbcTemplate.queryForObject("SELECT * FROM intransactions where sbucod='"+sbucode+"' and docnum=(SELECT docnum FROM intransactions where sbucod='"+sbucode+"' and docnum="+docnum+" and doccod='"+doccod+"' and creaby='"+creby+"') and doccod='"+doccod+"'  having sum(totprm) > 0 ", new InTransactionRowMapper());
 		}
 		
 		
